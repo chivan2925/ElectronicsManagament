@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply font-sans;
+}
+
+@keyframes sway {
+  0%, 100% { transform: translateX(0px); }
+  25% { transform: translateX(-5px) rotate(-1deg); } 
+  75% { transform: translateX(5px) rotate(1deg); } 
+}
+
+.animate-sway {
+  animation: sway 2s ease-in-out infinite; 
+}
