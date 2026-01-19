@@ -1,0 +1,235 @@
+@startchen ERD
+left to right direction
+
+entity Product {
+    ID <<key>>
+    Name
+    Category
+    Brand
+    Description
+    RatingStar
+    RatingCount
+    Status
+    CreatedAt
+    UpdatedAt
+}
+
+entity Variant {
+    ID <<key>>
+    Name
+    Color
+    Price
+    Stock
+    Status
+    CreatedAt
+}
+
+entity Cart {
+    ID <<key>>
+    UpdatedAt
+}
+
+entity Order {
+    ID <<key>>
+    Code
+    Address
+    Status
+    PaymentMethod
+    PaymentStatus
+    Discount
+    ShippingFee
+    Subtotal
+    Total
+    CreatedAt
+    PaidAt
+    Note
+    ShippingProvider
+    ShippingStatus
+}
+
+entity User {
+    ID <<key>>
+    Name
+    Avatar
+    Address
+    Email
+    PhoneNumber
+    HashedPassword
+    Status
+    CreatedAt
+}
+
+entity Staff {
+    ID <<key>>
+    Name
+    Avatar
+    Email
+    PhoneNumber
+    Address
+}
+
+entity Role {
+    ID <<key>>
+    Name
+    CreatedAt
+}
+
+entity Permission {
+    ID <<key>>
+    Name
+    Description
+    CreatedAt
+}
+
+entity Category {
+    ID <<key>>
+    Name
+    CreatedAt
+}
+
+entity Brand {
+    ID <<key>>
+    Name
+    Image
+    Status
+    CreatedAt
+}
+
+entity Coupon {
+    ID <<key>>
+    Code
+    Type
+    Value
+    MinOrder
+    StartsAt
+    EndAt
+    UsageLimit
+    Status
+}
+
+entity PaymentTransaction {
+    ID <<key>>
+    Provider
+    ProviderPaymentID
+    Amount
+    Status
+    CreatedAt
+}
+
+entity Review {
+    ID <<key>>
+    Star
+    Content
+    Status
+    CreatedAt
+}
+
+entity Warehouse {
+    ID <<key>>
+    Name
+    Location
+    Capacity
+    CreatedAt
+}
+
+'Giao dịch kho hàng
+relationship HasWarehouseTransaction {
+    Type
+    Quantity
+    Date
+    CreatedAt
+}
+HasWarehouseTransaction -N- Warehouse
+HasWarehouseTransaction -N- Variant
+HasWarehouseTransaction -1- Staff
+
+'Chi tiết kho hàng
+relationship WarehouseDetail {
+    Quantity
+}
+WarehouseDetail -N- Variant
+WarehouseDetail -N- Warehouse
+
+'Chi tiết đơn hàng
+relationship OrderDetail {
+    Quantity
+}
+OrderDetail -N- Variant
+OrderDetail -N- Order
+
+'Chi tiết giỏ hàng
+relationship CartDetail {
+    Quantity
+}
+CartDetail -N- Variant
+CartDetail -N- Cart
+
+'Vai trò của nhân viên
+relationship HasRole {
+    AssignedAt
+}
+HasRole -1- Role
+HasRole -N- Staff
+
+'Quyền hạn của vai trò
+relationship HasRolePermission {
+    GrantedAt
+}
+HasRolePermission -N- Role
+HasRolePermission -N- Permission
+
+'Mã giảm giá theo danh mục
+relationship HasCategoryCoupon {
+}
+HasCategoryCoupon -N- Category
+HasCategoryCoupon -N- Coupon
+
+'Mã giảm giá theo thương hiệu
+relationship HasBrandCoupon {
+}
+HasBrandCoupon -N- Brand
+HasBrandCoupon -N- Coupon
+
+'Giỏ hàng của người dùng
+relationship HasCart {
+}
+HasCart -1- Cart
+HasCart -1- User
+
+'Phiên bản sản phẩm
+relationship HasVariant {
+}
+HasVariant -N- Variant
+HasVariant -1- Product
+
+'Thương hiệu sản phẩm
+relationship HasBrand {
+}
+HasBrand -1- Brand
+HasBrand -N- Product
+
+'Thanh toán đơn hàng
+relationship HasPaymentTransaction {
+}
+HasPaymentTransaction -1- Order
+HasPaymentTransaction -N- PaymentTransaction
+
+'Đánh giá của sản phẩm
+relationship HasProductReview {
+}
+HasProductReview -1- Product
+HasProductReview -N- Review
+
+'Người dùng đánh giá
+relationship HasUserReview {
+}
+HasUserReview -1- User
+HasUserReview -N- Review
+
+'Đơn hàng của người dùng
+relationship HasOrder {
+}
+HasOrder -1- User
+HasOrder -N- Order
+
+@endchen
