@@ -1,0 +1,183 @@
+// =======================
+// CORE TABLES
+// =======================
+
+Table Product {
+  id int [pk]
+  name varchar
+  category_id int [Ref: > Category.id]
+  brand_id int [Ref: > Brand.id]
+  description text
+  rating_star float
+  rating_count int
+  status varchar
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table Variant {
+  id int [pk]
+  product_id int [Ref: > Product.id]
+  name varchar
+  color varchar
+  price decimal
+  stock int
+  status varchar
+  created_at timestamp
+}
+
+Table User {
+  id int [pk]
+  name varchar
+  avatar varchar
+  address varchar
+  email varchar
+  phone_number varchar
+  hashed_password varchar
+  status varchar
+  created_at timestamp
+}
+
+Table Staff {
+  id int [pk]
+  name varchar
+  avatar varchar
+  email varchar
+  phone_number varchar
+  address varchar
+  role_id int [Ref: > Role.id]
+  assgined_at timestamp
+}
+
+Table Role {
+  id int [pk]
+  name varchar
+  created_at timestamp
+}
+
+Table Permission {
+  id int [pk]
+  name varchar
+  description text
+  created_at timestamp
+}
+
+Table Category {
+  id int [pk]
+  name varchar
+  created_at timestamp
+}
+
+Table Brand {
+  id int [pk]
+  name varchar
+  image varchar
+  status varchar
+  created_at timestamp
+}
+
+Table Coupon {
+  id int [pk]
+  code varchar
+  type varchar
+  value decimal
+  min_order decimal
+  starts_at timestamp
+  end_at timestamp
+  usage_limit int
+  status varchar
+  category_id int [Ref: > Category.id]
+  brand_id int [Ref: > Brand.id]
+}
+
+Table Cart {
+  id int [pk]
+  updated_at timestamp
+  user_id int [Ref: - User.id]
+}
+
+Table Order {
+  id int [pk]
+  user_id int [Ref: > User.id]
+  code varchar
+  address varchar
+  status varchar
+  payment_method varchar
+  payment_status varchar
+  discount decimal
+  shipping_fee decimal
+  subtotal decimal
+  total decimal
+  created_at timestamp
+  paid_at timestamp
+  note text
+  shipping_provider varchar
+  shipping_status varchar
+}
+
+Table PaymentTransaction {
+  id int [pk]
+  order_id int [Ref: > Order.id]
+  provider varchar
+  provider_payment_id varchar
+  amount decimal
+  status varchar
+  created_at timestamp
+}
+
+Table Review {
+  id int [pk]
+  product_id int [Ref: > Product.id]
+  user_id int [Ref: > User.id]
+  star int
+  content text
+  status varchar
+  created_at timestamp
+}
+
+Table Warehouse {
+  id int [pk]
+  name varchar
+  location varchar
+  capacity int
+  created_at timestamp
+}
+
+
+// =======================
+// JOIN / RELATION TABLES
+// =======================
+
+Table OrderDetail {
+  order_id int [Ref: > Order.id]
+  variant_id int [Ref: > Variant.id]
+  quantity int
+}
+
+Table CartDetail {
+  cart_id int [Ref: > Cart.id]
+  variant_id int [Ref: > Variant.id]
+  quantity int
+}
+
+Table WarehouseDetail {
+  warehouse_id int [Ref: > Warehouse.id]
+  variant_id int [Ref: > Variant.id]
+  quantity int
+}
+
+Table WarehouseTransaction {
+  warehouse_id int [Ref: > Warehouse.id]
+  variant_id int [Ref: > Variant.id]
+  staff_id int [Ref: > Staff.id]
+  type varchar
+  quantity int
+  date timestamp
+  created_at timestamp
+}
+
+Table RolePermission {
+  role_id int [Ref: > Role.id]
+  permission_id int [Ref: > Permission.id]
+  granted_at timestamp
+}
