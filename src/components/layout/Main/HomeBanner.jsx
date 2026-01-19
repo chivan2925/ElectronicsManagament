@@ -3,7 +3,7 @@ import banner2 from "../../../assets/banner2.png";
 import ram1 from "../../../assets/ram1.png";
 import sao from "../../../assets/item5.png";
 
-export default function Section() {
+export default function HomeBanner() {
   return (
     <div
       className="h-[600px] bg-cover bg-center"
@@ -44,7 +44,7 @@ export default function Section() {
             className="w-24 h-24 object-contain animate-sway filter drop-shadow-md"
           />
         </div>
-  
+
         <div className="absolute top-[5%] right-[10%] z-0">
           <img
             src={sao}

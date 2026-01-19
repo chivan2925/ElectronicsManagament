@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { products } from "./SlideshowParts/products";
-import SlideCard from "./SlideshowParts/SlideCard";
-import SlideNavigation from "./SlideshowParts/SlideNavigation";
+import { products } from "./products";
+import SlideCard from "./SlideCard";
+import SlideNavigation from "./SlideNavigation";
 
 export default function Slideshow() {
   const [current, setCurrent] = useState(Math.floor(products.length / 2));
@@ -35,7 +35,7 @@ export default function Slideshow() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center bg-black w-full h-screen overflow-hidden">
+    <div className="flex flex-col items-center justify-center bg-dark w-full h-screen overflow-hidden">
       <div className="relative w-full h-[500px] flex justify-center items-center">
         {products.map((product, index) => (
           <SlideCard

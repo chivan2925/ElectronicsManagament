@@ -3,7 +3,7 @@ import logo from "../../../assets/logo.png";
 
 export default function Header() {
   return (
-    <header className="bg-black w-full sticky top-0 z-50 shadow-lg">
+    <header className="bg-dark w-full sticky top-0 z-50 shadow-lg">
       <div className="max-w-7xl mx-auto h-[70px] px-6 flex items-center justify-between">
         {/* logo */}
         <div className="flex-shrink-0">
@@ -56,7 +56,7 @@ export default function Header() {
           <div className="flex items-center gap-5 text-white text-xl">
             <div className="relative cursor-pointer hover:text-primary transition-colors">
               <FaShoppingCart />
-              <span className="text-black absolute -top-2 -right-2 bg-primary text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+              <span className="text-dark absolute -top-2 -right-2 bg-primary text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
                 10
               </span>
             </div>
