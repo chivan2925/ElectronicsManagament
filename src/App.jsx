@@ -1,17 +1,16 @@
-import Header from "./components/layout/Header/Header";
-import ProductSlideShow from "./components/layout/Main/SlideshowParts/ProductSlideShow";
-import HomeBanner from "./components/layout/Main/HomeBanner";
-import Footer from "./components/layout/Footer/Footer";
-import ProductContainer from "./components/layout/Main/Container/ProductContainer";
+import { Routes, Route } from "react-router-dom";
+import MainLayout from "./components/layout/MainLayout";
+import Home from "./pages/Home";
+import Checkout from "./pages/Checkout";
+
 function App() {
   return (
-    <div>
-      <Header />
-      <HomeBanner />
-      <ProductSlideShow />
-      <ProductContainer />
-      <Footer />
-    </div>
+    <Routes>
+      <Route element={<MainLayout />}>
+        <Route path="/" element={<Home />} />
+        <Route path="/checkout" element={<Checkout />} />
+      </Route>
+    </Routes>
   );
 }
 
