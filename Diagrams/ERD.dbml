@@ -167,6 +167,7 @@ Table WarehouseDetail {
 }
 
 Table WarehouseTransaction {
+  id int [pk]
   warehouse_id int [Ref: > Warehouse.id]
   variant_id int [Ref: > Variant.id]
   staff_id int [Ref: > Staff.id]

@@ -158,6 +158,7 @@ CREATE TABLE `WarehouseDetail` (
 );
 
 CREATE TABLE `WarehouseTransaction` (
+  `id` int PRIMARY KEY AUTO_INCREMENT,
   `warehouse_id` int,
   `variant_id` int,
   `staff_id` int,
