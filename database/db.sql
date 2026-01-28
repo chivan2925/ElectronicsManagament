@@ -1,5 +1,5 @@
 CREATE TABLE `Product` (
-  `id` int PRIMARY KEY,
+  `id` int PRIMARY KEY AUTO_INCREMENT,
   `name` varchar(255),
   `category_id` int,
   `brand_id` int,
@@ -12,7 +12,7 @@ CREATE TABLE `Product` (
 );
 
 CREATE TABLE `Variant` (
-  `id` int PRIMARY KEY,
+  `id` int PRIMARY KEY AUTO_INCREMENT,
   `product_id` int,
   `name` varchar(255),
   `color` varchar(255),
@@ -23,7 +23,7 @@ CREATE TABLE `Variant` (
 );
 
 CREATE TABLE `User` (
-  `id` int PRIMARY KEY,
+  `id` int PRIMARY KEY AUTO_INCREMENT,
   `name` varchar(255),
   `avatar` varchar(255),
   `address` varchar(255),
@@ -35,7 +35,7 @@ CREATE TABLE `User` (
 );
 
 CREATE TABLE `Staff` (
-  `id` int PRIMARY KEY,
+  `id` int PRIMARY KEY AUTO_INCREMENT,
   `name` varchar(255),
   `avatar` varchar(255),
   `email` varchar(255),
@@ -46,26 +46,26 @@ CREATE TABLE `Staff` (
 );
 
 CREATE TABLE `Role` (
-  `id` int PRIMARY KEY,
+  `id` int PRIMARY KEY AUTO_INCREMENT,
   `name` varchar(255),
   `created_at` timestamp
 );
 
 CREATE TABLE `Permission` (
-  `id` int PRIMARY KEY,
+  `id` int PRIMARY KEY AUTO_INCREMENT,
   `name` varchar(255),
   `description` text,
   `created_at` timestamp
 );
 
 CREATE TABLE `Category` (
-  `id` int PRIMARY KEY,
+  `id` int PRIMARY KEY AUTO_INCREMENT,
   `name` varchar(255),
   `created_at` timestamp
 );
 
 CREATE TABLE `Brand` (
-  `id` int PRIMARY KEY,
+  `id` int PRIMARY KEY AUTO_INCREMENT,
   `name` varchar(255),
   `image` varchar(255),
   `status` varchar(255),
@@ -73,7 +73,7 @@ CREATE TABLE `Brand` (
 );
 
 CREATE TABLE `Coupon` (
-  `id` int PRIMARY KEY,
+  `id` int PRIMARY KEY AUTO_INCREMENT,
   `code` varchar(255),
   `type` varchar(255),
   `value` decimal,
@@ -87,13 +87,13 @@ CREATE TABLE `Coupon` (
 );
 
 CREATE TABLE `Cart` (
-  `id` int PRIMARY KEY,
+  `id` int PRIMARY KEY AUTO_INCREMENT,
   `updated_at` timestamp,
   `user_id` int
 );
 
 CREATE TABLE `Order` (
-  `id` int PRIMARY KEY,
+  `id` int PRIMARY KEY AUTO_INCREMENT,
   `user_id` int,
   `code` varchar(255),
   `address` varchar(255),
@@ -112,7 +112,7 @@ CREATE TABLE `Order` (
 );
 
 CREATE TABLE `PaymentTransaction` (
-  `id` int PRIMARY KEY,
+  `id` int PRIMARY KEY AUTO_INCREMENT,
   `order_id` int,
   `provider` varchar(255),
   `provider_payment_id` varchar(255),
@@ -122,7 +122,7 @@ CREATE TABLE `PaymentTransaction` (
 );
 
 CREATE TABLE `Review` (
-  `id` int PRIMARY KEY,
+  `id` int PRIMARY KEY AUTO_INCREMENT,
   `product_id` int,
   `user_id` int,
   `star` int,
@@ -132,7 +132,7 @@ CREATE TABLE `Review` (
 );
 
 CREATE TABLE `Warehouse` (
-  `id` int PRIMARY KEY,
+  `id` int PRIMARY KEY AUTO_INCREMENT,
   `name` varchar(255),
   `location` varchar(255),
   `capacity` int,
