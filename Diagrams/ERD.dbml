@@ -190,6 +190,7 @@ Table categories {
   name varchar(50) [not null]
   slug varchar(255) [not null]
   parent_id int [Ref: > categories.id]
+  status product_status [default: product_status.ACTIVE]
   created_at datetime [default: `now()`]
   updated_at datetime
 }
