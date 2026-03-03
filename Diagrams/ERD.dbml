@@ -92,6 +92,12 @@ Enum shipping_status {
   CANCELLED
 }
 
+Enum warehouse_status {
+  ACTIVE
+  INACTIVE
+  DELETED
+}
+
 // =======================
 // CORE TABLES
 // =======================
@@ -232,7 +238,12 @@ Table orders {
   user_id int [Ref: > users.id]
   coupon_id int [Ref: > coupons.id]
   code varchar(10) [not null]
-  address_snapshot json [not null] //Địa chỉ mặc định của user
+  shipping_name varchar(100) [not null]
+  shipping_phone varchar(20) [not null]
+  shipping_line varchar(255) [not null]
+  shipping_ward varchar(50)
+  shipping_district varchar(50) [not null]
+  shipping_province varchar(50) [not null]
   status order_status [default: order_status.PENDING, not null]
   payment_method payment_method_type [not null]
   payment_status payment_status [default: payment_status.PENDING, not null]
@@ -268,6 +279,7 @@ Table return_requests {
   refund_amount decimal(12,3)
   status return_request_status [default: return_request_status.PENDING, not null]
   created_at datetime [default: `now()`, not null]
+  updated_at datetime
   resolved_at datetime
   evidence_json json
 }
@@ -282,6 +294,7 @@ Table reviews {
   content text
   photos_json json
   created_at datetime [default: `now()`, not null]
+  updated_at datetime
 }
 
 Table warehouses {
@@ -292,7 +305,10 @@ Table warehouses {
   district varchar(50)
   province varchar(50)
   capacity int [not null]
+  current_stock int [default: 0, not null]
+  status warehouse_status [default: warehouse_status.ACTIVE, not null]
   created_at datetime [default: `now()`, not null]
+  updated_at datetime
 }
 
 Table warehouse_transactions {
@@ -302,6 +318,7 @@ Table warehouse_transactions {
   type transaction_type [not null]
   status transaction_status [default: transaction_status.PENDING, not null]
   created_at datetime [default: `now()`, not null]
+  updated_at datetime
 }
 
 // =======================
