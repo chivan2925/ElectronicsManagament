@@ -98,6 +98,20 @@ Enum warehouse_status {
   DELETED
 }
 
+Enum gender_type {
+  MALE
+  FEMALE
+  OTHER
+  PREFER_NOT_TO_SAY
+}
+
+Enum review_status {
+  PENDING
+  APPROVED
+  REJECTED
+  DELETED
+}
+
 // =======================
 // CORE TABLES
 // =======================
@@ -106,12 +120,13 @@ Table products {
   id int [pk, increment]
   name varchar(255) [not null]
   slug varchar(255) [not null]
-  category_id int [Ref: > categories.id]
-  brand_id int [Ref: > brands.id]
+  category_id int [Ref: > categories.id, not null]
+  brand_id int [Ref: > brands.id, not null]
   description text
   specs_json json
-  rating_star decimal(2,1)
-  rating_count int
+  rating_star decimal(2,1) [default: 0, not null]
+  rating_count int [default: 0, not null]
+  warranty_months int [default: 0, not null]
   status product_status [default: product_status.ACTIVE, not null]
   created_at datetime [default: `now()`, not null]
   updated_at datetime [default: `now()`, not null]
@@ -119,19 +134,20 @@ Table products {
   checks {
     `rating_star >= 0 AND rating_star <= 5` [name: "chk_rating_star_range"]
     `rating_count >= 0` [name: "chk_rating_count_non_negative"]
+    `warranty_months >= 0` [name: "chk_warranty_months_non_negative"]
   }
 }
 
 Table variants {
   id int [pk, increment]
-  product_id int [Ref: > products.id]
+  product_id int [Ref: > products.id, not null]
   name varchar(255) [not null]
   slug varchar(255) [not null]
-  color varchar(50) [not null]
+  color varchar(50)
   specs_json json
   price decimal(12,3) [not null]
   stock int [not null]
-  status product_status [default: product_status.ACTIVE]
+  status product_status [default: product_status.ACTIVE, not null]
   created_at datetime [default: `now()`, not null]
   updated_at datetime [default: `now()`, not null]
 
@@ -152,6 +168,9 @@ Table media {
 
 Table users {
   id int [pk, increment]
+  full_name varchar(100) [not null]
+  gender gender_type [not null]
+  date_of_birth datetime
   username varchar(25) [not null]
   avatar_url varchar(255)
   email varchar(255) [not null]
@@ -164,13 +183,17 @@ Table users {
 
 Table staffs {
   id int [pk, increment]
+  full_name varchar(100) [not null]
+  gender gender_type [not null]
+  date_of_birth datetime
   username varchar(25) [not null]
   avatar_url varchar(255)
   email varchar(255) [not null]
   phone_number varchar(10) [not null]
   address varchar(255) [not null]
   role_id int [Ref: > roles.id]
-  status user_status [default: user_status.ACTIVE]
+  hashed_password varchar(60) [not null] //BCrypt
+  status user_status [default: user_status.ACTIVE, not null]
   assigned_at datetime [default: `now()`, not null]
   updated_at datetime [default: `now()`, not null]
 }
@@ -178,11 +201,13 @@ Table staffs {
 Table addresses {
   id int [pk, increment]
   user_id int [Ref: > users.id]
+  label varchar(50) [not null] //Home, Work, etc.
   line varchar(255) [not null]
   ward varchar(50) [not null]
   district varchar(50) [not null]
   province varchar(50) [not null]
-  is_default bool [default: true, not null]
+  note text
+  is_default bool [default: false, not null]
 }
 
 Table roles {
@@ -194,7 +219,7 @@ Table roles {
 
 Table permissions {
   id int [pk, increment]
-  key varchar(50) [not null]
+  key varchar(50) [not null] //Naming convention: PRODUCT_VIEW, PRODUCT_CREATE, PRODUCT_UPDATE, PRODUCT_DELETE, etc.
   name varchar(25) [not null]
   description text
   created_at datetime [default: `now()`, not null]
@@ -225,13 +250,14 @@ Table coupons {
   id int [pk, increment]
   category_id int [Ref: > categories.id]
   brand_id int [Ref: > brands.id]
-  code varchar(10) [not null]
+  code varchar(20) [not null]
   type coupon_type [not null]
   value decimal(12,3)
   min_order decimal(12,3)
   starts_at datetime
   ends_at datetime
   usage_limit int
+  max_discount decimal(12,3)
   status coupon_status [default: coupon_status.VALID, not null]
   created_at datetime [default: `now()`, not null]
   updated_at datetime [default: `now()`, not null]
@@ -245,22 +271,23 @@ Table coupons {
 
 Table carts {
   id int [pk, increment]
-  user_id int [Ref: - users.id]
+  user_id int [Ref: - users.id, unique, not null]
   created_at datetime [default: `now()`, not null]
   updated_at datetime [default: `now()`, not null]
 }
 
 Table orders {
   id int [pk, increment]
-  user_id int [Ref: > users.id]
+  user_id int [Ref: > users.id, not null]
   coupon_id int [Ref: > coupons.id]
-  code varchar(10) [not null]
+  code varchar(20) [not null]
   shipping_name varchar(100) [not null]
   shipping_phone varchar(20) [not null]
   shipping_line varchar(255) [not null]
   shipping_ward varchar(50) [not null]
   shipping_district varchar(50) [not null]
   shipping_province varchar(50) [not null]
+  tracking_code varchar(20) [not null]
   status order_status [default: order_status.PENDING, not null]
   payment_method payment_method_type [not null]
   payment_status payment_status [default: payment_status.PENDING, not null]
@@ -286,9 +313,9 @@ Table orders {
 
 Table payment_transactions {
   id int [pk, increment]
-  order_id int [Ref: > orders.id]
-  provider varchar(10) [not null]
-  provider_payment_id varchar(10) [not null]
+  order_id int [Ref: > orders.id, not null]
+  provider varchar(20) [not null]
+  provider_payment_id varchar(20) [not null]
   amount decimal(12,3) [not null]
   status payment_transaction_status [default: payment_transaction_status.PENDING, not null]
   created_at datetime [default: `now()`, not null]
@@ -300,13 +327,14 @@ Table payment_transactions {
 
 Table return_requests {
   id int [pk, increment]
-  user_id int [Ref: > users.id]
-  order_id int [Ref: > orders.id]
-  variant_id int [Ref: > variants.id]
-  handled_by_staff_id int [Ref: > staffs.id]
+  user_id int [Ref: > users.id, not null]
+  order_id int [Ref: > orders.id, not null]
+  variant_id int [Ref: > variants.id, not null]
+  handled_by_staff_id int [Ref: > staffs.id, not null]
   type return_request_type [not null]
   reason text
-  refund_amount decimal(12,3)
+  refund_amount decimal(12,3) [not null]
+  refund_method payment_method_type [not null]
   status return_request_status [default: return_request_status.PENDING, not null]
   created_at datetime [default: `now()`, not null]
   updated_at datetime [default: `now()`, not null]
@@ -321,12 +349,13 @@ Table return_requests {
 Table reviews {
   id int [pk, increment]
   product_id int [Ref: > products.id]
-  user_id int [Ref: > users.id]
-  order_id int [Ref: > orders.id]
+  user_id int [Ref: > users.id, not null]
+  order_id int [Ref: > orders.id, not null]
   variant_id int [Ref: > variants.id]
   rating_star int [not null]
   content text
   photos_json json
+  status review_status [default: review_status.PENDING, not null]
   created_at datetime [default: `now()`, not null]
   updated_at datetime [default: `now()`, not null]
 
@@ -357,10 +386,13 @@ Table warehouses {
 
 Table warehouse_transactions {
   id int [pk, increment]
-  warehouse_id int [Ref: > warehouses.id]
-  staff_id int [Ref: > staffs.id]
+  warehouse_id int [Ref: > warehouses.id, not null]
+  staff_id int [Ref: > staffs.id, not null]
+  order_id int [Ref: > orders.id]
+  return_request_id int [Ref: > return_requests.id]
   type transaction_type [not null]
   status transaction_status [default: transaction_status.PENDING, not null]
+  note text
   created_at datetime [default: `now()`, not null]
   updated_at datetime [default: `now()`, not null]
 }
@@ -370,8 +402,8 @@ Table warehouse_transactions {
 // =======================
 
 Table warehouse_transaction_details {
-  warehouse_transaction_id int [Ref: > warehouse_transactions.id]
-  variant_id int [Ref: > variants.id]
+  warehouse_transaction_id int [Ref: > warehouse_transactions.id, not null]
+  variant_id int [Ref: > variants.id, not null]
   quantity int [not null]
 
   indexes {
@@ -384,8 +416,8 @@ Table warehouse_transaction_details {
 }
 
 Table order_details {
-  order_id int [Ref: > orders.id]
-  variant_id int [Ref: > variants.id]
+  order_id int [Ref: > orders.id, not null]
+  variant_id int [Ref: > variants.id, not null]
   price decimal(12,3) [not null]
   quantity int [not null]
 
@@ -400,8 +432,8 @@ Table order_details {
 }
 
 Table cart_details {
-  cart_id int [Ref: > carts.id]
-  variant_id int [Ref: > variants.id]
+  cart_id int [Ref: > carts.id, not null]
+  variant_id int [Ref: > variants.id, not null]
   quantity int [not null]
 
   indexes {
@@ -414,8 +446,8 @@ Table cart_details {
 }
 
 Table warehouse_details {
-  warehouse_id int [Ref: > warehouses.id]
-  variant_id int [Ref: > variants.id]
+  warehouse_id int [Ref: > warehouses.id, not null]
+  variant_id int [Ref: > variants.id, not null]
   quantity int [not null]
 
   indexes {
@@ -428,8 +460,8 @@ Table warehouse_details {
 }
 
 Table role_permissions {
-  role_id int [Ref: > roles.id]
-  permission_id int [Ref: > permissions.id]
+  role_id int [Ref: > roles.id, not null]
+  permission_id int [Ref: > permissions.id, not null]
   granted_at datetime [default: `now()`, not null]
 
   indexes {
