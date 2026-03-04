@@ -24,7 +24,6 @@ public class CategoryEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @NotBlank(message = "Tên danh mục không được để trống")
     @Column(nullable = false, length = 50)
     private String name;
 

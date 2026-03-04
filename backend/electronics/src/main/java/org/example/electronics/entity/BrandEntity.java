@@ -22,7 +22,6 @@ public class BrandEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @NotBlank(message = "Tên thương hiệu không được để trống")
     @Column(nullable = false, length = 100)
     private String name;
 
