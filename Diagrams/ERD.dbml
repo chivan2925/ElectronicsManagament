@@ -112,6 +112,20 @@ Enum review_status {
   DELETED
 }
 
+Enum report_status {
+  PENDING
+  RESOLVED
+  REJECTED
+  DELETED
+}
+
+Enum handling_measure_type {
+  NONE
+  WARNING
+  TEMPORARY_HIDE_PRODUCT
+  PERMANENT_DELETE_PRODUCT
+}
+
 // =======================
 // CORE TABLES
 // =======================
@@ -393,6 +407,19 @@ Table warehouse_transactions {
   type transaction_type [not null]
   status transaction_status [default: transaction_status.PENDING, not null]
   note text
+  created_at datetime [default: `now()`, not null]
+  updated_at datetime [default: `now()`, not null]
+}
+
+Table reports {
+  id int [pk, increment]
+  user_id int [Ref: > users.id, not null]
+  product_id int [Ref: > products.id, not null]
+  staff_id int [Ref: > staffs.id]
+  reason text [not null]
+  proof_json json [not null]
+  status report_status [default: report_status.PENDING, not null]
+  handling_measures handling_measure_type [default: handling_measure_type.NONE, not null]
   created_at datetime [default: `now()`, not null]
   updated_at datetime [default: `now()`, not null]
 }
