@@ -4,6 +4,7 @@ import Home from "./pages/Home";
 import Checkout from "./pages/Checkout";
 import ManageStaff from "./pages/Admin/ManageStaff";
 import ManageUser from "./pages/Admin/ManageUser";
+import ManageReview from "./pages/Admin/ReviewManagement";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/admin/manage-staff" element={<ManageStaff />} />
         <Route path="/admin/manage-user" element={<ManageUser />} />
+        <Route path="/admin/manage-review" element={<ManageReview />} />
       </Route>
     </Routes>
   );
