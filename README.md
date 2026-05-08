@@ -1,16 +1,97 @@
-# React + Vite
+# ElectronicsManagament
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+ElectronicsManagament is an electronics and gaming e-commerce project with a React frontend and a Spring Boot backend.
 
-Currently, two official plugins are available:
+## Current Scope
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+The storefront targets products such as:
 
-## React Compiler
+- Phones
+- Laptops
+- Headphones
+- Mice
+- Keyboards
+- Mouse pads
+- Gaming PCs
+- Prebuilt desktops
+- PC components
+- Gaming chairs
+- Gaming accessories
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Tech Stack
 
-## Expanding the ESLint configuration
+Frontend:
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- React + Vite
+- Tailwind CSS
+- React Router
+- Axios
+- lucide-react
+- Recharts
+
+Backend:
+
+- Spring Boot REST API
+- Spring Security + JWT
+- JPA/Hibernate
+- PostgreSQL
+
+## Main Routes
+
+Client:
+
+- `/`: e-commerce homepage
+
+Admin:
+
+- `/admin`: admin dashboard
+- `/admin/categories`
+- `/admin/brands`
+- `/admin/products`
+- `/admin/variants`
+- `/admin/media`
+- `/admin/users`
+- `/admin/staff`
+- `/admin/roles`
+- `/admin/orders`
+- `/admin/warehouse`
+- `/admin/coupons`
+
+## Run Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Then open:
+
+```text
+http://127.0.0.1:5173/
+http://127.0.0.1:5173/admin
+```
+
+## Run Backend
+
+```bash
+cd backend/electronics
+mvn spring-boot:run
+```
+
+Default local database configuration is currently in:
+
+```text
+backend/electronics/src/main/resources/application.yml
+```
+
+## Documentation
+
+Project working context and AI rules are in:
+
+```text
+AGENTS.md
+docs/ai-context/
+```
+
+Before making structured changes, read `AGENTS.md`.

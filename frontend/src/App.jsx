@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import AdminLayout from "./layouts/AdminLayout";
+import Home from "./pages/Home";
 import ActivityLog from "./pages/admin/ActivityLog";
 import BestSellers from "./pages/admin/BestSellers";
 import Brands from "./pages/admin/Brands";
@@ -19,6 +20,8 @@ import Warehouse from "./pages/admin/Warehouse";
 function App() {
   return (
     <Routes>
+      <Route element={<Home />} path="/" />
+
       <Route element={<AdminLayout />} path="/admin">
         <Route index element={<Dashboard />} />
         <Route element={<Categories />} path="categories" />
@@ -37,8 +40,7 @@ function App() {
         <Route element={<ActivityLog />} path="reports/activity" />
       </Route>
 
-      <Route element={<Navigate replace to="/admin" />} path="/" />
-      <Route element={<Navigate replace to="/admin" />} path="*" />
+      <Route element={<Navigate replace to="/" />} path="*" />
     </Routes>
   );
 }
