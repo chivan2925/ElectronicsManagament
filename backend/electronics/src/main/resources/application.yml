@@ -18,10 +18,16 @@ spring:
       hibernate:
         format_sql: true
 
+  # 3. Upload Image
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
+
 # 3. JWT
 electronics:
   app:
-    jwtSecret: ${JWT_SECRET_KEY}
+    jwtSecret: DayLaMotDoanMaBiMatCuaDuAnElectronicsDaiHon32KyTuDeBaoMat
     jwtExpirationMs: 86400000
 
 # 4. Payment Integration
@@ -40,3 +46,9 @@ payment:
     refund-url: "https://test-payment.momo.vn/v2/gateway/api/refund"
     return-url: "http://localhost:8080/api/payments/momo-return"
     notify-url: "http://localhost:8080/api/webhook/momo-ipn" # Đường dẫn Momo bắn IPN về
+
+# Cấu hình Cloudinary
+cloudinary:
+  cloud-name: ddftruti7
+  api-key: 137853177264324
+  api-secret: _S5YYj3wj-QzsBc9KEq3z5Q10pM

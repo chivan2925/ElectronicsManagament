@@ -30,6 +30,9 @@ public class MediaEntity {
     @JoinColumn(name = "variant_id")
     private VariantEntity variant;
 
+    @Column(name = "public_id", unique = true, nullable = false)
+    private String publicId;
+
     @Column(name = "image_url", nullable = false)
     private String imageUrl;
 

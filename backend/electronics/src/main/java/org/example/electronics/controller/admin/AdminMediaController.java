@@ -8,9 +8,13 @@ import org.example.electronics.dto.request.admin.media.AdminAddMediaRequestDTO;
 import org.example.electronics.dto.request.admin.media.AdminUpdateMediaOrderRequestDTO;
 import org.example.electronics.dto.response.admin.AdminMediaResponseDTO;
 import org.example.electronics.service.admin.AdminMediaService;
+import org.example.electronics.service.system.impl.SystemCloudinaryServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/admin/media")
@@ -22,6 +26,8 @@ import org.springframework.web.bind.annotation.*;
 public class AdminMediaController {
 
     private final AdminMediaService adminMediaService;
+
+    private final SystemCloudinaryServiceImpl cloudinaryService;
 
     @PostMapping
     @Operation(
@@ -74,5 +80,14 @@ public class AdminMediaController {
         AdminMediaResponseDTO adminMediaResponseDTO = adminMediaService.updateMediaOrder(mediaId, adminUpdateMediaOrderRequestDTO);
 
         return ResponseEntity.ok(adminMediaResponseDTO);
+    }
+
+    @PostMapping("/upload")
+    public ResponseEntity<Map<String, String>> uploadImage(@RequestParam("file") MultipartFile file) {
+        // Gọi Service up lên Cloudinary, nhận về cái Map chứa "url" và "publicId"
+        Map<String, String> result = cloudinaryService.uploadImage(file);
+
+        // Trả thẳng JSON về cho Frontend
+        return ResponseEntity.ok(result);
     }
 }

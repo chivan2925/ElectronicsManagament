@@ -20,6 +20,7 @@ import org.example.electronics.repository.MediaRepository;
 import org.example.electronics.repository.ProductRepository;
 import org.example.electronics.repository.VariantRepository;
 import org.example.electronics.service.admin.AdminVariantService;
+import org.example.electronics.service.system.SystemCloudinaryService;
 import org.example.electronics.util.DateTimeUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,6 +32,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -38,9 +41,13 @@ public class AdminVariantServiceImpl implements AdminVariantService {
 
     private final VariantMapper variantMapper;
     private final VariantRepository variantRepository;
+
     private final ProductRepository productRepository;
+
     private final MediaMapper mediaMapper;
     private final MediaRepository mediaRepository;
+
+    private final SystemCloudinaryService cloudinaryService;
 
     @Transactional
     @Override
@@ -56,18 +63,18 @@ public class AdminVariantServiceImpl implements AdminVariantService {
                 ));
 
         VariantEntity newVariantEntity = variantMapper.toNewEntity(adminVariantRequestDTO);
-
         newVariantEntity.setProduct(existingProductEntity);
 
         VariantEntity savedVariantEntity = variantRepository.save(newVariantEntity);
 
+        // 🚀 XỬ LÝ LƯU ẢNH LÚC TẠO MỚI (Giữ nguyên logic của sếp, rất chuẩn)
         List<AdminNestedMediaRequestDTO> adminNestedMediaRequestDTOList = adminVariantRequestDTO.media();
 
         if(adminNestedMediaRequestDTOList != null && !adminNestedMediaRequestDTOList.isEmpty()) {
             List<MediaEntity> mediaEntityList = adminNestedMediaRequestDTOList.stream()
                     .map(mediaDTO -> {
                         MediaEntity mediaEntity = mediaMapper.nestedDTO_toNewEntity(mediaDTO);
-                        mediaEntity.setVariant(savedVariantEntity);
+                        mediaEntity.setVariant(savedVariantEntity); // Gắn vào Variant
                         return mediaEntity;
                     })
                     .toList();
@@ -97,8 +104,56 @@ public class AdminVariantServiceImpl implements AdminVariantService {
                 ));
 
         variantMapper.updateEntityFromRequest(adminVariantRequestDTO, existingVariantEntity);
-
         existingVariantEntity.setProduct(existingProductEntity);
+
+        // 🚀 ĐẠI PHẪU LOGIC ẢNH: TÌM & DỌN RÁC
+        List<AdminNestedMediaRequestDTO> incomingMediaDTOs = adminVariantRequestDTO.media();
+        Set<MediaEntity> existingMedia = existingVariantEntity.getMedia();
+
+        if (incomingMediaDTOs != null) {
+            // Lấy danh sách các publicId mà Frontend gửi lên
+            Set<String> incomingPublicIds = incomingMediaDTOs.stream()
+                    .map(AdminNestedMediaRequestDTO::publicId)
+                    .collect(Collectors.toSet());
+
+            // 1. TÌM ẢNH BỊ XÓA: Có trong DB cũ nhưng KHÔNG CÓ trong danh sách mới gửi lên
+            List<MediaEntity> mediaToDelete = existingMedia.stream()
+                    .filter(media -> !incomingPublicIds.contains(media.getPublicId()))
+                    .toList();
+
+            for (MediaEntity media : mediaToDelete) {
+                // Xóa rác sạch sẽ trên máy chủ Cloudinary
+                if (media.getPublicId() != null) {
+                    cloudinaryService.deleteImage(media.getPublicId());
+                }
+                // Xóa khỏi Database
+                mediaRepository.delete(media);
+            }
+
+            // Lấy danh sách các publicId CŨ để kiểm tra
+            Set<String> existingPublicIds = existingMedia.stream()
+                    .map(MediaEntity::getPublicId)
+                    .collect(Collectors.toSet());
+
+            // 2. THÊM ẢNH MỚI VÀ CẬP NHẬT ẢNH CŨ
+            for (AdminNestedMediaRequestDTO dto : incomingMediaDTOs) {
+                if (existingPublicIds.contains(dto.publicId())) {
+                    // Ảnh này đã có sẵn -> Chỉ cần kiểm tra xem Admin có đổi nó thành ảnh chính (isPrimary) không
+                    existingMedia.stream()
+                            .filter(m -> m.getPublicId().equals(dto.publicId()))
+                            .findFirst()
+                            .ifPresent(m -> {
+                                m.setIsPrimary(dto.isPrimary());
+                                mediaRepository.save(m);
+                            });
+                } else {
+                    // Ảnh hoàn toàn mới được Admin up thêm -> Lưu mới vào DB
+                    MediaEntity newMedia = mediaMapper.nestedDTO_toNewEntity(dto);
+                    newMedia.setVariant(existingVariantEntity);
+                    mediaRepository.save(newMedia);
+                }
+            }
+        }
 
         return variantMapper.toAdminResponseDTO(existingVariantEntity);
     }

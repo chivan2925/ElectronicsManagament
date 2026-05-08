@@ -9,6 +9,9 @@ public record AdminNestedMediaRequestDTO(
         @NotBlank(message = "Đường dẫn hình ảnh media không được để trống")
         String imageUrl,
 
+        @NotBlank(message = "Public ID ảnh không được để trống")
+        String publicId,
+
         @NotNull(message = "isPrimary không được null")
         Boolean isPrimary,
 
