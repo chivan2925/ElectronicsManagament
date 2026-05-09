@@ -11,7 +11,7 @@ import { featuredProducts, promoCards } from "../data/mockData";
 
 function Home() {
   return (
-    <div className="min-h-screen bg-[#050B14] text-white">
+    <div className="min-h-screen bg-[#050B14] bg-[radial-gradient(circle_at_12%_8%,rgba(0,91,255,0.22),transparent_28%),radial-gradient(circle_at_88%_18%,rgba(56,189,248,0.12),transparent_24%),radial-gradient(circle_at_50%_88%,rgba(29,78,216,0.16),transparent_32%)] text-white">
       <AnnouncementBar />
       <Header />
 
@@ -33,10 +33,10 @@ function Home() {
           <div>
             <div className="mb-5 flex items-end justify-between gap-4">
               <div>
-                <h2 className="text-2xl font-black text-white">Sản phẩm nổi bật</h2>
-                <p className="mt-1 text-sm text-slate-500">Gear hot, cấu hình mạnh, giá tốt cho game thủ.</p>
+                <h2 className="text-2xl font-black leading-tight text-white md:text-3xl">Sản phẩm nổi bật</h2>
+                <p className="mt-2 text-sm font-medium text-slate-400">Gear hot, cấu hình mạnh, giá tốt cho game thủ.</p>
               </div>
-              <a className="hidden text-sm font-bold text-blue-300 hover:text-white sm:inline" href="/">
+              <a className="premium-transition hidden text-sm font-bold text-blue-300 hover:text-white hover:drop-shadow-[0_0_14px_rgba(0,91,255,0.85)] sm:inline" href="/">
                 Xem thêm
               </a>
             </div>

@@ -3,18 +3,18 @@ import { formatCurrency } from "../utils/formatters";
 
 function ProductCard({ product }) {
   return (
-    <article className="group relative overflow-hidden rounded-2xl border border-slate-800 bg-gradient-to-b from-slate-900 to-[#07111F] p-4 shadow-xl shadow-black/20 transition hover:-translate-y-0.5 hover:border-blue-500/70">
+    <article className="premium-transition group relative overflow-hidden rounded-2xl border border-white/10 bg-[radial-gradient(circle_at_50%_0%,rgba(0,91,255,0.12),transparent_42%),linear-gradient(180deg,rgba(15,23,42,0.9),rgba(7,17,31,0.96))] p-4 shadow-xl shadow-black/20 backdrop-blur-xl before:pointer-events-none before:absolute before:inset-0 before:bg-[linear-gradient(130deg,rgba(255,255,255,0.08),transparent_28%,transparent_70%,rgba(0,91,255,0.1))] before:opacity-0 before:transition-opacity before:duration-300 hover:-translate-y-1 hover:border-blue-300/60 hover:shadow-[0_0_36px_rgba(0,91,255,0.24),0_24px_70px_rgba(0,0,0,0.35)] hover:before:opacity-100">
       {product.discount && (
-        <span className="absolute left-4 top-4 z-10 rounded-full bg-red-500 px-2.5 py-1 text-xs font-black text-white">
+        <span className="absolute left-4 top-4 z-10 rounded-full bg-red-500 px-2.5 py-1 text-xs font-black text-white shadow-[0_0_18px_rgba(239,68,68,0.55)]">
           {product.discount}
         </span>
       )}
 
-      <div className="flex aspect-[4/3] items-center justify-center rounded-xl bg-slate-950/70 p-3 ring-1 ring-slate-800">
-        <img alt={product.name} className="h-full w-full object-contain transition duration-300 group-hover:scale-105" src={product.image} />
+      <div className="relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-xl bg-[radial-gradient(circle_at_50%_30%,rgba(0,91,255,0.16),rgba(2,6,23,0.86)_54%)] p-3 ring-1 ring-white/10">
+        <img alt={product.name} className="premium-transition h-full w-full object-contain drop-shadow-[0_18px_34px_rgba(0,0,0,0.35)] group-hover:scale-110 group-hover:drop-shadow-[0_24px_44px_rgba(0,91,255,0.24)]" src={product.image} />
       </div>
 
-      <div className="mt-4">
+      <div className="relative z-10 mt-4">
         <h3 className="min-h-[44px] text-sm font-black leading-snug text-white md:text-base">{product.name}</h3>
 
         <div className="mt-3 flex items-center gap-2 text-sm">
@@ -33,7 +33,7 @@ function ProductCard({ product }) {
             )}
           </div>
           <button
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#005BFF] text-white shadow-lg shadow-blue-950/40 transition hover:bg-blue-700"
+            className="premium-transition flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#005BFF] text-white shadow-[0_0_24px_rgba(0,91,255,0.36)] hover:-translate-y-0.5 hover:bg-blue-500 hover:shadow-[0_0_36px_rgba(0,91,255,0.65)] active:translate-y-0"
             type="button"
             title="Thêm vào giỏ hàng"
           >
