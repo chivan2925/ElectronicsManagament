@@ -1,3 +1,4 @@
+import { createElement } from "react";
 import { cn } from "../../utils/classNames";
 
 const variantClasses = {
@@ -14,19 +15,22 @@ const sizeClasses = {
   lg: "px-3.5 py-1.5 text-sm",
 };
 
-function Badge({ children, className, size = "sm", variant = "soft", ...props }) {
-  return (
-    <span
-      className={cn(
+function Badge({ as: Component = "span", children, className, size = "sm", type = "button", variant = "soft", ...props }) {
+  const badgeProps = Component === "button" ? { type } : {};
+
+  return createElement(
+    Component,
+    {
+      className: cn(
         "inline-flex w-fit items-center rounded-full font-black",
         variantClasses[variant] || variantClasses.soft,
         sizeClasses[size] || sizeClasses.sm,
         className,
-      )}
-      {...props}
-    >
-      {children}
-    </span>
+      ),
+      ...props,
+      ...badgeProps,
+    },
+    children,
   );
 }
 

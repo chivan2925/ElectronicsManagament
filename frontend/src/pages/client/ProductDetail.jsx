@@ -1,18 +1,170 @@
-import { useParams } from "react-router-dom";
-import ClientPlaceholderPage from "../../components/common/ClientPlaceholderPage";
+import { useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import { motion } from "framer-motion";
+import { ChevronRight, PackageSearch } from "lucide-react";
+import AnnouncementBar from "../../components/layout/AnnouncementBar";
+import Header from "../../components/layout/Header";
+import ProductGallery from "../../components/product/ProductGallery";
+import ProductInfo from "../../components/product/ProductInfo";
+import ProductReviews from "../../components/product/ProductReviews";
+import ProductSpecs from "../../components/product/ProductSpecs";
+import RelatedProducts from "../../components/product/RelatedProducts";
+import Badge from "../../components/ui/Badge";
+import Button from "../../components/ui/Button";
+import Container from "../../components/ui/Container";
+import { getProductDetail, getRelatedProducts } from "../../data";
+import { fadeUp, staggerContainer } from "../../styles/animations";
+
+const MotionDiv = motion.div;
+
+function getInitialOptions(groups) {
+  return groups.reduce((selectedOptions, group) => {
+    const firstAvailableOption = group.options.find((option) => option.stock > 0) || group.options[0];
+
+    return {
+      ...selectedOptions,
+      [group.id]: firstAvailableOption.id,
+    };
+  }, {});
+}
+
+function getSelectedVariantOptions(groups, selectedOptions) {
+  return groups
+    .map((group) => group.options.find((option) => option.id === selectedOptions[group.id]))
+    .filter(Boolean);
+}
+
+function getMaxQuantity(product, selectedVariantOptions) {
+  if (product.stock <= 0) {
+    return 0;
+  }
+
+  return Math.max(0, Math.min(product.stock, ...selectedVariantOptions.map((option) => option.stock)));
+}
+
+function ProductNotFound() {
+  return (
+    <div className="store-page-shell">
+      <AnnouncementBar />
+      <Header />
+
+      <Container as="main" className="py-10">
+        <div className="store-glass rounded-3xl p-8 text-center">
+          <PackageSearch className="mx-auto text-blue-200 drop-shadow-[0_0_18px_rgba(0,91,255,0.55)]" size={48} />
+          <Badge className="mx-auto mt-5" variant="primary">Không tìm thấy</Badge>
+          <h1 className="text-heading mt-4">Sản phẩm không tồn tại</h1>
+          <p className="text-muted mx-auto mt-3 max-w-lg text-sm">
+            Sản phẩm này có thể đã đổi đường dẫn hoặc chưa có trong mock catalog hiện tại.
+          </p>
+          <Button as={Link} className="mt-6" to="/products" variant="outline">
+            Quay lại danh sách
+          </Button>
+        </div>
+      </Container>
+    </div>
+  );
+}
+
+function ProductDetailContent({ detail }) {
+  const initialOptions = getInitialOptions(detail.variantGroups);
+  const initialVariantOptions = getSelectedVariantOptions(detail.variantGroups, initialOptions);
+  const initialMaxQuantity = getMaxQuantity(detail.product, initialVariantOptions);
+  const [selectedOptions, setSelectedOptions] = useState(initialOptions);
+  const [quantity, setQuantity] = useState(initialMaxQuantity > 0 ? 1 : 0);
+
+  const selectedVariantOptions = getSelectedVariantOptions(detail.variantGroups, selectedOptions);
+  const maxQuantity = getMaxQuantity(detail.product, selectedVariantOptions);
+  const selectedPriceDelta = selectedVariantOptions.reduce((sum, option) => sum + option.priceDelta, 0);
+  const finalPrice = detail.product.price + selectedPriceDelta;
+  const finalOldPrice = detail.product.oldPrice ? detail.product.oldPrice + selectedPriceDelta : null;
+  const relatedProducts = getRelatedProducts(detail.product);
+
+  const handleVariantSelect = (groupId, optionId) => {
+    const nextOptions = { ...selectedOptions, [groupId]: optionId };
+    const nextVariantOptions = getSelectedVariantOptions(detail.variantGroups, nextOptions);
+    const nextMaxQuantity = getMaxQuantity(detail.product, nextVariantOptions);
+
+    setSelectedOptions(nextOptions);
+    setQuantity((currentQuantity) => {
+      if (nextMaxQuantity <= 0) {
+        return 0;
+      }
+
+      return Math.min(Math.max(currentQuantity, 1), nextMaxQuantity);
+    });
+  };
+
+  const handleQuantityChange = (nextQuantity) => {
+    if (maxQuantity <= 0) {
+      setQuantity(0);
+      return;
+    }
+
+    setQuantity(Math.min(Math.max(nextQuantity, 1), maxQuantity));
+  };
+
+  return (
+    <div className="store-page-shell">
+      <AnnouncementBar />
+      <Header />
+
+      <Container as="main" className="pb-14 pt-6 sm:pt-8">
+        <nav aria-label="Breadcrumb" className="mb-4 flex min-w-0 flex-wrap items-center gap-2 text-sm font-bold text-slate-400">
+          <Link className="premium-transition hover:text-white" to="/">
+            Trang chủ
+          </Link>
+          <ChevronRight className="text-slate-600" size={15} />
+          <Link className="premium-transition hover:text-white" to="/products">
+            Sản phẩm
+          </Link>
+          <ChevronRight className="text-slate-600" size={15} />
+          <span className="text-blue-200">{detail.product.category}</span>
+        </nav>
+
+        <MotionDiv
+          animate="visible"
+          className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_460px] lg:items-start"
+          initial="hidden"
+          variants={staggerContainer}
+        >
+          <MotionDiv variants={fadeUp}>
+            <ProductGallery images={detail.gallery} productName={detail.product.name} />
+          </MotionDiv>
+          <MotionDiv variants={fadeUp}>
+            <ProductInfo
+              detail={detail}
+              finalOldPrice={finalOldPrice}
+              finalPrice={finalPrice}
+              maxQuantity={maxQuantity}
+              onQuantityChange={handleQuantityChange}
+              onVariantSelect={handleVariantSelect}
+              product={detail.product}
+              quantity={quantity}
+              selectedOptions={selectedOptions}
+              variantGroups={detail.variantGroups}
+            />
+          </MotionDiv>
+        </MotionDiv>
+
+        <div className="mt-6 grid gap-6">
+          <ProductSpecs description={detail.description} specs={detail.specs} />
+          <ProductReviews breakdown={detail.ratingBreakdown} product={detail.product} reviews={detail.reviews} />
+          <RelatedProducts products={relatedProducts} />
+        </div>
+      </Container>
+    </div>
+  );
+}
 
 function ProductDetail() {
   const { slug } = useParams();
+  const detail = getProductDetail(slug);
 
-  return (
-    <ClientPlaceholderPage
-      badge="CHI TIẾT SẢN PHẨM"
-      features={["Ảnh sản phẩm", "Biến thể và tồn kho", "Thông số kỹ thuật", "Gợi ý sản phẩm liên quan"]}
-      primaryLabel="Quay lại danh sách"
-      subtitle={`Trang chi tiết cho sản phẩm "${slug}" sẽ hiển thị thông tin, giá, biến thể, media và CTA thêm vào giỏ hàng.`}
-      title="Trang chi tiết sản phẩm"
-    />
-  );
+  if (!detail) {
+    return <ProductNotFound />;
+  }
+
+  return <ProductDetailContent detail={detail} key={detail.product.id} />;
 }
 
 export default ProductDetail;

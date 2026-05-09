@@ -38,6 +38,20 @@ The storefront now has a reusable dark skeleton loading system with shimmer plac
 
 The frontend now has shared reusable UI primitives for buttons, cards, badges, inputs, section titles, icon buttons, containers, prices, and ratings.
 
+The storefront product listing page now exists at `/products` with mock-backed product grid, searchable catalog filtering, filter sidebar, active filters, sorting, pagination, breadcrumb, category banner, and responsive mobile filtering.
+
+The product listing filter/search state now lives in `frontend/src/hooks/useProductFilters.js`.
+
+The storefront product detail page now exists at `/products/:slug` with mock-backed gallery, variants, quantity, purchase actions, specs, description, reviews, shipping information, stock information, and related products.
+
+The product detail gallery now supports loading skeletons, smoother image switching, stronger thumbnail active states, hover zoom, fullscreen preview, and keyboard navigation in preview mode.
+
+The storefront header now includes a mock-backed cart drawer with slide-in animation, blurred backdrop, item quantity updates, remove actions, subtotal, coupon placeholder, continue-shopping action, checkout action, and animated cart count badge.
+
+The storefront cart page now exists at `/cart` with mock-backed cart items, quantity updates, remove actions, coupon input, order summary, shipping estimate, continue-shopping CTA, checkout CTA, and sticky desktop summary.
+
+The storefront checkout page now exists at `/checkout` with mock-backed customer information, shipping address, shipping method, payment method, form validation UI, coupon placeholder, and sticky order summary.
+
 Phase 2 cleanup normalized shared/admin visual patterns for cards, borders, shadows, hover states, focus states, icon buttons, typography usage, and responsive behavior without a large rewrite.
 
 Frontend routing now includes client ecommerce routes and admin routes with placeholders for pages that are not implemented yet.
@@ -74,6 +88,22 @@ Phase 3 — Client Ecommerce Pages
 - Reused shared primitives for admin cards and added an admin icon button pattern for compact table/topbar actions.
 - Improved placeholder page typography and muted text usage so future client ecommerce routes inherit the Phase 2 visual system.
 - Verified there was no document-level horizontal overflow in homepage and key admin viewport checks.
+
+## Phase 3 In Progress Items
+
+- Added a production-style mock-backed product listing page at `/products`.
+- Added reusable listing components: `FilterSidebar`, `SortDropdown`, `ActiveFilters`, and `Pagination`.
+- Added `SearchProductsInput`, `EmptyProductsState`, debounced search, multi-select category/brand/price/stock filters, collapsible filter groups, and a mobile filter drawer.
+- Expanded storefront mock product data to support category, brand, price, rating, stock, newest, featured, and best-seller listing workflows.
+- Added a production-style mock-backed product detail page at `/products/:slug`.
+- Added product detail components: `ProductGallery`, `ProductInfo`, `VariantSelector`, `QuantitySelector`, `ProductSpecs`, `ProductReviews`, and `RelatedProducts`.
+- Added mock product detail enrichment helpers for gallery, variants, specs, description, reviews, shipping, stock, and related products.
+- Polished `ProductGallery` with image loading skeletons, smoother thumbnail transitions, hover zoom, fullscreen preview modal, and keyboard preview controls.
+- Added a mock-backed ecommerce cart drawer opened from the storefront header cart button.
+- Added reusable cart components: `CartDrawer`, `CartItem`, and `CartSummary`.
+- Added a full mock-backed cart page at `/cart` using the reusable cart item and summary components.
+- Added a production-style mock-backed checkout page at `/checkout`.
+- Added checkout components: `CheckoutForm`, `ShippingMethodSelector`, `PaymentMethodSelector`, and `CheckoutSummary`.
 
 ## Frontend State
 
@@ -119,7 +149,10 @@ Current admin routes:
 
 Current frontend data:
 
-- Client homepage mock data is split across `frontend/src/data/categories.js`, `products.js`, `promotions.js`, and `services.js`.
+- Client storefront mock data is split across `frontend/src/data/categories.js`, `products.js`, `promotions.js`, and `services.js`.
+- `frontend/src/data/products.js` now includes expanded catalog fields for listing workflows, including `sold` and `createdAt`.
+- `frontend/src/data/productDetails.js` now enriches mock catalog products for product detail workflows.
+- `frontend/src/data/cart.js` now centralizes mock cart item setup for cart drawer and cart page workflows.
 - Admin pages use `frontend/src/data/adminMock.js`.
 - Shared data exports live in `frontend/src/data/index.js`.
 - API client exists at `frontend/src/api/client.js`.
@@ -134,8 +167,11 @@ Current frontend structure:
 - Client homepage page lives in `frontend/src/pages/client/Home.jsx`.
 - Admin pages live in `frontend/src/pages/admin/`.
 - Client homepage components live in `frontend/src/components/home/`.
+- Cart drawer and cart page components live in `frontend/src/components/cart/`.
+- Checkout components live in `frontend/src/components/checkout/`.
 - Client layout components live in `frontend/src/components/layout/`.
-- Product components live in `frontend/src/components/product/`.
+- Product components live in `frontend/src/components/product/`, including listing filters, search, sorting, active filters, empty state, pagination, detail gallery, product info, variants, quantity, specs, reviews, related products, and reusable product cards.
+- Product listing state logic lives in `frontend/src/hooks/useProductFilters.js`.
 - Skeleton loading components live in `frontend/src/components/skeletons/`.
 - Admin layout components live in `frontend/src/components/layout/admin/`.
 - Shared reusable UI components live in `frontend/src/components/ui/`.
@@ -171,6 +207,7 @@ Homepage state:
 - Homepage product cards now include polished image stages, wishlist placeholders, stock badges, stronger pricing treatment, and quick-add CTAs.
 - Flash sale card now shares the polished badge, stock, image glow, and CTA treatment.
 - Header now uses a sticky scroll-aware blurred background, premium search bar, desktop category dropdown, animated cart badge, and responsive mobile menu.
+- Header cart button now opens the mock-backed cart drawer and reflects cart count from local mock cart state.
 - Homepage background, hero banner, promo cards, category cards, service bar, and section separators now have deeper production ecommerce visual polish.
 - Homepage now includes a short mock loading state demo that renders dark shimmer skeletons before showing mock data.
 - Homepage responsive audit has been completed across mobile, tablet, desktop, and ultra-wide viewports.
@@ -178,7 +215,11 @@ Homepage state:
 - Tablet homepage now has a balanced hero, promo, service, and category layout with reduced empty space.
 - Desktop and ultra-wide homepage still preserve the three-column hero structure and centered max-width layout.
 - `/` still renders the existing homepage.
-- Client routes that are not fully implemented render dark ecommerce placeholder pages.
+- `/products` now renders the mock-backed product listing page.
+- `/products/:slug` now renders the mock-backed product detail page.
+- `/cart` now renders the mock-backed cart page.
+- `/checkout` now renders the mock-backed checkout page.
+- Client routes beyond homepage, product listing, product detail, cart, and checkout that are not fully implemented render dark ecommerce placeholder pages.
 - `/admin/login` renders an admin auth placeholder page.
 - `/admin` redirects to `/admin/dashboard`.
 
@@ -188,6 +229,20 @@ Latest validation:
 - Document-level overflow checks passed for `/`, `/admin/dashboard`, and `/admin/products` after the Phase 2 cleanup.
 - `npm run lint` passed in `frontend/` after the Phase 2 cleanup and audit.
 - `npm run build` passed in `frontend/` after the Phase 2 cleanup and audit.
+- `npm run lint` passed in `frontend/` after adding the product listing page.
+- `npm run build` passed in `frontend/` after adding the product listing page.
+- `npm run lint` passed in `frontend/` after improving product listing filter/search UX.
+- `npm run build` passed in `frontend/` after improving product listing filter/search UX.
+- `npm run lint` passed in `frontend/` after adding the product detail page.
+- `npm run build` passed in `frontend/` after adding the product detail page.
+- `npm run lint` passed in `frontend/` after polishing the product detail gallery.
+- `npm run build` passed in `frontend/` after polishing the product detail gallery.
+- `npm run lint` passed in `frontend/` after adding the cart drawer.
+- `npm run build` passed in `frontend/` after adding the cart drawer.
+- `npm run lint` passed in `frontend/` after adding the full cart page.
+- `npm run build` passed in `frontend/` after adding the full cart page.
+- `npm run lint` passed in `frontend/` after adding the checkout page.
+- `npm run build` passed in `frontend/` after adding the checkout page.
 - Build still reports a Vite chunk-size warning for a JavaScript bundle over 500 kB.
 
 ## Known Issues
@@ -195,7 +250,7 @@ Latest validation:
 - Admin authentication is still a placeholder UI and is not wired to `authService`.
 - Admin routes are not protected yet.
 - Admin CRUD pages still use mock data and are not connected to backend APIs.
-- Client ecommerce routes beyond the homepage are styled placeholders.
+- Client ecommerce routes beyond the homepage, product listing page, product detail page, cart page, and checkout page are styled placeholders.
 - Public storefront APIs for product browsing, cart, checkout, and customer auth are not complete.
 - Build output is valid, but Vite reports a large bundle warning that should be handled later with code splitting.
 
@@ -207,9 +262,9 @@ Phase 3 — Client Ecommerce Pages
 
 Next focus:
 
-- Build real mock-backed client ecommerce pages for product listing and product detail first.
-- Add category browsing and filtering UI using the established storefront patterns.
-- Extend cart, checkout, login, and register flows with mock data while public APIs are incomplete.
+- Replace login and register placeholders with real mock-backed flows.
+- Add category browsing routes only when the category browsing plan is ready.
+- Extend login and register flows with mock data while public APIs are incomplete.
 - Keep admin API integration prepared but do not connect homepage to live APIs yet.
 
 ## Backend State
@@ -271,7 +326,7 @@ Standard AI context files:
 - Do not assume admin routes are protected.
 - Do not assume admin CRUD pages use real API data.
 - Do not assume public ecommerce APIs are ready.
-- Do not assume checkout exists.
+- Do not assume checkout backend submission or real payment integration exists.
 - Do not assume production deployment is ready.
 
 ## Last Updated

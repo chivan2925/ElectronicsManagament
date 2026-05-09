@@ -11,8 +11,9 @@ import {
   X,
   Zap,
 } from "lucide-react";
-import { categories } from "../../data";
+import { categories, createMockCartItems } from "../../data";
 import { cn } from "../../utils/classNames";
+import CartDrawer from "../cart/CartDrawer";
 import Button from "../ui/Button";
 import IconButton from "../ui/IconButton";
 import Input from "../ui/Input";
@@ -25,8 +26,12 @@ const headerLinkClass =
 const categoryItems = categories.filter((category) => category.slug !== "tat-ca");
 
 function Header() {
+  const [cartItems, setCartItems] = useState(createMockCartItems);
+  const [isCartOpen, setIsCartOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const cartItemCount = cartItems.reduce((total, item) => total + item.quantity, 0);
+  const cartSubtotal = cartItems.reduce((total, item) => total + item.product.price * item.quantity, 0);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -39,7 +44,30 @@ function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const handleCartQuantityChange = (itemId, nextQuantity) => {
+    setCartItems((currentItems) =>
+      currentItems.map((item) =>
+        item.id === itemId
+          ? {
+              ...item,
+              quantity: Math.min(Math.max(nextQuantity, 1), item.maxQuantity),
+            }
+          : item,
+      ),
+    );
+  };
+
+  const handleCartRemove = (itemId) => {
+    setCartItems((currentItems) => currentItems.filter((item) => item.id !== itemId));
+  };
+
+  const openCartDrawer = () => {
+    setIsMobileMenuOpen(false);
+    setIsCartOpen(true);
+  };
+
   return (
+    <>
     <header
       className={cn(
         "sticky top-0 z-50 border-b backdrop-blur-2xl transition-default",
@@ -113,17 +141,19 @@ function Header() {
               <span className="hidden xl:inline">Đăng nhập / Đăng ký</span>
               <span className="xl:hidden">Tài khoản</span>
             </a>
-            <a className="premium-transition relative flex h-10 min-w-10 items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.06] px-2 font-bold text-white shadow-inner shadow-white/[0.03] hover:-translate-y-0.5 hover:border-blue-300/80 hover:bg-blue-500/10 hover:shadow-[0_0_30px_rgba(0,91,255,0.24)] sm:h-11 sm:min-w-11 sm:px-3" href="/cart">
+            <button className="premium-transition relative flex h-10 min-w-10 items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.06] px-2 font-bold text-white shadow-inner shadow-white/[0.03] outline-none hover:-translate-y-0.5 hover:border-blue-300/80 hover:bg-blue-500/10 hover:shadow-[0_0_30px_rgba(0,91,255,0.24)] focus-visible:ring-2 focus-visible:ring-blue-300/60 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 sm:h-11 sm:min-w-11 sm:px-3" onClick={openCartDrawer} type="button">
               <ShoppingCart size={20} />
               <span className="hidden lg:inline">Giỏ hàng</span>
-              <MotionSpan
-                animate={{ scale: [1, 1.12, 1] }}
-                className="absolute -right-2 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-xs font-black text-white shadow-[0_0_18px_rgba(239,68,68,0.7)]"
-                transition={{ duration: 1.3, repeat: Infinity, repeatDelay: 3.2 }}
-              >
-                3
-              </MotionSpan>
-            </a>
+              {cartItemCount > 0 && (
+                <MotionSpan
+                  animate={{ scale: [1, 1.12, 1] }}
+                  className="absolute -right-2 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-xs font-black text-white shadow-[0_0_18px_rgba(239,68,68,0.7)]"
+                  transition={{ duration: 1.3, repeat: Infinity, repeatDelay: 3.2 }}
+                >
+                  {cartItemCount}
+                </MotionSpan>
+              )}
+            </button>
 
             <IconButton
               aria-expanded={isMobileMenuOpen}
@@ -185,6 +215,16 @@ function Header() {
         </div>
       </div>
     </header>
+    <CartDrawer
+      isOpen={isCartOpen}
+      itemCount={cartItemCount}
+      items={cartItems}
+      onClose={() => setIsCartOpen(false)}
+      onQuantityChange={handleCartQuantityChange}
+      onRemove={handleCartRemove}
+      subtotal={cartSubtotal}
+    />
+    </>
   );
 }
 

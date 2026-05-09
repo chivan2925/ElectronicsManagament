@@ -33,6 +33,11 @@
 - Added styled placeholder pages for unfinished client routes and `/admin/login`.
 - Added the shared Axios API layer and flat resource service modules under `frontend/src/api`.
 - Split mock data into domain modules under `frontend/src/data`.
+- Mock product listing page at `/products`.
+- Mock product detail page at `/products/:slug`.
+- Mock cart drawer opened from the storefront header.
+- Mock full cart page at `/cart`.
+- Mock checkout page at `/checkout`.
 
 ## Near-Term Work
 
@@ -40,8 +45,8 @@
 2. Connect admin category pages to `categoryService`.
 3. Connect admin brand pages to `brandService`.
 4. Connect admin product pages to `productService`.
-5. Replace client route placeholders with real product listing and product detail pages.
-6. Replace cart and checkout placeholders with real mock flows.
+5. Replace login and register placeholders with real mock flows.
+6. Wire storefront cart and checkout flows into shared state when ready.
 
 ## Backend Notes
 

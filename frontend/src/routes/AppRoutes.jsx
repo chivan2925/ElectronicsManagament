@@ -5,7 +5,7 @@ import Cart from "../pages/client/Cart";
 import Checkout from "../pages/client/Checkout";
 import Login from "../pages/client/Login";
 import ProductDetail from "../pages/client/ProductDetail";
-import ClientProducts from "../pages/client/Products";
+import ProductListingPage from "../pages/client/ProductListingPage";
 import Register from "../pages/client/Register";
 import ActivityLog from "../pages/admin/ActivityLog";
 import AdminLogin from "../pages/admin/AdminLogin";
@@ -28,7 +28,7 @@ function AppRoutes() {
   return (
     <Routes>
       <Route element={<Home />} path="/" />
-      <Route element={<ClientProducts />} path="/products" />
+      <Route element={<ProductListingPage />} path="/products" />
       <Route element={<ProductDetail />} path="/products/:slug" />
       <Route element={<Cart />} path="/cart" />
       <Route element={<Checkout />} path="/checkout" />

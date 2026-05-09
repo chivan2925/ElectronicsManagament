@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { Heart, PackageCheck, ShoppingCart, Zap } from "lucide-react";
+import { Link } from "react-router-dom";
 import { fadeUp, hoverGlow, hoverLift, imageZoom, tapSoft } from "../../styles/animations";
 import Badge from "../ui/Badge";
 import Card from "../ui/Card";
@@ -52,12 +53,14 @@ function ProductCard({ product }) {
           <Heart size={17} />
         </IconButton>
 
-        <MotionImg
-          alt={product.name}
-          className="premium-transition relative z-10 h-full w-full object-contain drop-shadow-[0_18px_36px_rgba(0,0,0,0.42)] group-hover:drop-shadow-[0_26px_52px_rgba(0,91,255,0.28)]"
-          src={product.image}
-          variants={{ hover: imageZoom }}
-        />
+        <Link className="relative z-10 flex h-full w-full items-center justify-center" to={`/products/${product.slug}`}>
+          <MotionImg
+            alt={product.name}
+            className="premium-transition h-full w-full object-contain drop-shadow-[0_18px_36px_rgba(0,0,0,0.42)] group-hover:drop-shadow-[0_26px_52px_rgba(0,91,255,0.28)]"
+            src={product.image}
+            variants={{ hover: imageZoom }}
+          />
+        </Link>
 
         <Badge className="absolute bottom-3 left-3 z-20 gap-1 border border-white/10 bg-slate-950/60 shadow-[0_0_18px_rgba(0,91,255,0.16)] backdrop-blur-xl" variant={stockBadge.variant}>
           <PackageCheck size={12} />
@@ -73,7 +76,11 @@ function ProductCard({ product }) {
 
       <div className="relative z-10 mt-4 flex flex-1 flex-col">
         <p className="text-caption text-blue-200">{product.brand}</p>
-        <h3 className="text-card-title mt-1 min-h-[48px]">{product.name}</h3>
+        <h3 className="text-card-title mt-1 min-h-[48px]">
+          <Link className="transition-default hover:text-blue-100" to={`/products/${product.slug}`}>
+            {product.name}
+          </Link>
+        </h3>
 
         <div className="mt-3 rounded-xl border border-white/10 bg-slate-950/35 px-2.5 py-2 shadow-inner shadow-white/[0.03] sm:px-3">
           <Rating reviews={product.reviews} value={product.rating} />

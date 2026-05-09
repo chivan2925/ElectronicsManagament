@@ -203,3 +203,72 @@ Always update this file after meaningful work.
 - Marked Phase 2 as completed and set the next project phase to `Phase 3 — Client Ecommerce Pages`.
 - Updated `docs/ai-context/CURRENT_STATE.md` and `NEXT_TASKS.md`.
 - Verified `npm run lint`, `git diff --check`, and `npm run build` pass after the cleanup. Build still reports the existing Vite chunk-size warning.
+
+### Product Listing Page
+
+- Added `frontend/src/pages/client/ProductListingPage.jsx` and wired `/products` to the new mock-backed listing page.
+- Added reusable product listing components: `FilterSidebar`, `SortDropdown`, `ActiveFilters`, and `Pagination`.
+- Built product grid, category banner, breadcrumb, active filters, sorting, pagination, responsive mobile filtering, and desktop sticky filter sidebar.
+- Expanded storefront mock product data with additional electronics/gaming products plus `sold` and `createdAt` fields for listing sort behavior.
+- Kept the storefront dark gaming ecommerce direction and did not change the homepage layout.
+- Updated `docs/ai-context/CURRENT_STATE.md` and `NEXT_TASKS.md`.
+- Verified `npm run lint` and `npm run build` pass after the listing page. Build still reports the existing Vite chunk-size warning.
+
+### Product Listing Filter Search UX
+
+- Added `frontend/src/hooks/useProductFilters.js` to centralize mock-backed listing filter, search, sort, pagination, active-chip, and URL query state.
+- Added `SearchProductsInput` with debounced product search across name, brand, category, slug, and tags.
+- Added `EmptyProductsState` for no-result listing states with clear-filter action.
+- Improved `FilterSidebar` with collapsible filter sections, multi-select category/brand/price/stock filters, rating threshold filter, and reusable clear actions.
+- Replaced the mobile inline filter panel with a responsive bottom drawer while keeping the desktop sticky filter sidebar.
+- Updated product listing docs in `CURRENT_STATE.md`, `NEXT_TASKS.md`, and `FRONTEND_GUIDE.md`.
+- Verified `npm run lint` and `npm run build` pass after the filter/search UX update. Build still reports the existing Vite chunk-size warning.
+
+### Product Detail Page
+
+- Replaced the `/products/:slug` placeholder with a production-style mock-backed product detail page.
+- Added product detail components: `ProductGallery`, `ProductInfo`, `VariantSelector`, `QuantitySelector`, `ProductSpecs`, `ProductReviews`, and `RelatedProducts`.
+- Added `frontend/src/data/productDetails.js` to enrich catalog products with gallery images, variants, specs, description, reviews, shipping info, stock info, and related products.
+- Added image gallery thumbnails, hover zoom, product info hierarchy, variant selection, quantity controls, add-to-cart, buy-now, wishlist, specs, description, reviews, shipping, stock, and related product sections.
+- Made product listing cards link to the new product detail route from product image and title.
+- Kept the storefront dark gaming ecommerce direction and did not change the homepage layout.
+- Updated `docs/ai-context/CURRENT_STATE.md`, `NEXT_TASKS.md`, `FRONTEND_GUIDE.md`, and `TASK_BOARD.md`.
+- Verified `npm run lint` and `npm run build` pass after the product detail page. Build still reports the existing Vite chunk-size warning.
+
+### Product Gallery Polish
+
+- Polished `ProductGallery` for a more premium product detail image experience.
+- Added main image loading skeletons, smoother image switching animations, stronger active thumbnail states, thumbnail hover transitions, and refined hover zoom.
+- Added a fullscreen preview modal with dark ecommerce styling, subtle glow, modal thumbnails, close/previous/next controls, and Escape/arrow-key navigation support.
+- Kept the gallery reusable and did not add an external carousel dependency.
+- Updated `docs/ai-context/CURRENT_STATE.md` and `NEXT_TASKS.md`.
+- Verified `npm run lint` and `npm run build` pass after the gallery polish. Build still reports the existing Vite chunk-size warning.
+
+### Cart Drawer Experience
+
+- Added reusable cart drawer components under `frontend/src/components/cart/`: `CartDrawer`, `CartItem`, and `CartSummary`.
+- Wired the storefront header cart button to open a mock-backed slide-in drawer with blurred backdrop and smooth open/close animation.
+- Added mini cart preview, quantity update controls, remove item action, subtotal, coupon placeholder, continue-shopping action, checkout action, and mobile-friendly drawer layout.
+- Updated the header cart badge to reflect local mock cart count with the existing animated badge treatment.
+- Updated `docs/ai-context/CURRENT_STATE.md`, `NEXT_TASKS.md`, `FRONTEND_GUIDE.md`, and `TASK_BOARD.md`.
+- Verified `npm run lint` and `npm run build` pass after the cart drawer. Build still reports the existing Vite chunk-size warning.
+
+### Full Cart Page
+
+- Replaced the `/cart` placeholder with a production-style mock-backed cart page.
+- Added a responsive cart item table/grid, quantity updates, remove item actions, coupon input, order summary, shipping estimate, continue-shopping CTA, and checkout CTA.
+- Extended `CartItem` and `CartSummary` so the cart drawer and full cart page share reusable cart UI patterns.
+- Added `frontend/src/data/cart.js` to centralize mock cart item setup for the drawer and page.
+- Kept the storefront dark premium ecommerce direction and did not call real backend APIs.
+- Updated `docs/ai-context/CURRENT_STATE.md`, `NEXT_TASKS.md`, `FRONTEND_GUIDE.md`, and `TASK_BOARD.md`.
+- Verified `npm run lint` and `npm run build` pass after the cart page. Build still reports the existing Vite chunk-size warning.
+
+### Checkout Page
+
+- Replaced the `/checkout` placeholder with a production-style mock-backed checkout page.
+- Added checkout components under `frontend/src/components/checkout/`: `CheckoutForm`, `ShippingMethodSelector`, `PaymentMethodSelector`, and `CheckoutSummary`.
+- Added customer information, shipping address, shipping method, payment method, form validation UI, coupon placeholder, sticky order summary, and mobile-friendly layout.
+- Added COD, VNPay placeholder, and MoMo placeholder payment options without real payment integration.
+- Reused the mock cart item shape and kept checkout state local until shared cart state or storefront checkout APIs are ready.
+- Updated `docs/ai-context/CURRENT_STATE.md`, `NEXT_TASKS.md`, `FRONTEND_GUIDE.md`, and `TASK_BOARD.md`.
+- Verified `npm run lint` and `npm run build` pass after the checkout page. Build still reports the existing Vite chunk-size warning.

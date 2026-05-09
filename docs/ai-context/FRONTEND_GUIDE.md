@@ -71,6 +71,8 @@ frontend/src/
 │  └─ mediaService.js
 ├─ assets/
 ├─ components/
+│  ├─ cart/
+│  ├─ checkout/
 │  ├─ common/
 │  ├─ home/
 │  ├─ layout/
@@ -91,6 +93,7 @@ frontend/src/
 ├─ constants/
 ├─ data/
 │  ├─ adminMock.js
+│  ├─ cart.js
 │  ├─ categories.js
 │  ├─ index.js
 │  ├─ products.js
@@ -109,7 +112,7 @@ frontend/src/
 │     ├─ Home.jsx
 │     ├─ Login.jsx
 │     ├─ ProductDetail.jsx
-│     ├─ Products.jsx
+│     ├─ ProductListingPage.jsx
 │     └─ Register.jsx
 ├─ routes/
 │  └─ AppRoutes.jsx
@@ -198,6 +201,69 @@ Shared frontend primitives live in `src/components/ui`:
 - `Rating.jsx`: star rating with optional review count.
 
 Use these primitives for new frontend work unless a feature needs a clearly different interaction pattern.
+
+## Product Listing Components
+
+The `/products` page lives at `frontend/src/pages/client/ProductListingPage.jsx`.
+
+Reusable listing components live in `frontend/src/components/product/`:
+
+- `ProductCard.jsx`
+- `FilterSidebar.jsx`
+- `SearchProductsInput.jsx`
+- `SortDropdown.jsx`
+- `ActiveFilters.jsx`
+- `Pagination.jsx`
+- `EmptyProductsState.jsx`
+
+Reusable listing state logic lives in `frontend/src/hooks/useProductFilters.js`.
+
+The listing page uses mock data from `frontend/src/data/products.js` and must not call real APIs until storefront API integration is explicitly started.
+
+## Product Detail Components
+
+The `/products/:slug` page lives at `frontend/src/pages/client/ProductDetail.jsx`.
+
+Reusable product detail components live in `frontend/src/components/product/`:
+
+- `ProductGallery.jsx`
+- `ProductInfo.jsx`
+- `VariantSelector.jsx`
+- `QuantitySelector.jsx`
+- `ProductSpecs.jsx`
+- `ProductReviews.jsx`
+- `RelatedProducts.jsx`
+
+Mock product detail enrichment lives in `frontend/src/data/productDetails.js`.
+
+## Cart Drawer Components
+
+The mock cart drawer is opened from `frontend/src/components/layout/Header.jsx`.
+
+Reusable cart components live in `frontend/src/components/cart/`:
+
+- `CartDrawer.jsx`
+- `CartItem.jsx`
+- `CartSummary.jsx`
+
+The full cart page lives at `frontend/src/pages/client/Cart.jsx` and reuses `CartItem` and `CartSummary`.
+
+Mock cart item setup lives in `frontend/src/data/cart.js`.
+
+The cart drawer and cart page use local mock state until a shared cart state or real storefront cart API is implemented.
+
+## Checkout Components
+
+The `/checkout` page lives at `frontend/src/pages/client/Checkout.jsx`.
+
+Reusable checkout components live in `frontend/src/components/checkout/`:
+
+- `CheckoutForm.jsx`
+- `ShippingMethodSelector.jsx`
+- `PaymentMethodSelector.jsx`
+- `CheckoutSummary.jsx`
+
+The checkout page uses mock cart data, local form validation, and placeholder payment options for COD, VNPay, and MoMo until real checkout/payment APIs are ready.
 
 ## Skeleton Loading
 

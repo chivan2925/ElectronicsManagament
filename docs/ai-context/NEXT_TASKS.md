@@ -14,6 +14,13 @@ Phase 3 — Client Ecommerce Pages
 
 ## Recently Completed
 
+- Added the mock-backed `/products` product listing page with product grid, filter sidebar, sorting, active filters, pagination, breadcrumb, category banner, and responsive mobile filtering.
+- Improved `/products` with reusable filter/search state, debounced product search, multi-select filters, collapsible filter groups, mobile filter drawer, and empty state UI.
+- Added the mock-backed `/products/:slug` product detail page with gallery, variants, quantity, purchase actions, specs, description, reviews, shipping, stock, and related products.
+- Polished the product detail gallery with loading skeletons, smooth image switching, active thumbnails, hover zoom, fullscreen preview, and keyboard preview controls.
+- Added a mock-backed cart drawer opened from the storefront header with quantity update, remove item, subtotal, coupon placeholder, continue shopping, checkout action, and animated cart count badge.
+- Added the mock-backed `/cart` page with cart item table/grid, quantity updates, remove actions, coupon input, order summary, shipping estimate, continue shopping, checkout CTA, and sticky desktop summary.
+- Added the mock-backed `/checkout` page with customer information, shipping address, shipping method, payment method, validation UI, coupon placeholder, and sticky order summary.
 - Completed responsive audit and scoped responsive fixes for the ecommerce homepage across mobile, tablet, desktop, and ultra-wide viewports.
 - Completed Phase 2 design-system cleanup and audit for shared storefront and admin UI consistency.
 
@@ -21,7 +28,7 @@ Phase 3 — Client Ecommerce Pages
 
 1. Preserve the existing homepage layout.
 2. Keep the normalized frontend folder structure stable.
-3. Build client ecommerce pages with mock data.
+3. Build the remaining client ecommerce pages with mock data.
 4. Reuse Phase 2 design-system primitives and visual patterns.
 5. Keep modular catalog mock data aligned with the electronics/gaming category list.
 6. Keep AI context docs current.
@@ -51,9 +58,9 @@ Phase 3 — Client Ecommerce Pages
 
 ### Client Ecommerce
 
-- Replace client placeholder routes with real mock pages for product listing and product detail first.
-- Add category browsing and filtering UI using the established storefront grid, card, badge, price, and rating patterns.
-- Replace cart, checkout, login, and register placeholders with real mock flows after product pages.
+- Replace login and register placeholders with real mock flows after product, cart, and checkout pages.
+- Wire product detail purchase actions, cart drawer, cart page, and checkout page into shared cart state when the cart flow moves beyond local mock state.
+- Replace checkout mock submission and payment placeholders only when public checkout/payment APIs are ready.
 - Add category route/page when the category browsing plan is ready.
 - Wire product cards and header links into the new client routes.
 - Replace the homepage mock loading timer with real loading state when storefront data integration begins.

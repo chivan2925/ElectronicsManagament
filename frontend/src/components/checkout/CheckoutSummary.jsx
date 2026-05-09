@@ -1,0 +1,150 @@
+import { AlertCircle, BadgePercent, CheckCircle2, ChevronRight, LockKeyhole, PackageCheck, ShieldCheck } from "lucide-react";
+import { Link } from "react-router-dom";
+import { formatCurrency } from "../../utils/formatters";
+import Button from "../ui/Button";
+
+function CheckoutSummary({
+  appliedCoupon,
+  couponCode,
+  couponDiscount,
+  couponFeedback,
+  items,
+  itemCount,
+  onCouponApply,
+  onCouponChange,
+  onPlaceOrder,
+  orderPlaced,
+  paymentMethod,
+  shippingFee,
+  shippingMethod,
+  subtotal,
+  validationMessage,
+}) {
+  const total = Math.max(subtotal + shippingFee - couponDiscount, 0);
+
+  return (
+    <aside className="rounded-3xl border border-blue-300/20 bg-[#07111F]/96 p-4 shadow-[0_28px_90px_rgba(0,0,0,0.34),0_0_36px_rgba(0,91,255,0.12)] backdrop-blur-2xl lg:sticky lg:top-28 lg:p-5">
+      <div className="mb-4 flex items-start justify-between gap-3">
+        <div>
+          <p className="text-caption text-blue-200">Order summary</p>
+          <h2 className="text-section mt-1 text-xl">Tóm tắt đơn hàng</h2>
+        </div>
+        <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-500/15 text-blue-100 ring-1 ring-blue-300/30">
+          <PackageCheck size={20} />
+        </div>
+      </div>
+
+      <div className="grid gap-3">
+        {items.map((item) => (
+          <div className="grid grid-cols-[64px_1fr_auto] items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.035] p-2" key={item.id}>
+            <Link
+              className="relative flex aspect-square items-center justify-center overflow-hidden rounded-xl bg-[radial-gradient(circle_at_50%_18%,rgba(0,91,255,0.22),rgba(15,23,42,0.78)_52%,rgba(2,6,23,0.96)_100%)] p-1.5"
+              to={`/products/${item.product.slug}`}
+            >
+              <img alt={item.product.name} className="h-full w-full object-contain" src={item.product.image} />
+            </Link>
+            <div className="min-w-0">
+              <Link className="line-clamp-2 text-sm font-black text-white hover:text-blue-100" to={`/products/${item.product.slug}`}>
+                {item.product.name}
+              </Link>
+              <p className="text-caption mt-1 text-slate-500">x{item.quantity} · {item.variant}</p>
+            </div>
+            <p className="text-right text-sm font-black text-blue-100">{formatCurrency(item.product.price * item.quantity)}</p>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-4 rounded-2xl border border-white/10 bg-slate-950/38 p-3">
+        <label className="flex min-h-11 items-center gap-2 rounded-xl border border-white/10 bg-white/[0.035] px-3 shadow-inner shadow-white/[0.03] focus-within:border-blue-300/70 focus-within:shadow-[0_0_26px_rgba(0,91,255,0.18)]">
+          <BadgePercent className="shrink-0 text-blue-200" size={18} />
+          <input
+            className="min-w-0 flex-1 bg-transparent text-sm font-bold text-white outline-none placeholder:text-slate-500"
+            onChange={(event) => onCouponChange(event.target.value)}
+            placeholder="Mã giảm giá"
+            type="text"
+            value={couponCode}
+          />
+          <button
+            className="text-xs font-black text-blue-200 hover:text-white disabled:cursor-not-allowed disabled:text-slate-600"
+            disabled={!couponCode.trim()}
+            onClick={onCouponApply}
+            type="button"
+          >
+            Áp dụng
+          </button>
+        </label>
+        {couponFeedback && (
+          <p className="text-caption mt-2 flex items-center gap-1.5 text-emerald-200">
+            <CheckCircle2 size={14} />
+            {couponFeedback}
+          </p>
+        )}
+        {appliedCoupon && !couponFeedback && <p className="text-caption mt-2 text-slate-500">Coupon đã được ghi nhận.</p>}
+      </div>
+
+      <div className="mt-4 grid gap-2 text-sm">
+        <div className="flex items-center justify-between gap-3 text-slate-400">
+          <span>Tạm tính ({itemCount} sản phẩm)</span>
+          <span className="font-black text-slate-200">{formatCurrency(subtotal)}</span>
+        </div>
+        <div className="flex items-center justify-between gap-3 text-slate-400">
+          <span>{shippingMethod.name}</span>
+          <span className="font-black text-emerald-200">{shippingFee === 0 ? "Miễn phí" : formatCurrency(shippingFee)}</span>
+        </div>
+        {couponDiscount > 0 && (
+          <div className="flex items-center justify-between gap-3 text-slate-400">
+            <span>Ưu đãi coupon</span>
+            <span className="font-black text-emerald-200">-{formatCurrency(couponDiscount)}</span>
+          </div>
+        )}
+        <div className="flex items-center justify-between gap-3 text-slate-400">
+          <span>Thanh toán</span>
+          <span className="font-black text-slate-200">{paymentMethod.name}</span>
+        </div>
+        <div className="mt-2 flex items-end justify-between gap-3 border-t border-white/10 pt-3">
+          <span className="font-black text-white">Tổng thanh toán</span>
+          <span className="text-2xl font-black text-blue-200">{formatCurrency(total)}</span>
+        </div>
+      </div>
+
+      {validationMessage && (
+        <div className="mt-4 rounded-2xl border border-red-300/30 bg-red-500/10 p-3 text-sm font-bold text-red-100">
+          <div className="flex gap-2">
+            <AlertCircle className="mt-0.5 shrink-0" size={17} />
+            <span>{validationMessage}</span>
+          </div>
+        </div>
+      )}
+
+      {orderPlaced ? (
+        <div className="mt-4 rounded-2xl border border-emerald-300/30 bg-emerald-500/10 p-4 text-center">
+          <CheckCircle2 className="mx-auto text-emerald-200" size={30} />
+          <p className="mt-2 font-black text-white">Đơn hàng mock đã được ghi nhận</p>
+          <p className="text-caption mt-1 text-slate-400">Chưa có tích hợp thanh toán hoặc backend thật ở bước này.</p>
+        </div>
+      ) : (
+        <Button className="mt-4 h-12 rounded-2xl" fullWidth onClick={onPlaceOrder}>
+          Xác nhận đặt hàng
+          <ChevronRight size={18} />
+        </Button>
+      )}
+
+      <Button as={Link} className="mt-2 h-11 rounded-2xl" fullWidth to="/cart" variant="outline">
+        Quay lại giỏ hàng
+      </Button>
+
+      <div className="mt-4 grid grid-cols-2 gap-2">
+        <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-3">
+          <LockKeyhole className="mb-2 text-blue-200" size={18} />
+          <p className="text-caption text-slate-400">Không lưu thông tin thẻ trong mock flow</p>
+        </div>
+        <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-3">
+          <ShieldCheck className="mb-2 text-emerald-200" size={18} />
+          <p className="text-caption text-slate-400">Kiểm tra đơn trước khi xử lý thật</p>
+        </div>
+      </div>
+    </aside>
+  );
+}
+
+export default CheckoutSummary;

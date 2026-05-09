@@ -1,4 +1,6 @@
+export { createMockCartItems, mockCartConfigs } from "./cart";
 export { categories } from "./categories";
+export { getProductDetail, getRelatedProducts } from "./productDetails";
 export { featuredProducts, flashSaleProduct, products } from "./products";
 export { heroPromotion, promoCards } from "./promotions";
 export { services } from "./services";
