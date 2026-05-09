@@ -1,22 +1,22 @@
-# ElectronicsManagament
+# ElectronicsManagement
 
-ElectronicsManagament is an electronics and gaming e-commerce project with a React frontend and a Spring Boot backend.
+ElectronicsManagement is an electronics and gaming e-commerce project with a React frontend and a Spring Boot backend.
 
 ## Current Scope
 
 The storefront targets products such as:
 
-- Phones
-- Laptops
-- Headphones
-- Mice
-- Keyboards
-- Mouse pads
-- Gaming PCs
-- Prebuilt desktops
-- PC components
-- Gaming chairs
-- Gaming accessories
+- điện thoại
+- laptop
+- tai nghe
+- chuột
+- bàn phím
+- lót chuột
+- PC Gaming
+- máy bộ
+- linh kiện PC
+- ghế gaming
+- phụ kiện gaming
 
 ## Tech Stack
 
@@ -95,3 +95,26 @@ docs/ai-context/
 ```
 
 Before making structured changes, read `AGENTS.md`.
+
+## AI Context
+
+AI-assisted work should use these files as the primary context:
+
+- `AGENTS.md`
+- `ROADMAP.md`
+- `CHANGELOG_AI.md`
+- `docs/ai-context/PROJECT_CONTEXT.md`
+- `docs/ai-context/CURRENT_STATE.md`
+- `docs/ai-context/NEXT_TASKS.md`
+- `docs/ai-context/CODING_RULES.md`
+- `docs/ai-context/FRONTEND_GUIDE.md`
+- `docs/ai-context/UI_REFERENCE.md`
+- `docs/ai-context/API_INTEGRATION_GUIDE.md`
+
+After meaningful work, always update:
+
+- `docs/ai-context/CURRENT_STATE.md`
+- `docs/ai-context/NEXT_TASKS.md`
+- `CHANGELOG_AI.md`
+
+Current phase: `Phase 1 — Frontend Foundation`.

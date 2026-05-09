@@ -5,9 +5,13 @@ This is the index of active repository context and rule files.
 ## Core Context
 
 - `PROJECT_CONTEXT.md`: product overview, routes, and current state.
+- `CURRENT_STATE.md`: current implementation phase, completed work, active gaps, and next steps.
+- `NEXT_TASKS.md`: immediate priorities and recommended next tasks.
 - `FRONTEND_GUIDE.md`: frontend structure, commands, and component rules.
 - `CODING_RULES.md`: code, git, API, and validation rules.
-- `TASK_BOARD.md`: current work status and near-term priorities.
+- `UI_REFERENCE.md`: client/admin UI direction and homepage preservation rules.
+- `API_INTEGRATION_GUIDE.md`: frontend API integration conventions.
+- `TASK_BOARD.md`: legacy task board retained for historical context.
 
 ## UI Rules
 

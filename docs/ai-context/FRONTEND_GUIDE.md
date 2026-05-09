@@ -1,25 +1,50 @@
 # FRONTEND_GUIDE
 
-## Tech Stack
+## Purpose
 
-- React + Vite
+This guide describes the frontend direction for ElectronicsManagement.
+
+Current phase:
+
+```text
+Phase 1 — Frontend Foundation
+```
+
+## Stack
+
+- React
+- Vite
 - Tailwind CSS
 - React Router
 - Axios
 - lucide-react
 - Recharts
 
-## Commands
+## Current Routes
 
-```bash
-cd frontend
-npm install
-npm run dev
-npm run lint
-npm run build
-```
+Client:
 
-## Recommended Structure
+- `/`
+
+Admin:
+
+- `/admin`
+- `/admin/categories`
+- `/admin/brands`
+- `/admin/products`
+- `/admin/variants`
+- `/admin/media`
+- `/admin/users`
+- `/admin/staff`
+- `/admin/roles`
+- `/admin/orders`
+- `/admin/warehouse`
+- `/admin/coupons`
+- `/admin/reports/revenue`
+- `/admin/reports/best-sellers`
+- `/admin/reports/activity`
+
+## Current Structure
 
 ```text
 frontend/src/
@@ -27,7 +52,7 @@ frontend/src/
 │  └─ client.js
 ├─ components/
 │  ├─ admin/
-│  └─ client/shared components
+│  └─ client homepage components
 ├─ data/
 │  ├─ mockAdminData.js
 │  └─ mockData.js
@@ -43,49 +68,48 @@ frontend/src/
 └─ index.css
 ```
 
-When the client storefront grows, prefer splitting it into:
+## Client UI Direction
 
-```text
-components/client/
-pages/client/
-api/client/
-api/admin/
-```
+- Dark gaming ecommerce.
+- Premium product-focused feel.
+- Blue accent.
+- Strong product cards and CTA states.
+- Existing homepage layout must be preserved.
+
+## Admin UI Direction
+
+- Modern dashboard.
+- Dark navy sidebar.
+- Light content area.
+- KPI cards, charts, CRUD tables, badges, and action icons.
 
 ## Component Rules
 
-- Pages should compose layout and data flow.
-- UI components should be small and have clear props.
-- Do not create giant components containing multiple unrelated workflows.
-- Use mock data from `src/data` while APIs are not ready.
-- Use `src/api/client.js` for API integration; do not spread axios/fetch calls across many components.
+- Pages compose layout and data flow.
+- Components should be focused and reusable.
+- Use props instead of importing data inside small reusable components.
+- Keep API calls out of presentational components.
+- Add API modules later under `src/api`.
 
-## Routing
+## Future Structure
 
-- `/` is reserved for the client storefront.
-- `/admin` is reserved for the admin console.
-- The fallback route should redirect to `/`.
+When the client storefront grows, prefer:
 
-## Naming
+```text
+src/components/client/
+src/pages/client/
+src/api/client/
+src/api/admin/
+```
 
-- Components: PascalCase, for example `ProductCard.jsx`.
-- Data/util files: camelCase, for example `mockData.js`, `formatters.js`.
-- Admin pages: short and clear, for example `Products.jsx`, `Orders.jsx`.
+Do not move files just for neatness. Move them when it reduces confusion.
 
-## Styling
-
-- Use Tailwind CSS.
-- Use color tokens from `tailwind.config.js` when possible.
-- If a spec needs a specific color, controlled arbitrary classes are acceptable, for example `bg-[#050B14]`.
-- Avoid single-note palettes. Client can be dark/blue; admin should remain light/blue.
-
-## Verification
-
-For frontend changes, run:
+## Commands
 
 ```bash
+cd frontend
+npm install
+npm run dev
 npm run lint
 npm run build
 ```
-
-If the build reports a large chunk warning because of Recharts/admin code, note it, but do not optimize the bundle unless the task requires it.

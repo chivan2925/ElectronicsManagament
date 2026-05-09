@@ -1,75 +1,136 @@
 # PROJECT_CONTEXT
 
-## Overview
+## Project Name
 
-`ElectronicsManagament` is an electronics and gaming e-commerce project.
+ElectronicsManagement
 
-Current product scope:
+Repository folder:
 
-- Phones
-- Laptops
-- Headphones
-- Mice
-- Keyboards
-- Mouse pads
-- Gaming PCs
-- Prebuilt desktops
-- PC components
-- Gaming chairs
-- Gaming accessories
+```text
+ElectronicsManagament
+```
 
-## Product Goals
+The folder name currently contains a spelling mismatch, but documentation should refer to the product as ElectronicsManagement.
 
-The system includes:
+## Product Type
 
-- A client e-commerce storefront for customers to browse and buy products.
-- An admin console for staff to manage categories, brands, products, users, staff, orders, warehouse, and coupons.
-- A Spring Boot REST API that will become the real data source.
+ElectronicsManagement is an ecommerce website for electronics and gaming products.
 
-## Current State
+Main surfaces:
 
-Frontend:
+- Client ecommerce storefront.
+- Admin dashboard.
+- Spring Boot backend API.
 
-- Mock Admin Dashboard exists at `/admin`.
-- Mock Client Homepage exists at `/`.
-- Mock data lives in:
-  - `frontend/src/data/mockAdminData.js`
-  - `frontend/src/data/mockData.js`
-- The shared Axios client lives in `frontend/src/api/client.js`.
+## Product Categories
 
-Backend:
+Primary category display labels:
 
-- Spring Boot project lives in `backend/electronics`.
-- Admin endpoints exist for category, brand, product, variant, media, user, staff, order, warehouse, and coupon management.
-- Public/client endpoints for cart, checkout, and customer auth are not complete yet.
-- Local PostgreSQL database: `electronics_management`.
+- điện thoại
+- laptop
+- tai nghe
+- chuột
+- bàn phím
+- lót chuột
+- PC Gaming
+- máy bộ
+- linh kiện PC
+- ghế gaming
+- phụ kiện gaming
 
-## Main Routes
+## Current Phase
+
+```text
+Phase 1 — Frontend Foundation
+```
+
+Focus:
+
+- Preserve and stabilize the homepage.
+- Keep frontend structure clean.
+- Keep context docs accurate.
+- Prepare the design system and later API integration.
+
+## Frontend Stack
+
+- React
+- Vite
+- Tailwind CSS
+- React Router
+- Axios
+- lucide-react
+- Recharts
+
+## Backend Stack
+
+- Spring Boot REST API
+- Spring Security + JWT
+- JPA/Hibernate
+- PostgreSQL
+
+## Backend Admin API Scope
+
+The backend has admin APIs for:
+
+- Category
+- Brand
+- Product
+- Variant
+- Staff
+- User
+- Role / Permission
+- Order
+- Warehouse
+- Coupon
+- Media
+
+Additional backend areas:
+
+- Admin authentication.
+- Payment transactions.
+- Return requests.
+- VNPay and Momo system payment webhooks.
+- Cloudinary media upload.
+
+## Current Frontend State
+
+- Client homepage exists at `/`.
+- Admin dashboard exists at `/admin`.
+- Admin CRUD mock pages exist.
+- Client and admin still use mock data.
+- `frontend/src/api/client.js` is ready for API integration.
+
+## UI Direction
 
 Client:
 
-- `/`: homepage.
+- Dark gaming ecommerce.
+- Blue accent.
+- Premium product-focused feel.
+- Preserve existing homepage layout.
 
 Admin:
 
-- `/admin`: dashboard.
-- `/admin/categories`
-- `/admin/brands`
-- `/admin/products`
-- `/admin/variants`
-- `/admin/media`
-- `/admin/users`
-- `/admin/staff`
-- `/admin/roles`
-- `/admin/orders`
-- `/admin/warehouse`
-- `/admin/coupons`
-- `/admin/reports/revenue`
-- `/admin/reports/best-sellers`
-- `/admin/reports/activity`
+- Modern dashboard.
+- Dark navy sidebar.
+- Light content canvas.
+- Tables, KPI cards, charts, badges, and CRUD actions.
 
-## Important Notes
+## Important Constraint
 
-- Keep client and admin UI, routing, mock data, and components separate.
-- When API integration begins, replace mock data through API service modules rather than scattering fetch/axios calls across large components.
-- The backend currently contains secrets in `application.yml`; do not copy secrets into new docs or code.
+Do not break the existing homepage layout.
+
+Allowed:
+
+- Visual polish.
+- Hover states.
+- Transitions.
+- Typography improvements.
+- Responsive fixes that keep the same structure.
+
+Not allowed without explicit user approval:
+
+- Removing major homepage sections.
+- Reordering major homepage sections.
+- Replacing the hero layout structure.
+- Converting client homepage to admin-style UI.
