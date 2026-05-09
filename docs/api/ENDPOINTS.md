@@ -4,7 +4,7 @@
 
 This file documents the backend endpoints that currently exist in `backend/electronics/src/main/java/org/example/electronics/controller`.
 
-The current backend surface is mostly admin and system-facing. Public client storefront APIs for customer auth, product browsing, cart, checkout, and profile flows are not complete yet.
+The current backend surface is mostly admin and system-facing. Authenticated storefront checkout, profile, and order-history endpoints exist, but public customer auth, persisted cart, and real payment handoff flows are not complete yet.
 
 ## Base URL
 
@@ -161,6 +161,21 @@ Common filters used by many admin list endpoints:
 | `GET` | `/admin/permissions` | Query params | `Page<AdminPermissionResponseDTO>` | Supports `keyword`, `dateType`, `fromDate`, `toDate`, pageable params. |
 | `GET` | `/admin/permissions/{permissionId}` | None | `AdminPermissionResponseDTO` | Permission detail. |
 
+## Storefront Checkout
+
+| Method | Path | Body | Response | Notes |
+| --- | --- | --- | --- | --- |
+| `POST` | `/orders` | `UserCreateOrderRequestDTO` | `AdminOrderDetailResponseDTO` | Requires token. Creates a `PENDING` order, validates active user, validates coupon if supplied, checks stock, and creates a reserved stock transaction. Does not create a payment gateway link. |
+
+## Storefront Account
+
+| Method | Path | Body | Response | Notes |
+| --- | --- | --- | --- | --- |
+| `GET` | `/users/{userId}/profile` | None | `AdminUserResponseDTO` | Requires token. Returns customer profile data for the account area and checkout prefill. |
+| `PUT` | `/users/{userId}/profile` | `UserUpdateProfileRequestDTO` | `AdminUserResponseDTO` | Requires token. Updates basic customer profile fields and checks username/email/phone uniqueness. |
+| `GET` | `/orders?userId={userId}` | Query params | `Page<AdminOrderResponseDTO>` | Requires token. Lists orders for the account area. Supports pageable params. |
+| `GET` | `/orders/{orderId}?userId={userId}` | None | `AdminOrderDetailResponseDTO` | Requires token. Returns a single order detail for the account area. |
+
 ## Admin Sales
 
 ### Orders
@@ -267,6 +282,7 @@ Common filters used by many admin list endpoints:
 | `AdminCreateStaffRequestDTO` | `fullName`, `gender`, `dateOfBirth`, `username`, `avatarUrl`, `email`, `phoneNumber`, `address`, `roleId`, `password`, `status` |
 | `AdminUpdateStaffRequestDTO` | `fullName`, `gender`, `dateOfBirth`, `username`, `avatarUrl`, `email`, `phoneNumber`, `address`, `roleId`, `status` |
 | `AdminUpdateUserStatusRequestDTO` | `status` |
+| `UserUpdateProfileRequestDTO` | `fullName`, `gender`, `dateOfBirth`, `username`, `avatarUrl`, `email`, `phoneNumber` |
 | `AdminUpdateOrderRequestDTO` | `trackingCode`, `status`, `paymentStatus`, `shippingProvider`, `shippingStatus` |
 | `AdminUpdateReturnRequestStatusRequestDTO` | `status` |
 | `AdminWarehouseRequestDTO` | `name`, `line`, `ward`, `district`, `province`, `capacity`, `warehouseDetails`, `status` |

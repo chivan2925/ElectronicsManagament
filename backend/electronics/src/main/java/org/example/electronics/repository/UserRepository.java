@@ -12,6 +12,12 @@ import java.time.LocalDateTime;
 
 public interface UserRepository extends JpaRepository<UserEntity, Integer> {
 
+    boolean existsByEmailIgnoreCaseAndIdNot(String email, Integer id);
+
+    boolean existsByPhoneNumberAndIdNot(String phoneNumber, Integer id);
+
+    boolean existsByUsernameIgnoreCaseAndIdNot(String username, Integer id);
+
     @Query("SELECT u FROM UserEntity u WHERE 1=1 " +
 
             "AND (:keyword IS NULL OR ( " +

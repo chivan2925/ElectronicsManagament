@@ -12,9 +12,10 @@ function GuestRoute({
 }) {
   const auth = useAuth();
   const location = useLocation();
+  const surface = location.pathname.startsWith("/admin") ? "admin" : "store";
 
   if (auth.loading) {
-    return fallback ?? <RouteLoadingFallback />;
+    return fallback ?? <RouteLoadingFallback surface={surface} />;
   }
 
   if (auth.isAuthenticated) {

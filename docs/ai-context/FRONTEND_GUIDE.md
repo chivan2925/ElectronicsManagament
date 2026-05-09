@@ -7,7 +7,7 @@ This guide describes the frontend direction for ElectronicsManagement.
 Current phase:
 
 ```text
-Ready for Phase 4 — Auth + Backend Integration
+Ready for Phase 5 — Admin Dashboard System
 ```
 
 ## Stack
@@ -33,6 +33,9 @@ Client:
 - `/login`
 - `/register`
 - `/wishlist`
+- `/profile`
+- `/profile/orders`
+- `/profile/settings`
 
 Admin:
 
@@ -60,9 +63,15 @@ Admin:
 frontend/src/
 ├─ api/
 │  ├─ apiConfig.js
+│  ├─ apiErrorEvents.js
+│  ├─ apiErrorFeedback.js
 │  ├─ apiErrorHandler.js
 │  ├─ client.js
 │  ├─ normalizeApiError.js
+│  ├─ resourceService.js
+│  ├─ checkoutMapper.js
+│  ├─ accountMapper.js
+│  ├─ productMapper.js
 │  ├─ refreshTokenService.js
 │  ├─ authService.js
 │  ├─ categoryService.js
@@ -83,9 +92,16 @@ frontend/src/
 │  ├─ authHelpers.js
 │  ├─ roleHelpers.js
 │  └─ PermissionGate.jsx
+├─ cart/
+│  ├─ CartContext.js
+│  ├─ CartProvider.jsx
+│  ├─ cartUtils.js
+│  ├─ index.js
+│  └─ useCart.js
 ├─ assets/
 ├─ components/
 │  ├─ auth/
+│  ├─ account/
 │  ├─ cart/
 │  ├─ checkout/
 │  ├─ common/
@@ -105,6 +121,8 @@ frontend/src/
 │     ├─ Price.jsx
 │     ├─ Rating.jsx
 │     ├─ SectionTitle.jsx
+│     ├─ feedback/
+│     ├─ toast/
 │     └─ admin/
 ├─ constants/
 ├─ data/
@@ -124,6 +142,15 @@ frontend/src/
 │  ├─ routeGuardUtils.jsx
 │  └─ index.js
 ├─ hooks/
+│  ├─ useProductDetail.js
+│  ├─ useProducts.js
+│  ├─ useCheckoutCoupon.js
+│  ├─ useCheckoutOrder.js
+│  ├─ useCheckoutProfile.js
+│  ├─ useAccountProfile.js
+│  ├─ useRecentlyViewed.js
+│  ├─ useSearch.js
+│  └─ useWishlist.js
 ├─ layouts/
 │  └─ AdminLayout.jsx
 ├─ pages/
@@ -135,6 +162,9 @@ frontend/src/
 │     ├─ Checkout.jsx
 │     ├─ Home.jsx
 │     ├─ Login.jsx
+│     ├─ ProfileOrders.jsx
+│     ├─ ProfileOverview.jsx
+│     ├─ ProfileSettings.jsx
 │     ├─ ProductDetail.jsx
 │     ├─ ProductListingPage.jsx
 │     ├─ Register.jsx
@@ -235,12 +265,13 @@ Current auth state supports:
 
 Current protected routing behavior:
 
-- `ProtectedRoute` protects authenticated client routes such as `/checkout`.
+- `ProtectedRoute` protects customer-only client routes such as `/checkout`.
+- `ProtectedRoute` protects customer-only client account routes under `/profile`.
 - `StaffRoute` protects the `/admin/*` layout for admin/staff sessions.
 - `AdminRoute` protects admin-only management pages such as users, staff, and roles.
 - Admin route policies are centralized and reused by route guards and the admin sidebar.
-- ADMIN has full access, STAFF is limited to staff-allowed admin areas, and USER cannot enter admin routes.
-- Shared admin CRUD controls use resource action policies for create/update/delete visibility.
+- ADMIN has full access, STAFF module access requires matching resource view permissions, and USER cannot enter admin routes.
+- Shared admin CRUD controls use resource action policies for view/create/update/delete visibility.
 - `GuestRoute` blocks authenticated users from `/login`, `/register`, and `/admin/login`.
 - Unauthenticated redirects preserve the original route in `location.state.from`.
 - Guard loading states prevent unauthorized content flashing while sessions restore.
@@ -251,6 +282,7 @@ Current protected routing behavior:
 - admin/staff session: `/admin/dashboard`
 
 Reusable toast notifications live in `src/components/ui/toast`.
+Reusable feedback states live in `src/components/ui/feedback`.
 
 ## Reusable UI Primitives
 
@@ -265,6 +297,8 @@ Shared frontend primitives live in `src/components/ui`:
 - `Container.jsx`: page-width container helper.
 - `Price.jsx`: currency display with optional old price.
 - `Rating.jsx`: star rating with optional review count.
+- `feedback/`: `GlobalErrorBoundary`, `ApiErrorAlert`, `EmptyState`, and `PermissionDenied`.
+- `toast/`: `ToastProvider` and `useToast` for success, error, warning, info, loading, API-error, and promise-style feedback.
 
 Use these primitives for new frontend work unless a feature needs a clearly different interaction pattern.
 
@@ -282,9 +316,9 @@ Reusable listing components live in `frontend/src/components/product/`:
 - `Pagination.jsx`
 - `EmptyProductsState.jsx`
 
-Reusable listing state logic lives in `frontend/src/hooks/useProductFilters.js`.
+Reusable listing API, filter, sort, and pagination state logic lives in `frontend/src/hooks/useProducts.js`.
 
-The listing page uses mock data from `frontend/src/data/products.js` and must not call real APIs until storefront API integration is explicitly started.
+The listing page fetches Product API data through `frontend/src/api/productService.js`, normalizes flexible backend response shapes through `frontend/src/api/productMapper.js`, derives category and brand filter options from API data, and renders loading, API error, empty, and pagination foundation states without changing the existing PLP layout.
 
 ## Product Detail Components
 
@@ -300,11 +334,15 @@ Reusable product detail components live in `frontend/src/components/product/`:
 - `ProductReviews.jsx`
 - `RelatedProducts.jsx`
 
-Mock product detail enrichment lives in `frontend/src/data/productDetails.js`.
+Reusable product detail API state logic lives in `frontend/src/hooks/useProductDetail.js`.
 
-## Cart Drawer Components
+The detail page fetches Product API data through `frontend/src/api/productService.js`, normalizes detail, variants, media, reviews, specs, and stock state through `frontend/src/api/productMapper.js`, and renders loading, API error, not-found, and related-product states without changing the existing PDP layout.
 
-The mock cart drawer is opened from `frontend/src/components/layout/Header.jsx`.
+## Cart State And Drawer
+
+Shared storefront cart state lives in `frontend/src/cart/` and is mounted through `CartProvider` at the app root. Use `useCart()` for cart item count, subtotal, add, quantity update, remove, and clear actions.
+
+The cart drawer is opened from `frontend/src/components/layout/Header.jsx`.
 
 Reusable cart components live in `frontend/src/components/cart/`:
 
@@ -314,9 +352,7 @@ Reusable cart components live in `frontend/src/components/cart/`:
 
 The full cart page lives at `frontend/src/pages/client/Cart.jsx` and reuses `CartItem` and `CartSummary`.
 
-Mock cart item setup lives in `frontend/src/data/cart.js`.
-
-The cart drawer and cart page use local mock state until a shared cart state or real storefront cart API is implemented.
+The cart drawer, cart page, product-card quick add, product-detail add-to-cart, product-detail buy-now, and checkout page all use `frontend/src/cart`. `frontend/src/data/cart.js` is legacy mock setup and should not be used by active cart/checkout flows.
 
 ## Checkout Components
 
@@ -329,7 +365,15 @@ Reusable checkout components live in `frontend/src/components/checkout/`:
 - `PaymentMethodSelector.jsx`
 - `CheckoutSummary.jsx`
 
-The checkout page uses mock cart data, local form validation, and placeholder payment options for COD, VNPay, and MoMo until real checkout/payment APIs are ready.
+Checkout API state logic lives in `frontend/src/hooks/`:
+
+- `useCheckoutCoupon.js`
+- `useCheckoutOrder.js`
+- `useCheckoutProfile.js`
+
+Checkout API response and payload mapping lives in `frontend/src/api/checkoutMapper.js`.
+
+The checkout page uses shared cart state, local form validation, backend Coupon API validation, backend User API profile prefill when available, and backend Order API creation through `orderService.createOrder()`. COD creates the order only; VNPay and MoMo remain disabled placeholders until the real payment gateway task starts.
 
 ## Customer Auth Components
 
@@ -342,6 +386,24 @@ Reusable customer auth components live in `frontend/src/components/auth/`:
 - `RegisterForm.jsx`
 
 The login form uses local form state, local validation, `authService.login()`, AuthProvider session updates, role-based redirect, and toast notifications. `/register`, social login, and forgot-password remain placeholders until public customer auth APIs are ready.
+
+## Account Components
+
+The protected account area lives under `/profile`.
+
+Reusable account components live in `frontend/src/components/account/`:
+
+- `ProfileLayout.jsx`
+- `AccountSidebar.jsx`
+- `OrdersTable.jsx`
+
+Account pages live in `frontend/src/pages/client/`:
+
+- `ProfileOverview.jsx`
+- `ProfileOrders.jsx`
+- `ProfileSettings.jsx`
+
+Account API normalization lives in `frontend/src/api/accountMapper.js`. Profile fetch/update uses `userService.getCurrentUserProfile()` and `userService.updateCurrentUserProfile()`. Order history/detail uses `orderService.getUserOrders()` and `orderService.getUserOrderById()`.
 
 ## Wishlist And Recently Viewed
 

@@ -25,6 +25,14 @@ function normalizePath(path) {
   return path;
 }
 
+function normalizeHash(hash) {
+  return typeof hash === "string" && hash.startsWith("#") ? hash : "";
+}
+
+function normalizeSearch(search) {
+  return typeof search === "string" && search.startsWith("?") ? search : "";
+}
+
 export function getSafeRedirectPath(from, fallback = "/") {
   if (typeof from === "string") {
     return normalizePath(from) ?? fallback;
@@ -37,7 +45,7 @@ export function getSafeRedirectPath(from, fallback = "/") {
       return fallback;
     }
 
-    return `${pathname}${from.search ?? ""}${from.hash ?? ""}`;
+    return `${pathname}${normalizeSearch(from.search)}${normalizeHash(from.hash)}`;
   }
 
   return fallback;
@@ -58,7 +66,7 @@ export function canUseRememberedRedirect(auth, path) {
     return auth.canAccessAdmin();
   }
 
-  return true;
+  return !auth.canAccessAdmin();
 }
 
 export function hasRequiredPermissions(auth, requiredPermissions = [], requireAllPermissions = false) {

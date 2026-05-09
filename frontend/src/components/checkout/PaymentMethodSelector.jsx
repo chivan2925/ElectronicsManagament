@@ -30,11 +30,12 @@ function PaymentMethodSelector({ onChange, options, value }) {
           return (
             <button
               className={cn(
-                "premium-transition min-h-[156px] rounded-2xl border p-4 text-left outline-none focus-visible:ring-2 focus-visible:ring-blue-300/60 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950",
+                "premium-transition min-h-[156px] rounded-2xl border p-4 text-left outline-none focus-visible:ring-2 focus-visible:ring-blue-300/60 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 disabled:cursor-not-allowed disabled:opacity-60",
                 isSelected
                   ? "border-blue-300/70 bg-blue-500/12 shadow-[0_0_30px_rgba(0,91,255,0.18)]"
                   : "border-white/10 bg-white/[0.035] hover:border-blue-300/45 hover:bg-blue-500/[0.07]",
               )}
+              disabled={option.placeholder}
               key={option.id}
               onClick={() => onChange(option.id)}
               type="button"

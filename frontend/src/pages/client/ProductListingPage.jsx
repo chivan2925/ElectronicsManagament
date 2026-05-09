@@ -19,11 +19,13 @@ import Pagination from "../../components/product/Pagination";
 import ProductCard from "../../components/product/ProductCard";
 import SearchProductsInput from "../../components/product/SearchProductsInput";
 import SortDropdown from "../../components/product/SortDropdown";
+import ProductCardSkeleton from "../../components/skeletons/ProductCardSkeleton";
 import Badge from "../../components/ui/Badge";
 import Button from "../../components/ui/Button";
 import Container from "../../components/ui/Container";
+import ApiErrorAlert from "../../components/ui/feedback/ApiErrorAlert";
 import IconButton from "../../components/ui/IconButton";
-import useProductFilters from "../../hooks/useProductFilters";
+import useProducts from "../../hooks/useProducts";
 import { motionViewport, staggerContainer } from "../../styles/animations";
 import { cn } from "../../utils/classNames";
 import { compactCurrency } from "../../utils/formatters";
@@ -44,11 +46,14 @@ function ProductListingPage() {
     filteredProducts,
     filters,
     heroProducts,
+    isLoading,
+    error,
     pageCount,
     paginatedProducts,
     priceRanges,
     products,
     ratingOptions,
+    refresh,
     removeActiveFilter,
     selectedCategories,
     setPage,
@@ -62,7 +67,7 @@ function ProductListingPage() {
     toggleCategory,
     togglePriceRange,
     toggleStock,
-  } = useProductFilters();
+  } = useProducts();
 
   useEffect(() => {
     if (!isMobileFiltersOpen) {
@@ -81,6 +86,8 @@ function ProductListingPage() {
   const categorySummary =
     selectedCategories.length > 1 ? `${selectedCategories.length} danh mục đã chọn` : selectedCategory?.name || "Toàn bộ catalog";
   const hasActiveFilters = activeFilters.length > 0;
+  const availablePrices = products.map((product) => product.price).filter((price) => price > 0);
+  const minPrice = availablePrices.length ? Math.min(...availablePrices) : 0;
 
   const handlePageChange = (page) => {
     setPage(page);
@@ -199,7 +206,9 @@ function ProductListingPage() {
               <div className="flex flex-col gap-3 xl:flex-row xl:items-start xl:justify-between">
                 <div>
                   <p className="text-caption text-blue-200">{categorySummary}</p>
-                  <h2 className="text-section mt-1 text-xl">{filteredProducts.length} sản phẩm phù hợp</h2>
+                  <h2 className="text-section mt-1 text-xl">
+                    {isLoading ? "Đang tải sản phẩm..." : `${filteredProducts.length} sản phẩm phù hợp`}
+                  </h2>
                 </div>
 
                 <div className="grid gap-3 sm:grid-cols-[1fr_auto] xl:min-w-[620px]">
@@ -227,7 +236,21 @@ function ProductListingPage() {
 
             <ActiveFilters items={activeFilters} onClearAll={clearAllFilters} onRemove={removeActiveFilter} />
 
-            {paginatedProducts.length ? (
+            {isLoading ? (
+              <div className="grid grid-cols-2 gap-4 md:gap-5 xl:grid-cols-3">
+                {Array.from({ length: 9 }, (_, index) => (
+                  <ProductCardSkeleton key={`product-skeleton-${index}`} />
+                ))}
+              </div>
+            ) : error ? (
+              <ApiErrorAlert
+                actionLabel="Thử tải lại"
+                error={error}
+                onAction={refresh}
+                surface="store"
+                title="Không tải được danh sách sản phẩm"
+              />
+            ) : paginatedProducts.length ? (
               <MotionDiv
                 animate="visible"
                 className="grid grid-cols-2 gap-4 md:gap-5 xl:grid-cols-3"
@@ -257,7 +280,7 @@ function ProductListingPage() {
 
             <div className="grid gap-3 rounded-2xl border border-blue-300/15 bg-blue-500/[0.055] p-4 shadow-inner shadow-white/[0.03] backdrop-blur-xl sm:grid-cols-3">
               {[
-                { label: "Giá tốt", value: `Từ ${compactCurrency(Math.min(...products.map((product) => product.price)))}` },
+                { label: "Giá tốt", value: minPrice ? `Từ ${compactCurrency(minPrice)}` : "Đang cập nhật" },
                 { label: "Đổi trả", value: "7 ngày tại cửa hàng" },
                 { label: "Bảo hành", value: "Theo chính sách hãng" },
               ].map((item) => (

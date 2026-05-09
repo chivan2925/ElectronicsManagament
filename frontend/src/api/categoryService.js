@@ -1,33 +1,9 @@
-import { api } from "./client";
+import { createResourceService } from "./resourceService";
 
 const RESOURCE_PATH = "/admin/categories";
 
-export async function getAll(params = {}) {
-  return api.get(RESOURCE_PATH, { params });
-}
+const categoryService = createResourceService(RESOURCE_PATH);
 
-export async function getById(id) {
-  return api.get(`${RESOURCE_PATH}/${id}`);
-}
-
-export async function create(payload) {
-  return api.post(RESOURCE_PATH, payload);
-}
-
-export async function update(id, payload) {
-  return api.put(`${RESOURCE_PATH}/${id}`, payload);
-}
-
-export async function remove(id) {
-  return api.delete(`${RESOURCE_PATH}/${id}`);
-}
-
-const categoryService = {
-  create,
-  getAll,
-  getById,
-  remove,
-  update,
-};
+export const { create, getAll, getById, remove, update } = categoryService;
 
 export default categoryService;

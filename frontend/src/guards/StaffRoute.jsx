@@ -24,7 +24,7 @@ function StaffRoute({
   const auth = useAuth();
 
   if (auth.loading) {
-    return fallback ?? <RouteLoadingFallback />;
+    return fallback ?? <RouteLoadingFallback surface="admin" />;
   }
 
   if (!auth.isAuthenticated) {

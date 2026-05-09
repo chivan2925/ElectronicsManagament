@@ -41,15 +41,15 @@ Primary category display labels:
 ## Current Phase
 
 ```text
-Phase 1 — Frontend Foundation
+Ready for Phase 5 — Admin Dashboard System
 ```
 
 Focus:
 
-- Preserve and stabilize the homepage.
+- Preserve the homepage while building API-backed admin workflows.
 - Keep frontend structure clean.
 - Keep context docs accurate.
-- Prepare the design system and later API integration.
+- Convert mock admin pages into authenticated API-backed CRUD workflows.
 
 ## Frontend Stack
 
@@ -98,8 +98,9 @@ Additional backend areas:
 - Client homepage exists at `/`.
 - Admin dashboard exists at `/admin`.
 - Admin CRUD mock pages exist.
-- Client and admin still use mock data.
-- `frontend/src/api/client.js` and flat service modules are ready for API integration.
+- Client catalog, checkout, and account routes have partial real API integration.
+- Admin pages still use mock data.
+- `frontend/src/api/client.js`, `resourceService.js`, and service modules are ready for Phase 5 admin API integration.
 
 ## UI Direction
 

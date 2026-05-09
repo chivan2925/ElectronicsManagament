@@ -1,7 +1,9 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { AlertTriangle, CheckCircle2, Info, X, XCircle } from "lucide-react";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { AlertTriangle, CheckCircle2, Info, Loader2, X, XCircle } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ToastContext from "./ToastContext";
+import { buildApiErrorFeedback } from "../../../api/apiErrorFeedback";
+import { subscribeGlobalApiErrors } from "../../../api/apiErrorEvents";
 import { cn } from "../../../utils/classNames";
 
 const MotionDiv = motion.div;
@@ -18,6 +20,12 @@ const toastConfig = {
     className: "border-blue-300/30 bg-blue-500/15 text-blue-50 shadow-[0_22px_70px_rgba(0,91,255,0.22)]",
     iconClassName: "text-blue-200",
     title: "Thông báo",
+  },
+  loading: {
+    icon: Loader2,
+    className: "border-blue-300/30 bg-blue-500/15 text-blue-50 shadow-[0_22px_70px_rgba(0,91,255,0.22)]",
+    iconClassName: "animate-spin text-blue-200",
+    title: "Đang xử lý",
   },
   success: {
     icon: CheckCircle2,
@@ -73,51 +81,174 @@ function ToastItem({ toast, onDismiss }) {
 function ToastProvider({ children }) {
   const [toasts, setToasts] = useState([]);
   const nextToastId = useRef(0);
+  const toastTimers = useRef(new Map());
 
-  const dismissToast = useCallback((id) => {
-    setToasts((currentToasts) => currentToasts.filter((toast) => toast.id !== id));
+  const clearToastTimer = useCallback((id) => {
+    const timer = toastTimers.current.get(id);
+
+    if (timer) {
+      window.clearTimeout(timer);
+      toastTimers.current.delete(id);
+    }
   }, []);
 
+  const dismissToast = useCallback((id) => {
+    clearToastTimer(id);
+    setToasts((currentToasts) => currentToasts.filter((toast) => toast.id !== id));
+  }, [clearToastTimer]);
+
+  const scheduleDismiss = useCallback(
+    (id, duration) => {
+      clearToastTimer(id);
+
+      if (duration > 0) {
+        const timer = window.setTimeout(() => dismissToast(id), duration);
+        toastTimers.current.set(id, timer);
+      }
+    },
+    [clearToastTimer, dismissToast],
+  );
+
   const showToast = useCallback(
-    ({ duration = 4200, message, title, tone = "info" }) => {
-      const id = `toast-${Date.now()}-${nextToastId.current}`;
+    ({ duration, id: requestedId, message, title, tone = "info" }) => {
+      const id = requestedId ?? `toast-${Date.now()}-${nextToastId.current}`;
+      const toastDuration = duration ?? (tone === "loading" ? 0 : 4200);
       nextToastId.current += 1;
 
-      setToasts((currentToasts) => [
-        ...currentToasts,
-        {
+      setToasts((currentToasts) => {
+        const nextToast = {
           id,
           message,
           title,
           tone,
-        },
-      ]);
+        };
 
-      if (duration > 0) {
-        window.setTimeout(() => dismissToast(id), duration);
-      }
+        if (currentToasts.some((toast) => toast.id === id)) {
+          return currentToasts.map((toast) => (toast.id === id ? { ...toast, ...nextToast } : toast));
+        }
+
+        return [...currentToasts, nextToast];
+      });
+
+      scheduleDismiss(id, toastDuration);
 
       return id;
     },
-    [dismissToast],
+    [scheduleDismiss],
+  );
+
+  const updateToast = useCallback(
+    (id, updates = {}) => {
+      setToasts((currentToasts) =>
+        currentToasts.map((toast) => (toast.id === id ? { ...toast, ...updates } : toast)),
+      );
+
+      if ("duration" in updates) {
+        scheduleDismiss(id, updates.duration);
+      }
+    },
+    [scheduleDismiss],
+  );
+
+  const showApiError = useCallback(
+    (error, options = {}) => {
+      const feedback = buildApiErrorFeedback(error, options);
+
+      return showToast({
+        duration: feedback.isUnauthorized ? 5200 : options.duration,
+        message: feedback.message,
+        title: feedback.title,
+        tone: feedback.tone,
+      });
+    },
+    [showToast],
+  );
+
+  const runWithToast = useCallback(
+    async (task, options = {}) => {
+      const loadingMessage = options.loadingMessage ?? "Đang xử lý yêu cầu...";
+      const toastId = showToast({
+        duration: 0,
+        message: loadingMessage,
+        title: options.loadingTitle,
+        tone: "loading",
+      });
+
+      try {
+        const result = await (typeof task === "function" ? task() : task);
+        const successMessage = options.successMessage ?? "Thao tác đã hoàn tất.";
+
+        updateToast(toastId, {
+          duration: options.successDuration ?? 3600,
+          message: successMessage,
+          title: options.successTitle,
+          tone: "success",
+        });
+
+        return result;
+      } catch (error) {
+        const feedback = buildApiErrorFeedback(error, {
+          message: options.errorMessage,
+          title: options.errorTitle,
+        });
+
+        updateToast(toastId, {
+          duration: options.errorDuration ?? 5200,
+          message: feedback.message,
+          title: feedback.title,
+          tone: feedback.tone,
+        });
+
+        throw error;
+      }
+    },
+    [showToast, updateToast],
+  );
+
+  useEffect(
+    () =>
+      subscribeGlobalApiErrors((detail) => {
+        const feedback = detail?.feedback ?? buildApiErrorFeedback(detail?.apiError ?? detail?.error);
+
+        showToast({
+          duration: feedback.isUnauthorized ? 5200 : undefined,
+          message: feedback.message,
+          title: feedback.title,
+          tone: feedback.tone,
+        });
+      }),
+    [showToast],
+  );
+
+  useEffect(
+    () => () => {
+      toastTimers.current.forEach((timer) => window.clearTimeout(timer));
+      toastTimers.current.clear();
+    },
+    [],
   );
 
   const value = useMemo(
     () => ({
       dismissToast,
+      runWithToast,
+      showApiError,
       showError: (message, options = {}) => showToast({ ...options, message, tone: "error" }),
       showInfo: (message, options = {}) => showToast({ ...options, message, tone: "info" }),
+      showLoading: (message = "Đang xử lý yêu cầu...", options = {}) =>
+        showToast({ duration: 0, ...options, message, tone: "loading" }),
       showSuccess: (message, options = {}) => showToast({ ...options, message, tone: "success" }),
       showToast,
       showWarning: (message, options = {}) => showToast({ ...options, message, tone: "warning" }),
+      updateToast,
     }),
-    [dismissToast, showToast],
+    [dismissToast, runWithToast, showApiError, showToast, updateToast],
   );
 
   return (
     <ToastContext.Provider value={value}>
       {children}
-      <div className="pointer-events-none fixed right-4 top-4 z-[100] grid w-[min(92vw,380px)] gap-3">
+      <div aria-live="polite" className="pointer-events-none fixed right-4 top-4 z-[100] grid w-[min(92vw,380px)] gap-3">
         <AnimatePresence>
           {toasts.map((toast) => (
             <ToastItem key={toast.id} onDismiss={dismissToast} toast={toast} />

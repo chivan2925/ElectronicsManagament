@@ -1,8 +1,10 @@
-import { useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { categories, products } from "../data";
+import productService from "../api/productService";
+import { normalizeSlug } from "../api/productMapper";
 
 export const PRODUCTS_PER_PAGE = 9;
+const CATALOG_FETCH_SIZE = 72;
 
 export const SORT_OPTIONS = [
   { value: "featured", label: "nổi bật" },
@@ -70,7 +72,7 @@ function getFeaturedScore(product) {
 }
 
 function normalizeSearchValue(value) {
-  return value
+  return String(value ?? "")
     .toLowerCase()
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
@@ -84,41 +86,111 @@ function getSearchHaystack(product) {
   );
 }
 
-function useProductFilters() {
+function getCategoryOptions(products) {
+  const categories = products.reduce((map, product) => {
+    const name = product.category || "Sản phẩm";
+    const slug = normalizeSlug(name);
+    const current = map.get(slug) ?? {
+      id: product.categoryId ?? slug,
+      name,
+      slug,
+    };
+
+    map.set(slug, current);
+    return map;
+  }, new Map());
+
+  return Array.from(categories.values()).sort((a, b) => a.name.localeCompare(b.name));
+}
+
+function useProducts() {
   const [searchParams, setSearchParams] = useSearchParams();
-
-  const categoryOptions = useMemo(
-    () => categories.filter((category) => category.slug !== "tat-ca"),
-    [],
-  );
-
-  const categoryBySlug = useMemo(
-    () => new Map(categoryOptions.map((category) => [category.slug, category])),
-    [categoryOptions],
-  );
+  const [products, setProducts] = useState([]);
+  const [apiMeta, setApiMeta] = useState(null);
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [refreshIndex, setRefreshIndex] = useState(0);
 
   const validSortValues = useMemo(() => new Set(SORT_OPTIONS.map((option) => option.value)), []);
 
   const filters = useMemo(() => {
     const sort = searchParams.get("sort");
     const rating = searchParams.get("rating");
-    const categorySlugs = getListParam(searchParams, "category").filter((slug) => categoryBySlug.has(slug));
     const priceRangeIds = getListParam(searchParams, "price").filter((id) =>
       PRICE_RANGES.some((range) => range.id === id),
     );
 
     return {
-      categories: categorySlugs,
       brands: getListParam(searchParams, "brand"),
+      categories: getListParam(searchParams, "category"),
+      page: Math.max(Number(searchParams.get("page")) || 1, 1),
       priceRanges: priceRangeIds,
       rating: RATING_OPTIONS.some((option) => option.value === rating) ? rating : null,
-      stockStatuses: getListParam(searchParams, "stock").filter((status) => STOCK_LABELS[status]),
       search: searchParams.get("q") || "",
       sort: validSortValues.has(sort) ? sort : "featured",
-      page: Math.max(Number(searchParams.get("page")) || 1, 1),
+      stockStatuses: getListParam(searchParams, "stock").filter((status) => STOCK_LABELS[status]),
     };
-  }, [categoryBySlug, searchParams, validSortValues]);
+  }, [searchParams, validSortValues]);
 
+  const loadProducts = useCallback(() => {
+    let isActive = true;
+
+    Promise.resolve()
+      .then(() => {
+        if (!isActive) {
+          return null;
+        }
+
+        setIsLoading(true);
+        setError(null);
+
+        return productService.getCatalogProductsWithDetails({
+          keyword: filters.search || undefined,
+          page: 0,
+          size: CATALOG_FETCH_SIZE,
+          sort: filters.sort,
+          status: "ACTIVE",
+        });
+      })
+      .then((page) => {
+        if (!isActive || !page) {
+          return;
+        }
+
+        setProducts(page.items);
+        setApiMeta(page.meta);
+      })
+      .catch((loadError) => {
+        if (!isActive) {
+          return;
+        }
+
+        setError(loadError);
+        setProducts([]);
+        setApiMeta(null);
+      })
+      .finally(() => {
+        if (isActive) {
+          setIsLoading(false);
+        }
+      });
+
+    return () => {
+      isActive = false;
+    };
+  }, [filters.search, filters.sort]);
+
+  useEffect(() => loadProducts(), [loadProducts, refreshIndex]);
+
+  const refresh = useCallback(() => {
+    setRefreshIndex((current) => current + 1);
+  }, []);
+
+  const categoryOptions = useMemo(() => getCategoryOptions(products), [products]);
+  const categoryBySlug = useMemo(
+    () => new Map(categoryOptions.map((category) => [category.slug, category])),
+    [categoryOptions],
+  );
   const selectedCategories = useMemo(
     () => filters.categories.map((slug) => categoryBySlug.get(slug)).filter(Boolean),
     [categoryBySlug, filters.categories],
@@ -126,24 +198,25 @@ function useProductFilters() {
 
   const brandOptions = useMemo(() => {
     const brandMap = products.reduce((map, product) => {
-      map.set(product.brand, (map.get(product.brand) || 0) + 1);
+      const brand = product.brand || "ElectronicsManagement";
+      map.set(brand, (map.get(brand) || 0) + 1);
       return map;
     }, new Map());
 
-    return Array.from(brandMap, ([name, count]) => ({ name, count })).sort((a, b) =>
+    return Array.from(brandMap, ([name, count]) => ({ count, name })).sort((a, b) =>
       a.name.localeCompare(b.name),
     );
-  }, []);
+  }, [products]);
 
   const categoryCounts = useMemo(() => {
     const counts = { all: products.length };
 
     categoryOptions.forEach((category) => {
-      counts[category.slug] = products.filter((product) => product.category === category.name).length;
+      counts[category.slug] = products.filter((product) => normalizeSlug(product.category) === category.slug).length;
     });
 
     return counts;
-  }, [categoryOptions]);
+  }, [categoryOptions, products]);
 
   const stockOptions = useMemo(() => {
     const counts = products.reduce(
@@ -156,20 +229,20 @@ function useProductFilters() {
     );
 
     return Object.entries(STOCK_LABELS).map(([value, label]) => ({
-      value,
-      label,
       count: counts[value],
+      label,
+      value,
     }));
-  }, []);
+  }, [products]);
 
   const filteredProducts = useMemo(() => {
-    const selectedCategoryNames = new Set(selectedCategories.map((category) => category.name));
+    const selectedCategorySlugs = new Set(selectedCategories.map((category) => category.slug));
     const selectedPriceRanges = PRICE_RANGES.filter((range) => filters.priceRanges.includes(range.id));
     const selectedRating = Number(filters.rating);
     const normalizedQuery = normalizeSearchValue(filters.search);
 
     return products.filter((product) => {
-      if (selectedCategoryNames.size && !selectedCategoryNames.has(product.category)) {
+      if (selectedCategorySlugs.size && !selectedCategorySlugs.has(normalizeSlug(product.category))) {
         return false;
       }
 
@@ -204,6 +277,7 @@ function useProductFilters() {
     filters.rating,
     filters.search,
     filters.stockStatuses,
+    products,
     selectedCategories,
   ]);
 
@@ -235,35 +309,34 @@ function useProductFilters() {
     (currentPage - 1) * PRODUCTS_PER_PAGE,
     currentPage * PRODUCTS_PER_PAGE,
   );
-
   const heroProducts = sortedProducts.length ? sortedProducts.slice(0, 3) : products.slice(0, 3);
 
   const activeFilters = useMemo(() => {
     const items = [];
 
     if (filters.search.trim()) {
-      items.push({ type: "search", value: filters.search, label: `Tìm: ${filters.search}` });
+      items.push({ label: `Tìm: ${filters.search}`, type: "search", value: filters.search });
     }
 
     selectedCategories.forEach((category) => {
-      items.push({ type: "category", value: category.slug, label: category.name });
+      items.push({ label: category.name, type: "category", value: category.slug });
     });
 
     filters.brands.forEach((brand) => {
-      items.push({ type: "brand", value: brand, label: brand });
+      items.push({ label: brand, type: "brand", value: brand });
     });
 
     PRICE_RANGES.filter((range) => filters.priceRanges.includes(range.id)).forEach((range) => {
-      items.push({ type: "price", value: range.id, label: range.label });
+      items.push({ label: range.label, type: "price", value: range.id });
     });
 
     const rating = RATING_OPTIONS.find((option) => option.value === filters.rating);
     if (rating) {
-      items.push({ type: "rating", value: rating.value, label: rating.label });
+      items.push({ label: rating.label, type: "rating", value: rating.value });
     }
 
     filters.stockStatuses.forEach((status) => {
-      items.push({ type: "stock", value: status, label: STOCK_LABELS[status] });
+      items.push({ label: STOCK_LABELS[status], type: "stock", value: status });
     });
 
     return items;
@@ -287,14 +360,18 @@ function useProductFilters() {
     setSearchParams(nextParams);
   };
 
+  const clearCategories = () => {
+    updateSearchParams((nextParams) => nextParams.delete("category"));
+  };
+
+  const clearPriceRanges = () => {
+    updateSearchParams((nextParams) => nextParams.delete("price"));
+  };
+
   const toggleCategory = (categorySlug) => {
     updateSearchParams((nextParams) => {
       setListParam(nextParams, "category", toggleValue(filters.categories, categorySlug));
     });
-  };
-
-  const clearCategories = () => {
-    updateSearchParams((nextParams) => nextParams.delete("category"));
   };
 
   const toggleBrand = (brand) => {
@@ -307,10 +384,6 @@ function useProductFilters() {
     updateSearchParams((nextParams) => {
       setListParam(nextParams, "price", toggleValue(filters.priceRanges, rangeId));
     });
-  };
-
-  const clearPriceRanges = () => {
-    updateSearchParams((nextParams) => nextParams.delete("price"));
   };
 
   const setRating = (rating) => {
@@ -401,6 +474,7 @@ function useProductFilters() {
 
   return {
     activeFilters,
+    apiMeta,
     brandOptions,
     categoryCounts,
     categoryOptions,
@@ -408,14 +482,17 @@ function useProductFilters() {
     clearCategories,
     clearPriceRanges,
     currentPage,
+    error,
     filteredProducts,
     filters,
     heroProducts,
+    isLoading,
     pageCount,
     paginatedProducts,
     priceRanges: PRICE_RANGES,
     products,
     ratingOptions: RATING_OPTIONS,
+    refresh,
     removeActiveFilter,
     selectedCategories,
     setPage,
@@ -432,4 +509,4 @@ function useProductFilters() {
   };
 }
 
-export default useProductFilters;
+export default useProducts;

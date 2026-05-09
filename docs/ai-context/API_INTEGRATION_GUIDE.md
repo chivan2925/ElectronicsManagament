@@ -7,10 +7,10 @@ This guide defines how frontend API integration should be done later.
 Current phase:
 
 ```text
-Phase 4 — Auth + Backend Integration foundation
+Phase 4 — Auth + Backend Integration completed
 ```
 
-The shared frontend API layer and centralized auth architecture exist. Admin/staff login is connected to the backend JWT API; admin CRUD pages are not yet connected to real admin APIs.
+The shared frontend API layer and centralized auth architecture exist. Admin/staff login is connected to the backend JWT API, storefront product listing/detail pages are connected to Product API data, authenticated checkout creates backend orders with Coupon/User API support, and authenticated account pages use User Profile/User Order APIs. Admin CRUD pages are not yet connected to real admin APIs and are the Phase 5 focus.
 
 ## Backend API Scope
 
@@ -59,6 +59,8 @@ frontend/src/api/client.js
 frontend/src/api/apiConfig.js
 frontend/src/api/apiErrorHandler.js
 frontend/src/api/normalizeApiError.js
+frontend/src/api/apiErrorFeedback.js
+frontend/src/api/apiErrorEvents.js
 frontend/src/api/refreshTokenService.js
 ```
 
@@ -67,13 +69,16 @@ Current behavior:
 - Uses `VITE_API_BASE_URL`.
 - Uses `VITE_API_TIMEOUT`.
 - Uses `VITE_AUTH_REFRESH_ENDPOINT`.
+- Product catalog services use `VITE_PRODUCT_API_PATH`.
+- Checkout services use `VITE_COUPON_API_PATH`, `VITE_ORDER_API_PATH`, and `VITE_USER_API_PATH`.
+- Account services use `VITE_USER_PROFILE_API_PATH` and `VITE_USER_ORDER_API_PATH`.
 - Falls back to `http://localhost:8080/api`.
 - Defaults request timeout to `15000` ms.
 - Reads `accessToken` through `frontend/src/auth/authStorage.js`.
 - Adds `Authorization: Bearer <token>` automatically when a token is available.
 - Supports `skipAuth` for requests that must not send a bearer token.
 - Uses a shared response interceptor for normalized errors, retry handling, refresh handling, and `401` auth cleanup.
-- Attempts a single shared refresh-token request on eligible `401` responses, then retries the original request once.
+- Attempts a single shared refresh-token request on eligible `401` responses only when a stored refresh token exists, then retries the original request once.
 - Avoids duplicate concurrent refresh calls through `refreshTokenService`.
 - Avoids infinite refresh loops with `__isRetryAfterRefresh` and `skipAuthRefresh`.
 - Clears the centralized auth session when refresh fails or no refresh token is available.
@@ -83,6 +88,7 @@ Current behavior:
 - Keeps unsafe request retries opt-in through request config.
 - Exposes reusable data-returning API helpers through `api.get`, `api.post`, `api.put`, `api.patch`, `api.delete`, and `api.request`.
 - Attaches normalized error details to Axios errors as `error.apiError` and `error.normalizedError`.
+- Dispatches global API error events for shared toast and alert feedback unless `skipGlobalErrorHandler` is set.
 
 Environment example:
 
@@ -94,6 +100,12 @@ frontend/.env.example
 VITE_API_BASE_URL=http://localhost:8080/api
 VITE_API_TIMEOUT=15000
 VITE_AUTH_REFRESH_ENDPOINT=/admin/auth/refresh
+VITE_PRODUCT_API_PATH=/admin/products
+VITE_COUPON_API_PATH=/admin/coupons
+VITE_ORDER_API_PATH=/orders
+VITE_USER_API_PATH=/admin/users
+VITE_USER_PROFILE_API_PATH=/users
+VITE_USER_ORDER_API_PATH=/orders
 ```
 
 ## Integration Rules
@@ -103,6 +115,7 @@ VITE_AUTH_REFRESH_ENDPOINT=/admin/auth/refresh
 - Keep request/response shapes close to backend DTOs.
 - Add loading, error, and empty states before replacing mock data.
 - Replace mock data one resource at a time.
+- Normalize API response wrappers in the service/mapper layer before data reaches UI components.
 
 ## Recommended API Module Structure
 
@@ -112,6 +125,12 @@ frontend/src/api/
 ├─ apiConfig.js
 ├─ apiErrorHandler.js
 ├─ normalizeApiError.js
+├─ apiErrorFeedback.js
+├─ apiErrorEvents.js
+├─ resourceService.js
+├─ checkoutMapper.js
+├─ accountMapper.js
+├─ productMapper.js
 ├─ refreshTokenService.js
 ├─ authService.js
 ├─ categoryService.js
@@ -133,9 +152,99 @@ Resource services expose basic CRUD helpers:
 - `update(id, payload)`
 - `remove(id)`
 
+Basic CRUD modules should use `createResourceService()` so request logic stays centralized.
+
 `authService.js` owns login/logout and token helpers. It calls `POST /admin/auth/login` for the current backend admin/staff JWT flow.
 
-The homepage must continue using mock data until storefront API integration is explicitly started.
+The homepage product sections, storefront search overlay, wishlist, and recently viewed must continue using mock/local data until their API contracts are ready. Cart is shared local frontend state; checkout creates backend orders through the configured Order API.
+
+## Product Catalog Integration
+
+Current storefront product routes:
+
+- `/products`
+- `/products/:slug`
+
+Catalog files:
+
+```text
+frontend/src/api/productService.js
+frontend/src/api/productMapper.js
+frontend/src/hooks/useProducts.js
+frontend/src/hooks/useProductDetail.js
+```
+
+Current behavior:
+
+- `productService.js` keeps Product API calls centralized.
+- `productMapper.js` unwraps flexible response wrappers and normalizes listing, detail, variant, media, review, and pagination data for UI components.
+- `useProducts.js` owns listing fetch state, loading/error/empty states, category filtering, brand filtering, search, sorting, and pagination foundation.
+- `useProductDetail.js` owns detail fetch state, review/detail normalization, related products, loading, error, and not-found states.
+- Category and brand filters are derived from Product API data instead of duplicated constants in the listing page.
+- `VITE_PRODUCT_API_PATH` controls the catalog endpoint and currently defaults to `/admin/products`.
+
+Do not hardcode a single backend response shape in pages or presentational components. If the backend later exposes a dedicated public storefront product endpoint, point `VITE_PRODUCT_API_PATH` to that endpoint and keep response adaptation inside `productMapper.js`.
+
+## Checkout Integration
+
+Current storefront checkout routes:
+
+- `/cart`
+- `/checkout`
+
+Checkout files:
+
+```text
+frontend/src/cart/
+frontend/src/api/checkoutMapper.js
+frontend/src/api/couponService.js
+frontend/src/api/orderService.js
+frontend/src/api/userService.js
+frontend/src/hooks/useCheckoutCoupon.js
+frontend/src/hooks/useCheckoutOrder.js
+frontend/src/hooks/useCheckoutProfile.js
+```
+
+Current behavior:
+
+- `frontend/src/cart` is the single shared cart state source for header drawer, cart page, product cards, product detail actions, and checkout.
+- `couponService.applyCouponCode()` searches active/valid coupons through the configured Coupon API path and validates min order, time/status, and product eligibility in the mapper layer before UI feedback.
+- `orderService.createOrder()` posts checkout payloads to `VITE_ORDER_API_PATH`, defaulting to `/orders`.
+- `userService.getCurrentUserProfile()` can prefill checkout contact fields from the configured User API path.
+- `userService.getCurrentUserProfile()` reads the account profile endpoint configured by `VITE_USER_PROFILE_API_PATH`, defaulting to `/users`.
+- `checkoutMapper.js` builds create-order payloads and normalizes coupon/order responses before they reach UI components.
+- `/checkout` remains protected by `ProtectedRoute` and customer-only route policy; unauthorized users are redirected through the auth route guard.
+- VNPay and MoMo are disabled placeholders in this phase; no real payment gateway handoff is performed.
+
+## Account Integration
+
+Current authenticated account routes:
+
+- `/profile`
+- `/profile/orders`
+- `/profile/settings`
+
+Account files:
+
+```text
+frontend/src/api/accountMapper.js
+frontend/src/api/userService.js
+frontend/src/api/orderService.js
+frontend/src/hooks/useAccountProfile.js
+frontend/src/components/account/
+frontend/src/pages/client/ProfileOverview.jsx
+frontend/src/pages/client/ProfileOrders.jsx
+frontend/src/pages/client/ProfileSettings.jsx
+```
+
+Current behavior:
+
+- `/profile` and its child routes are protected by `ProtectedRoute` and customer-only route policy.
+- Profile fetch/update uses `GET/PUT /users/{userId}/profile`.
+- Order history uses `GET /orders?userId=...` with pageable query params.
+- Order detail uses `GET /orders/{orderId}?userId=...`.
+- `accountMapper.js` normalizes profile, order page, order summary, order detail, and order item response shapes before data reaches UI components.
+- Account logout uses the existing `authService.logout()` flow.
 
 ## Auth Architecture
 
@@ -193,13 +302,13 @@ Current behavior:
 - Admin/staff sessions redirect to `/admin/dashboard`; user-shaped sessions redirect to `/`.
 - `StaffRoute` protects the `/admin/*` shell for admin/staff sessions.
 - `AdminRoute` protects admin-only pages such as users, staff, and roles.
-- Admin route policies are shared with the admin sidebar so STAFF does not see Role Management and USER cannot access admin.
+- Admin route policies are shared with the admin sidebar so STAFF module access requires the matching resource view permission and USER cannot access admin.
 - ADMIN has full access; shared admin CRUD actions can be gated by resource permissions without inline role checks.
-- `ProtectedRoute` protects authenticated client routes such as `/checkout`.
+- `ProtectedRoute` protects authenticated customer routes such as `/checkout` and `/profile/*`.
 - `GuestRoute` wraps `/login`, `/register`, and `/admin/login`.
 - Unauthenticated redirects preserve the requested route in `location.state.from`.
 - Unauthorized authenticated sessions render a guard UI instead of flashing protected content.
-- A reusable toast provider shows login success and error notifications.
+- A reusable toast provider shows login success, error, loading, and global API error notifications.
 
 ## First Integration Order
 
@@ -252,7 +361,7 @@ Current backend note:
 
 - The existing Spring Boot admin auth controller currently exposes login/logout.
 - The frontend refresh flow is ready for `POST /admin/auth/refresh`, but real refresh requires the backend to return `refreshToken` and implement that endpoint.
-- If no `refreshToken` exists or refresh fails, the frontend clears auth and redirects through the route guards.
+- If no `refreshToken` exists, the frontend treats `401` as non-refreshable; if refresh fails, the frontend clears auth and redirects through the route guards.
 
 Current backend auth error handling:
 
@@ -268,7 +377,12 @@ Centralized files:
 ```text
 frontend/src/api/normalizeApiError.js
 frontend/src/api/apiErrorHandler.js
+frontend/src/api/apiErrorFeedback.js
+frontend/src/api/apiErrorEvents.js
 frontend/src/api/errorUtils.js
+frontend/src/components/ui/feedback/ApiErrorAlert.jsx
+frontend/src/components/ui/feedback/EmptyState.jsx
+frontend/src/components/ui/feedback/PermissionDenied.jsx
 ```
 
 Support both backend error shapes:
@@ -292,6 +406,7 @@ Normalized API errors include:
 - `isTimeout`
 - `isUnauthorized`
 - `isForbidden`
+- `isValidationError`
 - `isServerError`
 
 Default frontend messages:
@@ -302,3 +417,4 @@ Default frontend messages:
 - `500+`: show a generic server error message.
 
 Login-specific feedback remains in `errorUtils.js` and uses `normalizeApiError()` internally.
+Global UI feedback should use `apiErrorFeedback.js`, `apiErrorEvents.js`, `ApiErrorAlert`, and `ToastProvider` instead of duplicating status-specific messages in pages.

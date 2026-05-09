@@ -17,10 +17,12 @@ import CartItem from "../../components/cart/CartItem";
 import CartSummary from "../../components/cart/CartSummary";
 import AnnouncementBar from "../../components/layout/AnnouncementBar";
 import Header from "../../components/layout/Header";
+import { useCart } from "../../cart";
 import Badge from "../../components/ui/Badge";
 import Button from "../../components/ui/Button";
 import Container from "../../components/ui/Container";
-import { createMockCartItems } from "../../data";
+import { useToast } from "../../components/ui/toast";
+import useCheckoutCoupon from "../../hooks/useCheckoutCoupon";
 import { fadeUp, staggerContainer } from "../../styles/animations";
 import { formatCurrency } from "../../utils/formatters";
 
@@ -48,57 +50,48 @@ const trustHighlights = [
 ];
 
 function Cart() {
-  const [cartItems, setCartItems] = useState(createMockCartItems);
+  const {
+    hasItems,
+    itemCount,
+    items: cartItems,
+    productSavings,
+    removeItem,
+    subtotal,
+    updateQuantity,
+  } = useCart();
+  const toast = useToast();
   const [couponCode, setCouponCode] = useState("");
-  const [appliedCoupon, setAppliedCoupon] = useState("");
-
-  const itemCount = cartItems.reduce((total, item) => total + item.quantity, 0);
-  const subtotal = cartItems.reduce((total, item) => total + item.product.price * item.quantity, 0);
-  const productSavings = cartItems.reduce((total, item) => {
-    if (!item.product.oldPrice) {
-      return total;
-    }
-
-    return total + (item.product.oldPrice - item.product.price) * item.quantity;
-  }, 0);
+  const {
+    applyCoupon,
+    couponDiscount,
+    couponError,
+    couponFeedback,
+    isApplyingCoupon,
+  } = useCheckoutCoupon({ items: cartItems, subtotal });
   const shippingAmount = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : STANDARD_SHIPPING_FEE;
   const freeShippingRemaining = Math.max(FREE_SHIPPING_THRESHOLD - subtotal, 0);
-  const couponDiscount = appliedCoupon ? Math.min(Math.round(subtotal * 0.05), 750_000) : 0;
-  const couponFeedback = appliedCoupon
-    ? `Đã áp dụng ${appliedCoupon.toUpperCase()} - giảm ${formatCurrency(couponDiscount)}`
-    : "";
   const shippingCaption = freeShippingRemaining
     ? `Mua thêm ${formatCurrency(freeShippingRemaining)} để được miễn phí vận chuyển.`
     : "Đơn hàng đủ điều kiện miễn phí vận chuyển tiêu chuẩn.";
 
-  const handleQuantityChange = (itemId, nextQuantity) => {
-    setCartItems((currentItems) =>
-      currentItems.map((item) =>
-        item.id === itemId
-          ? {
-              ...item,
-              quantity: Math.min(Math.max(nextQuantity, 1), item.maxQuantity),
-            }
-          : item,
-      ),
-    );
-  };
-
-  const handleRemove = (itemId) => {
-    setCartItems((currentItems) => currentItems.filter((item) => item.id !== itemId));
-  };
-
-  const handleCouponApply = () => {
+  const handleCouponApply = async () => {
     const normalizedCoupon = couponCode.trim();
 
     if (!normalizedCoupon) {
       return;
     }
 
-    setAppliedCoupon(normalizedCoupon);
+    try {
+      await applyCoupon(normalizedCoupon);
+      toast.showSuccess("Mã giảm giá đã được áp dụng.", {
+        title: "Coupon hợp lệ",
+      });
+    } catch (error) {
+      toast.showApiError(error, {
+        title: "Coupon chưa hợp lệ",
+      });
+    }
   };
-
-  const hasItems = cartItems.length > 0;
 
   return (
     <div className="store-page-shell">
@@ -189,7 +182,7 @@ function Cart() {
               <MotionDiv animate="visible" className="grid gap-3" initial="hidden" variants={staggerContainer}>
                 {cartItems.map((item) => (
                   <MotionDiv key={item.id} variants={fadeUp}>
-                    <CartItem item={item} layout="page" onQuantityChange={handleQuantityChange} onRemove={handleRemove} />
+                    <CartItem item={item} layout="page" onQuantityChange={updateQuantity} onRemove={removeItem} />
                   </MotionDiv>
                 ))}
               </MotionDiv>
@@ -218,9 +211,11 @@ function Cart() {
                 checkoutLabel="Tiến hành thanh toán"
                 className="lg:p-5"
                 continueTo="/products"
+                couponError={couponError}
                 couponFeedback={couponFeedback}
                 couponValue={couponCode}
                 discount={couponDiscount}
+                isApplyingCoupon={isApplyingCoupon}
                 itemCount={itemCount}
                 onCouponApply={handleCouponApply}
                 onCouponChange={setCouponCode}

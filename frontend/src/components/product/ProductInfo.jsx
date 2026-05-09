@@ -10,6 +10,8 @@ import {
   Truck,
   Zap,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useCart } from "../../cart";
 import useWishlist from "../../hooks/useWishlist";
 import { hoverLift, tapSoft } from "../../styles/animations";
 import { cn } from "../../utils/classNames";
@@ -18,6 +20,7 @@ import Badge from "../ui/Badge";
 import Button from "../ui/Button";
 import IconButton from "../ui/IconButton";
 import Rating from "../ui/Rating";
+import { useToast } from "../ui/toast";
 import QuantitySelector from "./QuantitySelector";
 import VariantSelector from "./VariantSelector";
 
@@ -28,6 +31,13 @@ const stockTone = {
   low: "warning",
   out: "danger",
 };
+
+function getSelectedCartVariant(product, selectedOptions) {
+  const variants = product.variants || [];
+  const selectedVariantId = selectedOptions?.variant;
+
+  return variants.find((variant) => String(variant.id) === String(selectedVariantId)) ?? variants[0] ?? null;
+}
 
 function ProductInfo({
   detail,
@@ -41,9 +51,36 @@ function ProductInfo({
   selectedOptions,
   variantGroups,
 }) {
+  const { addItem } = useCart();
+  const navigate = useNavigate();
+  const toast = useToast();
   const { isWishlisted, toggleWishlist } = useWishlist();
   const isOutOfStock = maxQuantity <= 0;
   const productIsWishlisted = isWishlisted(product.id);
+  const selectedCartVariant = getSelectedCartVariant(product, selectedOptions);
+
+  const handleAddToCart = () => {
+    const result = addItem(product, {
+      quantity,
+      variant: selectedCartVariant,
+    });
+
+    if (!result.ok) {
+      toast.showWarning("Biến thể này đang hết hàng hoặc chưa có tồn kho khả dụng.");
+      return false;
+    }
+
+    toast.showSuccess("Đã thêm sản phẩm vào giỏ hàng.", {
+      title: "Giỏ hàng đã cập nhật",
+    });
+    return true;
+  };
+
+  const handleBuyNow = () => {
+    if (handleAddToCart()) {
+      navigate("/checkout");
+    }
+  };
 
   return (
     <section className="store-glass rounded-3xl p-4 sm:p-5 lg:sticky lg:top-28">
@@ -113,6 +150,7 @@ function ProductInfo({
             className={cn("h-12 rounded-2xl", isOutOfStock && "pointer-events-none opacity-50")}
             disabled={isOutOfStock}
             fullWidth
+            onClick={handleAddToCart}
           >
             <ShoppingCart size={19} />
             Thêm vào giỏ
@@ -127,6 +165,7 @@ function ProductInfo({
             )}
             disabled={isOutOfStock}
             fullWidth
+            onClick={handleBuyNow}
           >
             <Zap size={19} fill="currentColor" />
             Mua ngay

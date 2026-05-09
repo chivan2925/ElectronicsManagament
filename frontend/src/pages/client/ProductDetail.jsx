@@ -9,11 +9,13 @@ import ProductInfo from "../../components/product/ProductInfo";
 import ProductReviews from "../../components/product/ProductReviews";
 import ProductSpecs from "../../components/product/ProductSpecs";
 import RelatedProducts from "../../components/product/RelatedProducts";
-import Badge from "../../components/ui/Badge";
 import Button from "../../components/ui/Button";
 import Container from "../../components/ui/Container";
-import { getProductDetail, getRelatedProducts } from "../../data";
+import ApiErrorAlert from "../../components/ui/feedback/ApiErrorAlert";
+import EmptyState from "../../components/ui/feedback/EmptyState";
+import SkeletonBlock from "../../components/skeletons/SkeletonBlock";
 import useRecentlyViewed from "../../hooks/useRecentlyViewed";
+import useProductDetail from "../../hooks/useProductDetail";
 import { fadeUp, staggerContainer } from "../../styles/animations";
 
 const MotionDiv = motion.div;
@@ -50,23 +52,82 @@ function ProductNotFound() {
       <Header />
 
       <Container as="main" className="py-10">
-        <div className="store-glass rounded-3xl p-8 text-center">
-          <PackageSearch className="mx-auto text-blue-200 drop-shadow-[0_0_18px_rgba(0,91,255,0.55)]" size={48} />
-          <Badge className="mx-auto mt-5" variant="primary">Không tìm thấy</Badge>
-          <h1 className="text-heading mt-4">Sản phẩm không tồn tại</h1>
-          <p className="text-muted mx-auto mt-3 max-w-lg text-sm">
-            Sản phẩm này có thể đã đổi đường dẫn hoặc chưa có trong catalog hiện tại.
-          </p>
-          <Button as={Link} className="mt-6" to="/products" variant="outline">
-            Quay lại danh sách
-          </Button>
+        <EmptyState
+          actionLabel="Quay lại danh sách"
+          actionTo="/products"
+          eyebrow="Không tìm thấy"
+          icon={PackageSearch}
+          message="Sản phẩm này có thể đã đổi đường dẫn hoặc chưa có trong catalog hiện tại."
+          title="Sản phẩm không tồn tại"
+        />
+      </Container>
+    </div>
+  );
+}
+
+function ProductDetailLoading() {
+  return (
+    <div className="store-page-shell">
+      <AnnouncementBar />
+      <Header />
+
+      <Container as="main" className="pb-14 pt-6 sm:pt-8">
+        <div className="mb-4 flex gap-2">
+          <SkeletonBlock className="h-5 w-20 rounded-full" />
+          <SkeletonBlock className="h-5 w-28 rounded-full" />
+          <SkeletonBlock className="h-5 w-36 rounded-full" />
+        </div>
+
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_460px] lg:items-start">
+          <section className="store-glass-soft overflow-hidden rounded-3xl p-3 sm:p-4">
+            <SkeletonBlock className="aspect-square min-h-[320px] rounded-3xl" />
+            <div className="mt-4 grid grid-cols-4 gap-3">
+              {Array.from({ length: 4 }, (_, index) => (
+                <SkeletonBlock className="aspect-square rounded-2xl" key={`detail-gallery-${index}`} />
+              ))}
+            </div>
+          </section>
+
+          <section className="store-glass rounded-3xl p-4 sm:p-5">
+            <div className="flex gap-2">
+              <SkeletonBlock className="h-7 w-24 rounded-full" />
+              <SkeletonBlock className="h-7 w-20 rounded-full" />
+            </div>
+            <SkeletonBlock className="mt-5 h-10 w-4/5 rounded-2xl" />
+            <SkeletonBlock className="mt-3 h-6 w-2/3 rounded-full" />
+            <SkeletonBlock className="mt-6 h-32 rounded-3xl" />
+            <SkeletonBlock className="mt-5 h-28 rounded-2xl" />
+            <SkeletonBlock className="mt-5 h-12 rounded-2xl" />
+          </section>
         </div>
       </Container>
     </div>
   );
 }
 
-function ProductDetailContent({ detail }) {
+function ProductDetailError({ error, onRetry }) {
+  return (
+    <div className="store-page-shell">
+      <AnnouncementBar />
+      <Header />
+
+      <Container as="main" className="py-10">
+        <ApiErrorAlert
+          actionLabel="Thử tải lại"
+          error={error}
+          onAction={onRetry}
+          surface="store"
+          title="Không tải được chi tiết sản phẩm"
+        />
+        <Button as={Link} className="mt-5" to="/products" variant="outline">
+          Quay lại danh sách
+        </Button>
+      </Container>
+    </div>
+  );
+}
+
+function ProductDetailContent({ detail, relatedProducts }) {
   const { addRecentlyViewed } = useRecentlyViewed();
   const initialOptions = getInitialOptions(detail.variantGroups);
   const initialVariantOptions = getSelectedVariantOptions(detail.variantGroups, initialOptions);
@@ -79,7 +140,6 @@ function ProductDetailContent({ detail }) {
   const selectedPriceDelta = selectedVariantOptions.reduce((sum, option) => sum + option.priceDelta, 0);
   const finalPrice = detail.product.price + selectedPriceDelta;
   const finalOldPrice = detail.product.oldPrice ? detail.product.oldPrice + selectedPriceDelta : null;
-  const relatedProducts = getRelatedProducts(detail.product);
 
   useEffect(() => {
     addRecentlyViewed(detail.product);
@@ -164,13 +224,21 @@ function ProductDetailContent({ detail }) {
 
 function ProductDetail() {
   const { slug } = useParams();
-  const detail = getProductDetail(slug);
+  const { detail, error, isLoading, isNotFound, refresh, relatedProducts } = useProductDetail(slug);
 
-  if (!detail) {
+  if (isLoading) {
+    return <ProductDetailLoading />;
+  }
+
+  if (error) {
+    return <ProductDetailError error={error} onRetry={refresh} />;
+  }
+
+  if (isNotFound || !detail) {
     return <ProductNotFound />;
   }
 
-  return <ProductDetailContent detail={detail} key={detail.product.id} />;
+  return <ProductDetailContent detail={detail} key={detail.product.id} relatedProducts={relatedProducts} />;
 }
 
 export default ProductDetail;

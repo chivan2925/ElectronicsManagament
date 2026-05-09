@@ -1,5 +1,6 @@
-import { ArrowRight, BadgePercent, ShieldCheck, Truck } from "lucide-react";
+import { ArrowRight, BadgePercent, Loader2, ShieldCheck, Truck } from "lucide-react";
 import { Link } from "react-router-dom";
+import { buildApiErrorFeedback } from "../../api/apiErrorFeedback";
 import { cn } from "../../utils/classNames";
 import { formatCurrency } from "../../utils/formatters";
 import Button from "../ui/Button";
@@ -10,9 +11,11 @@ function CartSummary({
   className,
   continueLabel = "Tiếp tục mua sắm",
   continueTo,
+  couponError,
   couponFeedback,
   couponValue,
   discount = 0,
+  isApplyingCoupon = false,
   itemCount,
   onClose,
   onCouponApply,
@@ -36,6 +39,7 @@ function CartSummary({
         value: couponValue || "",
       }
     : {};
+  const couponErrorFeedback = couponError ? buildApiErrorFeedback(couponError, { title: "Coupon chưa hợp lệ" }) : null;
 
   return (
     <div
@@ -69,15 +73,16 @@ function CartSummary({
             type="text"
           />
           <button
-            className="text-xs font-black text-blue-200 hover:text-white disabled:cursor-not-allowed disabled:text-slate-600"
-            disabled={Boolean(onCouponChange) && !(couponValue || "").trim()}
+            className="inline-flex min-w-[58px] items-center justify-center gap-1 text-xs font-black text-blue-200 hover:text-white disabled:cursor-not-allowed disabled:text-slate-600"
+            disabled={isApplyingCoupon || (Boolean(onCouponChange) && !(couponValue || "").trim())}
             onClick={onCouponApply}
             type="button"
           >
-            Áp dụng
+            {isApplyingCoupon ? <Loader2 className="animate-spin" size={14} /> : "Áp dụng"}
           </button>
         </label>
         {couponFeedback && <p className="text-caption mt-2 text-emerald-200">{couponFeedback}</p>}
+        {couponErrorFeedback && <p className="text-caption mt-2 text-red-200">{couponErrorFeedback.message}</p>}
 
         <div className="mt-3 grid gap-2 text-sm">
           <div className="flex items-center justify-between gap-3 text-slate-400">

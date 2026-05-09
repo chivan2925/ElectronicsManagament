@@ -1,14 +1,18 @@
 import { Navigate, Route, Routes } from "react-router-dom";
-import { ADMIN_ROUTE_POLICIES } from "../auth/roleHelpers";
+import { ADMIN_ROUTE_POLICIES, CLIENT_ROUTE_POLICIES } from "../auth/roleHelpers";
 import AdminRoute from "../guards/AdminRoute";
 import GuestRoute from "../guards/GuestRoute";
 import ProtectedRoute from "../guards/ProtectedRoute";
 import StaffRoute from "../guards/StaffRoute";
+import ProfileLayout from "../components/account/ProfileLayout";
 import AdminLayout from "../layouts/AdminLayout";
 import Home from "../pages/client/Home";
 import Cart from "../pages/client/Cart";
 import Checkout from "../pages/client/Checkout";
 import Login from "../pages/client/Login";
+import ProfileOrders from "../pages/client/ProfileOrders";
+import ProfileOverview from "../pages/client/ProfileOverview";
+import ProfileSettings from "../pages/client/ProfileSettings";
 import ProductDetail from "../pages/client/ProductDetail";
 import ProductListingPage from "../pages/client/ProductListingPage";
 import Register from "../pages/client/Register";
@@ -42,7 +46,7 @@ function AppRoutes() {
       <Route element={<Cart />} path="/cart" />
       <Route
         element={
-          <ProtectedRoute>
+          <ProtectedRoute deniedTo="/admin/dashboard" policy={CLIENT_ROUTE_POLICIES.checkout}>
             <Checkout />
           </ProtectedRoute>
         }
@@ -65,6 +69,18 @@ function AppRoutes() {
         path="/register"
       />
       <Route element={<WishlistPage />} path="/wishlist" />
+      <Route
+        element={
+          <ProtectedRoute deniedTo="/admin/dashboard" policy={CLIENT_ROUTE_POLICIES.account}>
+            <ProfileLayout />
+          </ProtectedRoute>
+        }
+        path="/profile"
+      >
+        <Route index element={<ProfileOverview />} />
+        <Route element={<ProfileOrders />} path="orders" />
+        <Route element={<ProfileSettings />} path="settings" />
+      </Route>
 
       <Route
         element={

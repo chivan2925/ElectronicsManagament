@@ -9,11 +9,45 @@ Always update this file after meaningful work.
 ## Current Phase
 
 ```text
-Ready for Phase 4 — Auth + Backend Integration
+Ready for Phase 5 — Admin Dashboard System
 ```
 
 ## Recently Completed
 
+- Completed the Phase 4 backend integration review.
+- Added shared CRUD request logic through `frontend/src/api/resourceService.js` and refactored API service modules to use it.
+- Hardened refresh-token handling so `401` refresh retries only run when a refresh token exists.
+- Tightened redirect sanitization and prevented admin/staff sessions from being remembered into customer-only routes.
+- Made `/checkout` and `/profile/*` customer-session-only routes while keeping admin/staff sessions in admin.
+- Aligned staff admin module access with resource view permissions in route policies, sidebar filtering, and CRUD view actions.
+- Added store/admin-specific route loading states to reduce wrong-surface or unauthorized flashing.
+- Verified `npm run lint`, `npm run build`, `git diff --check`, and `mvn -q -DskipTests compile` after the Phase 4 review fixes.
+- Marked Phase 4 completed and the project ready for Phase 5 — Admin Dashboard System.
+- Added protected storefront account routes `/profile`, `/profile/orders`, and `/profile/settings`.
+- Added `ProfileLayout`, `AccountSidebar`, and `OrdersTable` for the dark premium account area.
+- Connected account profile fetch/update to real User Profile APIs through `userService` and `useAccountProfile.js`.
+- Connected order history and order detail to real Order APIs through `orderService`.
+- Added backend `GET/PUT /api/users/{userId}/profile`, `GET /api/orders?userId=...`, and `GET /api/orders/{orderId}?userId=...`.
+- Verified `npm run lint`, `npm run build`, and `mvn -q -DskipTests compile` after adding account pages.
+- Added backend `POST /api/orders` for authenticated checkout order creation with coupon validation, active-user validation, stock checks, and reservation stock transaction creation.
+- Connected the storefront cart drawer, `/cart`, product cards, product detail purchase actions, and `/checkout` to shared cart state under `frontend/src/cart`.
+- Connected cart and checkout coupon application to backend Coupon API through `couponService.applyCouponCode()` and `useCheckoutCoupon.js`.
+- Connected checkout order creation to backend Order API through `orderService.createOrder()` and `useCheckoutOrder.js`.
+- Added checkout profile prefill from User API through `userService.getCurrentUserProfile()` and `useCheckoutProfile.js`.
+- Kept VNPay/MoMo as disabled placeholders and did not integrate a real payment gateway.
+- Verified `npm run lint`, `npm run build`, `git diff --check`, and `mvn -q -DskipTests compile` after connecting checkout/order creation.
+- Connected the storefront product listing page to the real Product API with `useProducts.js`.
+- Connected the storefront product detail page to the real Product API with `useProductDetail.js`.
+- Added `frontend/src/api/productMapper.js` to normalize flexible Product API response shapes for listing, detail, variants, media, reviews, and pagination metadata.
+- Added Product API-backed loading, error, empty, not-found, category filtering, brand filtering, and pagination foundation states.
+- Removed the obsolete mock-backed `useProductFilters.js` hook so product listing state has one Product API-backed source.
+- Added `VITE_PRODUCT_API_PATH` to configure the Product API endpoint without changing UI components.
+- Verified `npm run lint`, `npm run build`, and `git diff --check` after connecting Product API data.
+- Added a centralized global feedback system with reusable `ToastProvider`, `GlobalErrorBoundary`, `ApiErrorAlert`, `EmptyState`, and `PermissionDenied` components.
+- Extended toast notifications with loading, API-error, and promise-style feedback helpers.
+- Added global API error event dispatch/listening for normalized auth, validation, network, timeout, server, and permission errors.
+- Reused shared empty and permission-denied states in product listing, admin tables, and route guard fallback UI.
+- Verified `npm run lint`, `npm run build`, and `git diff --check` after adding the global feedback system.
 - Connected `/login` and `/admin/login` to the backend JWT auth flow through `frontend/src/api/authService.js`.
 - Added loading, invalid-credentials, network-error, and disabled-account handling to the login form.
 - Added a reusable dark toast notification provider under `frontend/src/components/ui/toast`.
@@ -60,12 +94,13 @@ Ready for Phase 4 — Auth + Backend Integration
 
 1. Preserve the existing homepage layout.
 2. Keep the normalized frontend folder structure stable.
-3. Connect admin category pages through `frontend/src/api/categoryService.js`.
-4. Add loading, error, empty, and refresh states before replacing mock admin data.
+3. Start Phase 5 by connecting admin category pages through `frontend/src/api/categoryService.js`.
+4. Use centralized feedback components for loading, error, empty, permission, and refresh states before replacing mock admin data.
 5. Connect admin CRUD pages to backend APIs one resource at a time.
-6. Keep public storefront customer registration, cart, checkout, payment, wishlist, and search on mock/local state until public API contracts are ready.
-7. Resolve existing backend test blockers before relying on `mvn test` as a clean validation gate.
-8. Keep AI context docs current.
+6. Keep public storefront customer registration, payment gateway, wishlist, homepage products, and search on mock/local state until public API contracts are ready.
+7. Move customer auth and account ownership checks to a dedicated public customer auth contract when ready.
+8. Resolve existing backend test blockers before relying on `mvn test` as a clean validation gate.
+9. Keep AI context docs current.
 
 ## Next Recommended Tasks
 
@@ -74,9 +109,13 @@ Ready for Phase 4 — Auth + Backend Integration
 - Keep client and admin components separated.
 - Keep `src/api/client.js` as the only shared Axios client.
 - Keep `src/api/apiErrorHandler.js` and `src/api/normalizeApiError.js` as the centralized API error layer.
+- Keep `src/api/apiErrorFeedback.js` and `src/api/apiErrorEvents.js` as the global API feedback bridge.
 - Keep refresh-token coordination centralized in `src/api/refreshTokenService.js`.
+- Keep shared CRUD request logic centralized in `src/api/resourceService.js`.
 - Use `api.*` helpers from `src/api/client.js` in API service modules.
 - Keep resource API calls centralized through the service modules in `src/api`.
+- Keep Product API response normalization centralized in `src/api/productMapper.js`.
+- Keep checkout/order/coupon response normalization centralized in `src/api/checkoutMapper.js`.
 - Keep route guard behavior centralized in `src/guards`.
 - Keep role, permission, route, sidebar, page, and action access policies centralized in `src/auth/roleHelpers.js`.
 - Use `src/auth/usePermissions.js` and `src/auth/PermissionGate.jsx` instead of inline role checks in pages/components.
@@ -94,6 +133,7 @@ Ready for Phase 4 — Auth + Backend Integration
 - Reuse the homepage visual depth patterns on future client ecommerce pages without changing their layout structure.
 - Reuse `src/components/skeletons` for future mock-backed and API-backed loading states.
 - Reuse `src/components/ui` primitives before creating one-off button, badge, price, rating, card, input, or section-title markup.
+- Reuse `src/components/ui/feedback` before creating page-specific error, empty, or permission-denied states.
 - Keep `frontend/src/styles/theme.js`, `tokens.js`, `globals.css`, and `utilities.css` aligned.
 
 ### Client Ecommerce
@@ -101,27 +141,38 @@ Ready for Phase 4 — Auth + Backend Integration
 - Keep Phase 3 client ecommerce UI stable while backend integration begins.
 - Keep the register flow local until public customer auth APIs are ready.
 - Move storefront customer login to a public customer auth endpoint when the API contract is available.
-- Wire product detail purchase actions, cart drawer, cart page, and checkout page into shared cart state when the cart flow moves beyond local mock state.
+- Keep `/profile`, `/profile/orders`, and `/profile/settings` behind `ProtectedRoute`.
+- Keep account profile/order API calls centralized in `userService.js`, `orderService.js`, and `accountMapper.js`.
+- Keep the shared cart provider as the single cart state source for header drawer, cart page, product cards, product detail, and checkout.
 - Replace wishlist and recently viewed localStorage placeholders only when customer account/product history APIs are ready.
-- Replace search overlay mock data with a real storefront search API only when the public search/catalog API is ready.
-- Replace checkout mock submission and payment placeholders only when public checkout/payment APIs are ready.
+- Replace homepage product sections, wishlist/recently viewed lookup, and search overlay mock data with real storefront APIs when those contracts are ready.
+- Add real online payment gateway handoff only when the payment task starts.
 - Add category route/page when the category browsing plan is ready.
 - Replace the homepage mock loading timer with real loading state when storefront data integration begins.
 
-### Phase 4 Auth + Backend Integration
+### Phase 5 Admin Dashboard System
+
+- Connect admin category pages through `frontend/src/api/categoryService.js` first.
+- Add API-backed list loading, error, empty, and refresh states before replacing mock admin data.
+- Reuse shared route/sidebar/action permission policies for every admin resource page.
+- Keep ADMIN full access and require staff resource view permissions for staff module access.
+- Add create/edit/detail/delete workflows one resource at a time.
+- Add pagination, search/filter state, form validation, and safe destructive-action confirmations as pages move off mock data.
+
+### Phase 4 Auth + Backend Integration Maintenance
 
 - Maintain the real `/admin/login` backend JWT authentication flow.
 - Use the existing auth architecture in `frontend/src/auth`, `frontend/src/guards`, and `frontend/src/store/auth`.
-- Preserve protected routing behavior: admin/staff shell access, admin-only management pages, checkout auth gate, and guest-only auth pages.
-- Preserve centralized role/permission behavior: ADMIN full access, STAFF limited admin access, USER blocked from admin, and admin sidebar/actions filtered by policy.
+- Preserve protected routing behavior: admin/staff shell access, admin-only management pages, customer-only checkout/account gates, and guest-only auth pages.
+- Preserve centralized role/permission behavior: ADMIN full access, STAFF access requires resource view permissions, USER blocked from admin, and admin sidebar/actions filtered by policy.
 - Add backend refresh-token endpoint support for the frontend `refreshTokenService` contract when backend auth is extended.
-- Connect admin category pages through `frontend/src/api/categoryService.js` first.
-- Add loading, error, empty, and optimistic refresh states before replacing mock admin data.
 
 ## Blocked Or Not Ready
 
 - Public customer APIs are not complete.
-- Cart and checkout backend APIs are not complete.
+- Public customer auth is not complete; account APIs are authenticated and user-id scoped until a customer-auth principal contract is available.
+- Client checkout/account routes are customer-session-only in the frontend, but backend ownership enforcement still needs the future customer-auth principal contract.
+- A dedicated backend cart persistence API is not implemented; cart state is shared local frontend state.
 - Admin frontend API service modules exist, but pages are not connected to real data yet.
 - Backend admin auth currently exposes login/logout; refresh-token endpoint support is not implemented yet.
 - Backend `mvn test` currently fails because `AddressMapper` is not registered as a bean for `AdminAddressServiceImpl`.

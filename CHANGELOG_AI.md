@@ -376,3 +376,56 @@ Always update this file after meaningful work.
 - Filtered the admin sidebar from centralized policies so STAFF does not see Role Management and USER cannot enter admin routes.
 - Gated shared admin CRUD create/update/delete actions through resource action policies while keeping ADMIN full access.
 - Verified `npm run lint`, `npm run build`, and `git diff --check` after adding the role/permission system.
+
+### Global Feedback System
+
+- Added centralized feedback components: `GlobalErrorBoundary`, `ApiErrorAlert`, `EmptyState`, and `PermissionDenied`.
+- Extended `ToastProvider` with loading toasts, API-error feedback, toast updates, and promise-style feedback helpers.
+- Added `apiErrorFeedback.js` and `apiErrorEvents.js` for global normalized API error feedback.
+- Wired the Axios error handler to dispatch global auth, validation, network, timeout, server, and permission errors.
+- Reused shared empty and permission-denied states in product listing, admin tables, and route guard fallback UI.
+- Verified `npm run lint`, `npm run build`, and `git diff --check` after the feedback system update.
+
+### Product API Ecommerce Integration
+
+- Connected storefront `/products` to real Product API data through `frontend/src/hooks/useProducts.js`.
+- Connected storefront `/products/:slug` to real Product API data through `frontend/src/hooks/useProductDetail.js`.
+- Added `frontend/src/api/productMapper.js` to normalize flexible Product API listing, detail, variant, media, review, and pagination response shapes before data reaches UI components.
+- Extended `frontend/src/api/productService.js` with catalog listing, detail, review, slug lookup, and detail-enrichment helpers while preserving existing admin CRUD exports.
+- Replaced the old mock-backed listing hook with Product API-backed fetching, category filtering, brand filtering, loading, error, empty, and pagination foundation states.
+- Added `VITE_PRODUCT_API_PATH` to configure the Product API endpoint.
+- Preserved the existing PLP/PDP dark ecommerce UI and layout while replacing direct mock product data usage in those routes.
+- Verified `npm run lint`, `npm run build`, and `git diff --check` after connecting Product API data.
+
+### Cart Checkout And Order API Integration
+
+- Added backend `POST /api/orders` for authenticated checkout order creation with active-user validation, coupon validation, stock checks, and stock reservation.
+- Added `frontend/src/cart` with `CartProvider` and `useCart` as the single shared cart state for header drawer, cart page, product cards, product detail actions, and checkout.
+- Added `frontend/src/api/checkoutMapper.js` for create-order payload mapping, coupon validation, discount calculation, and order response normalization.
+- Extended `couponService.js`, `orderService.js`, and `userService.js` for checkout coupon application, order creation, and profile prefill.
+- Added reusable checkout hooks: `useCheckoutCoupon.js`, `useCheckoutOrder.js`, and `useCheckoutProfile.js`.
+- Connected `/cart` and `/checkout` to backend coupon/order flows with loading, invalid coupon, unauthorized checkout, out-of-stock/API error handling, and success feedback.
+- Kept VNPay and MoMo as disabled placeholders; no real payment gateway was integrated.
+- Verified `npm run lint`, `npm run build`, `git diff --check`, and `mvn -q -DskipTests compile`.
+
+### Authenticated Account Pages
+
+- Added protected storefront account routes `/profile`, `/profile/orders`, and `/profile/settings`.
+- Added account components `ProfileLayout`, `AccountSidebar`, and `OrdersTable` with dark premium ecommerce styling, avatar placeholder, logout, responsive navigation, and order-detail expansion.
+- Added `frontend/src/api/accountMapper.js`, `useAccountProfile.js`, and account methods in `userService.js` and `orderService.js`.
+- Added backend User Profile APIs `GET/PUT /api/users/{userId}/profile`.
+- Added backend User Order APIs `GET /api/orders?userId=...` and `GET /api/orders/{orderId}?userId=...`.
+- Updated the storefront header account and order links to point to the protected profile area for authenticated sessions.
+- Verified `npm run lint`, `npm run build`, and `mvn -q -DskipTests compile`.
+
+### Phase 4 Backend Integration Review
+
+- Added `frontend/src/api/resourceService.js` and refactored CRUD API service modules to use shared request logic.
+- Hardened refresh-token handling so `401` refresh retries only run when a stored refresh token exists.
+- Tightened remembered redirect sanitization and kept admin/staff sessions out of customer-only checkout/account routes.
+- Aligned staff admin module access with resource view permissions across route policies, sidebar filtering, and CRUD view actions.
+- Added store/admin-specific route loading states to reduce wrong-surface and unauthorized flashing during session restore.
+- Reused account profile normalization in checkout profile prefill and reset account order state when no customer user id is available.
+- Updated `CURRENT_STATE.md`, `NEXT_TASKS.md`, and API context to mark Phase 4 completed.
+- Marked the project ready for Phase 5 — Admin Dashboard System.
+- Verified `npm run lint`, `npm run build`, `git diff --check`, and `mvn -q -DskipTests compile`.

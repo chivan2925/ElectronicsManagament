@@ -1,18 +1,24 @@
-import { AlertCircle, BadgePercent, CheckCircle2, ChevronRight, LockKeyhole, PackageCheck, ShieldCheck } from "lucide-react";
+import { AlertCircle, BadgePercent, CheckCircle2, ChevronRight, Loader2, LockKeyhole, PackageCheck, ShieldCheck } from "lucide-react";
 import { Link } from "react-router-dom";
 import { formatCurrency } from "../../utils/formatters";
 import Button from "../ui/Button";
+import ApiErrorAlert from "../ui/feedback/ApiErrorAlert";
 
 function CheckoutSummary({
   appliedCoupon,
   couponCode,
   couponDiscount,
+  couponError,
   couponFeedback,
+  createdOrder,
   items,
   itemCount,
+  isApplyingCoupon = false,
+  isSubmitting = false,
   onCouponApply,
   onCouponChange,
   onPlaceOrder,
+  orderError,
   orderPlaced,
   paymentMethod,
   shippingFee,
@@ -65,12 +71,12 @@ function CheckoutSummary({
             value={couponCode}
           />
           <button
-            className="text-xs font-black text-blue-200 hover:text-white disabled:cursor-not-allowed disabled:text-slate-600"
-            disabled={!couponCode.trim()}
+            className="inline-flex min-w-[58px] items-center justify-center gap-1 text-xs font-black text-blue-200 hover:text-white disabled:cursor-not-allowed disabled:text-slate-600"
+            disabled={isApplyingCoupon || !couponCode.trim()}
             onClick={onCouponApply}
             type="button"
           >
-            Áp dụng
+            {isApplyingCoupon ? <Loader2 className="animate-spin" size={14} /> : "Áp dụng"}
           </button>
         </label>
         {couponFeedback && (
@@ -78,6 +84,9 @@ function CheckoutSummary({
             <CheckCircle2 size={14} />
             {couponFeedback}
           </p>
+        )}
+        {couponError && (
+          <ApiErrorAlert className="mt-3" compact error={couponError} surface="store" title="Coupon chưa hợp lệ" />
         )}
         {appliedCoupon && !couponFeedback && <p className="text-caption mt-2 text-slate-500">Coupon đã được ghi nhận.</p>}
       </div>
@@ -116,16 +125,38 @@ function CheckoutSummary({
         </div>
       )}
 
+      {orderError && (
+        <ApiErrorAlert
+          className="mt-4"
+          compact
+          error={orderError}
+          surface="store"
+          title="Chưa tạo được đơn hàng"
+        />
+      )}
+
       {orderPlaced ? (
         <div className="mt-4 rounded-2xl border border-emerald-300/30 bg-emerald-500/10 p-4 text-center">
           <CheckCircle2 className="mx-auto text-emerald-200" size={30} />
-          <p className="mt-2 font-black text-white">Thông tin đơn hàng đã được ghi nhận</p>
-          <p className="text-caption mt-1 text-slate-400">Cổng thanh toán sẽ được bật khi hệ thống tích hợp sẵn sàng.</p>
+          <p className="mt-2 font-black text-white">Đơn hàng đã được tạo</p>
+          <p className="text-caption mt-1 text-slate-400">
+            {createdOrder?.code ? `Mã đơn: ${createdOrder.code}. ` : ""}
+            Thanh toán online sẽ được kích hoạt ở bước tích hợp riêng.
+          </p>
         </div>
       ) : (
-        <Button className="mt-4 h-12 rounded-2xl" fullWidth onClick={onPlaceOrder}>
-          Xác nhận đặt hàng
-          <ChevronRight size={18} />
+        <Button className="mt-4 h-12 rounded-2xl" disabled={isSubmitting} fullWidth onClick={onPlaceOrder}>
+          {isSubmitting ? (
+            <>
+              <Loader2 className="animate-spin" size={18} />
+              Đang tạo đơn
+            </>
+          ) : (
+            <>
+              Xác nhận đặt hàng
+              <ChevronRight size={18} />
+            </>
+          )}
         </Button>
       )}
 

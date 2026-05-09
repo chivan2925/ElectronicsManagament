@@ -1,6 +1,7 @@
-import { Eye, Pencil, Trash2 } from "lucide-react";
+import { Eye, Inbox, Pencil, Trash2 } from "lucide-react";
 import usePermissions from "../../../auth/usePermissions";
 import Card from "../Card";
+import EmptyState from "../feedback/EmptyState";
 import AdminIconButton from "./AdminIconButton";
 
 const tableActions = [
@@ -72,8 +73,15 @@ function DataTable({ columns, data, actionPolicies = null, emptyText = "Không c
               ))
             ) : (
               <tr>
-                <td className="px-5 py-10 text-center text-sm text-muted" colSpan={columns.length + (showActions ? 1 : 0)}>
-                  {emptyText}
+                <td className="px-5 py-10" colSpan={columns.length + (showActions ? 1 : 0)}>
+                  <EmptyState
+                    framed={false}
+                    icon={Inbox}
+                    message="Thử đổi từ khóa tìm kiếm hoặc kiểm tra lại bộ lọc."
+                    size="compact"
+                    surface="admin"
+                    title={emptyText}
+                  />
                 </td>
               </tr>
             )}

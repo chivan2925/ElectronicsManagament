@@ -1,6 +1,7 @@
 import { normalizeApiError } from "./normalizeApiError";
 
 export { normalizeApiError };
+export { buildApiErrorFeedback, getApiErrorDetailItems, getApiErrorTitle, getApiErrorTone } from "./apiErrorFeedback";
 
 function includesAny(value, terms) {
   const normalizedValue = String(value ?? "").toLowerCase();

@@ -42,6 +42,7 @@ export async function login(credentials) {
   const data = await api.post("/admin/auth/login", credentials, {
     retry: false,
     skipAuth: true,
+    skipGlobalErrorHandler: true,
     skipUnauthorizedHandler: true,
   });
   const session = buildAuthSession(data);
@@ -58,6 +59,7 @@ export async function logout() {
   try {
     return await api.post("/admin/auth/logout", null, {
       retry: false,
+      skipGlobalErrorHandler: true,
       skipAuthRefresh: true,
       skipUnauthorizedHandler: true,
     });

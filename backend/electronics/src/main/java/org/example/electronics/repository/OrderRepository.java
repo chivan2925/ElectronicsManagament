@@ -57,6 +57,17 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Integer> {
     @Query("SELECT o FROM OrderEntity o WHERE o.id = :id")
     Optional<OrderEntity> findOrderByIdWithDetails(@Param("id") Integer orderId);
 
+    @EntityGraph(attributePaths = {"user"})
+    @Query("SELECT o FROM OrderEntity o WHERE o.user.id = :userId")
+    Page<OrderEntity> findOrdersByUserId(@Param("userId") Integer userId, Pageable pageable);
+
+    @EntityGraph(attributePaths = {"user", "coupon", "orderDetails", "orderDetails.variant", "orderDetails.variant.product"})
+    @Query("SELECT o FROM OrderEntity o WHERE o.id = :orderId AND o.user.id = :userId")
+    Optional<OrderEntity> findOrderByIdAndUserIdWithDetails(
+            @Param("orderId") Integer orderId,
+            @Param("userId") Integer userId
+    );
+
     @Query("SELECT o FROM OrderEntity o WHERE o.status = 'PENDING' AND o.createdAt <= :thresholdTime")
     Page<OrderEntity> findExpiredPendingOrders(@Param("thresholdTime") LocalDateTime thresholdTime, Pageable pageable);
 }

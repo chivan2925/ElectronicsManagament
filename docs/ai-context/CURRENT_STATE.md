@@ -9,14 +9,14 @@ Always update this file after meaningful work.
 ## Current Phase
 
 ```text
-Phase 3 — Client Ecommerce Pages completed
+Phase 4 — Auth + Backend Integration completed
 ```
 
 ## Current Summary
 
-ElectronicsManagement has completed Phase 3 client ecommerce pages and polish. The project is ready for Phase 4 — Auth + Backend Integration.
+ElectronicsManagement has completed Phase 4 — Auth + Backend Integration. The project is ready for Phase 5 — Admin Dashboard System.
 
-The client storefront now includes the homepage, product listing, product detail, cart, checkout, customer authentication, wishlist, recently viewed, and search overlay experiences using mock/local state. The admin dashboard exists as a mock modern dashboard. Backend admin APIs exist. Frontend admin/staff authentication is now connected to the backend JWT API, but admin CRUD pages are not connected to real backend data yet.
+The client storefront now includes the homepage, Product API-backed product listing and product detail, shared-cart cart and checkout, customer authentication, wishlist, recently viewed, search overlay, and authenticated account experiences. Checkout now creates real backend orders and validates coupons through backend APIs. Wishlist, recently viewed, search, and homepage product sections still use mock/local state. The admin dashboard exists as a mock modern dashboard. Backend admin APIs exist. Frontend admin/staff authentication is connected to the backend JWT API, but admin CRUD pages are not connected to real backend data yet.
 
 The frontend folder structure has been normalized without changing the current visual UI.
 
@@ -38,19 +38,21 @@ The storefront now has a reusable dark skeleton loading system with shimmer plac
 
 The frontend now has shared reusable UI primitives for buttons, cards, badges, inputs, section titles, icon buttons, containers, prices, and ratings.
 
-The storefront product listing page now exists at `/products` with mock-backed product grid, searchable catalog filtering, filter sidebar, active filters, sorting, pagination, breadcrumb, category banner, and responsive mobile filtering.
+The storefront product listing page now exists at `/products` with Product API-backed product grid, searchable catalog filtering, category/brand filtering, filter sidebar, active filters, sorting, pagination foundation, breadcrumb, category banner, loading, error, and empty states.
 
-The product listing filter/search state now lives in `frontend/src/hooks/useProductFilters.js`.
+The Product API-backed product listing state now lives in `frontend/src/hooks/useProducts.js`.
 
-The storefront product detail page now exists at `/products/:slug` with mock-backed gallery, variants, quantity, purchase actions, specs, description, reviews, shipping information, stock information, and related products.
+The storefront product detail page now exists at `/products/:slug` with Product API-backed gallery, variants, quantity, purchase actions, specs, description, reviews, shipping information, stock information, related products, loading, error, and not-found states.
+
+The frontend Product API integration uses `frontend/src/api/productMapper.js` to normalize flexible backend response shapes before they reach UI components.
 
 The product detail gallery now supports loading skeletons, smoother image switching, stronger thumbnail active states, hover zoom, fullscreen preview, and keyboard navigation in preview mode.
 
-The storefront header now includes a mock-backed cart drawer with slide-in animation, blurred backdrop, item quantity updates, remove actions, subtotal, coupon placeholder, continue-shopping action, checkout action, and animated cart count badge.
+The storefront header now includes a shared-cart drawer with slide-in animation, blurred backdrop, item quantity updates, remove actions, subtotal, checkout action, and animated cart count badge.
 
-The storefront cart page now exists at `/cart` with mock-backed cart items, quantity updates, remove actions, coupon input, order summary, shipping estimate, continue-shopping CTA, checkout CTA, and sticky desktop summary.
+The storefront cart page now exists at `/cart` with shared local cart items, quantity updates, remove actions, backend coupon validation, order summary, shipping estimate, continue-shopping CTA, checkout CTA, and sticky desktop summary.
 
-The storefront checkout page now exists at `/checkout` with mock-backed customer information, shipping address, shipping method, payment method, form validation UI, coupon placeholder, and sticky order summary.
+The storefront checkout page now exists at `/checkout` with authenticated checkout, customer profile prefill from User API when available, shipping address, shipping method, payment method, form validation UI, backend coupon validation, backend order creation, API loading/error states, and sticky order summary.
 
 The storefront customer authentication pages now exist at `/login` and `/register` with reusable dark auth layout/forms, social login placeholders, remember-me, forgot-password placeholder, local validation UI, and responsive dark glass styling. The `/login` form now calls the backend JWT auth service; `/register` remains local until customer registration APIs are ready.
 
@@ -58,18 +60,22 @@ The storefront wishlist page now exists at `/wishlist` with localStorage-backed 
 
 The storefront header now includes a reusable mock-backed search overlay with debounced live suggestions, recent searches, trending searches, product/category/brand result previews, and keyboard navigation behavior.
 
+The authenticated storefront account area now exists at `/profile`, `/profile/orders`, and `/profile/settings` with real User Profile and User Order API integration, protected routing, profile update, order history/detail, logout, and avatar placeholder UI.
+
 Phase 2 cleanup normalized shared/admin visual patterns for cards, borders, shadows, hover states, focus states, icon buttons, typography usage, and responsive behavior without a large rewrite.
 
 Frontend routing now includes client ecommerce routes and admin routes with placeholders for pages that are not implemented yet.
 
 The frontend now has a centralized JWT-ready auth architecture with AuthProvider, auth storage helpers, auth state helpers, reusable route guards, and an auth reducer/store namespace. It supports user/admin/staff session shape, roles, permissions, access token, refresh token, authentication status, loading state, session restore, redirect memory, refresh-on-401 flow, and graceful unauthorized UI, and is now used by the real login flow.
 
-The frontend now has a centralized role/permission system with shared route policies, sidebar filtering, reusable permission hooks, PermissionGate, and resource action policies for admin CRUD controls. ADMIN has full admin access, STAFF is limited to staff-allowed admin areas, and USER cannot access admin routes.
+The frontend now has a centralized role/permission system with shared route policies, sidebar filtering, reusable permission hooks, PermissionGate, and resource action policies for admin CRUD controls. ADMIN has full admin access, STAFF module access requires matching resource view permissions, and USER cannot access admin routes.
+
+The frontend now has a centralized global feedback system with reusable toast notifications, loading toasts, API error alerts, empty states, permission-denied states, and a global React error boundary.
 
 The next phase is:
 
 ```text
-Phase 4 — Auth + Backend Integration
+Phase 5 — Admin Dashboard System
 ```
 
 ## Phase 1 Completed Items
@@ -126,7 +132,7 @@ Phase 4 — Auth + Backend Integration
 - Replaced visible developer-facing checkout/auth/search copy with customer-facing placeholder copy.
 - Confirmed Phase 3 is complete and ready for Phase 4 — Auth + Backend Integration.
 
-## Phase 4 Auth Foundation Items
+## Phase 4 Completed Items
 
 - Added centralized auth modules under `frontend/src/auth`.
 - Added reusable route guards under `frontend/src/guards`.
@@ -147,6 +153,27 @@ Phase 4 — Auth + Backend Integration
 - Added centralized role/permission helpers through `frontend/src/auth/roleHelpers.js`, `usePermissions.js`, and `PermissionGate.jsx`.
 - Routed admin pages through shared role policies and filtered admin sidebar navigation from the same policy source.
 - Added resource action policies to shared admin CRUD controls so create/update/delete buttons can be gated without inline role checks.
+- Added centralized feedback components under `frontend/src/components/ui/feedback`.
+- Extended the shared toast provider with success, error, warning, info, loading, API-error, and promise-style feedback helpers.
+- Added global API error events so normalized auth, validation, network, timeout, server, and permission errors can surface consistently.
+- Wrapped the React app in `GlobalErrorBoundary`.
+- Connected storefront `/products` and `/products/:slug` to the real Product API through `useProducts.js`, `useProductDetail.js`, and flexible product response mapping.
+- Removed the obsolete mock-backed `useProductFilters.js` hook so storefront product listing state has one Product API-backed source.
+- Added a shared `frontend/src/cart` cart provider used by the header drawer, cart page, product cards, product detail purchase actions, and checkout page.
+- Added checkout API mapping through `frontend/src/api/checkoutMapper.js`.
+- Added backend coupon validation through `couponService.applyCouponCode()` and reusable `useCheckoutCoupon.js`.
+- Added authenticated checkout order creation through `orderService.createOrder()` and reusable `useCheckoutOrder.js`.
+- Added checkout customer profile prefill through `useCheckoutProfile.js` and `userService.getCurrentUserProfile()`.
+- Added backend `POST /api/orders` for authenticated order creation with coupon validation and stock reservation, without payment gateway integration.
+- Added backend user account APIs: `GET/PUT /api/users/{userId}/profile`, `GET /api/orders?userId=...`, and `GET /api/orders/{orderId}?userId=...`.
+- Added protected storefront account routes `/profile`, `/profile/orders`, and `/profile/settings` backed by User Profile and User Order APIs.
+- Added reusable `frontend/src/api/resourceService.js` so admin CRUD service modules share the same basic request logic.
+- Hardened refresh handling so `401` refresh retries only run when a stored refresh token exists.
+- Tightened remembered redirect sanitization and prevented admin/staff sessions from being redirected into customer-only routes.
+- Updated `/checkout` and `/profile/*` to use customer-only route policies while admin/staff sessions are redirected back to admin.
+- Aligned admin route/sidebar access with resource view permissions so staff module access requires both staff role and the matching `*:view` permission.
+- Added store/admin-specific route loading states to reduce unauthorized or wrong-surface flashing during session restore.
+- Completed the backend integration review and marked Phase 4 complete.
 
 ## Frontend State
 
@@ -170,6 +197,9 @@ Current client routes:
 - `/login`
 - `/register`
 - `/wishlist`
+- `/profile`
+- `/profile/orders`
+- `/profile/settings`
 
 Current admin routes:
 
@@ -193,22 +223,28 @@ Current admin routes:
 
 Current frontend data:
 
-- Client storefront mock data is split across `frontend/src/data/categories.js`, `products.js`, `promotions.js`, and `services.js`.
-- `frontend/src/data/products.js` now includes expanded catalog fields for listing workflows, including `sold` and `createdAt`.
-- `frontend/src/data/productDetails.js` now enriches mock catalog products for product detail workflows.
-- `frontend/src/data/cart.js` now centralizes mock cart item setup for cart drawer and cart page workflows.
+- Client storefront mock data is split across `frontend/src/data/categories.js`, `products.js`, `promotions.js`, and `services.js` for homepage/search/wishlist/local flows that are not API-backed yet.
+- `frontend/src/data/products.js` still supports mock/local storefront sections, but `/products` now uses Product API data.
+- `frontend/src/data/productDetails.js` remains available for legacy mock detail helpers, but `/products/:slug` now uses Product API data.
+- `frontend/src/data/cart.js` remains as legacy mock cart setup, but active cart drawer, `/cart`, and `/checkout` now use `frontend/src/cart`.
 - Admin pages use `frontend/src/data/adminMock.js`.
 - Shared data exports live in `frontend/src/data/index.js`.
 - API client exists at `frontend/src/api/client.js`.
 - API config exists at `frontend/src/api/apiConfig.js`.
-- API error handling exists at `frontend/src/api/apiErrorHandler.js` and `frontend/src/api/normalizeApiError.js`.
+- API error handling exists at `frontend/src/api/apiErrorHandler.js`, `normalizeApiError.js`, `apiErrorFeedback.js`, and `apiErrorEvents.js`.
+- Checkout/order/coupon mapping exists at `frontend/src/api/checkoutMapper.js`.
+- Account profile/order mapping exists at `frontend/src/api/accountMapper.js`.
+- Product API response mapping exists at `frontend/src/api/productMapper.js`.
 - API refresh-token handling exists at `frontend/src/api/refreshTokenService.js`.
 - API service modules now exist in `frontend/src/api` for auth, categories, brands, products, users, staff, orders, warehouses, coupons, and media.
-- API service modules use reusable `api.*` helpers instead of duplicating Axios response parsing.
+- API service modules use reusable `api.*` helpers and `resourceService.js` for shared CRUD request logic.
 - The shared API client reads the JWT through `frontend/src/auth/authStorage.js` using localStorage key `accessToken`.
 - The shared API client reads `VITE_API_BASE_URL`, `VITE_API_TIMEOUT`, and `VITE_AUTH_REFRESH_ENDPOINT`.
+- Product API integration reads `VITE_PRODUCT_API_PATH`, defaulting to `/admin/products`.
+- Checkout integration reads `VITE_COUPON_API_PATH`, `VITE_ORDER_API_PATH`, and `VITE_USER_API_PATH`.
+- Account integration reads `VITE_USER_PROFILE_API_PATH` and `VITE_USER_ORDER_API_PATH`.
 - Auth session metadata is centralized through `frontend/src/auth` and currently stores safe user, roles, and permissions metadata only.
-- `frontend/.env.example` documents `VITE_API_BASE_URL`, `VITE_API_TIMEOUT`, and `VITE_AUTH_REFRESH_ENDPOINT`.
+- `frontend/.env.example` documents `VITE_API_BASE_URL`, `VITE_API_TIMEOUT`, `VITE_AUTH_REFRESH_ENDPOINT`, `VITE_PRODUCT_API_PATH`, `VITE_COUPON_API_PATH`, `VITE_ORDER_API_PATH`, `VITE_USER_API_PATH`, `VITE_USER_PROFILE_API_PATH`, and `VITE_USER_ORDER_API_PATH`.
 - Admin/staff login is connected to the backend JWT API.
 - No admin CRUD page is connected to real backend data yet.
 
@@ -218,23 +254,30 @@ Current frontend structure:
 - Auth context, provider, hook, storage, and helpers live in `frontend/src/auth/`.
 - Role/permission policy helpers, permission hooks, and PermissionGate live in `frontend/src/auth/`.
 - Route guard components and helper UI live in `frontend/src/guards/`.
+- Shared storefront cart state lives in `frontend/src/cart/`.
 - Auth reducer exports live in `frontend/src/store/auth/`.
 - Toast notification components live in `frontend/src/components/ui/toast/`.
+- Feedback components live in `frontend/src/components/ui/feedback/`.
 - Client homepage page lives in `frontend/src/pages/client/Home.jsx`.
 - Admin pages live in `frontend/src/pages/admin/`.
 - Client homepage components live in `frontend/src/components/home/`.
 - Cart drawer and cart page components live in `frontend/src/components/cart/`.
 - Checkout components live in `frontend/src/components/checkout/`.
+- Account components live in `frontend/src/components/account/`.
 - Customer auth components live in `frontend/src/components/auth/`.
 - Search overlay components live in `frontend/src/components/search/`.
 - Client layout components live in `frontend/src/components/layout/`.
 - Product components live in `frontend/src/components/product/`, including listing filters, search, sorting, active filters, empty state, pagination, detail gallery, product info, variants, quantity, specs, reviews, related products, and reusable product cards.
-- Product listing state logic lives in `frontend/src/hooks/useProductFilters.js`.
+- Product listing API state logic lives in `frontend/src/hooks/useProducts.js`.
+- Product detail API state logic lives in `frontend/src/hooks/useProductDetail.js`.
+- Checkout coupon, order creation, and profile prefill logic lives in `frontend/src/hooks/useCheckoutCoupon.js`, `useCheckoutOrder.js`, and `useCheckoutProfile.js`.
+- Authenticated account profile state logic lives in `frontend/src/hooks/useAccountProfile.js`.
 - Wishlist and recently viewed local state logic lives in `frontend/src/hooks/useWishlist.js` and `frontend/src/hooks/useRecentlyViewed.js`.
 - Storefront search overlay logic lives in `frontend/src/hooks/useSearch.js`.
 - Skeleton loading components live in `frontend/src/components/skeletons/`.
 - Admin layout components live in `frontend/src/components/layout/admin/`.
 - Shared reusable UI components live in `frontend/src/components/ui/`.
+- Shared feedback components include `GlobalErrorBoundary`, `ApiErrorAlert`, `EmptyState`, and `PermissionDenied`.
 - Admin-specific reusable UI components live in `frontend/src/components/ui/admin/`.
 - Design tokens live in `frontend/src/styles/tokens.js`.
 - The primary theme object lives in `frontend/src/styles/theme.js`.
@@ -267,7 +310,7 @@ Homepage state:
 - Homepage product cards now include polished image stages, wishlist placeholders, stock badges, stronger pricing treatment, and quick-add CTAs.
 - Flash sale card now shares the polished badge, stock, image glow, and CTA treatment.
 - Header now uses a sticky scroll-aware blurred background, premium search bar, desktop category dropdown, animated cart badge, and responsive mobile menu.
-- Header cart button now opens the mock-backed cart drawer and reflects cart count from local mock cart state.
+- Header cart button now opens the shared-cart drawer and reflects cart count from `frontend/src/cart`.
 - Header search now opens the mock-backed search overlay on desktop and mobile.
 - Homepage background, hero banner, promo cards, category cards, service bar, and section separators now have deeper production ecommerce visual polish.
 - Homepage now includes a short mock loading state demo that renders dark shimmer skeletons before showing mock data.
@@ -276,19 +319,20 @@ Homepage state:
 - Tablet homepage now has a balanced hero, promo, service, and category layout with reduced empty space.
 - Desktop and ultra-wide homepage still preserve the three-column hero structure and centered max-width layout.
 - `/` still renders the existing homepage.
-- `/products` now renders the mock-backed product listing page.
-- `/products/:slug` now renders the mock-backed product detail page.
-- `/cart` now renders the mock-backed cart page.
-- `/checkout` now renders the mock-backed checkout page behind `ProtectedRoute`.
+- `/products` now renders the Product API-backed product listing page.
+- `/products/:slug` now renders the Product API-backed product detail page.
+- `/cart` now renders the shared-cart cart page with backend coupon validation.
+- `/checkout` now renders the authenticated customer checkout page behind `ProtectedRoute` and creates backend orders through `POST /api/orders`.
 - `/login` now renders the dark auth page and submits through `authService.login()`.
 - `/register` still renders the local ecommerce registration page until customer registration APIs exist and is now guest-only.
 - `/wishlist` now renders the localStorage-backed wishlist and recently viewed page.
-- Client routes beyond homepage, product listing, product detail, cart, checkout, login, register, and wishlist that are not fully implemented render dark ecommerce placeholder pages.
+- `/profile`, `/profile/orders`, and `/profile/settings` now render the protected customer account area with real profile/order APIs.
+- Client routes beyond homepage, product listing, product detail, cart, checkout, login, register, wishlist, and profile routes that are not fully implemented render dark ecommerce placeholder pages.
 - `/admin/login` now renders the dark premium admin auth page and submits through `authService.login()`.
 - `/admin/*` routes are protected by `StaffRoute`; unauthenticated users are redirected to `/admin/login`.
 - `/admin/users`, `/admin/staff`, and `/admin/roles` are additionally protected by `AdminRoute`.
 - Admin route access, sidebar visibility, page access, and shared CRUD action buttons now use centralized role/permission policies.
-- STAFF sessions do not see or access Role Management; USER sessions are blocked from admin routes; ADMIN sessions have full admin access.
+- STAFF sessions need matching resource view permissions for module access; USER sessions are blocked from admin routes; ADMIN sessions have full admin access.
 - `/admin` redirects to `/admin/dashboard` after admin route authentication passes.
 
 Latest validation:
@@ -333,6 +377,13 @@ Latest validation:
 - `npm run build` passed in `frontend/` after adding refresh-token session persistence.
 - `git diff --check` passed after adding refresh-token session persistence.
 - `npm run lint`, `npm run build`, and `git diff --check` passed after adding the role/permission system.
+- `npm run lint`, `npm run build`, and `git diff --check` passed after adding the global feedback system.
+- `npm run lint`, `npm run build`, and `git diff --check` passed after connecting storefront product listing/detail to Product API data.
+- `npm run lint`, `npm run build`, and `git diff --check` passed after connecting cart/checkout/order creation.
+- `mvn -q -DskipTests compile` passed in `backend/electronics/` after adding checkout order creation.
+- `npm run lint`, `npm run build`, and `mvn -q -DskipTests compile` passed after adding the authenticated account pages and user profile/order APIs.
+- `npm run lint`, `npm run build`, `git diff --check`, and `mvn -q -DskipTests compile` passed after the Phase 4 backend integration review.
+- Local Vite route smoke checks returned `200` for `/cart` and `/checkout` after connecting checkout/order creation.
 - `mvn clean compile -DskipTests` passed in `backend/electronics/` after adding auth error handlers.
 - `mvn test` failed due existing backend context issues: missing `AddressMapper` bean for `AdminAddressServiceImpl` and a database DDL migration warning for `media.display_order` containing null values.
 - Build still reports a Vite chunk-size warning for a JavaScript bundle over 500 kB.
@@ -341,24 +392,27 @@ Latest validation:
 
 - Admin CRUD pages still use mock data and are not connected to backend APIs.
 - Remaining future client ecommerce routes beyond the implemented homepage, product listing, product detail, cart, checkout, login, register, and wishlist pages are styled placeholders.
-- Public storefront APIs for product browsing, cart, checkout, and customer registration are not complete.
+- A dedicated public storefront product browsing endpoint is still not separate from the configured Product API path.
+- A dedicated backend cart persistence API is not implemented; the active cart is shared local frontend state and checkout creates backend orders.
+- Public customer registration is not complete.
 - The current real JWT login endpoint is the backend admin/staff auth endpoint; customer login should move to a public customer auth endpoint when that API exists.
+- Client checkout/profile routes are customer-session only in the frontend; backend account ownership enforcement should still be tightened when public customer auth is implemented.
 - The frontend refresh-token flow is ready, but the current backend admin auth controller only exposes login/logout; real refresh requires backend `refreshToken` response support and `POST /admin/auth/refresh`.
-- `/checkout` is frontend-auth protected, but checkout submission and payment remain mock/local until public checkout APIs are ready.
+- `/checkout` is frontend-auth protected and creates backend orders, but real online payment gateway submission remains out of scope.
 - Backend `mvn test` is blocked by existing ApplicationContext issues unrelated to the login UI integration.
 - Build output is valid, but Vite reports a large bundle warning that should be handled later with code splitting.
 
 ## Next Phase
 
 ```text
-Phase 4 — Auth + Backend Integration
+Phase 5 — Admin Dashboard System
 ```
 
 Next focus:
 
-- Connect admin CRUD pages to backend APIs one resource at a time.
+- Convert mock admin dashboard pages into authenticated API-backed workflows.
 - Start with admin categories through `frontend/src/api/categoryService.js`.
-- Keep public storefront customer auth, cart, checkout, payment, wishlist, and search on mock/local state until public storefront API contracts are ready.
+- Keep public storefront customer registration, payment, wishlist, homepage products, and search on mock/local state until public storefront API contracts are ready.
 
 ## Backend State
 

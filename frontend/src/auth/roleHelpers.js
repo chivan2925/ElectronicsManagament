@@ -101,22 +101,27 @@ export const APP_PERMISSIONS = Object.freeze({
 });
 
 export const ADMIN_ROUTE_POLICIES = Object.freeze({
-  activityLogs: { roles: [APP_ROLES.admin, APP_ROLES.staff] },
-  bestSellers: { roles: [APP_ROLES.admin, APP_ROLES.staff] },
-  brands: { roles: [APP_ROLES.admin, APP_ROLES.staff] },
-  categories: { roles: [APP_ROLES.admin, APP_ROLES.staff] },
-  coupons: { roles: [APP_ROLES.admin, APP_ROLES.staff] },
-  dashboard: { roles: [APP_ROLES.admin, APP_ROLES.staff] },
-  media: { roles: [APP_ROLES.admin, APP_ROLES.staff] },
-  orders: { roles: [APP_ROLES.admin, APP_ROLES.staff] },
-  products: { roles: [APP_ROLES.admin, APP_ROLES.staff] },
-  revenue: { roles: [APP_ROLES.admin, APP_ROLES.staff] },
+  activityLogs: { permissions: [APP_PERMISSIONS.activityLogView], roles: [APP_ROLES.admin, APP_ROLES.staff] },
+  bestSellers: { permissions: [APP_PERMISSIONS.bestSellerReportView], roles: [APP_ROLES.admin, APP_ROLES.staff] },
+  brands: { permissions: [APP_PERMISSIONS.brandView], roles: [APP_ROLES.admin, APP_ROLES.staff] },
+  categories: { permissions: [APP_PERMISSIONS.categoryView], roles: [APP_ROLES.admin, APP_ROLES.staff] },
+  coupons: { permissions: [APP_PERMISSIONS.couponView], roles: [APP_ROLES.admin, APP_ROLES.staff] },
+  dashboard: { permissions: [APP_PERMISSIONS.dashboardView], roles: [APP_ROLES.admin, APP_ROLES.staff] },
+  media: { permissions: [APP_PERMISSIONS.mediaView], roles: [APP_ROLES.admin, APP_ROLES.staff] },
+  orders: { permissions: [APP_PERMISSIONS.orderView], roles: [APP_ROLES.admin, APP_ROLES.staff] },
+  products: { permissions: [APP_PERMISSIONS.productView], roles: [APP_ROLES.admin, APP_ROLES.staff] },
+  revenue: { permissions: [APP_PERMISSIONS.revenueReportView], roles: [APP_ROLES.admin, APP_ROLES.staff] },
   roles: { roles: [APP_ROLES.admin] },
   root: { roles: [APP_ROLES.admin, APP_ROLES.staff] },
   staff: { roles: [APP_ROLES.admin] },
   users: { roles: [APP_ROLES.admin] },
-  variants: { roles: [APP_ROLES.admin, APP_ROLES.staff] },
-  warehouse: { roles: [APP_ROLES.admin, APP_ROLES.staff] },
+  variants: { permissions: [APP_PERMISSIONS.variantView], roles: [APP_ROLES.admin, APP_ROLES.staff] },
+  warehouse: { permissions: [APP_PERMISSIONS.warehouseView], roles: [APP_ROLES.admin, APP_ROLES.staff] },
+});
+
+export const CLIENT_ROUTE_POLICIES = Object.freeze({
+  account: { allowAdmin: false, roles: [APP_ROLES.user] },
+  checkout: { allowAdmin: false, roles: [APP_ROLES.user] },
 });
 
 const RESOURCE_PERMISSION_MAP = Object.freeze({
@@ -494,7 +499,6 @@ export function getResourceActionPolicy(resource, action) {
 
   if (action === "view") {
     return {
-      mode: ACCESS_MODES.any,
       permissions: permission ? [permission] : [],
       roles: [APP_ROLES.admin, APP_ROLES.staff],
     };

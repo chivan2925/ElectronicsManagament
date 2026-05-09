@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
 import { Heart, PackageCheck, ShoppingCart, Zap } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useCart } from "../../cart";
+import { useToast } from "../ui/toast";
 import useRecentlyViewed from "../../hooks/useRecentlyViewed";
 import useWishlist from "../../hooks/useWishlist";
 import { fadeUp, hoverGlow, hoverLift, imageZoom, tapSoft } from "../../styles/animations";
@@ -28,7 +30,9 @@ function getStockBadge(stock = 0) {
 }
 
 function ProductCard({ product }) {
+  const { addItem } = useCart();
   const { addRecentlyViewed } = useRecentlyViewed();
+  const toast = useToast();
   const { isWishlisted, toggleWishlist } = useWishlist();
   const stockBadge = getStockBadge(product.stock);
   const primaryTag = product.tags?.[0];
@@ -41,6 +45,19 @@ function ProductCard({ product }) {
 
   const handleProductOpen = () => {
     addRecentlyViewed(product);
+  };
+
+  const handleQuickAdd = () => {
+    const result = addItem(product);
+
+    if (!result.ok) {
+      toast.showWarning("Sản phẩm này đang hết hàng hoặc chưa có tồn kho khả dụng.");
+      return;
+    }
+
+    toast.showSuccess("Đã thêm sản phẩm vào giỏ hàng.", {
+      title: "Giỏ hàng đã cập nhật",
+    });
   };
 
   return (
@@ -119,6 +136,7 @@ function ProductCard({ product }) {
               isOutOfStock && "cursor-not-allowed bg-slate-700 text-slate-400 shadow-none hover:bg-slate-700 hover:shadow-none",
             )}
             disabled={isOutOfStock}
+            onClick={handleQuickAdd}
             type="button"
             whileHover={isOutOfStock ? undefined : hoverLift}
             whileTap={isOutOfStock ? undefined : tapSoft}

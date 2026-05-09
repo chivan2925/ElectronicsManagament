@@ -18,13 +18,14 @@ function ProtectedRoute({
   requireAllPermissions = false,
   requiredPermissions = [],
   requiredRoles = [],
+  surface = "store",
   unauthorizedElement,
 }) {
   const location = useLocation();
   const auth = useAuth();
 
   if (auth.loading) {
-    return fallback ?? <RouteLoadingFallback />;
+    return fallback ?? <RouteLoadingFallback surface={surface} />;
   }
 
   if (!auth.isAuthenticated) {

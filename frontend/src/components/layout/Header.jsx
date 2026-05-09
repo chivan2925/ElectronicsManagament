@@ -12,7 +12,9 @@ import {
   X,
   Zap,
 } from "lucide-react";
-import { categories, createMockCartItems } from "../../data";
+import useAuth from "../../auth/useAuth";
+import { useCart } from "../../cart";
+import { categories } from "../../data";
 import { cn } from "../../utils/classNames";
 import CartDrawer from "../cart/CartDrawer";
 import SearchOverlay from "../search/SearchOverlay";
@@ -26,13 +28,12 @@ const headerLinkClass =
 const categoryItems = categories.filter((category) => category.slug !== "tat-ca");
 
 function Header() {
-  const [cartItems, setCartItems] = useState(createMockCartItems);
+  const { isAuthenticated, user } = useAuth();
+  const { itemCount: cartItemCount, items: cartItems, removeItem, subtotal: cartSubtotal, updateQuantity } = useCart();
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const cartItemCount = cartItems.reduce((total, item) => total + item.quantity, 0);
-  const cartSubtotal = cartItems.reduce((total, item) => total + item.product.price * item.quantity, 0);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -59,23 +60,6 @@ function Header() {
     return () => window.removeEventListener("keydown", handleSearchShortcut);
   }, []);
 
-  const handleCartQuantityChange = (itemId, nextQuantity) => {
-    setCartItems((currentItems) =>
-      currentItems.map((item) =>
-        item.id === itemId
-          ? {
-              ...item,
-              quantity: Math.min(Math.max(nextQuantity, 1), item.maxQuantity),
-            }
-          : item,
-      ),
-    );
-  };
-
-  const handleCartRemove = (itemId) => {
-    setCartItems((currentItems) => currentItems.filter((item) => item.id !== itemId));
-  };
-
   const openCartDrawer = () => {
     setIsMobileMenuOpen(false);
     setIsCartOpen(true);
@@ -85,6 +69,10 @@ function Header() {
     setIsMobileMenuOpen(false);
     setIsSearchOpen(true);
   };
+  const accountHref = isAuthenticated ? "/profile" : "/login";
+  const accountLabel = isAuthenticated ? user?.fullName || user?.email || "Tài khoản" : "Đăng nhập / Đăng ký";
+  const compactAccountLabel = "Tài khoản";
+  const ordersHref = isAuthenticated ? "/profile/orders" : "/login";
 
   return (
     <>
@@ -153,7 +141,7 @@ function Header() {
           </button>
 
           <nav className="ml-auto flex shrink-0 items-center gap-1.5 text-sm sm:gap-2">
-            <a className={cn(headerLinkClass, "hidden xl:flex")} href="/">
+            <a className={cn(headerLinkClass, "hidden xl:flex")} href={ordersHref}>
               <PackageSearch size={19} />
               Theo dõi đơn hàng
             </a>
@@ -161,10 +149,10 @@ function Header() {
               <Heart size={19} />
               Yêu thích
             </a>
-            <a className={cn(headerLinkClass, "hidden sm:flex")} href="/login">
+            <a className={cn(headerLinkClass, "hidden sm:flex")} href={accountHref}>
               <UserRound size={19} />
-              <span className="hidden xl:inline">Đăng nhập / Đăng ký</span>
-              <span className="xl:hidden">Tài khoản</span>
+              <span className="hidden max-w-40 truncate xl:inline">{accountLabel}</span>
+              <span className="xl:hidden">{compactAccountLabel}</span>
             </a>
             <button className="premium-transition relative flex h-10 min-w-10 items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.06] px-2 font-bold text-white shadow-inner shadow-white/[0.03] outline-none hover:-translate-y-0.5 hover:border-blue-300/80 hover:bg-blue-500/10 hover:shadow-[0_0_30px_rgba(0,91,255,0.24)] focus-visible:ring-2 focus-visible:ring-blue-300/60 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 sm:h-11 sm:min-w-11 sm:px-3" onClick={openCartDrawer} type="button">
               <ShoppingCart size={20} />
@@ -225,7 +213,7 @@ function Header() {
               </div>
 
               <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                <a className={cn(headerLinkClass, "justify-center border border-white/10 bg-white/[0.04]")} href="/">
+                <a className={cn(headerLinkClass, "justify-center border border-white/10 bg-white/[0.04]")} href={ordersHref}>
                   <PackageSearch size={18} />
                   Theo dõi đơn
                 </a>
@@ -233,7 +221,7 @@ function Header() {
                   <Heart size={18} />
                   Yêu thích
                 </a>
-                <a className={cn(headerLinkClass, "justify-center border border-white/10 bg-white/[0.04] sm:col-span-2")} href="/login">
+                <a className={cn(headerLinkClass, "justify-center border border-white/10 bg-white/[0.04] sm:col-span-2")} href={accountHref}>
                   <UserRound size={18} />
                   Tài khoản
                 </a>
@@ -248,8 +236,8 @@ function Header() {
       itemCount={cartItemCount}
       items={cartItems}
       onClose={() => setIsCartOpen(false)}
-      onQuantityChange={handleCartQuantityChange}
-      onRemove={handleCartRemove}
+      onQuantityChange={updateQuantity}
+      onRemove={removeItem}
       subtotal={cartSubtotal}
     />
     <SearchOverlay isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />

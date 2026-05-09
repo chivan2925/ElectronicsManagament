@@ -105,6 +105,7 @@ export function normalizeApiError(error) {
     isServerError: type === API_ERROR_TYPES.SERVER,
     isTimeout: type === API_ERROR_TYPES.TIMEOUT,
     isUnauthorized: type === API_ERROR_TYPES.UNAUTHORIZED,
+    isValidationError: [400, 422].includes(Number(status)) && Boolean(data?.details ?? data?.errors),
     message: getErrorMessage(type, data, error),
     method: error?.config?.method?.toUpperCase() ?? null,
     path: data?.path ?? error?.config?.url ?? null,

@@ -1,31 +1,73 @@
 import { api } from "./client";
+import { normalizeOrderDetail, normalizeOrderPage } from "./accountMapper";
+import { normalizeOrder } from "./checkoutMapper";
+import { createResourceService } from "./resourceService";
 
-const RESOURCE_PATH = "/admin/orders";
+const ADMIN_RESOURCE_PATH = "/admin/orders";
+const CHECKOUT_RESOURCE_PATH = import.meta.env.VITE_ORDER_API_PATH || "/orders";
+const USER_ORDERS_RESOURCE_PATH = import.meta.env.VITE_USER_ORDER_API_PATH || CHECKOUT_RESOURCE_PATH;
+const adminOrderService = createResourceService(ADMIN_RESOURCE_PATH, { updateMethod: "patch" });
 
-export async function getAll(params = {}) {
-  return api.get(RESOURCE_PATH, { params });
-}
-
-export async function getById(id) {
-  return api.get(`${RESOURCE_PATH}/${id}`);
-}
+export const { getAll, getById, remove, update } = adminOrderService;
 
 export async function create(payload) {
-  return api.post(RESOURCE_PATH, payload);
+  return createOrder(payload);
 }
 
-export async function update(id, payload) {
-  return api.patch(`${RESOURCE_PATH}/${id}`, payload);
+export async function createOrder(payload, config = {}) {
+  const data = await api.post(CHECKOUT_RESOURCE_PATH, payload, {
+    skipGlobalErrorHandler: true,
+    ...config,
+  });
+
+  return normalizeOrder(data);
 }
 
-export async function remove(id) {
-  return api.delete(`${RESOURCE_PATH}/${id}`);
+export async function getUserOrderById(userId, orderId, config = {}) {
+  if (!userId || !orderId) {
+    return null;
+  }
+
+  const { params: configParams, ...requestConfig } = config;
+  const data = await api.get(`${USER_ORDERS_RESOURCE_PATH}/${orderId}`, {
+    ...requestConfig,
+    params: {
+      ...configParams,
+      userId,
+    },
+    skipGlobalErrorHandler: true,
+  });
+
+  return normalizeOrderDetail(data);
+}
+
+export async function getUserOrders(userId, params = {}, config = {}) {
+  if (!userId) {
+    return normalizeOrderPage([]);
+  }
+
+  const { params: configParams, ...requestConfig } = config;
+  const data = await api.get(USER_ORDERS_RESOURCE_PATH, {
+    ...requestConfig,
+    params: {
+      ...params,
+      ...configParams,
+      userId,
+    },
+    skipGlobalErrorHandler: true,
+  });
+
+  return normalizeOrderPage(data);
 }
 
 const orderService = {
+  ...adminOrderService,
   create,
+  createOrder,
   getAll,
   getById,
+  getUserOrderById,
+  getUserOrders,
   remove,
   update,
 };

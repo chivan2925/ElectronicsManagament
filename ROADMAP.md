@@ -7,7 +7,7 @@ This roadmap defines the planned phases for ElectronicsManagement.
 The project is currently in:
 
 ```text
-Phase 3 — Client Ecommerce
+Ready for Phase 5 — Admin Dashboard System
 ```
 
 ## Product Scope
@@ -32,9 +32,9 @@ ElectronicsManagement is built for an electronics and gaming catalog with these 
 | --- | --- | --- | --- |
 | 1 | Phase 1 — Frontend Foundation | Completed | Stabilize frontend structure, homepage, UI direction, and AI context docs. |
 | 2 | Design System | Completed | Formalize reusable UI patterns for client and admin. |
-| 3 | Client Ecommerce | Current | Build product listing, product detail, cart, checkout UI, and customer flows. |
-| 4 | Auth + API | Planned | Add admin login, protected routes, API modules, and real data integration. |
-| 5 | Admin Dashboard | Planned | Convert mock admin pages into authenticated API-backed CRUD workflows. |
+| 3 | Client Ecommerce | Completed | Build product listing, product detail, cart, checkout UI, and customer flows. |
+| 4 | Auth + API | Completed | Add admin login, protected routes, API modules, and real data integration. |
+| 5 | Admin Dashboard | Current | Convert mock admin pages into authenticated API-backed CRUD workflows. |
 | 6 | Ecommerce Core | Planned | Implement real browsing, cart, checkout, payment, and order tracking. |
 | 7 | Advanced Features | Planned | Add reviews, returns, coupons, search depth, reports, and richer management tools. |
 | 8 | Production + Deploy | Planned | Harden config, secrets, migrations, testing, performance, and deployment. |
@@ -178,8 +178,8 @@ Key tasks:
 
 ## Current Priority
 
-1. Build Phase 3 client ecommerce pages with mock data.
+1. Start Phase 5 admin dashboard system.
 2. Preserve homepage layout while improving quality.
 3. Reuse Phase 2 design-system primitives and visual patterns.
 4. Keep AI context files up to date.
-5. Start Phase 4 with admin login and API modules only after the frontend foundation is stable.
+5. Connect admin CRUD pages to backend APIs one resource at a time, starting with categories.

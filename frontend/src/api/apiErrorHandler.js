@@ -1,4 +1,5 @@
-import { clearAuthSession, notifyAuthUnauthorized } from "../auth/authStorage";
+import { clearAuthSession, getStoredRefreshToken, notifyAuthUnauthorized } from "../auth/authStorage";
+import { notifyGlobalApiError } from "./apiErrorEvents";
 import { normalizeApiError } from "./normalizeApiError";
 import { refreshAccessToken } from "./refreshTokenService";
 
@@ -94,6 +95,7 @@ export function canRefreshUnauthorizedRequest(error, apiError = normalizeApiErro
   return Boolean(
     apiError.isUnauthorized &&
       config &&
+      getStoredRefreshToken() &&
       !config.__isRetryAfterRefresh &&
       !config.skipAuthRefresh &&
       !config.skipUnauthorizedHandler,
@@ -115,6 +117,7 @@ export function createApiErrorHandler(client) {
         return client.request(error.config);
       } catch {
         handleUnauthorizedApiError(error, apiError);
+        notifyGlobalApiError(error, apiError);
         return Promise.reject(error);
       }
     }
@@ -126,6 +129,8 @@ export function createApiErrorHandler(client) {
       await wait(getRetryDelay(error.config));
       return client.request(error.config);
     }
+
+    notifyGlobalApiError(error, apiError);
 
     return Promise.reject(error);
   };

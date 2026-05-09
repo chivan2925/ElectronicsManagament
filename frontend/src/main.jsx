@@ -3,17 +3,23 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import AuthProvider from "./auth/AuthProvider";
 import App from "./App";
+import { CartProvider } from "./cart";
+import { GlobalErrorBoundary } from "./components/ui/feedback";
 import { ToastProvider } from "./components/ui/toast";
 import "./styles/index.css";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <BrowserRouter>
-      <AuthProvider>
-        <ToastProvider>
-          <App />
-        </ToastProvider>
-      </AuthProvider>
-    </BrowserRouter>
+    <GlobalErrorBoundary>
+      <BrowserRouter>
+        <AuthProvider>
+          <ToastProvider>
+            <CartProvider>
+              <App />
+            </CartProvider>
+          </ToastProvider>
+        </AuthProvider>
+      </BrowserRouter>
+    </GlobalErrorBoundary>
   </StrictMode>,
 );

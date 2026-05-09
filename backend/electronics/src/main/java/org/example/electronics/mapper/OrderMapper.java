@@ -17,6 +17,7 @@ public interface OrderMapper {
 
     @Mapping(source = "user.id", target = "userId")
     @Mapping(source = "user.fullName", target = "userFullName")
+    @Mapping(source = "paymentMethodType", target = "paymentMethod")
     AdminOrderResponseDTO toAdminResponseDTO(OrderEntity orderEntity);
 
     @Mapping(source = "user.id", target = "userId")
@@ -24,6 +25,7 @@ public interface OrderMapper {
     @Mapping(source = "user.email", target = "userEmail")
     @Mapping(source = "user.phoneNumber", target = "userPhoneNumber")
     @Mapping(source = "coupon.code", target = "couponCode")
+    @Mapping(source = "paymentMethodType", target = "paymentMethod")
     AdminOrderDetailResponseDTO toAdminDetailResponseDTO(OrderEntity orderEntity);
 
     @Mapping(source = "variant.id", target = "variantId")

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ChevronRight, ClipboardCheck, CreditCard, PackageSearch, ShieldCheck, Truck } from "lucide-react";
@@ -8,10 +8,14 @@ import PaymentMethodSelector from "../../components/checkout/PaymentMethodSelect
 import ShippingMethodSelector from "../../components/checkout/ShippingMethodSelector";
 import AnnouncementBar from "../../components/layout/AnnouncementBar";
 import Header from "../../components/layout/Header";
+import { useCart } from "../../cart";
 import Badge from "../../components/ui/Badge";
 import Button from "../../components/ui/Button";
 import Container from "../../components/ui/Container";
-import { createMockCartItems } from "../../data";
+import { useToast } from "../../components/ui/toast";
+import useCheckoutCoupon from "../../hooks/useCheckoutCoupon";
+import useCheckoutOrder from "../../hooks/useCheckoutOrder";
+import useCheckoutProfile from "../../hooks/useCheckoutProfile";
 import { fadeUp, staggerContainer } from "../../styles/animations";
 import { formatCurrency } from "../../utils/formatters";
 
@@ -35,6 +39,7 @@ const paymentMethods = [
   {
     badge: "Khuyến nghị",
     description: "Thanh toán khi nhận hàng, kiểm tra thông tin đơn trước khi trả tiền.",
+    apiValue: "CASH",
     id: "cod",
     name: "COD",
     placeholder: false,
@@ -42,6 +47,7 @@ const paymentMethods = [
   {
     badge: "Sắp có",
     description: "Thanh toán qua cổng VNPay sẽ được bật khi hệ thống thanh toán sẵn sàng.",
+    apiValue: "DIGITAL",
     id: "vnpay",
     name: "VNPay",
     placeholder: true,
@@ -49,6 +55,7 @@ const paymentMethods = [
   {
     badge: "Sắp có",
     description: "Thanh toán ví MoMo sẽ được bật khi hệ thống thanh toán sẵn sàng.",
+    apiValue: "DIGITAL",
     id: "momo",
     name: "MoMo",
     placeholder: true,
@@ -98,18 +105,59 @@ function validateCheckout(values) {
 }
 
 function Checkout() {
-  const [cartItems] = useState(createMockCartItems);
+  const { itemCount, items: cartItems, subtotal } = useCart();
+  const toast = useToast();
+  const { profile } = useCheckoutProfile();
   const [values, setValues] = useState(initialCheckoutValues);
+  const [profileApplied, setProfileApplied] = useState(false);
   const [touchedFields, setTouchedFields] = useState({});
   const [submitAttempted, setSubmitAttempted] = useState(false);
   const [shippingMethodId, setShippingMethodId] = useState("standard");
   const [paymentMethodId, setPaymentMethodId] = useState("cod");
   const [couponCode, setCouponCode] = useState("");
-  const [appliedCoupon, setAppliedCoupon] = useState("");
   const [orderPlaced, setOrderPlaced] = useState(false);
+  const {
+    appliedCoupon,
+    applyCoupon,
+    couponDiscount,
+    couponError,
+    couponFeedback,
+    isApplyingCoupon,
+  } = useCheckoutCoupon({ items: cartItems, subtotal });
+  const {
+    createOrder,
+    createOrderError,
+    createdOrder,
+    isCreatingOrder,
+    resetOrder,
+  } = useCheckoutOrder();
 
-  const itemCount = cartItems.reduce((total, item) => total + item.quantity, 0);
-  const subtotal = cartItems.reduce((total, item) => total + item.product.price * item.quantity, 0);
+  useEffect(() => {
+    if (profileApplied || !profile) {
+      return undefined;
+    }
+
+    let isActive = true;
+
+    Promise.resolve().then(() => {
+      if (!isActive) {
+        return;
+      }
+
+      setValues((currentValues) => ({
+        ...currentValues,
+        email: currentValues.email || profile.email,
+        fullName: currentValues.fullName || profile.fullName,
+        phone: currentValues.phone || profile.phone,
+      }));
+      setProfileApplied(true);
+    });
+
+    return () => {
+      isActive = false;
+    };
+  }, [profile, profileApplied]);
+
   const isFreeShipping = subtotal >= FREE_SHIPPING_THRESHOLD;
   const shippingMethods = useMemo(
     () => [
@@ -121,6 +169,7 @@ function Checkout() {
         id: "standard",
         name: "Giao tiêu chuẩn",
         price: isFreeShipping ? 0 : STANDARD_SHIPPING_FEE,
+        provider: "GHN",
       },
       {
         description: "Ưu tiên xử lý đơn trong ngày làm việc, phù hợp khi cần nhận sớm.",
@@ -128,6 +177,7 @@ function Checkout() {
         id: "express",
         name: "Giao nhanh",
         price: 89_000,
+        provider: "GHTK",
       },
       {
         description: "Nhận tại cửa hàng sau khi có thông báo xác nhận đơn.",
@@ -135,6 +185,7 @@ function Checkout() {
         id: "pickup",
         name: "Nhận tại cửa hàng",
         price: 0,
+        provider: "OTHER",
       },
     ],
     [isFreeShipping],
@@ -152,10 +203,6 @@ function Checkout() {
 
     return currentErrors;
   }, {});
-  const couponDiscount = appliedCoupon ? Math.min(Math.round(subtotal * 0.05), 750_000) : 0;
-  const couponFeedback = appliedCoupon
-    ? `Đã áp dụng ${appliedCoupon.toUpperCase()} - giảm ${formatCurrency(couponDiscount)}`
-    : "";
   const validationMessage =
     submitAttempted && Object.keys(validationErrors).length
       ? "Vui lòng kiểm tra các trường bắt buộc trước khi xác nhận đơn hàng."
@@ -167,6 +214,7 @@ function Checkout() {
       [fieldName]: nextValue,
     }));
     setOrderPlaced(false);
+    resetOrder();
   };
 
   const handleFieldBlur = (fieldName) => {
@@ -176,18 +224,28 @@ function Checkout() {
     }));
   };
 
-  const handleCouponApply = () => {
+  const handleCouponApply = async () => {
     const normalizedCoupon = couponCode.trim();
 
     if (!normalizedCoupon) {
       return;
     }
 
-    setAppliedCoupon(normalizedCoupon);
-    setOrderPlaced(false);
+    try {
+      await applyCoupon(normalizedCoupon);
+      toast.showSuccess("Mã giảm giá đã được áp dụng.", {
+        title: "Coupon hợp lệ",
+      });
+      setOrderPlaced(false);
+      resetOrder();
+    } catch (error) {
+      toast.showApiError(error, {
+        title: "Coupon chưa hợp lệ",
+      });
+    }
   };
 
-  const handlePlaceOrder = () => {
+  const handlePlaceOrder = async () => {
     setSubmitAttempted(true);
     setTouchedFields(
       Object.keys(initialCheckoutValues).reduce(
@@ -208,7 +266,25 @@ function Checkout() {
       return;
     }
 
-    setOrderPlaced(true);
+    try {
+      const order = await createOrder({
+        appliedCoupon,
+        items: cartItems,
+        paymentMethod: selectedPaymentMethod,
+        shippingMethod: selectedShippingMethod,
+        values,
+      });
+
+      setOrderPlaced(true);
+      toast.showSuccess(order?.code ? `Đơn hàng ${order.code} đã được tạo.` : "Đơn hàng đã được tạo.", {
+        title: "Đặt hàng thành công",
+      });
+    } catch (error) {
+      setOrderPlaced(false);
+      toast.showApiError(error, {
+        title: "Chưa tạo được đơn hàng",
+      });
+    }
   };
 
   if (!cartItems.length) {
@@ -306,6 +382,7 @@ function Checkout() {
               onChange={(nextMethodId) => {
                 setShippingMethodId(nextMethodId);
                 setOrderPlaced(false);
+                resetOrder();
               }}
               options={shippingMethods}
               value={shippingMethodId}
@@ -314,6 +391,7 @@ function Checkout() {
               onChange={(nextMethodId) => {
                 setPaymentMethodId(nextMethodId);
                 setOrderPlaced(false);
+                resetOrder();
               }}
               options={paymentMethods}
               value={paymentMethodId}
@@ -325,15 +403,21 @@ function Checkout() {
               appliedCoupon={appliedCoupon}
               couponCode={couponCode}
               couponDiscount={couponDiscount}
+              couponError={couponError}
               couponFeedback={couponFeedback}
+              createdOrder={createdOrder}
               itemCount={itemCount}
               items={cartItems}
+              isApplyingCoupon={isApplyingCoupon}
+              isSubmitting={isCreatingOrder}
               onCouponApply={handleCouponApply}
               onCouponChange={(nextCouponCode) => {
                 setCouponCode(nextCouponCode);
                 setOrderPlaced(false);
+                resetOrder();
               }}
               onPlaceOrder={handlePlaceOrder}
+              orderError={createOrderError}
               orderPlaced={orderPlaced}
               paymentMethod={selectedPaymentMethod}
               shippingFee={selectedShippingMethod.price}
