@@ -79,6 +79,31 @@ export function normalizeUser(payload) {
   };
 }
 
+function collectRolePermissions(roles) {
+  if (!roles) {
+    return [];
+  }
+
+  if (Array.isArray(roles)) {
+    return roles.flatMap((role) => collectRolePermissions(role));
+  }
+
+  if (roles instanceof Set) {
+    return Array.from(roles).flatMap((role) => collectRolePermissions(role));
+  }
+
+  if (typeof roles === "object") {
+    return [
+      roles.permissions,
+      roles.authorities,
+      roles.permissionCodes,
+      roles.permissionNames,
+    ];
+  }
+
+  return [];
+}
+
 export function buildAuthSession(payload = {}) {
   const user = normalizeUser(payload);
   const tokens = payload.tokens ?? {};
@@ -90,8 +115,11 @@ export function buildAuthSession(payload = {}) {
   const permissions = normalizePermissions([
     payload.permissions,
     payload.authorities,
+    collectRolePermissions(payload.roles),
+    collectRolePermissions(payload.role),
     user?.permissions,
     user?.authorities,
+    collectRolePermissions(user?.roles),
     user?.role?.permissions,
   ]);
 
