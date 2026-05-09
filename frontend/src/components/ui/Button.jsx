@@ -31,7 +31,7 @@ function Button({
     Component,
     {
       className: cn(
-        "premium-transition inline-flex items-center justify-center gap-2 font-black outline-none focus-visible:ring-2 focus-visible:ring-blue-300/60 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950",
+        "transition-default inline-flex items-center justify-center gap-2 font-black outline-none focus-visible:ring-2 focus-visible:ring-blue-300/60 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950",
         variantClasses[variant] || variantClasses.primary,
         sizeClasses[size] || sizeClasses.md,
         fullWidth && "w-full",

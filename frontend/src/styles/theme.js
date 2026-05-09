@@ -1,0 +1,85 @@
+export const theme = {
+  colors: {
+    primary: "#005BFF",
+    primaryHover: "#3B82F6",
+    background: "#050B14",
+    surface: "#07111F",
+    surfaceSecondary: "#0F172A",
+    border: "#1E293B",
+    textPrimary: "#FFFFFF",
+    textSecondary: "#94A3B8",
+    success: "#16A34A",
+    danger: "#EF4444",
+    warning: "#F59E0B",
+    adminBackground: "#F6F8FB",
+    adminSurface: "#FFFFFF",
+    adminBorder: "#E5E7EB",
+    adminText: "#111827",
+    adminTextSecondary: "#6B7280",
+  },
+  radius: {
+    sm: "0.5rem",
+    md: "0.75rem",
+    lg: "1rem",
+    xl: "1.25rem",
+    full: "999px",
+  },
+  spacing: {
+    8: "0.5rem",
+    12: "0.75rem",
+    16: "1rem",
+    20: "1.25rem",
+    24: "1.5rem",
+    32: "2rem",
+    40: "2.5rem",
+    48: "3rem",
+    64: "4rem",
+  },
+  shadows: {
+    adminCard: "0 1px 2px rgba(15, 23, 42, 0.06)",
+    cardDark: "0 24px 70px rgba(0, 0, 0, 0.28)",
+    cardDarkHover: "0 24px 70px rgba(0, 0, 0, 0.35)",
+    blueGlow: "0 0 30px rgba(0, 91, 255, 0.22)",
+    blueGlowStrong: "0 0 44px rgba(0, 91, 255, 0.65)",
+    innerHighlight: "inset 0 1px 0 rgba(255, 255, 255, 0.06)",
+  },
+  typography: {
+    display: {
+      fontSize: "clamp(2.25rem, 5vw, 3.75rem)",
+      lineHeight: "1.12",
+      fontWeight: "900",
+    },
+    heading: {
+      fontSize: "clamp(2rem, 3.5vw, 3rem)",
+      lineHeight: "1.18",
+      fontWeight: "900",
+    },
+    title: {
+      fontSize: "clamp(1.5rem, 2.4vw, 1.875rem)",
+      lineHeight: "1.28",
+      fontWeight: "900",
+    },
+    body: {
+      fontSize: "1rem",
+      lineHeight: "1.7",
+      fontWeight: "500",
+    },
+    caption: {
+      fontSize: "0.75rem",
+      lineHeight: "1.55",
+      fontWeight: "600",
+    },
+    muted: {
+      lineHeight: "1.65",
+      fontWeight: "500",
+    },
+  },
+  transitions: {
+    fast: "160ms ease",
+    default: "220ms ease",
+    premium: "280ms cubic-bezier(0.22, 1, 0.36, 1)",
+    slow: "420ms ease",
+  },
+};
+
+export default theme;

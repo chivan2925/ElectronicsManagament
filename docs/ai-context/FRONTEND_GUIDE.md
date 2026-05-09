@@ -17,6 +17,7 @@ Phase 1 — Frontend Foundation
 - Tailwind CSS
 - React Router
 - Axios
+- Framer Motion
 - lucide-react
 - Recharts
 
@@ -75,6 +76,7 @@ frontend/src/
 │  ├─ layout/
 │  │  └─ admin/
 │  ├─ product/
+│  ├─ skeletons/
 │  └─ ui/
 │     ├─ Badge.jsx
 │     ├─ Button.jsx
@@ -113,7 +115,11 @@ frontend/src/
 │  └─ AppRoutes.jsx
 ├─ services/
 ├─ styles/
+│  ├─ globals.css
+│  ├─ animations.js
 │  ├─ tokens.js
+│  ├─ theme.js
+│  ├─ utilities.css
 │  └─ index.css
 ├─ utils/
 │  └─ formatters.js
@@ -133,12 +139,16 @@ frontend/src/
 
 Token sources:
 
-- `src/styles/tokens.js`: JavaScript design tokens used by Tailwind config and future JS-driven UI logic.
-- `src/styles/index.css`: CSS custom properties and shared utilities such as `store-page-shell`, `store-glass`, `store-glass-soft`, `neon-blue-glow`, and `premium-transition`.
+- `src/styles/theme.js`: primary JavaScript theme for ecommerce colors, radius, shadows, and transitions.
+- `src/styles/tokens.js`: Tailwind-facing design tokens derived from the theme.
+- `src/styles/globals.css`: CSS custom properties and global defaults.
+- `src/styles/utilities.css`: reusable utilities such as `card-dark`, `card-hover`, `blue-glow`, `section-spacing`, `container-default`, and `transition-default`.
+- `src/styles/animations.js`: reusable Framer Motion presets for subtle storefront interactions.
+- `src/styles/index.css`: style entrypoint imported by `src/main.jsx`.
 
 Token groups:
 
-- colors
+- colors, including `primary`, `primaryHover`, `background`, `surface`, `surfaceSecondary`, `border`, `textPrimary`, `textSecondary`, `success`, `danger`, and `warning`
 - spacing
 - radius
 - shadows
@@ -188,6 +198,18 @@ Shared frontend primitives live in `src/components/ui`:
 - `Rating.jsx`: star rating with optional review count.
 
 Use these primitives for new frontend work unless a feature needs a clearly different interaction pattern.
+
+## Skeleton Loading
+
+Shared storefront skeleton components live in `src/components/skeletons`:
+
+- `HeaderSkeleton.jsx`
+- `BannerSkeleton.jsx`
+- `CategorySkeleton.jsx`
+- `ProductCardSkeleton.jsx`
+- `SkeletonBlock.jsx`
+
+Use these components for dark ecommerce loading states before connecting real API data.
 
 ## Future Structure
 

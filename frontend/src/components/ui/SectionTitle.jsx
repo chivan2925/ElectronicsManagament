@@ -10,10 +10,10 @@ function SectionTitle({
   titleClassName,
 }) {
   return (
-    <div className={cn("mb-5 flex items-end justify-between gap-4", className)}>
+    <div className={cn("flex-between mb-5 items-end gap-4", className)}>
       <div>
-        <h2 className={cn("text-2xl font-black leading-tight text-white md:text-3xl", titleClassName)}>{title}</h2>
-        {subtitle && <p className="mt-2 text-sm font-medium text-slate-400">{subtitle}</p>}
+        <h2 className={cn("text-section", titleClassName)}>{title}</h2>
+        {subtitle && <p className="text-muted mt-2 text-sm">{subtitle}</p>}
       </div>
 
       {action ||

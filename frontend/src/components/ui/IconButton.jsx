@@ -30,7 +30,7 @@ function IconButton({
     Component,
     {
       className: cn(
-        "premium-transition inline-flex shrink-0 items-center justify-center outline-none focus-visible:ring-2 focus-visible:ring-blue-300/60 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950",
+        "transition-default inline-flex shrink-0 items-center justify-center outline-none focus-visible:ring-2 focus-visible:ring-blue-300/60 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950",
         variantClasses[variant] || variantClasses.ghost,
         sizeClasses[size] || sizeClasses.md,
         className,

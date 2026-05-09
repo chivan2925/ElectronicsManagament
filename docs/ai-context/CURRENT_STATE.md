@@ -20,7 +20,21 @@ The client homepage exists and has a dark gaming ecommerce visual direction. The
 
 The frontend folder structure has been normalized without changing the current visual UI.
 
-The frontend now has a design token system for shared colors, spacing, radius, shadows, typography, z-index, and transitions.
+The frontend now has a theme system for shared colors, spacing, radius, shadows, typography, z-index, and transitions.
+
+The storefront typography system now includes display, heading, title, body, caption, price, card-title, and muted text utilities.
+
+The storefront spacing and layout system now includes page, section, grid, and flex utilities for consistent ecommerce rhythm.
+
+The storefront motion system now uses Framer Motion presets for subtle fade, stagger, hover lift, glow, and image zoom interactions.
+
+The storefront product card pattern now has production-style ecommerce polish with improved image framing, discount and stock badges, wishlist placeholder, rating treatment, pricing area, and quick-add CTA.
+
+The storefront header now has production-style ecommerce polish with scroll-aware sticky blur, improved search, category dropdown, cart badge motion, and a responsive mobile menu.
+
+The homepage visual system now has stronger production-level depth through layered dark gradients, subtle texture, hero lighting, neon promo accents, and section separation.
+
+The storefront now has a reusable dark skeleton loading system with shimmer placeholders for headers, banners, categories, and product cards.
 
 The frontend now has shared reusable UI primitives for buttons, cards, badges, inputs, section titles, icon buttons, containers, prices, and ratings.
 
@@ -41,6 +55,10 @@ Design System + Client Ecommerce pages
 - Added client routes and admin routes with styled placeholders where workflows are not implemented yet.
 - Added shared UI primitives for common buttons, cards, badges, inputs, section titles, icon buttons, containers, prices, and ratings.
 - Added design tokens and shared CSS utilities for frontend styling.
+- Added a normalized ecommerce theme system with `theme.js`, `globals.css`, and `utilities.css`.
+- Added reusable typography utilities for ecommerce hierarchy and dark-theme readability.
+- Added reusable spacing/layout utilities for page containers, sections, product grids, category grids, and common flex alignment.
+- Added reusable skeleton loading components for storefront loading states.
 - Added a shared Axios client and flat API service modules under `frontend/src/api`.
 - Modularized mock data under `frontend/src/data`.
 - Removed the leftover empty `frontend/src/components/admin` directory during review.
@@ -53,6 +71,7 @@ Current stack:
 - Tailwind CSS
 - React Router
 - Axios
+- Framer Motion
 - lucide-react
 - Recharts
 
@@ -105,11 +124,22 @@ Current frontend structure:
 - Client homepage components live in `frontend/src/components/home/`.
 - Client layout components live in `frontend/src/components/layout/`.
 - Product components live in `frontend/src/components/product/`.
+- Skeleton loading components live in `frontend/src/components/skeletons/`.
 - Admin layout components live in `frontend/src/components/layout/admin/`.
 - Shared reusable UI components live in `frontend/src/components/ui/`.
 - Admin-specific reusable UI components live in `frontend/src/components/ui/admin/`.
 - Design tokens live in `frontend/src/styles/tokens.js`.
-- Styles entrypoint and CSS variables live in `frontend/src/styles/index.css`.
+- The primary theme object lives in `frontend/src/styles/theme.js`.
+- Motion presets live in `frontend/src/styles/animations.js`.
+- CSS variables and global defaults live in `frontend/src/styles/globals.css`.
+- Reusable utility classes live in `frontend/src/styles/utilities.css`.
+- The styles entrypoint remains `frontend/src/styles/index.css`.
+- Typography utilities include `text-display`, `text-heading`, `text-section`, `text-card-title`, `text-price`, and `text-muted`.
+- Layout utilities include `page-container`, `section-wrapper`, `grid-products`, `grid-categories`, `flex-between`, and `flex-center`.
+- Spacing scale uses 8, 12, 16, 20, 24, 32, 40, 48, and 64 pixel steps.
+- Motion presets include `fadeIn`, `fadeUp`, `staggerContainer`, `hoverLift`, `hoverGlow`, and `imageZoom`.
+- Skeleton components include `HeaderSkeleton`, `BannerSkeleton`, `CategorySkeleton`, `ProductCardSkeleton`, and shared `SkeletonBlock`.
+- Skeleton styling uses the `skeleton-shimmer` and `skeleton-card` utilities.
 - No empty source directories were found after the Phase 1 review cleanup.
 
 Homepage state:
@@ -122,6 +152,15 @@ Homepage state:
 - The homepage shell now uses the shared `store-page-shell` utility with the same dark radial background.
 - Homepage now uses shared UI primitives where appropriate without intentionally changing layout.
 - Homepage now receives mock categories, products, promotions, and service data from `src/data`.
+- Shared primitives now use the normalized `container-default` and `transition-default` utilities where appropriate.
+- Homepage hero title, section headings, product names, prices, flash sale text, and service bar copy now use the shared typography utilities.
+- Homepage page container, section rhythm, category grid, product grid, flash sale header, and hero media alignment now use shared layout utilities.
+- Homepage product cards, category cards, hero buttons, promo cards, flash sale card, and service cards now use subtle Framer Motion interactions.
+- Homepage product cards now include polished image stages, wishlist placeholders, stock badges, stronger pricing treatment, and quick-add CTAs.
+- Flash sale card now shares the polished badge, stock, image glow, and CTA treatment.
+- Header now uses a sticky scroll-aware blurred background, premium search bar, desktop category dropdown, animated cart badge, and responsive mobile menu.
+- Homepage background, hero banner, promo cards, category cards, service bar, and section separators now have deeper production ecommerce visual polish.
+- Homepage now includes a short mock loading state demo that renders dark shimmer skeletons before showing mock data.
 - `/` still renders the existing homepage.
 - Client routes that are not fully implemented render dark ecommerce placeholder pages.
 - `/admin/login` renders an admin auth placeholder page.
@@ -129,8 +168,8 @@ Homepage state:
 
 Latest validation:
 
-- `npm run lint` passed in `frontend/` after the Phase 1 review.
-- `npm run build` passed in `frontend/` after the Phase 1 review.
+- `npm run lint` passed in `frontend/` after the skeleton loading system update.
+- `npm run build` passed in `frontend/` after the skeleton loading system update.
 - Build still reports a Vite chunk-size warning for a JavaScript bundle over 500 kB.
 
 ## Known Issues

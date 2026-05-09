@@ -33,12 +33,19 @@ Next phase — Design System + Client Ecommerce pages
 
 ### Design System Preparation
 
-- Expand usage of the token system where it reduces repeated classes without changing UI.
+- Expand usage of the theme utilities where it reduces repeated classes without changing UI.
+- Continue applying typography utilities to new client ecommerce pages.
+- Continue applying spacing/layout utilities to new client ecommerce pages.
+- Continue applying the shared Framer Motion presets to new client ecommerce cards and CTAs.
+- Reuse the polished `ProductCard` pattern on product listing and recommendation sections.
+- Reuse the polished storefront header interaction patterns on future client ecommerce pages.
+- Reuse the homepage visual depth patterns on future client ecommerce pages without changing their layout structure.
+- Reuse `src/components/skeletons` for future mock-backed and API-backed loading states.
 - Reuse `src/components/ui` primitives before creating one-off button, badge, price, rating, card, input, or section-title markup.
 - Normalize section headings.
 - Define reusable client product card patterns.
 - Define reusable admin table/action patterns.
-- Keep `frontend/src/styles/tokens.js` and CSS variables in `frontend/src/styles/index.css` aligned.
+- Keep `frontend/src/styles/theme.js`, `tokens.js`, `globals.css`, and `utilities.css` aligned.
 
 ### Client Ecommerce
 
@@ -46,6 +53,7 @@ Next phase — Design System + Client Ecommerce pages
 - Replace cart, checkout, login, and register placeholders with real mock flows after product pages.
 - Add category route/page when the category browsing plan is ready.
 - Wire product cards and header links into the new client routes.
+- Replace the homepage mock loading timer with real loading state when storefront data integration begins.
 
 ### Auth + API Preparation
 

@@ -95,3 +95,88 @@ Always update this file after meaningful work.
 - Documented Phase 1 completed items, known issues, and the next phase in `docs/ai-context/CURRENT_STATE.md`.
 - Updated `docs/ai-context/NEXT_TASKS.md` toward Design System + Client Ecommerce pages.
 - Verified `npm run lint` and `npm run build` pass after the review. Build still reports the existing Vite chunk-size warning.
+
+### Theme System Standardization
+
+- Added `frontend/src/styles/theme.js` as the primary ecommerce theme source for colors, shadows, radius, and transitions.
+- Split global CSS into `frontend/src/styles/globals.css` and reusable utilities into `frontend/src/styles/utilities.css`.
+- Kept `frontend/src/styles/index.css` as the single stylesheet entrypoint imported by `src/main.jsx`.
+- Added reusable storefront utility classes: `card-dark`, `card-hover`, `blue-glow`, `section-spacing`, `container-default`, and `transition-default`.
+- Updated `frontend/src/styles/tokens.js` to derive Tailwind-facing values from `theme.js`.
+- Lightly refactored shared `Button`, `IconButton`, `Card`, and `Container` primitives to use the normalized utility classes where appropriate.
+- Preserved the existing homepage layout and visual direction.
+- Updated `docs/ai-context/UI_REFERENCE.md`, `CURRENT_STATE.md`, `FRONTEND_GUIDE.md`, and `NEXT_TASKS.md` for the normalized theme system.
+- Verified `npm run lint` and `npm run build` pass after the theme update. Build still reports the existing Vite chunk-size warning.
+
+### Typography System Standardization
+
+- Added storefront typography scale support for display, heading, title, body, caption, muted text, card title, and price styles.
+- Added reusable typography utilities in `frontend/src/styles/utilities.css`: `text-display`, `text-heading`, `text-section`, `text-card-title`, `text-price`, and `text-muted`.
+- Added typography values to `frontend/src/styles/theme.js`, `tokens.js`, and CSS variables in `globals.css`.
+- Refactored homepage hero title, section titles, product names, flash sale text, service bar text, and shared price rendering to use typography utilities.
+- Preserved homepage layout and dark gaming theme.
+- Updated `docs/ai-context/UI_REFERENCE.md`, `CURRENT_STATE.md`, and `NEXT_TASKS.md`.
+- Verified `npm run lint` and `npm run build` pass after the typography update. Build still reports the existing Vite chunk-size warning.
+
+### Spacing And Layout System
+
+- Added storefront spacing scale values for 8, 12, 16, 20, 24, 32, 40, 48, and 64 pixel steps.
+- Added reusable layout utilities in `frontend/src/styles/utilities.css`: `page-container`, `section-wrapper`, `grid-products`, `grid-categories`, `flex-between`, and `flex-center`.
+- Updated `frontend/src/styles/theme.js`, `tokens.js`, and `globals.css` with the normalized spacing/layout values.
+- Lightly refactored the homepage container, section rhythm, product grid, category grid, flash sale header, and hero media alignment to use shared layout utilities.
+- Preserved the existing homepage visual direction and section structure.
+- Updated `docs/ai-context/CURRENT_STATE.md`, `NEXT_TASKS.md`, and `UI_REFERENCE.md`.
+- Verified `npm run lint` and `npm run build` pass after the spacing/layout update. Build still reports the existing Vite chunk-size warning.
+
+### Motion System
+
+- Added `framer-motion` to the frontend dependencies.
+- Added reusable motion presets in `frontend/src/styles/animations.js`: `fadeIn`, `fadeUp`, `staggerContainer`, `hoverLift`, `hoverGlow`, and `imageZoom`.
+- Applied subtle motion to homepage product cards, category cards, hero buttons, promo cards, flash sale card, and service cards.
+- Kept hover effects lightweight with small translate, glow, and image zoom interactions.
+- Preserved the existing homepage layout and section order.
+- Updated `docs/ai-context/UI_REFERENCE.md`, `CURRENT_STATE.md`, and `NEXT_TASKS.md`.
+- Verified `npm run lint` and `npm run build` pass after the motion update. Build still reports the existing Vite chunk-size warning.
+
+### Product Card Polish
+
+- Polished `frontend/src/components/product/ProductCard.jsx` for a more production-ready gaming ecommerce card.
+- Improved product image framing, glow treatment, hover behavior, discount badge, rating section, and pricing area.
+- Added wishlist button placeholder, stock badge placeholder, primary tag chip, and quick-add CTA without changing product data shape.
+- Lightly polished `frontend/src/components/home/FlashSaleCard.jsx` to align with the upgraded product card treatment.
+- Preserved the homepage section structure and dark storefront theme.
+- Updated `docs/ai-context/CURRENT_STATE.md` and `NEXT_TASKS.md`.
+- Verified `npm run lint` and `npm run build` pass after the product card polish. Build still reports the existing Vite chunk-size warning.
+
+### Header And Navbar Polish
+
+- Polished `frontend/src/components/layout/Header.jsx` for a more production-ready ecommerce navbar.
+- Added scroll-aware sticky header styling with dark transparent background, stronger backdrop blur, smooth transition, and premium shadow treatment.
+- Improved search bar spacing, dark input quality, and subtle focus glow.
+- Added a desktop category dropdown using the existing catalog mock data.
+- Added subtle cart badge animation with Framer Motion.
+- Added a responsive mobile menu with mobile search, category shortcuts, tracking, and account links.
+- Preserved the existing homepage layout and dark gaming storefront style.
+- Updated `docs/ai-context/CURRENT_STATE.md` and `NEXT_TASKS.md`.
+- Verified `npm run lint` and `npm run build` pass after the header polish. Build still reports the existing Vite chunk-size warning.
+
+### Homepage Visual Polish
+
+- Polished the homepage visual quality for a more production-ready gaming ecommerce feel.
+- Improved `store-page-shell` with layered dark gradients, subtle grid texture, and deeper lighting.
+- Improved `HeroBanner` depth with richer radial gradients, directional lighting, product spotlighting, and stronger CTA focus.
+- Improved promo cards with richer gradients, neon accents, framed product imagery, and tighter ecommerce typography.
+- Added subtle section separation and deeper visual hierarchy for service, category, and product sections.
+- Preserved the existing homepage layout, section order, and dark gaming ecommerce identity.
+- Updated `docs/ai-context/UI_REFERENCE.md`, `CURRENT_STATE.md`, and `NEXT_TASKS.md`.
+- Verified `npm run lint` and `npm run build` pass after the homepage visual polish. Build still reports the existing Vite chunk-size warning.
+
+### Skeleton Loading System
+
+- Added reusable dark storefront skeleton components under `frontend/src/components/skeletons/`.
+- Added `ProductCardSkeleton`, `CategorySkeleton`, `BannerSkeleton`, `HeaderSkeleton`, and shared `SkeletonBlock`.
+- Added `skeleton-shimmer` and `skeleton-card` utilities for realistic dark-theme shimmer loading placeholders.
+- Refactored the homepage to show a short mock loading state demo before rendering mock data.
+- Kept the demo local to the frontend and did not add real API calls.
+- Updated `docs/ai-context/CURRENT_STATE.md` and `NEXT_TASKS.md`.
+- Verified `npm run lint` and `npm run build` pass after the skeleton loading system update. Build still reports the existing Vite chunk-size warning.

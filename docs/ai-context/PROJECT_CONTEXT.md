@@ -58,6 +58,7 @@ Focus:
 - Tailwind CSS
 - React Router
 - Axios
+- Framer Motion
 - lucide-react
 - Recharts
 

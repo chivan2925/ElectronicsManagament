@@ -8,10 +8,15 @@ const sizeClasses = {
 };
 
 function Container({ as: Component = "div", children, className, padded = true, size = "page", ...props }) {
+  const layoutClass =
+    padded && size === "page"
+      ? "container-default"
+      : cn("mx-auto", sizeClasses[size] || sizeClasses.page, padded && "px-4 lg:px-8");
+
   return createElement(
     Component,
     {
-      className: cn("mx-auto", sizeClasses[size] || sizeClasses.page, padded && "px-4 lg:px-8", className),
+      className: cn(layoutClass === "container-default" ? "page-container" : layoutClass, className),
       ...props,
     },
     children,
