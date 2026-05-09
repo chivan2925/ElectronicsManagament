@@ -1,17 +1,7 @@
-import { Routes, Route } from "react-router-dom";
-import MainLayout from "./components/layout/MainLayout";
-import Home from "./pages/Home";
-import Checkout from "./pages/Checkout";
+import AppRoutes from "./routes/AppRoutes";
 
 function App() {
-  return (
-    <Routes>
-      <Route element={<MainLayout />}>
-        <Route path="/" element={<Home />} />
-        <Route path="/checkout" element={<Checkout />} />
-      </Route>
-    </Routes>
-  );
+  return <AppRoutes />;
 }
 
 export default App;

@@ -1,0 +1,171 @@
+@layer base {
+  :root {
+    --color-primary: #005BFF;
+    --color-primary-hover: #3B82F6;
+    --color-background: #050B14;
+    --color-background-dark: #050B14;
+    --color-surface: #07111F;
+    --color-surface-dark: #07111F;
+    --color-surface-secondary: #0F172A;
+    --color-surface-dark-elevated: #0F172A;
+    --color-border: #1E293B;
+    --color-border-dark: #1E293B;
+    --color-text-primary: #FFFFFF;
+    --color-text-secondary: #94A3B8;
+    --color-text-muted: #94A3B8;
+    --color-text-soft: #CBD5E1;
+    --color-background-light: #F6F8FB;
+    --color-surface-light: #FFFFFF;
+    --color-border-light: #E5E7EB;
+    --color-admin-ink: #111827;
+    --color-admin-muted: #6B7280;
+    --color-success: #16A34A;
+    --color-warning: #F59E0B;
+    --color-danger: #EF4444;
+
+    --space-xs: 0.25rem;
+    --space-sm: 0.5rem;
+    --space-md: 0.75rem;
+    --space-lg: 1rem;
+    --space-xl: 1.25rem;
+    --space-2xl: 1.5rem;
+    --space-3xl: 2rem;
+    --space-4xl: 2.5rem;
+    --space-5xl: 3rem;
+    --space-6xl: 4rem;
+    --space-8: 0.5rem;
+    --space-12: 0.75rem;
+    --space-16: 1rem;
+    --space-20: 1.25rem;
+    --space-24: 1.5rem;
+    --space-32: 2rem;
+    --space-40: 2.5rem;
+    --space-48: 3rem;
+    --space-64: 4rem;
+    --layout-page-max: 1440px;
+    --layout-page-x: var(--space-16);
+    --layout-page-x-lg: var(--space-32);
+    --layout-section-gap: var(--space-40);
+    --layout-card-gap: var(--space-16);
+    --layout-hero-gap: var(--space-20);
+
+    --radius-sm: 0.5rem;
+    --radius-md: 0.75rem;
+    --radius-lg: 1rem;
+    --radius-xl: 1.25rem;
+    --radius-full: 999px;
+
+    --shadow-admin-card: 0 1px 2px rgba(15, 23, 42, 0.06);
+    --shadow-card-dark: 0 24px 70px rgba(0, 0, 0, 0.28);
+    --shadow-card-dark-hover: 0 24px 70px rgba(0, 0, 0, 0.35);
+    --shadow-store-card: var(--shadow-card-dark);
+    --shadow-store-card-hover: var(--shadow-card-dark-hover);
+    --shadow-blue-glow: 0 0 30px rgba(0, 91, 255, 0.22);
+    --shadow-blue-glow-strong: 0 0 44px rgba(0, 91, 255, 0.65);
+    --shadow-neon-blue: var(--shadow-blue-glow);
+    --shadow-neon-blue-strong: var(--shadow-blue-glow-strong);
+    --shadow-inner-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+
+    --font-sans: Inter, system-ui, sans-serif;
+    --font-size-xs: 0.75rem;
+    --font-size-sm: 0.875rem;
+    --font-size-base: 1rem;
+    --font-size-lg: 1.125rem;
+    --font-size-xl: 1.25rem;
+    --font-size-2xl: 1.5rem;
+    --font-size-3xl: 1.875rem;
+    --font-size-4xl: 2.25rem;
+    --font-size-5xl: 3rem;
+    --line-height-tight: 1.15;
+    --line-height-normal: 1.5;
+    --line-height-relaxed: 1.7;
+    --text-display-size: clamp(2.25rem, 5vw, 3.75rem);
+    --text-display-line-height: 1.12;
+    --text-heading-size: clamp(2rem, 3.5vw, 3rem);
+    --text-heading-line-height: 1.18;
+    --text-title-size: clamp(1.5rem, 2.4vw, 1.875rem);
+    --text-title-line-height: 1.28;
+    --text-body-size: 1rem;
+    --text-body-line-height: 1.7;
+    --text-caption-size: 0.75rem;
+    --text-caption-line-height: 1.55;
+    --text-card-title-size: clamp(0.925rem, 1.2vw, 1rem);
+    --text-card-title-line-height: 1.45;
+    --text-price-size: clamp(1.125rem, 1.7vw, 1.375rem);
+    --text-price-line-height: 1.2;
+    --text-muted-line-height: 1.65;
+    --text-muted-font-weight: inherit;
+
+    --z-base: 0;
+    --z-raised: 10;
+    --z-dropdown: 20;
+    --z-sticky: 40;
+    --z-modal: 50;
+    --z-toast: 60;
+
+    --transition-fast: 160ms ease;
+    --transition-default: 220ms ease;
+    --transition-base: var(--transition-default);
+    --transition-premium: 280ms cubic-bezier(0.22, 1, 0.36, 1);
+    --transition-premium-duration: 280ms;
+    --transition-premium-easing: cubic-bezier(0.22, 1, 0.36, 1);
+    --transition-slow: 420ms ease;
+    --typography-muted-color: var(--color-admin-muted);
+
+    color: var(--color-admin-ink);
+    background: var(--color-background-light);
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    min-width: 320px;
+    min-height: 100vh;
+    margin: 0;
+    background: var(--color-background-light);
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  .store-page-shell {
+    --typography-muted-color: var(--color-text-secondary);
+    --text-muted-font-weight: 500;
+  }
+
+  @media (min-width: 1024px) {
+    :root {
+      --layout-page-x: var(--layout-page-x-lg);
+      --layout-section-gap: var(--space-48);
+      --layout-card-gap: var(--space-20);
+    }
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-text-soft);
+    border-radius: var(--radius-full);
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
