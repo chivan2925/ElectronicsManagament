@@ -9,11 +9,17 @@ Always update this file after meaningful work.
 ## Current Phase
 
 ```text
-Phase 3 — Client Ecommerce Pages
+Ready for Phase 4 — Auth + Backend Integration
 ```
 
 ## Recently Completed
 
+- Completed the full Phase 3 client ecommerce review and polish across PLP, PDP, cart, checkout, auth, wishlist, recently viewed, and search surfaces.
+- Normalized repeated storefront stat-card styling with the shared `store-stat-card` utility.
+- Tightened mobile checkout/shipping/order-summary layouts to reduce overflow risk.
+- Replaced visible developer-facing checkout/auth/search copy with customer-facing placeholder copy.
+- Verified `npm run lint`, `git diff --check`, `npm run build`, and client route smoke checks after Phase 3 polish.
+- Marked Phase 3 completed and the project ready for Phase 4 — Auth + Backend Integration.
 - Added the mock-backed `/products` product listing page with product grid, filter sidebar, sorting, active filters, pagination, breadcrumb, category banner, and responsive mobile filtering.
 - Improved `/products` with reusable filter/search state, debounced product search, multi-select filters, collapsible filter groups, mobile filter drawer, and empty state UI.
 - Added the mock-backed `/products/:slug` product detail page with gallery, variants, quantity, purchase actions, specs, description, reviews, shipping, stock, and related products.
@@ -21,6 +27,9 @@ Phase 3 — Client Ecommerce Pages
 - Added a mock-backed cart drawer opened from the storefront header with quantity update, remove item, subtotal, coupon placeholder, continue shopping, checkout action, and animated cart count badge.
 - Added the mock-backed `/cart` page with cart item table/grid, quantity updates, remove actions, coupon input, order summary, shipping estimate, continue shopping, checkout CTA, and sticky desktop summary.
 - Added the mock-backed `/checkout` page with customer information, shipping address, shipping method, payment method, validation UI, coupon placeholder, and sticky order summary.
+- Added the mock-backed `/login` and `/register` ecommerce auth pages with reusable auth layout/forms, social placeholders, remember-me, forgot-password placeholder, and local validation UI.
+- Added the localStorage-backed `/wishlist` page with product-card wishlist toggles, recently viewed tracking, and reusable wishlist/recently-viewed hooks.
+- Added the mock-backed storefront search overlay with debounced suggestions, recent searches, trending searches, product/category/brand previews, and keyboard navigation behavior.
 - Completed responsive audit and scoped responsive fixes for the ecommerce homepage across mobile, tablet, desktop, and ultra-wide viewports.
 - Completed Phase 2 design-system cleanup and audit for shared storefront and admin UI consistency.
 
@@ -28,10 +37,11 @@ Phase 3 — Client Ecommerce Pages
 
 1. Preserve the existing homepage layout.
 2. Keep the normalized frontend folder structure stable.
-3. Build the remaining client ecommerce pages with mock data.
-4. Reuse Phase 2 design-system primitives and visual patterns.
-5. Keep modular catalog mock data aligned with the electronics/gaming category list.
-6. Keep AI context docs current.
+3. Start Phase 4 by wiring admin authentication to the backend auth API.
+4. Add protected admin route handling after admin auth is working.
+5. Connect admin CRUD pages to backend APIs one resource at a time.
+6. Keep public storefront customer auth, cart, checkout, payment, wishlist, and search on mock/local state until public API contracts are ready.
+7. Keep AI context docs current.
 
 ## Next Recommended Tasks
 
@@ -58,14 +68,17 @@ Phase 3 — Client Ecommerce Pages
 
 ### Client Ecommerce
 
-- Replace login and register placeholders with real mock flows after product, cart, and checkout pages.
+- Keep Phase 3 client ecommerce UI stable while backend integration begins.
+- Keep the mock login and register flows local until public customer auth APIs are ready.
+- Wire login and register forms to customer auth APIs only after API contracts are available.
 - Wire product detail purchase actions, cart drawer, cart page, and checkout page into shared cart state when the cart flow moves beyond local mock state.
+- Replace wishlist and recently viewed localStorage placeholders only when customer account/product history APIs are ready.
+- Replace search overlay mock data with a real storefront search API only when the public search/catalog API is ready.
 - Replace checkout mock submission and payment placeholders only when public checkout/payment APIs are ready.
 - Add category route/page when the category browsing plan is ready.
-- Wire product cards and header links into the new client routes.
 - Replace the homepage mock loading timer with real loading state when storefront data integration begins.
 
-### Auth + API Preparation
+### Phase 4 Auth + Backend Integration
 
 - Replace the `/admin/login` placeholder with real admin authentication.
 - Add protected admin route wrapper.

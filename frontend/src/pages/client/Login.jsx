@@ -1,14 +1,18 @@
-import ClientPlaceholderPage from "../../components/common/ClientPlaceholderPage";
+import AuthLayout from "../../components/auth/AuthLayout";
+import LoginForm from "../../components/auth/LoginForm";
 
 function Login() {
   return (
-    <ClientPlaceholderPage
-      badge="ĐĂNG NHẬP"
-      features={["Email / số điện thoại", "Mật khẩu", "Ghi nhớ đăng nhập", "Quên mật khẩu"]}
-      primaryLabel="Tiếp tục mua sắm"
-      subtitle="Trang đăng nhập khách hàng sẽ kết nối API auth khi backend public/customer auth sẵn sàng."
-      title="Đăng nhập tài khoản khách hàng"
-    />
+    <AuthLayout
+      badge="Customer login"
+      subtitle="Đăng nhập vào tài khoản khách hàng để chuẩn bị lưu giỏ hàng, theo dõi đơn và nhận ưu đãi cho gear yêu thích."
+      switchLabel="Tạo tài khoản"
+      switchText="Chưa có tài khoản?"
+      switchTo="/register"
+      title="Chào mừng trở lại ElectroStore"
+    >
+      <LoginForm />
+    </AuthLayout>
   );
 }
 

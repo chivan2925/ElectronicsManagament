@@ -155,7 +155,7 @@ function ProductListingPage() {
                   const Icon = item.icon;
 
                   return (
-                    <div className="rounded-2xl border border-white/10 bg-white/[0.045] p-3 shadow-inner shadow-white/[0.03]" key={item.label}>
+                    <div className="store-stat-card rounded-2xl p-3" key={item.label}>
                       <Icon className="mb-3 text-blue-200 drop-shadow-[0_0_14px_rgba(0,91,255,0.55)]" size={20} />
                       <p className="text-sm font-black text-white">{item.label}</p>
                       <p className="text-caption mt-1 text-slate-400">{item.value}</p>
@@ -261,7 +261,7 @@ function ProductListingPage() {
                 { label: "Đổi trả", value: "7 ngày tại cửa hàng" },
                 { label: "Bảo hành", value: "Theo chính sách hãng" },
               ].map((item) => (
-                <div className="rounded-xl border border-white/10 bg-slate-950/35 p-3" key={item.label}>
+                <div className="store-stat-card rounded-xl p-3" key={item.label}>
                   <p className="text-sm font-black text-white">{item.label}</p>
                   <p className="text-caption mt-1 text-slate-400">{item.value}</p>
                 </div>

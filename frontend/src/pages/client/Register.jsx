@@ -1,14 +1,18 @@
-import ClientPlaceholderPage from "../../components/common/ClientPlaceholderPage";
+import AuthLayout from "../../components/auth/AuthLayout";
+import RegisterForm from "../../components/auth/RegisterForm";
 
 function Register() {
   return (
-    <ClientPlaceholderPage
-      badge="ĐĂNG KÝ"
-      features={["Thông tin cá nhân", "Email / số điện thoại", "Mật khẩu an toàn", "Xác nhận tài khoản"]}
-      primaryLabel="Khám phá sản phẩm"
-      subtitle="Trang đăng ký khách hàng sẽ chuẩn bị cho luồng tài khoản, đặt hàng và theo dõi đơn."
+    <AuthLayout
+      badge="Customer signup"
+      subtitle="Tạo tài khoản cho trải nghiệm mua sắm điện tử và gaming, lưu ưu đãi, theo dõi đơn hàng và rút ngắn bước checkout."
+      switchLabel="Đăng nhập"
+      switchText="Đã có tài khoản?"
+      switchTo="/login"
       title="Tạo tài khoản ElectroStore"
-    />
+    >
+      <RegisterForm />
+    </AuthLayout>
   );
 }
 

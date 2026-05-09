@@ -194,16 +194,19 @@ function CheckoutForm({ errors, onBlur, onChange, values }) {
             required
             value={values.ward}
           />
-          <CheckoutField
-            error={errors.note}
-            icon={MessageSquare}
-            id="note"
-            label="Ghi chú giao hàng"
-            onBlur={onBlur}
-            onChange={onChange}
-            placeholder="Ví dụ: gọi trước khi giao, giao giờ hành chính..."
-            value={values.note}
-          />
+          <div className="md:col-span-2">
+            <CheckoutField
+              error={errors.note}
+              icon={MessageSquare}
+              id="note"
+              label="Ghi chú giao hàng"
+              onBlur={onBlur}
+              onChange={onChange}
+              placeholder="Ví dụ: gọi trước khi giao, giao giờ hành chính..."
+              textarea
+              value={values.note}
+            />
+          </div>
         </div>
       </CheckoutSection>
     </div>

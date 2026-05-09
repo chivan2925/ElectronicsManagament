@@ -4,9 +4,7 @@ import {
   ChevronLeft,
   ChevronRight,
   ImageIcon,
-  Keyboard,
   Maximize2,
-  Search,
   X,
 } from "lucide-react";
 import { cn } from "../../utils/classNames";
@@ -127,12 +125,12 @@ function ProductGallery({ images = [], productName }) {
 
           <div className="absolute left-4 top-4 z-20 flex flex-wrap gap-2">
             <Badge className="gap-2" variant="primary">
-              <Search size={13} />
-              Hover để phóng
+              <ImageIcon size={13} />
+              Ảnh chi tiết
             </Badge>
             <Badge className="hidden gap-2 sm:inline-flex" variant="soft">
-              <Keyboard size={13} />
-              ← / → khi xem lớn
+              <Maximize2 size={13} />
+              Xem lớn
             </Badge>
           </div>
 
@@ -258,9 +256,7 @@ function ProductGallery({ images = [], productName }) {
               <div className="flex items-center justify-between gap-3 border-b border-white/10 px-4 py-3">
                 <div>
                   <p className="text-sm font-black text-white">{productName}</p>
-                  <p className="text-caption mt-1 text-slate-400">
-                    {previewImage.label} • Dùng phím ← / → để chuyển ảnh, Esc để đóng
-                  </p>
+                  <p className="text-caption mt-1 text-slate-400">{previewImage.label}</p>
                 </div>
                 <IconButton
                   aria-label="Đóng xem ảnh"

@@ -10,6 +10,7 @@ import {
   Truck,
   Zap,
 } from "lucide-react";
+import useWishlist from "../../hooks/useWishlist";
 import { hoverLift, tapSoft } from "../../styles/animations";
 import { cn } from "../../utils/classNames";
 import { formatCurrency } from "../../utils/formatters";
@@ -40,7 +41,9 @@ function ProductInfo({
   selectedOptions,
   variantGroups,
 }) {
+  const { isWishlisted, toggleWishlist } = useWishlist();
   const isOutOfStock = maxQuantity <= 0;
+  const productIsWishlisted = isWishlisted(product.id);
 
   return (
     <section className="store-glass rounded-3xl p-4 sm:p-5 lg:sticky lg:top-28">
@@ -131,11 +134,17 @@ function ProductInfo({
         </MotionDiv>
 
         <IconButton
-          aria-label="Thêm vào yêu thích"
-          className="h-12 w-full rounded-2xl border-white/10 bg-white/[0.05] text-white hover:border-blue-300/70 hover:bg-blue-500/10 sm:w-12"
+          aria-label={productIsWishlisted ? "Bỏ khỏi yêu thích" : "Thêm vào yêu thích"}
+          aria-pressed={productIsWishlisted}
+          className={cn(
+            "h-12 w-full gap-2 rounded-2xl border-white/10 bg-white/[0.05] px-4 text-white hover:border-blue-300/70 hover:bg-blue-500/10 sm:w-12 sm:gap-0 sm:px-0",
+            productIsWishlisted && "border-red-200/50 bg-red-500/15 text-red-100 shadow-[0_0_26px_rgba(239,68,68,0.2)]",
+          )}
+          onClick={() => toggleWishlist(product)}
           variant="outline"
         >
-          <Heart size={20} />
+          <Heart fill={productIsWishlisted ? "currentColor" : "none"} size={20} />
+          <span className="text-sm font-black sm:hidden">Yêu thích</span>
         </IconButton>
       </div>
 

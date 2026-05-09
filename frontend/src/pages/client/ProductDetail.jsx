@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ChevronRight, PackageSearch } from "lucide-react";
@@ -13,6 +13,7 @@ import Badge from "../../components/ui/Badge";
 import Button from "../../components/ui/Button";
 import Container from "../../components/ui/Container";
 import { getProductDetail, getRelatedProducts } from "../../data";
+import useRecentlyViewed from "../../hooks/useRecentlyViewed";
 import { fadeUp, staggerContainer } from "../../styles/animations";
 
 const MotionDiv = motion.div;
@@ -54,7 +55,7 @@ function ProductNotFound() {
           <Badge className="mx-auto mt-5" variant="primary">Không tìm thấy</Badge>
           <h1 className="text-heading mt-4">Sản phẩm không tồn tại</h1>
           <p className="text-muted mx-auto mt-3 max-w-lg text-sm">
-            Sản phẩm này có thể đã đổi đường dẫn hoặc chưa có trong mock catalog hiện tại.
+            Sản phẩm này có thể đã đổi đường dẫn hoặc chưa có trong catalog hiện tại.
           </p>
           <Button as={Link} className="mt-6" to="/products" variant="outline">
             Quay lại danh sách
@@ -66,6 +67,7 @@ function ProductNotFound() {
 }
 
 function ProductDetailContent({ detail }) {
+  const { addRecentlyViewed } = useRecentlyViewed();
   const initialOptions = getInitialOptions(detail.variantGroups);
   const initialVariantOptions = getSelectedVariantOptions(detail.variantGroups, initialOptions);
   const initialMaxQuantity = getMaxQuantity(detail.product, initialVariantOptions);
@@ -78,6 +80,10 @@ function ProductDetailContent({ detail }) {
   const finalPrice = detail.product.price + selectedPriceDelta;
   const finalOldPrice = detail.product.oldPrice ? detail.product.oldPrice + selectedPriceDelta : null;
   const relatedProducts = getRelatedProducts(detail.product);
+
+  useEffect(() => {
+    addRecentlyViewed(detail.product);
+  }, [addRecentlyViewed, detail.product]);
 
   const handleVariantSelect = (groupId, optionId) => {
     const nextOptions = { ...selectedOptions, [groupId]: optionId };

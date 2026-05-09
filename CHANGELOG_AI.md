@@ -272,3 +272,41 @@ Always update this file after meaningful work.
 - Reused the mock cart item shape and kept checkout state local until shared cart state or storefront checkout APIs are ready.
 - Updated `docs/ai-context/CURRENT_STATE.md`, `NEXT_TASKS.md`, `FRONTEND_GUIDE.md`, and `TASK_BOARD.md`.
 - Verified `npm run lint` and `npm run build` pass after the checkout page. Build still reports the existing Vite chunk-size warning.
+
+### Customer Auth Pages
+
+- Replaced the `/login` and `/register` placeholders with production-style mock-backed ecommerce auth pages.
+- Added auth components under `frontend/src/components/auth/`: `AuthLayout`, `LoginForm`, and `RegisterForm`.
+- Added login form validation, register form validation, password strength UI, remember-me UI, forgot-password placeholder, and social login placeholders.
+- Kept the auth pages local-only without real customer auth API or OAuth integration.
+- Updated `docs/ai-context/CURRENT_STATE.md`, `NEXT_TASKS.md`, and `FRONTEND_GUIDE.md`.
+- Verified `npm run lint` and `npm run build` pass after the auth pages. Build still reports the existing Vite chunk-size warning.
+
+### Wishlist And Recently Viewed
+
+- Added `frontend/src/pages/client/WishlistPage.jsx` and wired `/wishlist` into client routing.
+- Added `frontend/src/hooks/useWishlist.js` and `frontend/src/hooks/useRecentlyViewed.js` for localStorage-backed mock persistence.
+- Wired wishlist toggles into product cards and product detail purchase actions.
+- Added recently viewed tracking from product card/detail navigation and a recently viewed section on the wishlist page.
+- Added a wishlist link to the storefront header desktop and mobile navigation.
+- Updated `docs/ai-context/CURRENT_STATE.md`, `NEXT_TASKS.md`, and `FRONTEND_GUIDE.md`.
+- Verified `npm run lint` and `npm run build` pass after the wishlist experience. Build still reports the existing Vite chunk-size warning.
+
+### Ecommerce Search Experience
+
+- Added `frontend/src/components/search/SearchOverlay.jsx` and `SearchSuggestions.jsx`.
+- Added `frontend/src/hooks/useSearch.js` with debounce, mock products/categories/brands search, recent searches, trending searches, and keyboard navigation state.
+- Replaced the static storefront header search input with a desktop/mobile search overlay trigger.
+- Added live result previews for products, categories, and brands using mock storefront data only.
+- Updated `docs/ai-context/CURRENT_STATE.md`, `NEXT_TASKS.md`, and `FRONTEND_GUIDE.md`.
+- Verified `npm run lint` and `npm run build` pass after the search experience. Build still reports the existing Vite chunk-size warning.
+
+### Phase 3 Client Ecommerce Polish And Completion
+
+- Reviewed and polished Phase 3 client ecommerce surfaces across PLP, PDP, cart, checkout, auth, wishlist, recently viewed, and search.
+- Added the shared `store-stat-card` utility and reused it across client ecommerce stat/trust cards.
+- Tightened ProductCard height consistency, out-of-stock quick-add behavior, wishlist action clarity, and recently viewed/wishlist polish.
+- Improved checkout mobile behavior for shipping options, order-summary item rows, and delivery notes.
+- Replaced visible developer-facing checkout/auth/search copy with customer-facing placeholder copy while keeping flows mock/local only.
+- Verified `npm run lint`, `git diff --check`, `npm run build`, and route smoke checks for `/`, `/products`, `/products/:slug`, `/cart`, `/checkout`, `/login`, `/register`, and `/wishlist`.
+- Marked Phase 3 as completed and set the project ready for Phase 4 — Auth + Backend Integration.

@@ -40,15 +40,15 @@ const paymentMethods = [
     placeholder: false,
   },
   {
-    badge: "Placeholder",
-    description: "Giữ chỗ giao diện cho cổng VNPay, chưa tạo giao dịch thật.",
+    badge: "Sắp có",
+    description: "Thanh toán qua cổng VNPay sẽ được bật khi hệ thống thanh toán sẵn sàng.",
     id: "vnpay",
     name: "VNPay",
     placeholder: true,
   },
   {
-    badge: "Placeholder",
-    description: "Giữ chỗ giao diện cho ví MoMo, chưa gọi API thanh toán thật.",
+    badge: "Sắp có",
+    description: "Thanh toán ví MoMo sẽ được bật khi hệ thống thanh toán sẵn sàng.",
     id: "momo",
     name: "MoMo",
     placeholder: true,
@@ -261,11 +261,11 @@ function Checkout() {
             <div>
               <Badge className="mb-4 gap-2" variant="primary">
                 <ClipboardCheck size={13} />
-                Secure mock checkout
+                Secure checkout
               </Badge>
               <h1 className="text-heading max-w-3xl">Hoàn tất đơn hàng</h1>
               <p className="text-muted mt-3 max-w-2xl text-base md:text-lg">
-                Nhập thông tin giao hàng, chọn vận chuyển và phương thức thanh toán. VNPay và MoMo đang là placeholder, chưa tạo giao dịch thật.
+                Nhập thông tin giao hàng, chọn vận chuyển và phương thức thanh toán. COD sẵn sàng, VNPay và MoMo đang được chuẩn bị cho bước tích hợp.
               </p>
             </div>
 
@@ -273,12 +273,12 @@ function Checkout() {
               {[
                 { icon: Truck, label: "Vận chuyển rõ ràng", value: selectedShippingMethod.eta },
                 { icon: CreditCard, label: "3 phương thức", value: "COD, VNPay, MoMo" },
-                { icon: ShieldCheck, label: "Mock an toàn", value: "Không gọi payment API" },
+                { icon: ShieldCheck, label: "Thông tin rõ ràng", value: "Kiểm tra trước khi đặt" },
               ].map((item) => {
                 const Icon = item.icon;
 
                 return (
-                  <div className="rounded-2xl border border-white/10 bg-white/[0.045] p-3 shadow-inner shadow-white/[0.03]" key={item.label}>
+                  <div className="store-stat-card rounded-2xl p-3" key={item.label}>
                     <Icon className="mb-3 text-blue-200 drop-shadow-[0_0_14px_rgba(0,91,255,0.55)]" size={20} />
                     <p className="text-sm font-black text-white">{item.label}</p>
                     <p className="text-caption mt-1 text-slate-400">{item.value}</p>

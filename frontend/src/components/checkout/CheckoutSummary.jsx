@@ -36,7 +36,7 @@ function CheckoutSummary({
 
       <div className="grid gap-3">
         {items.map((item) => (
-          <div className="grid grid-cols-[64px_1fr_auto] items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.035] p-2" key={item.id}>
+          <div className="grid grid-cols-[56px_minmax(0,1fr)] items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.035] p-2 sm:grid-cols-[64px_minmax(0,1fr)_auto]" key={item.id}>
             <Link
               className="relative flex aspect-square items-center justify-center overflow-hidden rounded-xl bg-[radial-gradient(circle_at_50%_18%,rgba(0,91,255,0.22),rgba(15,23,42,0.78)_52%,rgba(2,6,23,0.96)_100%)] p-1.5"
               to={`/products/${item.product.slug}`}
@@ -49,7 +49,7 @@ function CheckoutSummary({
               </Link>
               <p className="text-caption mt-1 text-slate-500">x{item.quantity} · {item.variant}</p>
             </div>
-            <p className="text-right text-sm font-black text-blue-100">{formatCurrency(item.product.price * item.quantity)}</p>
+            <p className="col-span-2 text-right text-sm font-black text-blue-100 sm:col-span-1">{formatCurrency(item.product.price * item.quantity)}</p>
           </div>
         ))}
       </div>
@@ -119,8 +119,8 @@ function CheckoutSummary({
       {orderPlaced ? (
         <div className="mt-4 rounded-2xl border border-emerald-300/30 bg-emerald-500/10 p-4 text-center">
           <CheckCircle2 className="mx-auto text-emerald-200" size={30} />
-          <p className="mt-2 font-black text-white">Đơn hàng mock đã được ghi nhận</p>
-          <p className="text-caption mt-1 text-slate-400">Chưa có tích hợp thanh toán hoặc backend thật ở bước này.</p>
+          <p className="mt-2 font-black text-white">Thông tin đơn hàng đã được ghi nhận</p>
+          <p className="text-caption mt-1 text-slate-400">Cổng thanh toán sẽ được bật khi hệ thống tích hợp sẵn sàng.</p>
         </div>
       ) : (
         <Button className="mt-4 h-12 rounded-2xl" fullWidth onClick={onPlaceOrder}>
@@ -134,13 +134,13 @@ function CheckoutSummary({
       </Button>
 
       <div className="mt-4 grid grid-cols-2 gap-2">
-        <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-3">
+        <div className="store-stat-card rounded-2xl p-3">
           <LockKeyhole className="mb-2 text-blue-200" size={18} />
-          <p className="text-caption text-slate-400">Không lưu thông tin thẻ trong mock flow</p>
+          <p className="text-caption text-slate-400">Không lưu thông tin thẻ trên giao diện này</p>
         </div>
-        <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-3">
+        <div className="store-stat-card rounded-2xl p-3">
           <ShieldCheck className="mb-2 text-emerald-200" size={18} />
-          <p className="text-caption text-slate-400">Kiểm tra đơn trước khi xử lý thật</p>
+          <p className="text-caption text-slate-400">Kiểm tra thông tin trước khi xác nhận</p>
         </div>
       </div>
     </aside>

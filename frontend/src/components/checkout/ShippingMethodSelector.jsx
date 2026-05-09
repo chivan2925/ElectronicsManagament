@@ -26,7 +26,7 @@ function ShippingMethodSelector({ onChange, options, value }) {
               onClick={() => onChange(option.id)}
               type="button"
             >
-              <div className="flex items-start justify-between gap-3">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div className="flex min-w-0 gap-3">
                   <div
                     className={cn(
@@ -47,11 +47,11 @@ function ShippingMethodSelector({ onChange, options, value }) {
                   </div>
                 </div>
 
-                <div className="text-right">
+                <div className="flex items-center justify-between gap-3 sm:block sm:text-right">
                   <p className="text-sm font-black text-blue-100">
                     {option.price === 0 ? "Miễn phí" : formatCurrency(option.price)}
                   </p>
-                  {isSelected && <CheckCircle2 className="ml-auto mt-2 text-emerald-200" size={18} />}
+                  {isSelected && <CheckCircle2 className="text-emerald-200 sm:ml-auto sm:mt-2" size={18} />}
                 </div>
               </div>
             </button>

@@ -119,11 +119,11 @@ function CartSummary({
       </div>
 
       <div className="mt-3 grid grid-cols-2 gap-2">
-        <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-3">
+        <div className="store-stat-card rounded-2xl p-3">
           <Truck className="mb-2 text-blue-200" size={18} />
           <p className="text-caption text-slate-400">Giao nhanh toàn quốc</p>
         </div>
-        <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-3">
+        <div className="store-stat-card rounded-2xl p-3">
           <ShieldCheck className="mb-2 text-emerald-200" size={18} />
           <p className="text-caption text-slate-400">Bảo hành chính hãng</p>
         </div>

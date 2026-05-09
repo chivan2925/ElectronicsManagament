@@ -257,4 +257,22 @@
       0 0 30px rgba(0, 91, 255, 0.08);
     backdrop-filter: blur(14px);
   }
+
+  .store-stat-card {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.045);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+    transition-property: transform, border-color, background-color, box-shadow;
+    transition-duration: var(--transition-premium-duration);
+    transition-timing-function: var(--transition-premium-easing);
+  }
+
+  .store-stat-card:hover {
+    transform: translateY(-0.125rem);
+    border-color: rgba(147, 197, 253, 0.48);
+    background: rgba(0, 91, 255, 0.09);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.05),
+      0 0 26px rgba(0, 91, 255, 0.16);
+  }
 }

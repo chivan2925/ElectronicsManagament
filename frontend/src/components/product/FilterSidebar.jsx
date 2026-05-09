@@ -24,7 +24,7 @@ function OptionButton({ active, count, label, mode = "checkbox", onClick }) {
       )}
       onClick={onClick}
       type="button"
-      >
+    >
       <span className="flex min-w-0 items-center gap-2.5">
         <span
           className={cn(

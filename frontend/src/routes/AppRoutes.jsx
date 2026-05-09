@@ -7,6 +7,7 @@ import Login from "../pages/client/Login";
 import ProductDetail from "../pages/client/ProductDetail";
 import ProductListingPage from "../pages/client/ProductListingPage";
 import Register from "../pages/client/Register";
+import WishlistPage from "../pages/client/WishlistPage";
 import ActivityLog from "../pages/admin/ActivityLog";
 import AdminLogin from "../pages/admin/AdminLogin";
 import BestSellers from "../pages/admin/BestSellers";
@@ -34,6 +35,7 @@ function AppRoutes() {
       <Route element={<Checkout />} path="/checkout" />
       <Route element={<Login />} path="/login" />
       <Route element={<Register />} path="/register" />
+      <Route element={<WishlistPage />} path="/wishlist" />
 
       <Route element={<AdminLogin />} path="/admin/login" />
       <Route element={<AdminLayout />} path="/admin">

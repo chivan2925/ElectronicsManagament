@@ -32,6 +32,7 @@ Client:
 - `/checkout`
 - `/login`
 - `/register`
+- `/wishlist`
 
 Admin:
 
@@ -71,6 +72,7 @@ frontend/src/
 │  └─ mediaService.js
 ├─ assets/
 ├─ components/
+│  ├─ auth/
 │  ├─ cart/
 │  ├─ checkout/
 │  ├─ common/
@@ -78,6 +80,7 @@ frontend/src/
 │  ├─ layout/
 │  │  └─ admin/
 │  ├─ product/
+│  ├─ search/
 │  ├─ skeletons/
 │  └─ ui/
 │     ├─ Badge.jsx
@@ -113,7 +116,8 @@ frontend/src/
 │     ├─ Login.jsx
 │     ├─ ProductDetail.jsx
 │     ├─ ProductListingPage.jsx
-│     └─ Register.jsx
+│     ├─ Register.jsx
+│     └─ WishlistPage.jsx
 ├─ routes/
 │  └─ AppRoutes.jsx
 ├─ services/
@@ -264,6 +268,40 @@ Reusable checkout components live in `frontend/src/components/checkout/`:
 - `CheckoutSummary.jsx`
 
 The checkout page uses mock cart data, local form validation, and placeholder payment options for COD, VNPay, and MoMo until real checkout/payment APIs are ready.
+
+## Customer Auth Components
+
+The `/login` and `/register` pages live at `frontend/src/pages/client/Login.jsx` and `frontend/src/pages/client/Register.jsx`.
+
+Reusable customer auth components live in `frontend/src/components/auth/`:
+
+- `AuthLayout.jsx`
+- `LoginForm.jsx`
+- `RegisterForm.jsx`
+
+The auth pages use local form state, local validation, social login placeholders, remember-me UI, and forgot-password placeholder behavior until public customer auth APIs are ready.
+
+## Wishlist And Recently Viewed
+
+The `/wishlist` page lives at `frontend/src/pages/client/WishlistPage.jsx`.
+
+Reusable wishlist/recently viewed state hooks live in `frontend/src/hooks/`:
+
+- `useWishlist.js`
+- `useRecentlyViewed.js`
+
+The wishlist and recently viewed flows use localStorage persistence placeholders and shared product card UI until customer account/product history APIs are ready.
+
+## Search Overlay
+
+Reusable storefront search components live in `frontend/src/components/search/`:
+
+- `SearchOverlay.jsx`
+- `SearchSuggestions.jsx`
+
+Reusable search state logic lives in `frontend/src/hooks/useSearch.js`.
+
+The storefront header opens the search overlay on desktop and mobile. The overlay uses mock products, categories, and brands with debounced local suggestions, recent searches, trending searches, result previews, and keyboard navigation behavior until a real storefront search API is ready.
 
 ## Skeleton Loading
 

@@ -137,7 +137,7 @@ function Cart() {
                 const Icon = item.icon;
 
                 return (
-                  <div className="rounded-2xl border border-white/10 bg-white/[0.045] p-3 shadow-inner shadow-white/[0.03]" key={item.label}>
+                  <div className="store-stat-card rounded-2xl p-3" key={item.label}>
                     <Icon className="mb-3 text-blue-200 drop-shadow-[0_0_14px_rgba(0,91,255,0.55)]" size={20} />
                     <p className="text-sm font-black text-white">{item.label}</p>
                     <p className="text-caption mt-1 text-slate-400">{item.value}</p>
@@ -168,7 +168,7 @@ function Cart() {
                     const Icon = item.icon;
 
                     return (
-                      <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-3" key={item.label}>
+                      <div className="store-stat-card rounded-2xl p-3" key={item.label}>
                         <Icon className="mb-2 text-blue-200" size={18} />
                         <p className="text-sm font-black text-white">{item.label}</p>
                         <p className="text-caption mt-1 text-slate-400">{item.value}</p>
@@ -195,17 +195,17 @@ function Cart() {
               </MotionDiv>
 
               <div className="grid gap-3 rounded-3xl border border-blue-300/15 bg-blue-500/[0.055] p-4 shadow-inner shadow-white/[0.03] backdrop-blur-xl sm:grid-cols-3">
-                <div className="rounded-2xl border border-white/10 bg-slate-950/35 p-3">
+                <div className="store-stat-card rounded-2xl p-3">
                   <CircleCheck className="mb-2 text-emerald-200" size={18} />
                   <p className="text-sm font-black text-white">Tiết kiệm sản phẩm</p>
                   <p className="text-caption mt-1 text-slate-400">{formatCurrency(productSavings)}</p>
                 </div>
-                <div className="rounded-2xl border border-white/10 bg-slate-950/35 p-3">
+                <div className="store-stat-card rounded-2xl p-3">
                   <MapPin className="mb-2 text-blue-200" size={18} />
                   <p className="text-sm font-black text-white">Ước tính giao hàng</p>
                   <p className="text-caption mt-1 text-slate-400">Nội thành 1-2 ngày, toàn quốc 2-4 ngày</p>
                 </div>
-                <div className="rounded-2xl border border-white/10 bg-slate-950/35 p-3">
+                <div className="store-stat-card rounded-2xl p-3">
                   <ShieldCheck className="mb-2 text-blue-200" size={18} />
                   <p className="text-sm font-black text-white">Bảo vệ đơn hàng</p>
                   <p className="text-caption mt-1 text-slate-400">Kiểm tra hàng và hỗ trợ đổi trả theo chính sách</p>

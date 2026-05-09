@@ -9,14 +9,14 @@ Always update this file after meaningful work.
 ## Current Phase
 
 ```text
-Phase 2 — Design System completed
+Phase 3 — Client Ecommerce Pages completed
 ```
 
 ## Current Summary
 
-ElectronicsManagement has completed Phase 2 design-system cleanup and audit. The project is ready for Phase 3 — Client Ecommerce Pages.
+ElectronicsManagement has completed Phase 3 client ecommerce pages and polish. The project is ready for Phase 4 — Auth + Backend Integration.
 
-The client homepage exists and has a dark gaming ecommerce visual direction. The admin dashboard exists as a mock modern dashboard. Backend admin APIs exist, but the frontend is not connected to real backend APIs yet.
+The client storefront now includes the homepage, product listing, product detail, cart, checkout, customer authentication, wishlist, recently viewed, and search overlay experiences using mock/local state. The admin dashboard exists as a mock modern dashboard. Backend admin APIs exist, but the frontend is not connected to real backend APIs yet.
 
 The frontend folder structure has been normalized without changing the current visual UI.
 
@@ -28,7 +28,7 @@ The storefront spacing and layout system now includes page, section, grid, and f
 
 The storefront motion system now uses Framer Motion presets for subtle fade, stagger, hover lift, glow, and image zoom interactions.
 
-The storefront product card pattern now has production-style ecommerce polish with improved image framing, discount and stock badges, wishlist placeholder, rating treatment, pricing area, and quick-add CTA.
+The storefront product card pattern now has production-style ecommerce polish with improved image framing, discount and stock badges, wishlist toggle, rating treatment, pricing area, and quick-add CTA.
 
 The storefront header now has production-style ecommerce polish with scroll-aware sticky blur, improved search, category dropdown, cart badge motion, and a responsive mobile menu.
 
@@ -52,6 +52,12 @@ The storefront cart page now exists at `/cart` with mock-backed cart items, quan
 
 The storefront checkout page now exists at `/checkout` with mock-backed customer information, shipping address, shipping method, payment method, form validation UI, coupon placeholder, and sticky order summary.
 
+The storefront customer authentication pages now exist at `/login` and `/register` with reusable mock-backed auth layout/forms, social login placeholders, remember-me, forgot-password placeholder, local validation UI, and responsive dark glass styling.
+
+The storefront wishlist page now exists at `/wishlist` with localStorage-backed wishlist state, product-card wishlist toggles, recently viewed tracking, and reusable wishlist/recently-viewed hooks.
+
+The storefront header now includes a reusable mock-backed search overlay with debounced live suggestions, recent searches, trending searches, product/category/brand result previews, and keyboard navigation behavior.
+
 Phase 2 cleanup normalized shared/admin visual patterns for cards, borders, shadows, hover states, focus states, icon buttons, typography usage, and responsive behavior without a large rewrite.
 
 Frontend routing now includes client ecommerce routes and admin routes with placeholders for pages that are not implemented yet.
@@ -59,7 +65,7 @@ Frontend routing now includes client ecommerce routes and admin routes with plac
 The next phase is:
 
 ```text
-Phase 3 — Client Ecommerce Pages
+Phase 4 — Auth + Backend Integration
 ```
 
 ## Phase 1 Completed Items
@@ -89,7 +95,7 @@ Phase 3 — Client Ecommerce Pages
 - Improved placeholder page typography and muted text usage so future client ecommerce routes inherit the Phase 2 visual system.
 - Verified there was no document-level horizontal overflow in homepage and key admin viewport checks.
 
-## Phase 3 In Progress Items
+## Phase 3 Completed Items
 
 - Added a production-style mock-backed product listing page at `/products`.
 - Added reusable listing components: `FilterSidebar`, `SortDropdown`, `ActiveFilters`, and `Pagination`.
@@ -104,6 +110,17 @@ Phase 3 — Client Ecommerce Pages
 - Added a full mock-backed cart page at `/cart` using the reusable cart item and summary components.
 - Added a production-style mock-backed checkout page at `/checkout`.
 - Added checkout components: `CheckoutForm`, `ShippingMethodSelector`, `PaymentMethodSelector`, and `CheckoutSummary`.
+- Added production-style mock-backed ecommerce auth pages at `/login` and `/register`.
+- Added auth components: `AuthLayout`, `LoginForm`, and `RegisterForm`.
+- Added a localStorage-backed wishlist and recently viewed experience at `/wishlist`.
+- Added reusable wishlist/recently viewed hooks: `useWishlist` and `useRecentlyViewed`.
+- Added a mock-backed ecommerce search overlay experience to the storefront header.
+- Added search components and logic: `SearchOverlay`, `SearchSuggestions`, and `useSearch`.
+- Reviewed and polished the full client ecommerce phase across PLP, PDP, cart, checkout, auth, wishlist, recently viewed, and search surfaces.
+- Normalized repeated storefront stat-card styling with `store-stat-card`.
+- Tightened mobile checkout and order-summary layouts to reduce overflow risk.
+- Replaced visible developer-facing checkout/auth/search copy with customer-facing placeholder copy.
+- Confirmed Phase 3 is complete and ready for Phase 4 — Auth + Backend Integration.
 
 ## Frontend State
 
@@ -126,6 +143,7 @@ Current client routes:
 - `/checkout`
 - `/login`
 - `/register`
+- `/wishlist`
 
 Current admin routes:
 
@@ -169,9 +187,13 @@ Current frontend structure:
 - Client homepage components live in `frontend/src/components/home/`.
 - Cart drawer and cart page components live in `frontend/src/components/cart/`.
 - Checkout components live in `frontend/src/components/checkout/`.
+- Customer auth components live in `frontend/src/components/auth/`.
+- Search overlay components live in `frontend/src/components/search/`.
 - Client layout components live in `frontend/src/components/layout/`.
 - Product components live in `frontend/src/components/product/`, including listing filters, search, sorting, active filters, empty state, pagination, detail gallery, product info, variants, quantity, specs, reviews, related products, and reusable product cards.
 - Product listing state logic lives in `frontend/src/hooks/useProductFilters.js`.
+- Wishlist and recently viewed local state logic lives in `frontend/src/hooks/useWishlist.js` and `frontend/src/hooks/useRecentlyViewed.js`.
+- Storefront search overlay logic lives in `frontend/src/hooks/useSearch.js`.
 - Skeleton loading components live in `frontend/src/components/skeletons/`.
 - Admin layout components live in `frontend/src/components/layout/admin/`.
 - Shared reusable UI components live in `frontend/src/components/ui/`.
@@ -208,6 +230,7 @@ Homepage state:
 - Flash sale card now shares the polished badge, stock, image glow, and CTA treatment.
 - Header now uses a sticky scroll-aware blurred background, premium search bar, desktop category dropdown, animated cart badge, and responsive mobile menu.
 - Header cart button now opens the mock-backed cart drawer and reflects cart count from local mock cart state.
+- Header search now opens the mock-backed search overlay on desktop and mobile.
 - Homepage background, hero banner, promo cards, category cards, service bar, and section separators now have deeper production ecommerce visual polish.
 - Homepage now includes a short mock loading state demo that renders dark shimmer skeletons before showing mock data.
 - Homepage responsive audit has been completed across mobile, tablet, desktop, and ultra-wide viewports.
@@ -219,7 +242,9 @@ Homepage state:
 - `/products/:slug` now renders the mock-backed product detail page.
 - `/cart` now renders the mock-backed cart page.
 - `/checkout` now renders the mock-backed checkout page.
-- Client routes beyond homepage, product listing, product detail, cart, and checkout that are not fully implemented render dark ecommerce placeholder pages.
+- `/login` and `/register` now render mock-backed ecommerce customer auth pages.
+- `/wishlist` now renders the localStorage-backed wishlist and recently viewed page.
+- Client routes beyond homepage, product listing, product detail, cart, checkout, login, register, and wishlist that are not fully implemented render dark ecommerce placeholder pages.
 - `/admin/login` renders an admin auth placeholder page.
 - `/admin` redirects to `/admin/dashboard`.
 
@@ -243,6 +268,16 @@ Latest validation:
 - `npm run build` passed in `frontend/` after adding the full cart page.
 - `npm run lint` passed in `frontend/` after adding the checkout page.
 - `npm run build` passed in `frontend/` after adding the checkout page.
+- `npm run lint` passed in `frontend/` after adding the ecommerce auth pages.
+- `npm run build` passed in `frontend/` after adding the ecommerce auth pages.
+- `npm run lint` passed in `frontend/` after adding the wishlist and recently viewed experience.
+- `npm run build` passed in `frontend/` after adding the wishlist and recently viewed experience.
+- `npm run lint` passed in `frontend/` after adding the ecommerce search overlay.
+- `npm run build` passed in `frontend/` after adding the ecommerce search overlay.
+- `npm run lint` passed in `frontend/` after the full client ecommerce Phase 3 polish.
+- `git diff --check` passed after the full client ecommerce Phase 3 polish.
+- `npm run build` passed in `frontend/` after the full client ecommerce Phase 3 polish.
+- Route smoke checks returned `200` for `/`, `/products`, `/products/:slug`, `/cart`, `/checkout`, `/login`, `/register`, and `/wishlist` on the local Vite dev server.
 - Build still reports a Vite chunk-size warning for a JavaScript bundle over 500 kB.
 
 ## Known Issues
@@ -250,22 +285,22 @@ Latest validation:
 - Admin authentication is still a placeholder UI and is not wired to `authService`.
 - Admin routes are not protected yet.
 - Admin CRUD pages still use mock data and are not connected to backend APIs.
-- Client ecommerce routes beyond the homepage, product listing page, product detail page, cart page, and checkout page are styled placeholders.
+- Remaining future client ecommerce routes beyond the implemented homepage, product listing, product detail, cart, checkout, login, register, and wishlist pages are styled placeholders.
 - Public storefront APIs for product browsing, cart, checkout, and customer auth are not complete.
 - Build output is valid, but Vite reports a large bundle warning that should be handled later with code splitting.
 
 ## Next Phase
 
 ```text
-Phase 3 — Client Ecommerce Pages
+Phase 4 — Auth + Backend Integration
 ```
 
 Next focus:
 
-- Replace login and register placeholders with real mock-backed flows.
-- Add category browsing routes only when the category browsing plan is ready.
-- Extend login and register flows with mock data while public APIs are incomplete.
-- Keep admin API integration prepared but do not connect homepage to live APIs yet.
+- Connect admin authentication first using the existing backend auth API.
+- Add protected admin route handling after admin auth is wired.
+- Connect admin CRUD pages to backend APIs one resource at a time.
+- Keep public storefront customer auth, cart, checkout, payment, wishlist, and search on mock/local state until public storefront API contracts are ready.
 
 ## Backend State
 

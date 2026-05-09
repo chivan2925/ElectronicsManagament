@@ -15,7 +15,7 @@ function ProductReviews({ breakdown, product, reviews }) {
             Đánh giá khách hàng
           </Badge>
           <h2 className="text-section">Người dùng nói gì</h2>
-          <p className="text-muted mt-2 text-sm">Tổng hợp đánh giá mock theo trải nghiệm mua hàng tại ElectronicsManagement.</p>
+          <p className="text-muted mt-2 text-sm">Tổng hợp đánh giá theo trải nghiệm mua hàng tại ElectronicsManagement.</p>
         </div>
         <Button variant="outline">Viết đánh giá</Button>
       </div>

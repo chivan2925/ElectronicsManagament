@@ -78,7 +78,7 @@ function CartItem({ item, layout = "drawer", onQuantityChange, onRemove }) {
                 </IconButton>
               </div>
 
-              <p className="text-caption mt-2 w-fit rounded-full border border-white/10 bg-slate-950/40 px-2.5 py-1 text-slate-400">
+              <p className="text-caption mt-2 w-fit max-w-full truncate rounded-full border border-white/10 bg-slate-950/40 px-2.5 py-1 text-slate-400">
                 {variant}
               </p>
               <p className="text-caption mt-2 text-slate-500">Tồn kho khả dụng: {maxQuantity}</p>
@@ -155,7 +155,7 @@ function CartItem({ item, layout = "drawer", onQuantityChange, onRemove }) {
             </IconButton>
           </div>
 
-          <p className="text-caption mt-2 rounded-full border border-white/10 bg-slate-950/40 px-2.5 py-1 text-slate-400">
+          <p className="text-caption mt-2 w-fit max-w-full truncate rounded-full border border-white/10 bg-slate-950/40 px-2.5 py-1 text-slate-400">
             {variant}
           </p>
 

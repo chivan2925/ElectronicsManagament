@@ -1,7 +1,10 @@
 import { motion } from "framer-motion";
 import { Heart, PackageCheck, ShoppingCart, Zap } from "lucide-react";
 import { Link } from "react-router-dom";
+import useRecentlyViewed from "../../hooks/useRecentlyViewed";
+import useWishlist from "../../hooks/useWishlist";
 import { fadeUp, hoverGlow, hoverLift, imageZoom, tapSoft } from "../../styles/animations";
+import { cn } from "../../utils/classNames";
 import Badge from "../ui/Badge";
 import Card from "../ui/Card";
 import IconButton from "../ui/IconButton";
@@ -25,11 +28,23 @@ function getStockBadge(stock = 0) {
 }
 
 function ProductCard({ product }) {
+  const { addRecentlyViewed } = useRecentlyViewed();
+  const { isWishlisted, toggleWishlist } = useWishlist();
   const stockBadge = getStockBadge(product.stock);
   const primaryTag = product.tags?.[0];
+  const productIsWishlisted = isWishlisted(product.id);
+  const isOutOfStock = product.stock <= 0;
+
+  const handleWishlistToggle = () => {
+    toggleWishlist(product);
+  };
+
+  const handleProductOpen = () => {
+    addRecentlyViewed(product);
+  };
 
   return (
-    <Card as={MotionArticle} className="isolate h-full" variants={{ ...fadeUp, hover: hoverGlow }} variant="product" whileHover="hover">
+    <Card as={MotionArticle} className="isolate flex h-full flex-col" variants={{ ...fadeUp, hover: hoverGlow }} variant="product" whileHover="hover">
       <div className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-blue-200/50 to-transparent" />
 
       <div className="relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-[radial-gradient(circle_at_50%_20%,rgba(0,91,255,0.24),rgba(15,23,42,0.72)_42%,rgba(2,6,23,0.94)_100%)] p-4 shadow-inner shadow-white/[0.04]">
@@ -44,16 +59,21 @@ function ProductCard({ product }) {
         )}
 
         <IconButton
-          aria-label="Thêm vào yêu thích"
-          className="absolute right-3 top-3 z-20 border-white/15 bg-slate-950/55 text-slate-200 hover:border-blue-200/70 hover:bg-blue-500/20 hover:text-white"
+          aria-label={productIsWishlisted ? "Bỏ khỏi yêu thích" : "Thêm vào yêu thích"}
+          aria-pressed={productIsWishlisted}
+          className={cn(
+            "absolute right-3 top-3 z-20 border-white/15 bg-slate-950/55 text-slate-200 hover:border-blue-200/70 hover:bg-blue-500/20 hover:text-white",
+            productIsWishlisted && "border-red-200/50 bg-red-500/18 text-red-100 shadow-[0_0_24px_rgba(239,68,68,0.24)]",
+          )}
+          onClick={handleWishlistToggle}
           size="sm"
-          title="Thêm vào yêu thích"
+          title={productIsWishlisted ? "Bỏ khỏi yêu thích" : "Thêm vào yêu thích"}
           variant="outline"
         >
-          <Heart size={17} />
+          <Heart fill={productIsWishlisted ? "currentColor" : "none"} size={17} />
         </IconButton>
 
-        <Link className="relative z-10 flex h-full w-full items-center justify-center" to={`/products/${product.slug}`}>
+        <Link className="relative z-10 flex h-full w-full items-center justify-center" onClick={handleProductOpen} to={`/products/${product.slug}`}>
           <MotionImg
             alt={product.name}
             className="premium-transition h-full w-full object-contain drop-shadow-[0_18px_36px_rgba(0,0,0,0.42)] group-hover:drop-shadow-[0_26px_52px_rgba(0,91,255,0.28)]"
@@ -77,7 +97,7 @@ function ProductCard({ product }) {
       <div className="relative z-10 mt-4 flex flex-1 flex-col">
         <p className="text-caption text-blue-200">{product.brand}</p>
         <h3 className="text-card-title mt-1 min-h-[48px]">
-          <Link className="transition-default hover:text-blue-100" to={`/products/${product.slug}`}>
+          <Link className="transition-default hover:text-blue-100" onClick={handleProductOpen} to={`/products/${product.slug}`}>
             {product.name}
           </Link>
         </h3>
@@ -94,14 +114,18 @@ function ProductCard({ product }) {
 
           <MotionButton
             aria-label="Thêm nhanh vào giỏ hàng"
-            className="transition-default mt-3 inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-primary px-3 text-sm font-black text-white shadow-[0_0_26px_rgba(0,91,255,0.42)] outline-none hover:bg-primary-hover hover:shadow-[0_0_38px_rgba(0,91,255,0.62)] focus-visible:ring-2 focus-visible:ring-blue-300/60 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
+            className={cn(
+              "transition-default mt-3 inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-primary px-3 text-sm font-black text-white shadow-[0_0_26px_rgba(0,91,255,0.42)] outline-none hover:bg-primary-hover hover:shadow-[0_0_38px_rgba(0,91,255,0.62)] focus-visible:ring-2 focus-visible:ring-blue-300/60 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950",
+              isOutOfStock && "cursor-not-allowed bg-slate-700 text-slate-400 shadow-none hover:bg-slate-700 hover:shadow-none",
+            )}
+            disabled={isOutOfStock}
             type="button"
-            whileHover={hoverLift}
-            whileTap={tapSoft}
+            whileHover={isOutOfStock ? undefined : hoverLift}
+            whileTap={isOutOfStock ? undefined : tapSoft}
           >
             <ShoppingCart size={18} />
-            <span className="hidden sm:inline">Thêm nhanh</span>
-            <span className="sm:hidden">Thêm</span>
+            <span className="hidden sm:inline">{isOutOfStock ? "Hết hàng" : "Thêm nhanh"}</span>
+            <span className="sm:hidden">{isOutOfStock ? "Hết" : "Thêm"}</span>
           </MotionButton>
         </div>
       </div>

@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import {
   ChevronDown,
   Grid3X3,
+  Heart,
   Menu,
   PackageSearch,
   Search,
@@ -14,9 +15,8 @@ import {
 import { categories, createMockCartItems } from "../../data";
 import { cn } from "../../utils/classNames";
 import CartDrawer from "../cart/CartDrawer";
-import Button from "../ui/Button";
+import SearchOverlay from "../search/SearchOverlay";
 import IconButton from "../ui/IconButton";
-import Input from "../ui/Input";
 
 const MotionSpan = motion.span;
 
@@ -29,6 +29,7 @@ function Header() {
   const [cartItems, setCartItems] = useState(createMockCartItems);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const cartItemCount = cartItems.reduce((total, item) => total + item.quantity, 0);
   const cartSubtotal = cartItems.reduce((total, item) => total + item.product.price * item.quantity, 0);
@@ -42,6 +43,20 @@ function Header() {
     window.addEventListener("scroll", handleScroll, { passive: true });
 
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const handleSearchShortcut = (event) => {
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
+        event.preventDefault();
+        setIsMobileMenuOpen(false);
+        setIsSearchOpen(true);
+      }
+    };
+
+    window.addEventListener("keydown", handleSearchShortcut);
+
+    return () => window.removeEventListener("keydown", handleSearchShortcut);
   }, []);
 
   const handleCartQuantityChange = (itemId, nextQuantity) => {
@@ -64,6 +79,11 @@ function Header() {
   const openCartDrawer = () => {
     setIsMobileMenuOpen(false);
     setIsCartOpen(true);
+  };
+
+  const openSearchOverlay = () => {
+    setIsMobileMenuOpen(false);
+    setIsSearchOpen(true);
   };
 
   return (
@@ -118,23 +138,28 @@ function Header() {
             </div>
           </div>
 
-          <div className="premium-transition hidden flex-1 items-center rounded-2xl border border-white/10 bg-slate-950/50 p-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] backdrop-blur-xl focus-within:border-blue-300/80 focus-within:bg-slate-950/76 focus-within:shadow-[0_0_34px_rgba(0,91,255,0.24),inset_0_1px_0_rgba(255,255,255,0.05)] md:flex">
-            <Input
-              className="flex-1 border-0 bg-transparent px-0 shadow-none backdrop-blur-none focus-within:border-transparent focus-within:bg-transparent focus-within:shadow-none"
-              inputClassName="h-10 px-1 text-sm"
-              leftIcon={<Search className="ml-3 text-blue-200" size={19} />}
-              placeholder="Tìm laptop, PC Gaming, tai nghe..."
-              type="search"
-            />
-            <Button className="h-10 rounded-xl px-5 py-0 font-black shadow-[0_0_24px_rgba(0,91,255,0.36)]" size="md">
-              Tìm kiếm
-            </Button>
-          </div>
+          <button
+            className="premium-transition hidden h-12 flex-1 items-center gap-3 rounded-2xl border border-white/10 bg-slate-950/50 px-4 text-left shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] outline-none backdrop-blur-xl hover:border-blue-300/70 hover:bg-slate-950/76 hover:shadow-[0_0_34px_rgba(0,91,255,0.22),inset_0_1px_0_rgba(255,255,255,0.05)] focus-visible:ring-2 focus-visible:ring-blue-300/60 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 md:flex"
+            onClick={openSearchOverlay}
+            type="button"
+          >
+            <Search className="shrink-0 text-blue-200" size={19} />
+            <span className="min-w-0 flex-1 truncate text-sm font-bold text-slate-400">
+              Tìm laptop, PC Gaming, tai nghe...
+            </span>
+            <span className="hidden rounded-xl border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs font-black text-slate-500 xl:inline-flex">
+              Tìm nhanh
+            </span>
+          </button>
 
           <nav className="ml-auto flex shrink-0 items-center gap-1.5 text-sm sm:gap-2">
             <a className={cn(headerLinkClass, "hidden xl:flex")} href="/">
               <PackageSearch size={19} />
               Theo dõi đơn hàng
+            </a>
+            <a className={cn(headerLinkClass, "hidden xl:flex")} href="/wishlist">
+              <Heart size={19} />
+              Yêu thích
             </a>
             <a className={cn(headerLinkClass, "hidden sm:flex")} href="/login">
               <UserRound size={19} />
@@ -175,18 +200,17 @@ function Header() {
         >
           <div className="min-h-0">
             <div className="rounded-2xl border border-blue-200/15 bg-slate-950/52 p-3 shadow-[0_18px_60px_rgba(0,0,0,0.34)] backdrop-blur-2xl">
-              <div className="premium-transition flex items-center rounded-2xl border border-white/10 bg-slate-950/60 p-1.5 focus-within:border-blue-300/80 focus-within:shadow-[0_0_30px_rgba(0,91,255,0.22)]">
-                <Input
-                  className="flex-1 border-0 bg-transparent px-0 shadow-none backdrop-blur-none focus-within:border-transparent focus-within:bg-transparent focus-within:shadow-none"
-                  inputClassName="h-10 px-1 text-sm"
-                  leftIcon={<Search className="ml-3 text-blue-200" size={18} />}
-                  placeholder="Tìm gear gaming..."
-                  type="search"
-                />
-                <Button className="h-10 rounded-xl px-4 py-0" size="md">
+              <button
+                className="premium-transition flex h-12 w-full items-center gap-3 rounded-2xl border border-white/10 bg-slate-950/60 px-4 text-left outline-none hover:border-blue-300/80 hover:bg-blue-500/10 hover:shadow-[0_0_30px_rgba(0,91,255,0.22)] focus-visible:ring-2 focus-visible:ring-blue-300/60 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
+                onClick={openSearchOverlay}
+                type="button"
+              >
+                <Search className="shrink-0 text-blue-200" size={18} />
+                <span className="min-w-0 flex-1 truncate text-sm font-bold text-slate-400">Tìm gear gaming...</span>
+                <span className="rounded-xl bg-primary px-3 py-1.5 text-xs font-black text-white shadow-[0_0_18px_rgba(0,91,255,0.36)]">
                   Tìm
-                </Button>
-              </div>
+                </span>
+              </button>
 
               <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
                 {categoryItems.slice(0, 6).map((category) => (
@@ -205,7 +229,11 @@ function Header() {
                   <PackageSearch size={18} />
                   Theo dõi đơn
                 </a>
-                <a className={cn(headerLinkClass, "justify-center border border-white/10 bg-white/[0.04]")} href="/login">
+                <a className={cn(headerLinkClass, "justify-center border border-white/10 bg-white/[0.04]")} href="/wishlist">
+                  <Heart size={18} />
+                  Yêu thích
+                </a>
+                <a className={cn(headerLinkClass, "justify-center border border-white/10 bg-white/[0.04] sm:col-span-2")} href="/login">
                   <UserRound size={18} />
                   Tài khoản
                 </a>
@@ -224,6 +252,7 @@ function Header() {
       onRemove={handleCartRemove}
       subtotal={cartSubtotal}
     />
+    <SearchOverlay isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
     </>
   );
 }
