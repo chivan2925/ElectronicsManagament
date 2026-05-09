@@ -64,6 +64,10 @@ public class ProductEntity {
     @Builder.Default
     private Integer warrantyMonths = 0;
 
+    @Column(name = "featured")
+    @Builder.Default
+    private Boolean featured = false;
+
     @OneToMany(mappedBy = "product")
     @Builder.Default
     private Set<VariantEntity> variants = new HashSet<>();

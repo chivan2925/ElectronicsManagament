@@ -87,8 +87,8 @@ Common filters used by many admin list endpoints:
 | `POST` | `/admin/brands` | `AdminBrandRequestDTO` | `AdminBrandResponseDTO` | Create brand. |
 | `PUT` | `/admin/brands/{brandId}` | `AdminBrandRequestDTO` | `AdminBrandResponseDTO` | Update brand. |
 | `PATCH` | `/admin/brands/{brandId}/status` | `AdminUpdateProductStatusRequestDTO` | `AdminBrandResponseDTO` | Update brand status. |
-| `DELETE` | `/admin/brands/{brandId}` | None | `AdminBrandResponseDTO` | Soft delete. |
-| `GET` | `/admin/brands` | Query params | `Page<AdminBrandResponseDTO>` | Supports `keyword`, `status`, `dateType`, `fromDate`, `toDate`, pageable params. |
+| `DELETE` | `/admin/brands/{brandId}` | None | `204 No Content` | Soft delete. |
+| `GET` | `/admin/brands` | Query params | `Page<AdminBrandResponseDTO>` | Supports `keyword`, `status`, `featured`, `dateType`, `fromDate`, `toDate`, pageable params. |
 | `GET` | `/admin/brands/{brandId}` | None | `AdminBrandResponseDTO` | Brand detail. |
 
 ### Products
@@ -98,8 +98,9 @@ Common filters used by many admin list endpoints:
 | `POST` | `/admin/products` | `AdminProductRequestDTO` | `AdminProductResponseDTO` | Create base product. |
 | `PUT` | `/admin/products/{productId}` | `AdminProductRequestDTO` | `AdminProductResponseDTO` | Update base product. |
 | `PATCH` | `/admin/products/{productId}/status` | `AdminUpdateProductStatusRequestDTO` | `AdminProductResponseDTO` | Update product status. |
+| `PATCH` | `/admin/products/{productId}/featured` | `AdminUpdateProductFeaturedRequestDTO` | `AdminProductResponseDTO` | Update featured flag. |
 | `DELETE` | `/admin/products/{productId}` | None | `204 No Content` | Soft delete. Blocked when variants still exist. |
-| `GET` | `/admin/products` | Query params | `Page<AdminProductResponseDTO>` | Supports `keyword`, `status`, `dateType`, `fromDate`, `toDate`, pageable params. |
+| `GET` | `/admin/products` | Query params | `Page<AdminProductResponseDTO>` | Supports `keyword`, `status`, `categoryId`, `brandId`, `featured`, `dateType`, `fromDate`, `toDate`, pageable params. |
 | `GET` | `/admin/products/{productId}` | None | `AdminDetailProductResponseDTO` | Product detail with variants. |
 | `GET` | `/admin/products/{productId}/reviews` | Query params | `Page<AdminReviewResponseDTO>` | Supports `keyword`, `dateType`, `fromDate`, `toDate`, pageable params. |
 
@@ -111,7 +112,7 @@ Common filters used by many admin list endpoints:
 | `PUT` | `/admin/variants/{variantId}` | `AdminVariantRequestDTO` | `AdminVariantResponseDTO` | Update variant. |
 | `PATCH` | `/admin/variants/{variantId}/status` | `AdminUpdateProductStatusRequestDTO` | `AdminVariantResponseDTO` | Update variant status. |
 | `DELETE` | `/admin/variants/{variantId}` | None | `204 No Content` | Soft delete. |
-| `GET` | `/admin/variants` | Query params | `Page<AdminVariantResponseDTO>` | Supports `keyword`, `status`, `dateType`, `fromDate`, `toDate`, pageable params. |
+| `GET` | `/admin/variants` | Query params | `Page<AdminVariantResponseDTO>` | Supports `keyword`, `status`, `productId`, `dateType`, `fromDate`, `toDate`, pageable params. |
 | `GET` | `/admin/variants/{variantId}` | None | `AdminDetailVariantResponseDTO` | Variant detail. |
 
 ### Media
@@ -271,9 +272,9 @@ Common filters used by many admin list endpoints:
 | --- | --- |
 | `AdminLoginRequestDTO` | `email`, `password` |
 | `AdminCategoryRequestDTO` | `name`, `iconUrl`, `slug`, `parentId`, `status` |
-| `AdminBrandRequestDTO` | `name`, `imageUrl`, `status` |
-| `AdminProductRequestDTO` | `name`, `slug`, `categoryId`, `brandId`, `description`, `specsJson`, `warrantyMonths`, `media`, `status` |
-| `AdminVariantRequestDTO` | `productId`, `media`, `name`, `slug`, `color`, `specsJson`, `price`, `totalStock`, `status` |
+| `AdminBrandRequestDTO` | `name`, `slug`, `imageUrl`, `description`, `featured`, `status` |
+| `AdminProductRequestDTO` | `name`, `slug`, `categoryId`, `brandId`, `description`, `specsJson`, `warrantyMonths`, `featured`, `media`, `status` |
+| `AdminVariantRequestDTO` | `productId`, `media`, `name`, `slug`, `sku`, `color`, `specsJson`, `price`, `totalStock`, `status` |
 | `AdminAddMediaRequestDTO` | `productId`, `variantId`, `imageUrl`, `isPrimary`, `displayOrder` |
 | `AdminUpdateMediaOrderRequestDTO` | `displayOrder` |
 | `AdminCouponRequestDTO` | `categoryId`, `brandId`, `code`, `type`, `value`, `minOrder`, `startDate`, `endDate`, `usageLimit`, `maxDiscount`, `status` |

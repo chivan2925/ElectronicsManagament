@@ -95,12 +95,13 @@ public class AdminVariantController {
     public ResponseEntity<Page<AdminVariantResponseDTO>> getAllVariants(
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) ProductStatus status,
+            @RequestParam(required = false) Integer productId,
             @RequestParam(defaultValue = "CREATED_AT") DateFilterType dateType,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate toDate,
             @PageableDefault(sort = "updatedAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
-        Page<AdminVariantResponseDTO> adminVariantResponseDTOPage = adminVariantService.getAllVariants(keyword, status, dateType, fromDate, toDate, pageable);
+        Page<AdminVariantResponseDTO> adminVariantResponseDTOPage = adminVariantService.getAllVariants(keyword, status, productId, dateType, fromDate, toDate, pageable);
 
         return ResponseEntity.ok(adminVariantResponseDTOPage);
     }

@@ -17,7 +17,7 @@ import java.util.*;
         name = "variants",
         check = {
                 @CheckConstraint(name = "chk_price_non_negative", constraint = "price >= 0"),
-                @CheckConstraint(name = "chk_stock_non_negative", constraint = "stock >= 0")
+                @CheckConstraint(name = "chk_stock_non_negative", constraint = "total_stock >= 0")
         }
 )
 @Getter
@@ -46,6 +46,9 @@ public class VariantEntity {
 
     @Column(nullable = false, unique = true)
     private String slug;
+
+    @Column(unique = true, length = 100)
+    private String sku;
 
     @Column(length = 50)
     private String color;

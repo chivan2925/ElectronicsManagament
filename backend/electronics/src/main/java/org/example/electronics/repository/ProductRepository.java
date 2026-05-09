@@ -35,6 +35,9 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Integer>
             ")) " +
 
             "AND (:status IS NULL OR p.status = :status) " +
+            "AND (:categoryId IS NULL OR p.category.id = :categoryId) " +
+            "AND (:brandId IS NULL OR p.brand.id = :brandId) " +
+            "AND (:featured IS NULL OR p.featured = :featured) " +
 
             "AND (CAST(:fromDate AS timestamp) IS NULL OR " +
             "    (:dateType = 'CREATED_AT' AND p.createdAt >= :fromDate) OR " +
@@ -54,6 +57,9 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Integer>
                     "    OR LOWER(p.slug) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
                     ")) " +
                     "AND (:status IS NULL OR p.status = :status) " +
+                    "AND (:categoryId IS NULL OR p.category.id = :categoryId) " +
+                    "AND (:brandId IS NULL OR p.brand.id = :brandId) " +
+                    "AND (:featured IS NULL OR p.featured = :featured) " +
 
                     "AND (CAST(:fromDate AS timestamp) IS NULL OR " +
                     "    (:dateType = 'CREATED_AT' AND p.createdAt >= :fromDate) OR " +
@@ -68,6 +74,9 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Integer>
     Page<ProductEntity> findProductsWithFilter(
             @Param("keyword") String keyword,
             @Param("status") ProductStatus status,
+            @Param("categoryId") Integer categoryId,
+            @Param("brandId") Integer brandId,
+            @Param("featured") Boolean featured,
             @Param("dateType") String dateType,
             @Param("fromDate") LocalDateTime fromDate,
             @Param("toDate") LocalDateTime toDate,

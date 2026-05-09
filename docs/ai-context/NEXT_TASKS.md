@@ -14,6 +14,33 @@ Ready for Phase 5 — Admin Dashboard System
 
 ## Recently Completed
 
+- Connected `/admin/variants` to real backend Variant and Product APIs with reusable variant-specific components.
+- Added `frontend/src/pages/admin/variants/VariantForm.jsx` and `VariantTable.jsx`.
+- Added real variant management flows: list with server pagination, search, product filter, status filter, create, update, soft delete, status toggle, SKU management, stock management, price override, and dynamic attribute fields.
+- Added `frontend/src/api/variantMapper.js` and upgraded `variantService.js` for normalized Variant API list/detail responses, Variant create/update payloads, and status patch updates.
+- Extended backend Variant API support for `sku`, product filtering, SKU search, and SKU uniqueness checks.
+- Verified `npm run lint`, `npm run build`, `git diff --check`, `mvn -q -DskipTests compile`, and a local `/admin/variants` route smoke check. Build still reports the existing Vite chunk-size warning.
+- Connected `/admin/products` to real backend Product, Brand, and Category APIs with reusable product-specific components.
+- Added `frontend/src/pages/admin/products/ProductForm.jsx`, `ProductTable.jsx`, and `ProductFilters.jsx`.
+- Added real product management flows: list with server pagination, search, category filter, brand filter, status filter, featured filter, create, update, soft delete, status toggle, and featured toggle.
+- Added image URL preview placeholder UX in Product Form while keeping real media upload for the Media module.
+- Upgraded `frontend/src/api/productService.js` and `productMapper.js` for normalized Product API list/detail responses, Product create/update payloads, status patch updates, and featured patch updates.
+- Extended backend Product API support for `featured`, category/brand/featured filters, richer list/detail DTO fields, product-level media placeholder updates, and Cloudinary dependency wiring for clean backend compile.
+- Verified `npm run lint`, `npm run build`, `git diff --check`, `mvn -q -DskipTests compile`, and a local `/admin/products` route smoke check. Build still reports the existing Vite chunk-size warning.
+- Connected `/admin/users` to real backend User APIs with reusable `AdminTable`, `AdminSearch`, `AdminFilters`, `AdminDrawer`, `StatusBadge`, and `ConfirmDialog`.
+- Added real user management flows: list with server pagination, search, status filter, role display, detail drawer, account activate/deactivate, and protected delete action.
+- Connected `/admin/staff` to real backend Staff and Role APIs with reusable admin CRUD components and role-aware action gating.
+- Added real staff management flows: list with server pagination, search, status filter, role display, create, update, delete, detail drawer, and account activate/deactivate.
+- Added `frontend/src/api/adminPeopleMapper.js` and upgraded `userService.js`, `staffService.js`, and `roleService.js` for normalized people-management responses and payloads.
+- Protected current-staff self actions in Staff Management so admins cannot deactivate, edit, or delete their own active session account from the table.
+- Extended backend staff search to include full name in `StaffRepository`.
+- Verified `npm run lint`, `npm run build`, `git diff --check`, and local `/admin/users` + `/admin/staff` route smoke checks. Build still reports the existing Vite chunk-size warning.
+- Connected `/admin/brands` to real backend Brand APIs with reusable `AdminTable`, `AdminSearch`, `AdminFilters`, `AdminDrawer`, `AdminForm`, and `ConfirmDialog`.
+- Added real brand CRUD flows: list (server pagination), create, update, soft delete, status update via `PATCH /admin/brands/{id}/status`, and featured toggle through the update API.
+- Added backend-aware brand API mapping in `frontend/src/api/brandMapper.js` and upgraded `frontend/src/api/brandService.js` for normalized page/detail/status methods.
+- Extended backend Brand DTO/entity/repository/service support for `slug`, `description`, `featured`, and featured filtering.
+- Added a logo URL field with upload placeholder UX for Brand Management.
+- Verified `npm run lint`, `npm run build`, `git diff --check`, and a local `/admin/brands` route smoke check after Brand Management integration. Build still reports the existing Vite chunk-size warning.
 - Connected `/admin/categories` to real backend Category APIs with reusable `AdminTable`, `AdminSearch`, `AdminFilters`, `AdminDrawer`, `AdminForm`, and `ConfirmDialog`.
 - Added real category CRUD flows: list (server pagination), create, update, soft delete, and status update via `PATCH /admin/categories/{id}/status`.
 - Added backend-aware category API mapping in `frontend/src/api/categoryMapper.js` and upgraded `frontend/src/api/categoryService.js` for normalized page/detail/status methods.
@@ -126,7 +153,7 @@ Ready for Phase 5 — Admin Dashboard System
 
 1. Preserve the existing homepage layout.
 2. Keep the normalized frontend folder structure stable.
-3. Continue Phase 5 API-backed admin pages by connecting brands through `frontend/src/admin/services` and `frontend/src/api/brandService.js`.
+3. Continue Phase 5 API-backed admin pages by connecting media through the existing admin API service pattern.
 4. Use centralized feedback components for loading, error, empty, permission, and refresh states before replacing mock admin data.
 5. Connect admin CRUD pages to backend APIs one resource at a time.
 6. Keep public storefront customer registration, payment gateway, wishlist, homepage products, and search on mock/local state until public API contracts are ready.
@@ -187,7 +214,7 @@ Ready for Phase 5 — Admin Dashboard System
 
 ### Phase 5 Admin Dashboard System
 
-- Continue with admin brands next, then products/variants/media using the same reusable Category module pattern.
+- Continue with admin media next using the same reusable Category/Brand/Product/Variant/User/Staff module pattern.
 - Reuse `useAdminTable`, `useAdminFilters`, `useAdminPagination`, and `useAdminModal` instead of adding local duplicated table state.
 - Reuse admin module registry metadata for resource labels, routes, permissions, and service selection.
 - Add API-backed list loading, error, empty, and refresh states before replacing mock admin data.
@@ -210,7 +237,7 @@ Ready for Phase 5 — Admin Dashboard System
 - Public customer auth is not complete; account APIs are authenticated and user-id scoped until a customer-auth principal contract is available.
 - Client checkout/account routes are customer-session-only in the frontend, but backend ownership enforcement still needs the future customer-auth principal contract.
 - A dedicated backend cart persistence API is not implemented; cart state is shared local frontend state.
-- Admin frontend API service modules exist; `/admin/categories` is connected, remaining pages are still mock-backed.
+- Admin frontend API service modules exist; `/admin/categories`, `/admin/brands`, `/admin/products`, `/admin/variants`, `/admin/users`, and `/admin/staff` are connected, remaining pages are still mock-backed.
 - Category API currently has no `description` field in request/response DTOs, so category description is UI-session only until backend contract is extended.
 - Backend admin auth currently exposes login/logout; refresh-token endpoint support is not implemented yet.
 - Backend `mvn test` currently fails because `AddressMapper` is not registered as a bean for `AdminAddressServiceImpl`.

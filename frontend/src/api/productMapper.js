@@ -1,4 +1,5 @@
 const DEFAULT_PRODUCT_STATUS = "ACTIVE";
+const PRODUCT_PLACEHOLDER_IMAGE = "https://placehold.co/480x360/F1F5F9/64748B?text=Product+Image";
 
 const PLACEHOLDER_TONES = {
   "PC Gaming": "0B1730",
@@ -163,6 +164,60 @@ function getPrimaryImage(raw, productFallback = null) {
   return firstDefined(raw?.primaryImageUrl, raw?.imageUrl, raw?.thumbnailUrl, raw?.image, mediaImage, variantImage, productFallback);
 }
 
+export function parseProductSpecsText(value = "") {
+  const text = String(value ?? "").trim();
+
+  if (!text) {
+    return {};
+  }
+
+  if (text.startsWith("{")) {
+    const parsed = JSON.parse(text);
+
+    if (!isPlainObject(parsed)) {
+      throw new Error("Product specs must be a JSON object.");
+    }
+
+    return parsed;
+  }
+
+  return text.split(/\r?\n/).reduce((specs, line, index) => {
+    const trimmedLine = line.trim();
+
+    if (!trimmedLine) {
+      return specs;
+    }
+
+    const separatorIndex = trimmedLine.search(/[:=]/);
+
+    if (separatorIndex <= 0) {
+      throw new Error(`Invalid specs line ${index + 1}. Use "key: value".`);
+    }
+
+    const key = trimmedLine.slice(0, separatorIndex).trim();
+    const specValue = trimmedLine.slice(separatorIndex + 1).trim();
+
+    if (!key || !specValue) {
+      throw new Error(`Invalid specs line ${index + 1}. Use "key: value".`);
+    }
+
+    return {
+      ...specs,
+      [key]: specValue,
+    };
+  }, {});
+}
+
+export function formatProductSpecsText(value = {}) {
+  if (!isPlainObject(value)) {
+    return "";
+  }
+
+  return Object.entries(value)
+    .map(([key, specValue]) => `${key}: ${Array.isArray(specValue) ? specValue.join(", ") : specValue}`)
+    .join("\n");
+}
+
 function normalizeVariant(raw, fallbackStock = null) {
   const id = firstDefined(raw?.id, raw?.variantId, raw?.sku, raw?.slug, raw?.name);
   const name = firstDefined(raw?.name, raw?.variantName, raw?.title, raw?.color, "Phiên bản tiêu chuẩn");
@@ -242,6 +297,7 @@ export function normalizeProduct(raw = {}) {
   const brand = firstDefined(data.brandName, data.brand?.name, data.brand, "ElectronicsManagement");
   const price = getProductPrice(data, variants);
   const oldPrice = getProductOldPrice(data, price);
+  const primaryImageUrl = getPrimaryImage(data, null);
   const product = {
     apiId: firstDefined(data.id, data.productId, id),
     brand,
@@ -249,27 +305,82 @@ export function normalizeProduct(raw = {}) {
     category,
     categoryId: firstDefined(data.categoryId, data.category?.id, null),
     createdAt: toDateValue(firstDefined(data.createdAt, data.created_at, data.updatedAt, data.updated_at)),
+    description: firstDefined(data.description, ""),
     discount: firstDefined(data.discount, data.discountLabel, getDiscountLabel(price, oldPrice)),
+    featured: Boolean(data.featured),
     id: String(id),
     image: null,
+    media: getMediaList(data),
     name,
     oldPrice,
     price,
+    primaryImageUrl,
     rating: toNumber(firstDefined(data.ratingStar, data.rating, data.averageRating, data.ratingAverage), 0),
     reviews: toNumber(firstDefined(data.ratingCount, data.reviews, data.reviewCount, data.totalReviews), 0),
     slug: firstDefined(data.slug, normalizeSlug(`${name}-${id}`)),
     sold: toNumber(firstDefined(data.sold, data.soldQuantity, data.totalSold), 0),
+    specsJson: isPlainObject(data.specsJson ?? data.specs) ? data.specsJson ?? data.specs : {},
+    specsText: formatProductSpecsText(data.specsJson ?? data.specs),
     status: firstDefined(data.status, DEFAULT_PRODUCT_STATUS),
     stock: getProductStock(data, variants),
     tags: [],
     updatedAt: toDateValue(firstDefined(data.updatedAt, data.updated_at, data.createdAt, data.created_at)),
     variants,
+    warrantyMonths: toNumber(firstDefined(data.warrantyMonths, data.warranty, 0), 0),
   };
 
-  product.image = getPrimaryImage(data, createProductPlaceholderImage(product));
+  product.image = primaryImageUrl ?? createProductPlaceholderImage(product);
   product.tags = getTags(data, product);
 
   return product;
+}
+
+function buildProductMedia(values = {}) {
+  const imageUrl = values.thumbnailUrl?.trim() || values.primaryImageUrl?.trim() || "";
+  const originalImageUrl = values.originalThumbnailUrl?.trim() || "";
+
+  if (!imageUrl || imageUrl === originalImageUrl || imageUrl === PRODUCT_PLACEHOLDER_IMAGE) {
+    return undefined;
+  }
+
+  const publicIdBase = normalizeSlug(values.slug || values.name || "product-image") || "product-image";
+
+  return [
+    {
+      displayOrder: 0,
+      imageUrl,
+      isPrimary: true,
+      publicId: `${publicIdBase}-${Date.now()}`,
+    },
+  ];
+}
+
+export function buildProductPayload(values = {}) {
+  const media = buildProductMedia(values);
+  const payload = {
+    brandId: values.brandId ? Number(values.brandId) : null,
+    categoryId: values.categoryId ? Number(values.categoryId) : null,
+    description: values.description?.trim() || null,
+    featured: Boolean(values.featured),
+    name: values.name?.trim() ?? "",
+    slug: values.slug?.trim() ?? "",
+    specsJson: parseProductSpecsText(values.specsText),
+    status: values.status || DEFAULT_PRODUCT_STATUS,
+    warrantyMonths:
+      values.warrantyMonths !== "" && values.warrantyMonths !== null && values.warrantyMonths !== undefined
+        ? Number(values.warrantyMonths)
+        : 0,
+  };
+
+  if (media) {
+    payload.media = media;
+  }
+
+  return payload;
+}
+
+export function normalizeAdminProductDetail(raw = {}) {
+  return normalizeProduct(raw);
 }
 
 function normalizeSpecRows(specs) {

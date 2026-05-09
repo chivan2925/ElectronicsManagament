@@ -16,14 +16,22 @@ public interface BrandRepository extends JpaRepository<BrandEntity, Integer> {
 
     boolean existsByNameAndIdNot(String name, Integer id);
 
+    boolean existsBySlug(String slug);
+
+    boolean existsBySlugAndIdNot(String slug, Integer id);
+
     @Query("SELECT b FROM BrandEntity b WHERE 1=1 " +
 
             "AND (:keyword IS NULL OR ( " +
             "    CAST(b.id AS string) LIKE CONCAT('%', :keyword, '%') " +
             "    OR LOWER(b.name) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "    OR LOWER(b.slug) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "    OR LOWER(b.description) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
             ")) " +
 
             "AND (:status IS NULL OR b.status = :status) " +
+
+            "AND (:featured IS NULL OR COALESCE(b.featured, false) = :featured) " +
 
             "AND (CAST(:fromDate AS timestamp) IS NULL OR " +
             "    (:dateType = 'CREATED_AT' AND b.createdAt >= :fromDate) OR " +
@@ -38,6 +46,7 @@ public interface BrandRepository extends JpaRepository<BrandEntity, Integer> {
     Page<BrandEntity> findBrandsWithFilter(
             @Param("keyword") String keyword,
             @Param("status") ProductStatus status,
+            @Param("featured") Boolean featured,
             @Param("dateType") String dateType,
             @Param("fromDate") LocalDateTime fromDate,
             @Param("toDate") LocalDateTime toDate,

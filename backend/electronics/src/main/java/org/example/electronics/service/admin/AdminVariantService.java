@@ -17,6 +17,6 @@ public interface AdminVariantService {
     AdminVariantResponseDTO updateVariant(Integer variantId, AdminVariantRequestDTO adminVariantRequestDTO);
     AdminVariantResponseDTO updateStatusVariant(Integer variantId, AdminUpdateProductStatusRequestDTO adminUpdateProductStatusRequestDTO);
     void deleteVariant(Integer variantId);
-    Page<AdminVariantResponseDTO> getAllVariants(String keyword, ProductStatus status, DateFilterType dateType, LocalDate fromDate, LocalDate toDate, Pageable pageable);
+    Page<AdminVariantResponseDTO> getAllVariants(String keyword, ProductStatus status, Integer productId, DateFilterType dateType, LocalDate fromDate, LocalDate toDate, Pageable pageable);
     AdminDetailVariantResponseDTO getVariantById(Integer variantId);
 }

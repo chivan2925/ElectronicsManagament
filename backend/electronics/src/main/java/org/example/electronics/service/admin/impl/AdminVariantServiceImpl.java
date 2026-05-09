@@ -57,6 +57,10 @@ public class AdminVariantServiceImpl implements AdminVariantService {
             throw new IllegalArgumentException("Tên hoặc Slug biến thể này đã tồn tại.");
         }
 
+        if (variantRepository.existsBySku(adminVariantRequestDTO.sku())) {
+            throw new IllegalArgumentException("SKU bien the nay da ton tai.");
+        }
+
         ProductEntity existingProductEntity = productRepository.findById(adminVariantRequestDTO.productId())
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Không tìm thấy sản phẩm với id: " + adminVariantRequestDTO.productId()
@@ -91,6 +95,10 @@ public class AdminVariantServiceImpl implements AdminVariantService {
         if(variantRepository.existsByNameAndIdNot(adminVariantRequestDTO.name(), variantId) ||
                 variantRepository.existsBySlugAndIdNot(adminVariantRequestDTO.slug(), variantId)) {
             throw new IllegalArgumentException("Tên hoặc Slug biến thể này đã bị trùng với một biến thể khác.");
+        }
+
+        if (variantRepository.existsBySkuAndIdNot(adminVariantRequestDTO.sku(), variantId)) {
+            throw new IllegalArgumentException("SKU bien the nay da bi trung voi mot bien the khac.");
         }
 
         VariantEntity existingVariantEntity = variantRepository.findById(variantId)
@@ -184,7 +192,7 @@ public class AdminVariantServiceImpl implements AdminVariantService {
 
     @Transactional(readOnly = true)
     @Override
-    public Page<AdminVariantResponseDTO> getAllVariants(String keyword, ProductStatus status, DateFilterType dateType, LocalDate fromDate, LocalDate toDate, Pageable pageable) {
+    public Page<AdminVariantResponseDTO> getAllVariants(String keyword, ProductStatus status, Integer productId, DateFilterType dateType, LocalDate fromDate, LocalDate toDate, Pageable pageable) {
         LocalDateTime startDateTime = DateTimeUtils.getStartOfDay(fromDate);
         LocalDateTime endDateTime = DateTimeUtils.getEndOfDay(toDate);
 
@@ -192,7 +200,7 @@ public class AdminVariantServiceImpl implements AdminVariantService {
 
         String typeString = dateType != null ? dateType.name() : DateFilterType.CREATED_AT.name();
 
-        Page<VariantEntity> variantEntityPage = variantRepository.findVariantsWithFilter(finalKeyword, status, typeString, startDateTime, endDateTime, pageable);
+        Page<VariantEntity> variantEntityPage = variantRepository.findVariantsWithFilter(finalKeyword, status, productId, typeString, startDateTime, endDateTime, pageable);
 
         return variantEntityPage.map(variantMapper::toAdminResponseDTO);
     }

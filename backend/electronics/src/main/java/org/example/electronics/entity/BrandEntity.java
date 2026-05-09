@@ -24,8 +24,18 @@ public class BrandEntity {
     @Column(nullable = false, unique = true, length = 100)
     private String name;
 
+    @Column(unique = true, length = 150)
+    private String slug;
+
     @Column(name = "image_url")
     private String imageUrl;
+
+    @Column(columnDefinition = "text")
+    private String description;
+
+    @Column(name = "featured")
+    @Builder.Default
+    private Boolean featured = false;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)

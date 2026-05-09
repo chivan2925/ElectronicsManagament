@@ -4,6 +4,7 @@ import org.example.electronics.dto.response.admin.AdminMediaResponseDTO;
 import org.example.electronics.dto.response.admin.variant.AdminVariantResponseDTO;
 import org.example.electronics.entity.enums.ProductStatus;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,8 @@ public record AdminDetailProductResponseDTO(
 
         String brandName,
 
+        String primaryImageUrl,
+
         String description,
 
         Map<String, Object> specsJson,
@@ -32,6 +35,12 @@ public record AdminDetailProductResponseDTO(
         Integer ratingCount,
 
         Integer warrantyMonths,
+
+        BigDecimal price,
+
+        Integer stock,
+
+        Boolean featured,
 
         List<AdminVariantResponseDTO> variants,
 

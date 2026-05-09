@@ -6,6 +6,55 @@ This changelog records AI-assisted project context, documentation, and implement
 
 Always update this file after meaningful work.
 
+## 2026-05-10
+
+### Admin Variant Management API Integration
+
+- Rebuilt `frontend/src/pages/admin/Variants.jsx` into a real API-backed inventory module at `/admin/variants`.
+- Added reusable Variant Management components: `VariantForm.jsx` and `VariantTable.jsx`.
+- Added real variant list/table with server-side search, product filter, status filter, pagination, loading state, API error handling, status toggle, and protected actions.
+- Added Variant create/update drawer with product linking, SKU management, stock management, price override, color/size fields, dynamic attributes, and image URL preview placeholder UX.
+- Added `frontend/src/api/variantMapper.js` and upgraded `variantService.js` for normalized Variant API responses and payloads.
+- Extended backend Variant API support for `sku`, product filtering, SKU search, SKU uniqueness checks, and `sku` fields in list/detail DTOs.
+- Verified `npm run lint`, `npm run build`, `git diff --check`, `mvn -q -DskipTests compile`, and a local `/admin/variants` route smoke check. Build still reports the existing Vite chunk-size warning.
+
+### Admin Product Management API Integration
+
+- Rebuilt `frontend/src/pages/admin/Products.jsx` into a real API-backed admin module at `/admin/products`.
+- Added reusable Product Management components: `ProductForm.jsx`, `ProductTable.jsx`, and `ProductFilters.jsx`.
+- Added real product list/table with server-side search, category filter, brand filter, status filter, featured filter, pagination, loading state, API error handling, status toggle, featured toggle, and protected actions.
+- Added Product create/update drawer using reusable admin form patterns with image URL preview placeholder UX.
+- Upgraded `frontend/src/api/productMapper.js` and `productService.js` for normalized Product API responses, Product create/update payloads, status patch updates, and featured patch updates.
+- Extended backend Product API support for `featured`, category/brand/featured filters, featured patch updates, richer product list/detail DTO metadata, product-level media placeholder updates, and variant stock in variant responses.
+- Added the Cloudinary Java SDK dependency and removed the duplicate MapStruct primary-image mapping conflict so backend compile can pass.
+- Verified `npm run lint`, `npm run build`, `git diff --check`, `mvn -q -DskipTests compile`, and a local `/admin/products` route smoke check. Build still reports the existing Vite chunk-size warning.
+
+### Admin User And Staff Management API Integration
+
+- Rebuilt `frontend/src/pages/admin/Users.jsx` into a real API-backed admin module at `/admin/users`.
+- Added real user list/table with server-side search, status filter, role display, account status controls, pagination, loading state, API error handling, detail drawer, and protected delete action.
+- Rebuilt `frontend/src/pages/admin/Staff.jsx` into a real API-backed admin module at `/admin/staff`.
+- Added real staff list/table with server-side search, status filter, role display, account status controls, pagination, loading state, API error handling, detail drawer, create, update, and delete flows.
+- Added Staff create/update forms using reusable `AdminDrawer` + `AdminForm` and live Role API options.
+- Added role-aware and protected actions through centralized permission policies, including current-staff self-action protection.
+- Added `frontend/src/api/adminPeopleMapper.js` and upgraded `userService.js`, `staffService.js`, and `roleService.js` for normalized User, Staff, and Role API responses and payloads.
+- Extended backend staff search in `StaffRepository` to include full name.
+- Verified `npm run lint`, `npm run build`, `git diff --check`, and local `/admin/users` + `/admin/staff` route smoke checks. Build still reports the existing Vite chunk-size warning.
+
+### Admin Brand Management API Integration
+
+- Rebuilt `frontend/src/pages/admin/Brands.jsx` into a real API-backed admin module at `/admin/brands`.
+- Added real brand list/table with server-side search, status filter, featured filter, pagination, loading state, and API error handling.
+- Added brand create/update flows using reusable `AdminDrawer` + `AdminForm`.
+- Added soft-delete flow using reusable `ConfirmDialog`.
+- Added brand status toggle via backend `PATCH /admin/brands/{id}/status`.
+- Added featured toggle through the Brand update API.
+- Added logo URL entry with upload placeholder UX.
+- Added `frontend/src/api/brandMapper.js` and upgraded `frontend/src/api/brandService.js` for normalized Brand API responses and payloads.
+- Extended backend Brand entity, DTOs, repository, service, and controller support for `slug`, `description`, `featured`, and featured filtering.
+- Updated Brand API and database schema documentation.
+- Verified `npm run lint`, `npm run build`, `git diff --check`, and a local `/admin/brands` route smoke check. Build still reports the existing Vite chunk-size warning.
+
 ## 2026-05-09
 
 ### Context Standardization

@@ -25,6 +25,9 @@ public record AdminVariantRequestDTO(
         @Schema(description = "Đường dẫn thân thiện cho SEO", example = "laptop-gaming")
         String slug,
 
+        @NotBlank(message = "SKU bien the san pham khong duoc de trong")
+        String sku,
+
         @NotBlank(message = "Màu biến thể sản phẩm không được để trống")
         String color,
 

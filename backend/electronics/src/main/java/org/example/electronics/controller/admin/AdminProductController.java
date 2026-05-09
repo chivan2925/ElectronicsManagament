@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.electronics.dto.request.admin.AdminProductRequestDTO;
+import org.example.electronics.dto.request.admin.status.AdminUpdateProductFeaturedRequestDTO;
 import org.example.electronics.dto.request.admin.status.AdminUpdateProductStatusRequestDTO;
 import org.example.electronics.dto.response.admin.AdminReviewResponseDTO;
 import org.example.electronics.dto.response.admin.product.AdminDetailProductResponseDTO;
@@ -77,6 +78,20 @@ public class AdminProductController {
         return ResponseEntity.ok(adminProductResponseDTO);
     }
 
+    @PatchMapping("/{productId}/featured")
+    @Operation(
+            summary = "Cáº­p nháº­t tráº¡ng thÃ¡i ná»•i báº­t cá»§a Sáº£n pháº©m",
+            description = "Báº­t/táº¯t cá» featured Ä‘á»ƒ sáº£n pháº©m cÃ³ thá»ƒ Ä‘Æ°á»£c Æ°u tiÃªn trÃªn cÃ¡c khu vá»±c quáº£ng bÃ¡."
+    )
+    public ResponseEntity<AdminProductResponseDTO> updateFeaturedProduct(
+            @PathVariable Integer productId,
+            @Valid @RequestBody AdminUpdateProductFeaturedRequestDTO adminUpdateProductFeaturedRequestDTO
+    ) {
+        AdminProductResponseDTO adminProductResponseDTO = adminProductService.updateFeaturedProduct(productId, adminUpdateProductFeaturedRequestDTO);
+
+        return ResponseEntity.ok(adminProductResponseDTO);
+    }
+
     @DeleteMapping("/{productId}")
     @Operation(
             summary = "Xóa Sản phẩm (Soft Delete)",
@@ -98,12 +113,15 @@ public class AdminProductController {
     public ResponseEntity<Page<AdminProductResponseDTO>> getAllProducts(
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) ProductStatus status,
+            @RequestParam(required = false) Integer categoryId,
+            @RequestParam(required = false) Integer brandId,
+            @RequestParam(required = false) Boolean featured,
             @RequestParam(defaultValue = "CREATED_AT") DateFilterType dateType,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate toDate,
             @PageableDefault(sort = "updatedAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
-        Page<AdminProductResponseDTO> adminProductResponseDTOPage = adminProductService.getAllProducts(keyword, status, dateType, fromDate, toDate, pageable);
+        Page<AdminProductResponseDTO> adminProductResponseDTOPage = adminProductService.getAllProducts(keyword, status, categoryId, brandId, featured, dateType, fromDate, toDate, pageable);
 
         return ResponseEntity.ok(adminProductResponseDTOPage);
     }

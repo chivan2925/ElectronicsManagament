@@ -1,6 +1,9 @@
 import { api } from "./client";
 import {
+  buildProductPayload,
   createProductDetail,
+  normalizeAdminProductDetail,
+  normalizeProduct,
   normalizeProductPage,
   normalizeReviewPage,
   normalizeSlug,
@@ -46,7 +49,43 @@ function getCatalogParams(params = {}) {
   });
 }
 
-export const { create, getAll, getById, remove, update } = adminProductService;
+export async function getAll(params = {}, config = {}) {
+  const data = await adminProductService.getAll(cleanParams(params), config);
+  return normalizeProductPage(data);
+}
+
+export async function getById(id, config = {}) {
+  const data = await adminProductService.getById(id, config);
+  return normalizeAdminProductDetail(data);
+}
+
+export async function create(payload, config = {}) {
+  const data = await adminProductService.create(buildProductPayload(payload), config);
+  return normalizeProduct(data);
+}
+
+export async function update(id, payload, config = {}) {
+  const data = await adminProductService.update(id, buildProductPayload(payload), config);
+  return normalizeProduct(data);
+}
+
+export async function remove(id, config = {}) {
+  return adminProductService.remove(id, config);
+}
+
+export async function updateStatus(id, status, config = {}) {
+  const nextStatus = typeof status === "string" ? status : status?.status;
+  const data = await api.patch(`${RESOURCE_PATH}/${id}/status`, { status: nextStatus }, config);
+
+  return normalizeProduct(data);
+}
+
+export async function updateFeatured(id, featured, config = {}) {
+  const nextFeatured = typeof featured === "boolean" ? featured : Boolean(featured?.featured);
+  const data = await api.patch(`${RESOURCE_PATH}/${id}/featured`, { featured: nextFeatured }, config);
+
+  return normalizeProduct(data);
+}
 
 export async function getCatalogProducts(params = {}, config = {}) {
   const data = await api.get(RESOURCE_PATH, {
@@ -150,6 +189,8 @@ const productService = {
   getById,
   remove,
   update,
+  updateFeatured,
+  updateStatus,
 };
 
 export default productService;

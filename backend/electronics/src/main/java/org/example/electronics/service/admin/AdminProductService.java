@@ -1,6 +1,7 @@
 package org.example.electronics.service.admin;
 
 import org.example.electronics.dto.request.admin.AdminProductRequestDTO;
+import org.example.electronics.dto.request.admin.status.AdminUpdateProductFeaturedRequestDTO;
 import org.example.electronics.dto.request.admin.status.AdminUpdateProductStatusRequestDTO;
 import org.example.electronics.dto.response.admin.product.AdminDetailProductResponseDTO;
 import org.example.electronics.dto.response.admin.product.AdminProductResponseDTO;
@@ -15,8 +16,9 @@ public interface AdminProductService {
 
     AdminProductResponseDTO createProduct(AdminProductRequestDTO adminProductRequestDTO);
     AdminProductResponseDTO updateProduct(Integer productId, AdminProductRequestDTO adminProductRequestDTO);
+    AdminProductResponseDTO updateFeaturedProduct(Integer productId, AdminUpdateProductFeaturedRequestDTO adminUpdateProductFeaturedRequestDTO);
     AdminProductResponseDTO updateStatusProduct(Integer productId, AdminUpdateProductStatusRequestDTO adminUpdateProductStatusRequestDTO);
     void deleteProduct(Integer productId);
-    Page<AdminProductResponseDTO> getAllProducts(String keyword, ProductStatus status, DateFilterType dateType, LocalDate fromDate, LocalDate toDate, Pageable pageable);
+    Page<AdminProductResponseDTO> getAllProducts(String keyword, ProductStatus status, Integer categoryId, Integer brandId, Boolean featured, DateFilterType dateType, LocalDate fromDate, LocalDate toDate, Pageable pageable);
     AdminDetailProductResponseDTO getProductById(Integer productId);
 }

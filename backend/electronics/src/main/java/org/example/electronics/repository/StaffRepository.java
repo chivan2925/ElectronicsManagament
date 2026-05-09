@@ -29,6 +29,7 @@ public interface StaffRepository extends JpaRepository<StaffEntity, Integer> {
 
             "AND (:keyword IS NULL OR ( " +
             "    CAST(s.id AS string) LIKE CONCAT('%', :keyword, '%') " +
+            "    OR LOWER(s.fullName) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
             "    OR LOWER(s.username) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
             "    OR LOWER(s.email) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
             "    OR LOWER(s.phoneNumber) LIKE LOWER(CONCAT('%', :keyword, '%')) " +

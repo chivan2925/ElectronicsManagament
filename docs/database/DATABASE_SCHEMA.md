@@ -62,7 +62,10 @@ Important columns:
 
 - `id`
 - `name`
+- `slug`
 - `image_url`
+- `description`
+- `featured`
 - `status`
 - `created_at`
 - `updated_at`
@@ -70,6 +73,8 @@ Important columns:
 Notes:
 
 - `name` is unique.
+- `slug` is unique when present.
+- `featured` marks brands for highlighted admin/storefront placement.
 - `status` uses `ProductStatus`.
 
 ### `products`
@@ -88,6 +93,7 @@ Important columns:
 - `rating_star`
 - `rating_count`
 - `warranty_months`
+- `featured`
 - `status`
 - `created_at`
 - `updated_at`
@@ -98,6 +104,7 @@ Notes:
 - `category_id` is required.
 - `brand_id` is required.
 - `specs_json` stores flexible product specifications.
+- `featured` marks products for highlighted admin/storefront placement.
 - Rating and warranty fields have non-negative/range checks.
 
 ### `variants`
@@ -110,6 +117,7 @@ Important columns:
 - `product_id`
 - `name`
 - `slug`
+- `sku`
 - `color`
 - `specs_json`
 - `price`
@@ -122,6 +130,7 @@ Notes:
 
 - `product_id` is required.
 - `slug` is unique.
+- `sku` is unique when present and is used for inventory and order reconciliation.
 - `price` and `total_stock` must be non-negative.
 - `total_stock` is the aggregate stock across warehouses.
 

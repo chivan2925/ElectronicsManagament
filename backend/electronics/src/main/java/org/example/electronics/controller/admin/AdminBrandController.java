@@ -91,12 +91,13 @@ public class AdminBrandController {
     public ResponseEntity<Page<AdminBrandResponseDTO>> getAllBrands(
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) ProductStatus status,
+            @RequestParam(required = false) Boolean featured,
             @RequestParam(defaultValue = "CREATED_AT") DateFilterType dateType,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate toDate,
             @PageableDefault(sort = "updatedAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
-        Page<AdminBrandResponseDTO> adminBrandResponseDTOPage = adminBrandService.getAllBrands(keyword, status, dateType, fromDate, toDate, pageable);
+        Page<AdminBrandResponseDTO> adminBrandResponseDTOPage = adminBrandService.getAllBrands(keyword, status, featured, dateType, fromDate, toDate, pageable);
 
         return ResponseEntity.ok(adminBrandResponseDTOPage);
     }

@@ -35,7 +35,12 @@ public class AdminBrandServiceImpl implements AdminBrandService {
             throw new IllegalArgumentException("Tên thương hiệu đã tồn tại");
         }
 
+        if(brandRepository.existsBySlug(adminBrandRequestDTO.slug())) {
+            throw new IllegalArgumentException("Slug thương hiệu đã tồn tại");
+        }
+
         BrandEntity newBrandEntity = brandMapper.toNewEntity(adminBrandRequestDTO);
+        applyDefaults(newBrandEntity);
 
         newBrandEntity = brandRepository.save(newBrandEntity);
 
@@ -49,12 +54,17 @@ public class AdminBrandServiceImpl implements AdminBrandService {
             throw new IllegalArgumentException("Tên thương hiệu đã bị trùng với một thương hiệu khác");
         }
 
+        if(brandRepository.existsBySlugAndIdNot(adminBrandRequestDTO.slug(), brandId)) {
+            throw new IllegalArgumentException("Slug thương hiệu đã bị trùng với một thương hiệu khác");
+        }
+
         BrandEntity existingBrandEntity = brandRepository.findById(brandId)
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Không tìm thấy thương hiệu với id: " + brandId
                 ));
 
         brandMapper.updateEntityFromRequest(adminBrandRequestDTO, existingBrandEntity);
+        applyDefaults(existingBrandEntity);
 
         return brandMapper.toAdminResponseDTO(existingBrandEntity);
     }
@@ -85,7 +95,7 @@ public class AdminBrandServiceImpl implements AdminBrandService {
 
     @Transactional(readOnly = true)
     @Override
-    public Page<AdminBrandResponseDTO> getAllBrands(String keyword, ProductStatus status, DateFilterType dateType, LocalDate fromDate, LocalDate toDate, Pageable pageable) {
+    public Page<AdminBrandResponseDTO> getAllBrands(String keyword, ProductStatus status, Boolean featured, DateFilterType dateType, LocalDate fromDate, LocalDate toDate, Pageable pageable) {
         LocalDateTime startDateTime = DateTimeUtils.getStartOfDay(fromDate);
         LocalDateTime endDateTime = DateTimeUtils.getEndOfDay(toDate);
 
@@ -93,7 +103,7 @@ public class AdminBrandServiceImpl implements AdminBrandService {
 
         String typeString = dateType != null ? dateType.name() : DateFilterType.CREATED_AT.name();
 
-        Page<BrandEntity> brandEntityPage = brandRepository.findBrandsWithFilter(finalKeyword, status, typeString, startDateTime, endDateTime, pageable);
+        Page<BrandEntity> brandEntityPage = brandRepository.findBrandsWithFilter(finalKeyword, status, featured, typeString, startDateTime, endDateTime, pageable);
 
         return brandEntityPage.map(brandMapper::toAdminResponseDTO);
     }
@@ -107,5 +117,11 @@ public class AdminBrandServiceImpl implements AdminBrandService {
                 ));
 
         return brandMapper.toAdminResponseDTO(existingBrandEntity);
+    }
+
+    private void applyDefaults(BrandEntity brandEntity) {
+        if (brandEntity.getFeatured() == null) {
+            brandEntity.setFeatured(false);
+        }
     }
 }

@@ -3,6 +3,7 @@ package org.example.electronics.service.admin.impl;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.example.electronics.dto.request.admin.AdminProductRequestDTO;
+import org.example.electronics.dto.request.admin.status.AdminUpdateProductFeaturedRequestDTO;
 import org.example.electronics.dto.request.admin.status.AdminUpdateProductStatusRequestDTO;
 import org.example.electronics.dto.request.admin.media.AdminNestedMediaRequestDTO;
 import org.example.electronics.dto.response.admin.product.AdminDetailProductResponseDTO;
@@ -62,22 +63,11 @@ public class AdminProductServiceImpl implements AdminProductService {
 
         newProductEntity.setCategory(existingCategoryEntity);
         newProductEntity.setBrand(existingBrandEntity);
+        newProductEntity.setFeatured(Boolean.TRUE.equals(adminProductRequestDTO.featured()));
 
         ProductEntity savedProductEntity = productRepository.save(newProductEntity);
 
-        List<AdminNestedMediaRequestDTO> adminNestedMediaRequestDTOList = adminProductRequestDTO.media();
-
-        if(adminNestedMediaRequestDTOList != null && !adminNestedMediaRequestDTOList.isEmpty()) {
-            List<MediaEntity> mediaEntityList = adminNestedMediaRequestDTOList.stream()
-                    .map(mediaDTO -> {
-                        MediaEntity mediaEntity = mediaMapper.nestedDTO_toNewEntity(mediaDTO);
-                        mediaEntity.setProduct(savedProductEntity);
-                        return mediaEntity;
-                    })
-                    .toList();
-
-            mediaRepository.saveAll(mediaEntityList);
-        }
+        saveProductMedia(savedProductEntity, adminProductRequestDTO.media(), false);
 
         return productMapper.toAdminResponseDTO(savedProductEntity);
     }
@@ -109,6 +99,21 @@ public class AdminProductServiceImpl implements AdminProductService {
 
         existingProductEntity.setCategory(existingCategoryEntity);
         existingProductEntity.setBrand(existingBrandEntity);
+        existingProductEntity.setFeatured(Boolean.TRUE.equals(adminProductRequestDTO.featured()));
+        saveProductMedia(existingProductEntity, adminProductRequestDTO.media(), true);
+
+        return productMapper.toAdminResponseDTO(existingProductEntity);
+    }
+
+    @Transactional
+    @Override
+    public AdminProductResponseDTO updateFeaturedProduct(Integer productId, AdminUpdateProductFeaturedRequestDTO adminUpdateProductFeaturedRequestDTO) {
+        ProductEntity existingProductEntity = productRepository.findById(productId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "KhÃ´ng tÃ¬m tháº¥y sáº£n pháº©m vá»›i id: " + productId
+                ));
+
+        existingProductEntity.setFeatured(adminUpdateProductFeaturedRequestDTO.featured());
 
         return productMapper.toAdminResponseDTO(existingProductEntity);
     }
@@ -143,7 +148,7 @@ public class AdminProductServiceImpl implements AdminProductService {
 
     @Transactional(readOnly = true)
     @Override
-    public Page<AdminProductResponseDTO> getAllProducts(String keyword, ProductStatus status, DateFilterType dateType, LocalDate fromDate, LocalDate toDate, Pageable pageable) {
+    public Page<AdminProductResponseDTO> getAllProducts(String keyword, ProductStatus status, Integer categoryId, Integer brandId, Boolean featured, DateFilterType dateType, LocalDate fromDate, LocalDate toDate, Pageable pageable) {
         LocalDateTime startDateTime = DateTimeUtils.getStartOfDay(fromDate);
         LocalDateTime endDateTime = DateTimeUtils.getEndOfDay(toDate);
 
@@ -151,7 +156,7 @@ public class AdminProductServiceImpl implements AdminProductService {
 
         String typeString = dateType != null ? dateType.name() : DateFilterType.CREATED_AT.name();
 
-        Page<ProductEntity> productEntityPage = productRepository.findProductsWithFilter(finalKeyword, status, typeString, startDateTime, endDateTime, pageable);
+        Page<ProductEntity> productEntityPage = productRepository.findProductsWithFilter(finalKeyword, status, categoryId, brandId, featured, typeString, startDateTime, endDateTime, pageable);
 
         return productEntityPage.map(productMapper::toAdminResponseDTO);
     }
@@ -165,5 +170,25 @@ public class AdminProductServiceImpl implements AdminProductService {
                 ));
 
         return productMapper.toAdminDetailResponseDTO(existingProductEntity);
+    }
+
+    private void saveProductMedia(ProductEntity productEntity, List<AdminNestedMediaRequestDTO> mediaRequests, boolean resetPrimary) {
+        if (mediaRequests == null || mediaRequests.isEmpty()) {
+            return;
+        }
+
+        if (resetPrimary) {
+            mediaRepository.updateIsPrimaryToFalseByProductId(productEntity.getId());
+        }
+
+        List<MediaEntity> mediaEntityList = mediaRequests.stream()
+                .map(mediaDTO -> {
+                    MediaEntity mediaEntity = mediaMapper.nestedDTO_toNewEntity(mediaDTO);
+                    mediaEntity.setProduct(productEntity);
+                    return mediaEntity;
+                })
+                .toList();
+
+        mediaRepository.saveAll(mediaEntityList);
     }
 }

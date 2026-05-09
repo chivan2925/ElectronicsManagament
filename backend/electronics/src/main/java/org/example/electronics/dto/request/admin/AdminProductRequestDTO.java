@@ -32,6 +32,8 @@ public record AdminProductRequestDTO (
         @NotNull(message = "Thời hạn bảo hành sản phẩm không được để trống")
         Integer warrantyMonths,
 
+        Boolean featured,
+
         List<@Valid AdminNestedMediaRequestDTO> media,
 
         @NotNull(message = "Trạng thái sản phẩm không được để trống")

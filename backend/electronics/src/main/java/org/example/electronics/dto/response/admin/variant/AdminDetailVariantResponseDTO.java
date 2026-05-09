@@ -21,6 +21,8 @@ public record AdminDetailVariantResponseDTO(
 
         String slug,
 
+        String sku,
+
         String color,
 
         Map<String, Object> specsJson,

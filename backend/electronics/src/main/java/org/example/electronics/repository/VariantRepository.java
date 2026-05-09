@@ -21,9 +21,13 @@ public interface VariantRepository extends JpaRepository<VariantEntity, Integer>
 
     boolean existsBySlug(String slug);
 
+    boolean existsBySku(String sku);
+
     boolean existsByNameAndIdNot(String name, Integer id);
 
     boolean existsBySlugAndIdNot(String slug, Integer id);
+
+    boolean existsBySkuAndIdNot(String sku, Integer id);
 
     @Query(value = "SELECT v FROM VariantEntity v " +
             "LEFT JOIN FETCH v.product " +
@@ -33,9 +37,13 @@ public interface VariantRepository extends JpaRepository<VariantEntity, Integer>
             "    CAST(v.id AS string) LIKE CONCAT('%', :keyword, '%') " +
             "    OR LOWER(v.name) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
             "    OR LOWER(v.slug) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "    OR LOWER(v.sku) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "    OR LOWER(v.color) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "    OR LOWER(v.product.name) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
             ")) " +
 
             "AND (:status IS NULL OR v.status = :status) " +
+            "AND (:productId IS NULL OR v.product.id = :productId) " +
 
             "AND (CAST(:fromDate AS timestamp) IS NULL OR " +
             "    (:dateType = 'CREATED_AT' AND v.createdAt >= :fromDate) OR " +
@@ -53,8 +61,12 @@ public interface VariantRepository extends JpaRepository<VariantEntity, Integer>
                     "    CAST(v.id AS string) LIKE CONCAT('%', :keyword, '%') " +
                     "    OR LOWER(v.name) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
                     "    OR LOWER(v.slug) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+                    "    OR LOWER(v.sku) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+                    "    OR LOWER(v.color) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+                    "    OR LOWER(v.product.name) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
                     ")) " +
                     "AND (:status IS NULL OR v.status = :status) " +
+                    "AND (:productId IS NULL OR v.product.id = :productId) " +
 
                     "AND (CAST(:fromDate AS timestamp) IS NULL OR " +
                     "    (:dateType = 'CREATED_AT' AND v.createdAt >= :fromDate) OR " +
@@ -69,6 +81,7 @@ public interface VariantRepository extends JpaRepository<VariantEntity, Integer>
     Page<VariantEntity> findVariantsWithFilter(
             @Param("keyword") String keyword,
             @Param("status") ProductStatus status,
+            @Param("productId") Integer productId,
             @Param("dateType") String dateType,
             @Param("fromDate") LocalDateTime fromDate,
             @Param("toDate") LocalDateTime toDate,

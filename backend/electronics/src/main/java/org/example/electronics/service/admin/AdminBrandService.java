@@ -16,6 +16,6 @@ public interface AdminBrandService {
     AdminBrandResponseDTO updateBrand(Integer brandId, AdminBrandRequestDTO adminBrandRequestDTO);
     AdminBrandResponseDTO updateStatusBrand(Integer brandId, AdminUpdateProductStatusRequestDTO adminUpdateProductStatusRequestDTO);
     void deleteBrand(Integer brandId);
-    Page<AdminBrandResponseDTO> getAllBrands(String keyword, ProductStatus status, DateFilterType dateType, LocalDate fromDate, LocalDate toDate, Pageable pageable);
+    Page<AdminBrandResponseDTO> getAllBrands(String keyword, ProductStatus status, Boolean featured, DateFilterType dateType, LocalDate fromDate, LocalDate toDate, Pageable pageable);
     AdminBrandResponseDTO getBrandById(Integer brandId);
 }

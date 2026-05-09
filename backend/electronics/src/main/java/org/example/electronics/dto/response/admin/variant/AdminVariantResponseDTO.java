@@ -16,11 +16,15 @@ public record AdminVariantResponseDTO(
 
         String slug,
 
+        String sku,
+
         String color,
 
         BigDecimal price,
 
         String primaryImageUrl,
+
+        Integer totalStock,
 
         ProductStatus status,
 
