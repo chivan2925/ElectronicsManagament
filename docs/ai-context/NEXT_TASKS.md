@@ -14,6 +14,38 @@ Ready for Phase 5 — Admin Dashboard System
 
 ## Recently Completed
 
+- Connected `/admin/categories` to real backend Category APIs with reusable `AdminTable`, `AdminSearch`, `AdminFilters`, `AdminDrawer`, `AdminForm`, and `ConfirmDialog`.
+- Added real category CRUD flows: list (server pagination), create, update, soft delete, and status update via `PATCH /admin/categories/{id}/status`.
+- Added backend-aware category API mapping in `frontend/src/api/categoryMapper.js` and upgraded `frontend/src/api/categoryService.js` for normalized page/detail/status methods.
+- Added optimistic UI for category status toggling with rollback on API failure.
+- Verified `npm run lint` and `npm run build` after Category Management integration.
+- Added backend CORS configuration for localhost dev origins in `SecurityConfig` and enabled CORS in the Spring Security filter chain.
+- Verified preflight responses now include `Access-Control-Allow-Origin` for `http://localhost:5173`.
+- Confirmed admin authentication reads `staffs` (email login), not `users`.
+- Patched local PostgreSQL admin-auth schema drift for `staffs`, `roles`, and `permissions` (including `permissions.code`/`updated_at`) and verified `POST /api/admin/auth/login` returns `200` for `admin@shop.com`.
+- Fixed backend payment property binding in `VNPayUtils` and `MomoUtils` to read `payment.*` keys with fallback to legacy `electronics.app.*` keys, removing the missing-placeholder crash on startup.
+- Verified backend startup reaches web-server boot; local failures now reproduce as port binding conflict when `8080` is already occupied.
+- Verified backend can run with an alternate port using `mvn spring-boot:run -Dspring-boot.run.arguments=--server.port=8081`.
+- Added reusable admin CRUD foundation components under `frontend/src/admin/components/crud`: `AdminTable`, `AdminForm`, `AdminModal`, `AdminDrawer`, `AdminFilters`, `AdminSearch`, `AdminPagination`, `StatusBadge`, `ConfirmDialog`, and `EmptyAdminState`.
+- Added reusable table sorting, pagination, search, filters, bulk actions, row actions, loading states, and empty states for future admin modules.
+- Kept legacy admin UI imports compatible by bridging existing table/status components to the new CRUD foundation.
+- Verified `npm run lint` and `npm run build` after adding the reusable admin CRUD foundation.
+- Rebuilt `/admin/dashboard` as a responsive mock analytics dashboard with KPI cards, revenue chart, orders chart, recent orders, top products, low-stock products, sales overview, and recent activity.
+- Added reusable dashboard analytics components under `frontend/src/admin/components/dashboard`: `StatCard`, `RevenueChart`, `OrdersChart`, `ActivityFeed`, and `AnalyticsCard`.
+- Added realistic dashboard mock analytics data in `frontend/src/data/adminMock.js`.
+- Verified `npm run lint` and `npm run build` after rebuilding the admin dashboard analytics page.
+- Rebuilt the production admin layout under `frontend/src/admin/layouts` with `AdminLayout`, `AdminSidebar`, `AdminTopbar`, `Breadcrumbs`, and `SidebarSection`.
+- Added a dark responsive admin sidebar, sticky glass topbar, breadcrumbs, notification placeholder, admin profile dropdown, desktop collapsed mode, mobile drawer behavior, and route-aware active states.
+- Preserved the existing homepage layout and kept admin UI changes scoped to the admin shell.
+- Verified `npm run lint` and `npm run build` after rebuilding the admin layout.
+- Added the Phase 5 admin dashboard architecture foundation under `frontend/src/admin`.
+- Added admin subfolders for components, layouts, pages, hooks, services, tables, forms, modals, and analytics.
+- Added reusable admin hooks: `useAdminTable`, `useAdminFilters`, `useAdminPagination`, and `useAdminModal`.
+- Added an admin module registry and CRUD service wrappers for categories, brands, products, variants, media, users, staff, roles, permissions, orders, warehouses, and coupons.
+- Added `variantService.js`, `roleService.js`, and `permissionService.js` using the shared resource service pattern.
+- Routed admin layout/page imports through the new `frontend/src/admin` namespace without redesigning existing admin UI.
+- Updated existing admin `CrudPage` to use `useAdminTable` so search/filter state is no longer duplicated in the page component.
+- Verified `npm run lint`, `npm run build`, and `git diff --check` after adding the admin architecture foundation.
 - Completed the Phase 4 backend integration review.
 - Added shared CRUD request logic through `frontend/src/api/resourceService.js` and refactored API service modules to use it.
 - Hardened refresh-token handling so `401` refresh retries only run when a refresh token exists.
@@ -94,7 +126,7 @@ Ready for Phase 5 — Admin Dashboard System
 
 1. Preserve the existing homepage layout.
 2. Keep the normalized frontend folder structure stable.
-3. Start Phase 5 by connecting admin category pages through `frontend/src/api/categoryService.js`.
+3. Continue Phase 5 API-backed admin pages by connecting brands through `frontend/src/admin/services` and `frontend/src/api/brandService.js`.
 4. Use centralized feedback components for loading, error, empty, permission, and refresh states before replacing mock admin data.
 5. Connect admin CRUD pages to backend APIs one resource at a time.
 6. Keep public storefront customer registration, payment gateway, wishlist, homepage products, and search on mock/local state until public API contracts are ready.
@@ -112,6 +144,9 @@ Ready for Phase 5 — Admin Dashboard System
 - Keep `src/api/apiErrorFeedback.js` and `src/api/apiErrorEvents.js` as the global API feedback bridge.
 - Keep refresh-token coordination centralized in `src/api/refreshTokenService.js`.
 - Keep shared CRUD request logic centralized in `src/api/resourceService.js`.
+- Keep reusable admin page state in `src/admin/hooks`.
+- Keep admin module metadata and CRUD wrappers in `src/admin/services`.
+- Keep admin route/page entrypoints under `src/admin/pages` and `src/admin/layouts`.
 - Use `api.*` helpers from `src/api/client.js` in API service modules.
 - Keep resource API calls centralized through the service modules in `src/api`.
 - Keep Product API response normalization centralized in `src/api/productMapper.js`.
@@ -152,7 +187,9 @@ Ready for Phase 5 — Admin Dashboard System
 
 ### Phase 5 Admin Dashboard System
 
-- Connect admin category pages through `frontend/src/api/categoryService.js` first.
+- Continue with admin brands next, then products/variants/media using the same reusable Category module pattern.
+- Reuse `useAdminTable`, `useAdminFilters`, `useAdminPagination`, and `useAdminModal` instead of adding local duplicated table state.
+- Reuse admin module registry metadata for resource labels, routes, permissions, and service selection.
 - Add API-backed list loading, error, empty, and refresh states before replacing mock admin data.
 - Reuse shared route/sidebar/action permission policies for every admin resource page.
 - Keep ADMIN full access and require staff resource view permissions for staff module access.
@@ -173,10 +210,13 @@ Ready for Phase 5 — Admin Dashboard System
 - Public customer auth is not complete; account APIs are authenticated and user-id scoped until a customer-auth principal contract is available.
 - Client checkout/account routes are customer-session-only in the frontend, but backend ownership enforcement still needs the future customer-auth principal contract.
 - A dedicated backend cart persistence API is not implemented; cart state is shared local frontend state.
-- Admin frontend API service modules exist, but pages are not connected to real data yet.
+- Admin frontend API service modules exist; `/admin/categories` is connected, remaining pages are still mock-backed.
+- Category API currently has no `description` field in request/response DTOs, so category description is UI-session only until backend contract is extended.
 - Backend admin auth currently exposes login/logout; refresh-token endpoint support is not implemented yet.
 - Backend `mvn test` currently fails because `AddressMapper` is not registered as a bean for `AdminAddressServiceImpl`.
 - Backend startup also reports a database DDL warning for existing null `media.display_order` values.
+- Backend local startup on default port may fail when another process already binds `8080`.
+- Local PostgreSQL still contains legacy drift in non-auth modules and should be migrated with controlled SQL scripts instead of relying on `ddl-auto` alone.
 - Production deployment is not ready.
 
 ## Maintenance Reminder

@@ -100,7 +100,7 @@ Additional backend areas:
 - Admin CRUD mock pages exist.
 - Client catalog, checkout, and account routes have partial real API integration.
 - Admin pages still use mock data.
-- `frontend/src/api/client.js`, `resourceService.js`, and service modules are ready for Phase 5 admin API integration.
+- `frontend/src/api/client.js`, `resourceService.js`, service modules, and the `frontend/src/admin` architecture foundation are ready for Phase 5 admin API integration.
 
 ## UI Direction
 

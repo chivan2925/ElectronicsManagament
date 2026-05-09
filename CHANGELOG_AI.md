@@ -429,3 +429,71 @@ Always update this file after meaningful work.
 - Updated `CURRENT_STATE.md`, `NEXT_TASKS.md`, and API context to mark Phase 4 completed.
 - Marked the project ready for Phase 5 — Admin Dashboard System.
 - Verified `npm run lint`, `npm run build`, `git diff --check`, and `mvn -q -DskipTests compile`.
+
+### Admin Dashboard Architecture Foundation
+
+- Added `frontend/src/admin/` with `components`, `layouts`, `pages`, `hooks`, `services`, `tables`, `forms`, `modals`, and `analytics` namespaces.
+- Added reusable admin hooks: `useAdminTable`, `useAdminFilters`, `useAdminPagination`, and `useAdminModal`.
+- Added admin module registry and CRUD service wrappers for categories, brands, products, variants, media, users, staff, roles, permissions, orders, warehouses, and coupons.
+- Added `variantService.js`, `roleService.js`, and `permissionService.js` under `frontend/src/api` using the shared resource-service pattern.
+- Routed admin layout and page imports through `frontend/src/admin` bridge exports without redesigning existing UI.
+- Updated admin `CrudPage` to use `useAdminTable` and moved shared table actions into `frontend/src/admin/tables`.
+- Updated `CURRENT_STATE.md`, `NEXT_TASKS.md`, frontend guide, and API integration notes.
+- Verified `npm run lint`, `npm run build`, and `git diff --check`.
+
+### Production Admin Layout
+
+- Rebuilt the admin shell under `frontend/src/admin/layouts` with `AdminLayout`, `AdminSidebar`, `AdminTopbar`, `Breadcrumbs`, and `SidebarSection`.
+- Added a dark responsive sidebar, sticky glass topbar, breadcrumbs, notification placeholder, profile dropdown, desktop collapsed mode, mobile drawer behavior, and route-aware sidebar active states.
+- Kept the legacy `frontend/src/layouts/AdminLayout.jsx` path as a compatibility bridge to the new admin layout namespace.
+- Updated `CURRENT_STATE.md`, `NEXT_TASKS.md`, and this changelog.
+- Verified `npm run lint` and `npm run build`. Build still reports the existing Vite chunk-size warning.
+
+### Admin Dashboard Analytics Page
+
+- Rebuilt `/admin/dashboard` as a responsive ecommerce SaaS analytics dashboard.
+- Added KPI cards, revenue chart, orders chart, recent orders, top products, low-stock products, sales overview, and recent activity sections.
+- Added reusable dashboard components under `frontend/src/admin/components/dashboard`: `StatCard`, `RevenueChart`, `OrdersChart`, `ActivityFeed`, and `AnalyticsCard`.
+- Added realistic mock analytics data to `frontend/src/data/adminMock.js`.
+- Updated `CURRENT_STATE.md`, `NEXT_TASKS.md`, and this changelog.
+- Verified `npm run lint` and `npm run build`. Build still reports the existing Vite chunk-size warning.
+
+### Admin CRUD Foundation
+
+- Added reusable CRUD foundation components under `frontend/src/admin/components/crud`: `AdminTable`, `AdminForm`, `AdminModal`, `AdminDrawer`, `AdminFilters`, `AdminSearch`, `AdminPagination`, `StatusBadge`, `ConfirmDialog`, and `EmptyAdminState`.
+- Added reusable support for table sorting, pagination, search controls, filters, bulk actions, row actions, loading states, and empty states.
+- Bridged existing admin `DataTable`, `CrudPage`, and `StatusBadge` imports toward the new CRUD foundation for compatibility.
+- Updated `CURRENT_STATE.md`, `NEXT_TASKS.md`, and this changelog.
+- Verified `npm run lint` and `npm run build`. Build still reports the existing Vite chunk-size warning.
+
+### Backend Startup Stabilization
+
+- Fixed payment utility property binding so `VNPayUtils` and `MomoUtils` read `payment.*` config keys, with fallback support for legacy `electronics.app.*` keys.
+- Removed the backend startup crash caused by unresolved placeholder `electronics.app.vnpay.secretKey`.
+- Verified `mvn clean spring-boot:run` now progresses to web-server startup.
+- Confirmed local startup can still fail when port `8080` is occupied; verified successful startup using `--server.port=8081` and `200` response at `/swagger-ui/index.html`.
+
+### Backend Admin Login Debug
+
+- Added backend CORS configuration in `SecurityConfig` for localhost frontend origins (`localhost` and `127.0.0.1` with any port), and enabled `.cors()` in the security filter chain.
+- Verified preflight requests now return `Access-Control-Allow-Origin` and related CORS headers for `http://localhost:5173`.
+- Confirmed admin auth uses `staffs` (email-based login), not `users`.
+- Confirmed current PostgreSQL schema drift causes admin login `500`: `staffs` is missing `full_name` and `username`; `roles` is missing `status` and `updated_at`.
+
+### Backend Admin Login Schema Patch
+
+- Investigated new login `500` stacktrace and identified another schema mismatch in `permissions` (`code` and `updated_at` missing).
+- Patched local PostgreSQL schema for admin-auth tables (`staffs`, `roles`, `permissions`) and backfilled required values.
+- Verified `POST /api/admin/auth/login` returns `200` with `admin@shop.com` after schema patch.
+- Verified CORS preflight for `/api/admin/auth/login` still returns `Access-Control-Allow-Origin` for `http://localhost:5173`.
+
+### Admin Category Management API Integration
+
+- Rebuilt `frontend/src/pages/admin/Categories.jsx` into a real API-backed admin module at `/admin/categories`.
+- Added real category list/table with server-side search, status filter, pagination, loading state, and API error handling.
+- Added create and update flows using reusable `AdminDrawer` + `AdminForm`.
+- Added soft-delete flow using reusable `ConfirmDialog`.
+- Added status toggle using backend `PATCH /admin/categories/{id}/status` with optimistic UI and rollback on failure.
+- Added `frontend/src/api/categoryMapper.js` to normalize category page/detail responses and standardize request payload mapping.
+- Upgraded `frontend/src/api/categoryService.js` with normalized `getAll/getById/create/update/remove/updateStatus` methods for the Category module.
+- Verified `npm run lint` and `npm run build` in `frontend/`. Build still reports the existing Vite chunk-size warning.

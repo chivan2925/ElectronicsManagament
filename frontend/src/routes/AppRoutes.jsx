@@ -1,11 +1,29 @@
 import { Navigate, Route, Routes } from "react-router-dom";
+import { AdminLayout } from "../admin/layouts";
+import {
+  ActivityLog,
+  AdminLogin,
+  AdminProducts,
+  BestSellers,
+  Brands,
+  Categories,
+  Coupons,
+  Dashboard,
+  Media,
+  Orders,
+  Revenue,
+  Roles,
+  Staff,
+  Users,
+  Variants,
+  Warehouse,
+} from "../admin/pages";
 import { ADMIN_ROUTE_POLICIES, CLIENT_ROUTE_POLICIES } from "../auth/roleHelpers";
 import AdminRoute from "../guards/AdminRoute";
 import GuestRoute from "../guards/GuestRoute";
 import ProtectedRoute from "../guards/ProtectedRoute";
 import StaffRoute from "../guards/StaffRoute";
 import ProfileLayout from "../components/account/ProfileLayout";
-import AdminLayout from "../layouts/AdminLayout";
 import Home from "../pages/client/Home";
 import Cart from "../pages/client/Cart";
 import Checkout from "../pages/client/Checkout";
@@ -17,22 +35,6 @@ import ProductDetail from "../pages/client/ProductDetail";
 import ProductListingPage from "../pages/client/ProductListingPage";
 import Register from "../pages/client/Register";
 import WishlistPage from "../pages/client/WishlistPage";
-import ActivityLog from "../pages/admin/ActivityLog";
-import AdminLogin from "../pages/admin/AdminLogin";
-import BestSellers from "../pages/admin/BestSellers";
-import Brands from "../pages/admin/Brands";
-import Categories from "../pages/admin/Categories";
-import Coupons from "../pages/admin/Coupons";
-import Dashboard from "../pages/admin/Dashboard";
-import Media from "../pages/admin/Media";
-import Orders from "../pages/admin/Orders";
-import AdminProducts from "../pages/admin/Products";
-import Revenue from "../pages/admin/Revenue";
-import Roles from "../pages/admin/Roles";
-import Staff from "../pages/admin/Staff";
-import Users from "../pages/admin/Users";
-import Variants from "../pages/admin/Variants";
-import Warehouse from "../pages/admin/Warehouse";
 
 const withStaffRoute = (element, policy) => <StaffRoute policy={policy}>{element}</StaffRoute>;
 const withAdminRoute = (element, policy) => <AdminRoute policy={policy}>{element}</AdminRoute>;

@@ -77,12 +77,31 @@ frontend/src/
 │  ├─ categoryService.js
 │  ├─ brandService.js
 │  ├─ productService.js
+│  ├─ variantService.js
 │  ├─ userService.js
 │  ├─ staffService.js
+│  ├─ roleService.js
+│  ├─ permissionService.js
 │  ├─ orderService.js
 │  ├─ warehouseService.js
 │  ├─ couponService.js
 │  └─ mediaService.js
+├─ admin/
+│  ├─ analytics/
+│  ├─ components/
+│  ├─ forms/
+│  ├─ hooks/
+│  │  ├─ useAdminFilters.js
+│  │  ├─ useAdminModal.js
+│  │  ├─ useAdminPagination.js
+│  │  └─ useAdminTable.js
+│  ├─ layouts/
+│  ├─ modals/
+│  ├─ pages/
+│  ├─ services/
+│  │  ├─ adminCrudService.js
+│  │  └─ adminModuleRegistry.js
+│  └─ tables/
 ├─ auth/
 │  ├─ AuthContext.jsx
 │  ├─ AuthProvider.jsx
@@ -224,6 +243,19 @@ Use tokens for new shared UI work. Avoid broad rewrites of stable components whe
 - Dark navy sidebar.
 - Light content area.
 - KPI cards, charts, CRUD tables, badges, and action icons.
+
+## Admin Architecture
+
+The Phase 5 admin dashboard namespace lives in `frontend/src/admin`.
+
+- `admin/components` bridges reusable admin UI primitives.
+- `admin/layouts` and `admin/pages` are the route-facing admin entrypoints.
+- `admin/hooks` owns reusable table, filter, pagination, and modal state.
+- `admin/services` owns admin module registry metadata and generic CRUD wrappers.
+- `admin/tables`, `admin/forms`, `admin/modals`, and `admin/analytics` hold reusable admin-specific patterns.
+- Admin modules currently tracked by the registry: categories, brands, products, variants, media, users, staff, roles, permissions, orders, warehouses, and coupons.
+
+Use `useAdminTable`, `useAdminFilters`, `useAdminPagination`, and `useAdminModal` before adding local duplicated state to admin pages. Use the admin module registry and CRUD wrappers before wiring a page directly to a resource service.
 
 ## Component Rules
 

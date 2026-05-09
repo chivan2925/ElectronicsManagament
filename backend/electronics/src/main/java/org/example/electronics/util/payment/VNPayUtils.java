@@ -13,7 +13,7 @@ import java.util.*;
 @Component
 public class VNPayUtils {
 
-    @Value("${electronics.app.vnpay.secretKey}")
+    @Value("${electronics.app.vnpay.secretKey:${payment.vnpay.secret-key:}}")
     private String secretKey;
 
     // 🚀 Vũ khí 1: Thuật toán băm HMAC-SHA512 (Chuẩn tài liệu VNPay)

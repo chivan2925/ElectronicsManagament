@@ -13,10 +13,10 @@ import java.util.Map;
 @Slf4j
 public class MomoUtils {
 
-    @Value("${electronics.app.momo.secretKey}")
+    @Value("${electronics.app.momo.secretKey:${payment.momo.secret-key:}}")
     private String secretKey;
 
-    @Value("${electronics.app.momo.accessKey}")
+    @Value("${electronics.app.momo.accessKey:${payment.momo.access-key:}}")
     private String accessKey;
 
     // 🚀 Vũ khí của Momo: HMAC-SHA256

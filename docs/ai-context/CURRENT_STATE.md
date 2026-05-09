@@ -9,14 +9,14 @@ Always update this file after meaningful work.
 ## Current Phase
 
 ```text
-Phase 4 — Auth + Backend Integration completed
+Phase 5 — Admin Dashboard System foundation
 ```
 
 ## Current Summary
 
-ElectronicsManagement has completed Phase 4 — Auth + Backend Integration. The project is ready for Phase 5 — Admin Dashboard System.
+ElectronicsManagement has completed Phase 4 — Auth + Backend Integration and has started Phase 5 — Admin Dashboard System foundation.
 
-The client storefront now includes the homepage, Product API-backed product listing and product detail, shared-cart cart and checkout, customer authentication, wishlist, recently viewed, search overlay, and authenticated account experiences. Checkout now creates real backend orders and validates coupons through backend APIs. Wishlist, recently viewed, search, and homepage product sections still use mock/local state. The admin dashboard exists as a mock modern dashboard. Backend admin APIs exist. Frontend admin/staff authentication is connected to the backend JWT API, but admin CRUD pages are not connected to real backend data yet.
+The client storefront now includes the homepage, Product API-backed product listing and product detail, shared-cart cart and checkout, customer authentication, wishlist, recently viewed, search overlay, and authenticated account experiences. Checkout now creates real backend orders and validates coupons through backend APIs. Wishlist, recently viewed, search, and homepage product sections still use mock/local state. The admin dashboard exists as a mock modern dashboard. Backend admin APIs exist. Frontend admin/staff authentication is connected to the backend JWT API, and the admin architecture foundation now exists under `frontend/src/admin`. The `/admin/categories` module is now connected to the real Category API with table, search, filters, create, update, delete, status toggle, and pagination.
 
 The frontend folder structure has been normalized without changing the current visual UI.
 
@@ -175,6 +175,23 @@ Phase 5 — Admin Dashboard System
 - Added store/admin-specific route loading states to reduce unauthorized or wrong-surface flashing during session restore.
 - Completed the backend integration review and marked Phase 4 complete.
 
+## Phase 5 Admin Dashboard Foundation Items
+
+- Added `frontend/src/admin/` as the admin dashboard namespace with `components`, `layouts`, `pages`, `hooks`, `services`, `tables`, `forms`, `modals`, and `analytics`.
+- Added `useAdminTable`, `useAdminFilters`, `useAdminPagination`, and `useAdminModal` for reusable admin table and modal state.
+- Added admin module registry and CRUD service wrappers under `frontend/src/admin/services`.
+- Added admin module entries for categories, brands, products, variants, media, users, staff, roles, permissions, orders, warehouses, and coupons.
+- Added frontend API service modules for variants, roles, and permissions using the shared resource service pattern.
+- Routed admin imports through `frontend/src/admin/pages` and `frontend/src/admin/layouts` without redesigning the existing UI.
+- Reused `useAdminTable` in the existing admin `CrudPage` to remove duplicated search/filter logic from the component.
+- Rebuilt the admin layout shell under `frontend/src/admin/layouts` with `AdminLayout`, `AdminSidebar`, `AdminTopbar`, `Breadcrumbs`, and `SidebarSection`.
+- Added a responsive dark admin sidebar, sticky glass topbar, breadcrumbs, notification placeholder, profile dropdown, collapsed desktop navigation, mobile drawer navigation, and route-aware active states.
+- Rebuilt `/admin/dashboard` as a mock analytics dashboard with KPI cards, revenue chart, orders chart, recent orders, top products, low-stock products, sales overview, and recent activity.
+- Added reusable admin dashboard analytics components under `frontend/src/admin/components/dashboard`: `StatCard`, `RevenueChart`, `OrdersChart`, `ActivityFeed`, and `AnalyticsCard`.
+- Added reusable admin CRUD foundation components under `frontend/src/admin/components/crud`: `AdminTable`, `AdminForm`, `AdminModal`, `AdminDrawer`, `AdminFilters`, `AdminSearch`, `AdminPagination`, `StatusBadge`, `ConfirmDialog`, and `EmptyAdminState`.
+- Added CRUD foundation support for sorting, pagination, search controls, filters, bulk actions, row actions, loading states, and empty states.
+- Connected `/admin/categories` to real backend Category APIs with reusable admin components, server-side search/filter/pagination, create/update/delete, status patch updates, and API error/loading states.
+
 ## Frontend State
 
 Current stack:
@@ -227,7 +244,7 @@ Current frontend data:
 - `frontend/src/data/products.js` still supports mock/local storefront sections, but `/products` now uses Product API data.
 - `frontend/src/data/productDetails.js` remains available for legacy mock detail helpers, but `/products/:slug` now uses Product API data.
 - `frontend/src/data/cart.js` remains as legacy mock cart setup, but active cart drawer, `/cart`, and `/checkout` now use `frontend/src/cart`.
-- Admin pages use `frontend/src/data/adminMock.js`.
+- Most admin pages use `frontend/src/data/adminMock.js`; `/admin/categories` now uses real backend data.
 - Shared data exports live in `frontend/src/data/index.js`.
 - API client exists at `frontend/src/api/client.js`.
 - API config exists at `frontend/src/api/apiConfig.js`.
@@ -236,8 +253,9 @@ Current frontend data:
 - Account profile/order mapping exists at `frontend/src/api/accountMapper.js`.
 - Product API response mapping exists at `frontend/src/api/productMapper.js`.
 - API refresh-token handling exists at `frontend/src/api/refreshTokenService.js`.
-- API service modules now exist in `frontend/src/api` for auth, categories, brands, products, users, staff, orders, warehouses, coupons, and media.
+- API service modules now exist in `frontend/src/api` for auth, categories, brands, products, variants, users, staff, roles, permissions, orders, warehouses, coupons, and media.
 - API service modules use reusable `api.*` helpers and `resourceService.js` for shared CRUD request logic.
+- Admin dashboard foundation helpers live in `frontend/src/admin`.
 - The shared API client reads the JWT through `frontend/src/auth/authStorage.js` using localStorage key `accessToken`.
 - The shared API client reads `VITE_API_BASE_URL`, `VITE_API_TIMEOUT`, and `VITE_AUTH_REFRESH_ENDPOINT`.
 - Product API integration reads `VITE_PRODUCT_API_PATH`, defaulting to `/admin/products`.
@@ -246,11 +264,17 @@ Current frontend data:
 - Auth session metadata is centralized through `frontend/src/auth` and currently stores safe user, roles, and permissions metadata only.
 - `frontend/.env.example` documents `VITE_API_BASE_URL`, `VITE_API_TIMEOUT`, `VITE_AUTH_REFRESH_ENDPOINT`, `VITE_PRODUCT_API_PATH`, `VITE_COUPON_API_PATH`, `VITE_ORDER_API_PATH`, `VITE_USER_API_PATH`, `VITE_USER_PROFILE_API_PATH`, and `VITE_USER_ORDER_API_PATH`.
 - Admin/staff login is connected to the backend JWT API.
-- No admin CRUD page is connected to real backend data yet.
+- `/admin/categories` is connected to real backend data; remaining admin modules still use mock data.
 
 Current frontend structure:
 
 - Route definitions live in `frontend/src/routes/AppRoutes.jsx`.
+- Admin dashboard architecture lives in `frontend/src/admin/`.
+- Admin dashboard analytics components live in `frontend/src/admin/components/dashboard/`.
+- Admin CRUD foundation components live in `frontend/src/admin/components/crud/`.
+- Admin table/filter/pagination/modal hooks live in `frontend/src/admin/hooks/`.
+- Admin module registry and CRUD service wrappers live in `frontend/src/admin/services/`.
+- Admin route imports now go through `frontend/src/admin/pages/` and `frontend/src/admin/layouts/`.
 - Auth context, provider, hook, storage, and helpers live in `frontend/src/auth/`.
 - Role/permission policy helpers, permission hooks, and PermissionGate live in `frontend/src/auth/`.
 - Route guard components and helper UI live in `frontend/src/guards/`.
@@ -275,7 +299,7 @@ Current frontend structure:
 - Wishlist and recently viewed local state logic lives in `frontend/src/hooks/useWishlist.js` and `frontend/src/hooks/useRecentlyViewed.js`.
 - Storefront search overlay logic lives in `frontend/src/hooks/useSearch.js`.
 - Skeleton loading components live in `frontend/src/components/skeletons/`.
-- Admin layout components live in `frontend/src/components/layout/admin/`.
+- Admin layout components live in `frontend/src/admin/layouts/`, with legacy compatibility exports preserved through `frontend/src/layouts/AdminLayout.jsx`.
 - Shared reusable UI components live in `frontend/src/components/ui/`.
 - Shared feedback components include `GlobalErrorBoundary`, `ApiErrorAlert`, `EmptyState`, and `PermissionDenied`.
 - Admin-specific reusable UI components live in `frontend/src/components/ui/admin/`.
@@ -383,14 +407,24 @@ Latest validation:
 - `mvn -q -DskipTests compile` passed in `backend/electronics/` after adding checkout order creation.
 - `npm run lint`, `npm run build`, and `mvn -q -DskipTests compile` passed after adding the authenticated account pages and user profile/order APIs.
 - `npm run lint`, `npm run build`, `git diff --check`, and `mvn -q -DskipTests compile` passed after the Phase 4 backend integration review.
+- `npm run lint`, `npm run build`, and `git diff --check` passed after adding the Phase 5 admin architecture foundation.
+- `npm run lint` and `npm run build` passed in `frontend/` after rebuilding the production admin layout. Build still reports the existing Vite chunk-size warning.
+- `npm run lint` and `npm run build` passed in `frontend/` after rebuilding the admin dashboard analytics page. Build still reports the existing Vite chunk-size warning.
+- `npm run lint` and `npm run build` passed in `frontend/` after adding the reusable admin CRUD foundation. Build still reports the existing Vite chunk-size warning.
 - Local Vite route smoke checks returned `200` for `/cart` and `/checkout` after connecting checkout/order creation.
 - `mvn clean compile -DskipTests` passed in `backend/electronics/` after adding auth error handlers.
 - `mvn test` failed due existing backend context issues: missing `AddressMapper` bean for `AdminAddressServiceImpl` and a database DDL migration warning for `media.display_order` containing null values.
+- Backend payment startup placeholders were aligned so `VNPayUtils` and `MomoUtils` read `payment.*` keys (with fallback to legacy `electronics.app.*` keys), removing the previous missing-placeholder startup crash.
+- `mvn clean spring-boot:run` now reaches web-server startup, but local run still fails on machines where port `8080` is already used by another process.
+- `mvn spring-boot:run --server.port=8081` was verified to start successfully; `http://localhost:8081/swagger-ui/index.html` returned `200`.
+- Backend security now includes CORS config for localhost frontend origins and returns `Access-Control-Allow-Origin` for dev preflight requests.
+- Local PostgreSQL admin-auth schema was patched to match current entities (`staffs`, `roles`, `permissions`) and admin login now returns `200` with `admin@shop.com`.
+- `npm run lint` and `npm run build` passed in `frontend/` after integrating real Category Management on `/admin/categories`. Build still reports the existing Vite chunk-size warning.
 - Build still reports a Vite chunk-size warning for a JavaScript bundle over 500 kB.
 
 ## Known Issues
 
-- Admin CRUD pages still use mock data and are not connected to backend APIs.
+- Most admin CRUD pages still use mock data; only `/admin/categories` is connected to backend APIs.
 - Remaining future client ecommerce routes beyond the implemented homepage, product listing, product detail, cart, checkout, login, register, and wishlist pages are styled placeholders.
 - A dedicated public storefront product browsing endpoint is still not separate from the configured Product API path.
 - A dedicated backend cart persistence API is not implemented; the active cart is shared local frontend state and checkout creates backend orders.
@@ -400,6 +434,9 @@ Latest validation:
 - The frontend refresh-token flow is ready, but the current backend admin auth controller only exposes login/logout; real refresh requires backend `refreshToken` response support and `POST /admin/auth/refresh`.
 - `/checkout` is frontend-auth protected and creates backend orders, but real online payment gateway submission remains out of scope.
 - Backend `mvn test` is blocked by existing ApplicationContext issues unrelated to the login UI integration.
+- Backend local startup may fail if port `8080` is occupied by another local service; run on another port or free `8080`.
+- Existing local PostgreSQL schema is partially legacy and may still have drift in non-auth tables.
+- Backend Category API currently does not expose `description` in request/response DTOs; category description in admin UI is session-level until backend contract is extended.
 - Build output is valid, but Vite reports a large bundle warning that should be handled later with code splitting.
 
 ## Next Phase
@@ -411,7 +448,7 @@ Phase 5 — Admin Dashboard System
 Next focus:
 
 - Convert mock admin dashboard pages into authenticated API-backed workflows.
-- Start with admin categories through `frontend/src/api/categoryService.js`.
+- Continue with admin brands through `frontend/src/admin/services` and `frontend/src/api/brandService.js`.
 - Keep public storefront customer registration, payment, wishlist, homepage products, and search on mock/local state until public storefront API contracts are ready.
 
 ## Backend State

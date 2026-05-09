@@ -1,0 +1,16 @@
+export { default as ActivityLog } from "../../pages/admin/ActivityLog";
+export { default as AdminLogin } from "../../pages/admin/AdminLogin";
+export { default as AdminProducts } from "../../pages/admin/Products";
+export { default as BestSellers } from "../../pages/admin/BestSellers";
+export { default as Brands } from "../../pages/admin/Brands";
+export { default as Categories } from "../../pages/admin/Categories";
+export { default as Coupons } from "../../pages/admin/Coupons";
+export { default as Dashboard } from "../../pages/admin/Dashboard";
+export { default as Media } from "../../pages/admin/Media";
+export { default as Orders } from "../../pages/admin/Orders";
+export { default as Revenue } from "../../pages/admin/Revenue";
+export { default as Roles } from "../../pages/admin/Roles";
+export { default as Staff } from "../../pages/admin/Staff";
+export { default as Users } from "../../pages/admin/Users";
+export { default as Variants } from "../../pages/admin/Variants";
+export { default as Warehouse } from "../../pages/admin/Warehouse";

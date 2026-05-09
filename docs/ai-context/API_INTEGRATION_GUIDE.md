@@ -136,8 +136,11 @@ frontend/src/api/
 ├─ categoryService.js
 ├─ brandService.js
 ├─ productService.js
+├─ variantService.js
 ├─ userService.js
 ├─ staffService.js
+├─ roleService.js
+├─ permissionService.js
 ├─ orderService.js
 ├─ warehouseService.js
 ├─ couponService.js
@@ -153,6 +156,12 @@ Resource services expose basic CRUD helpers:
 - `remove(id)`
 
 Basic CRUD modules should use `createResourceService()` so request logic stays centralized.
+
+Admin dashboard API orchestration lives under `frontend/src/admin/services`:
+
+- `adminModuleRegistry.js` maps admin modules to labels, routes, permission resources, and API services.
+- `adminCrudService.js` provides generic list/detail/create/update/remove wrappers so pages do not duplicate CRUD calls.
+- Registered admin modules are categories, brands, products, variants, media, users, staff, roles, permissions, orders, warehouses, and coupons.
 
 `authService.js` owns login/logout and token helpers. It calls `POST /admin/auth/login` for the current backend admin/staff JWT flow.
 

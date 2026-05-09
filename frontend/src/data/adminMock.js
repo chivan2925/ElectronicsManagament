@@ -31,6 +31,146 @@ export const kpiCards = [
   },
 ];
 
+export const dashboardKpis = [
+  {
+    helper: "COD, VNPay, Momo",
+    key: "todayRevenue",
+    title: "Doanh thu hôm nay",
+    tone: "blue",
+    trend: "+18.2%",
+    trendType: "up",
+    value: "128.4tr",
+  },
+  {
+    helper: "So với mục tiêu 3.2 tỷ",
+    key: "monthRevenue",
+    title: "Doanh thu tháng",
+    tone: "emerald",
+    trend: "+12.8%",
+    trendType: "up",
+    value: "2.84 tỷ",
+  },
+  {
+    helper: "16 đơn cần xử lý",
+    key: "orders",
+    title: "Đơn hàng",
+    tone: "violet",
+    trend: "+24 đơn",
+    trendType: "up",
+    value: "1,284",
+  },
+  {
+    helper: "Khách hàng hoạt động",
+    key: "users",
+    title: "Users",
+    tone: "amber",
+    trend: "+7.4%",
+    trendType: "up",
+    value: "9,420",
+  },
+  {
+    helper: "Dưới ngưỡng nhập lại",
+    key: "lowStock",
+    title: "Tồn kho thấp",
+    tone: "rose",
+    trend: "5 SKU",
+    trendType: "down",
+    value: "18",
+  },
+];
+
+export const dashboardRevenueData = [
+  { label: "26/04", revenue: 82000000, target: 76000000 },
+  { label: "27/04", revenue: 96000000, target: 79000000 },
+  { label: "28/04", revenue: 74400000, target: 82000000 },
+  { label: "29/04", revenue: 118000000, target: 85000000 },
+  { label: "30/04", revenue: 142000000, target: 92000000 },
+  { label: "01/05", revenue: 134000000, target: 94000000 },
+  { label: "02/05", revenue: 156000000, target: 98000000 },
+  { label: "03/05", revenue: 121000000, target: 100000000 },
+  { label: "04/05", revenue: 109000000, target: 101000000 },
+  { label: "05/05", revenue: 136000000, target: 104000000 },
+  { label: "06/05", revenue: 165000000, target: 108000000 },
+  { label: "07/05", revenue: 149000000, target: 110000000 },
+  { label: "08/05", revenue: 172000000, target: 114000000 },
+  { label: "09/05", revenue: 128400000, target: 116000000 },
+];
+
+export const dashboardOrdersData = [
+  { label: "T2", cancelled: 3, completed: 68, orders: 76 },
+  { label: "T3", cancelled: 5, completed: 74, orders: 86 },
+  { label: "T4", cancelled: 4, completed: 71, orders: 82 },
+  { label: "T5", cancelled: 6, completed: 89, orders: 104 },
+  { label: "T6", cancelled: 7, completed: 108, orders: 126 },
+  { label: "T7", cancelled: 8, completed: 124, orders: 142 },
+  { label: "CN", cancelled: 5, completed: 96, orders: 118 },
+];
+
+export const dashboardSalesOverview = {
+  channels: [
+    { label: "Online storefront", value: 58, revenue: 1647000000 },
+    { label: "Admin assisted", value: 27, revenue: 766800000 },
+    { label: "Marketplace", value: 15, revenue: 425600000 },
+  ],
+  metrics: [
+    { label: "AOV", value: "2.21tr", helper: "+9.1%" },
+    { label: "Conversion", value: "4.8%", helper: "+0.6%" },
+    { label: "Refund rate", value: "1.2%", helper: "-0.3%" },
+    { label: "Fulfillment", value: "92%", helper: "+3.4%" },
+  ],
+};
+
+export const dashboardTopProducts = [
+  {
+    category: "chuột",
+    id: "TP001",
+    image: "https://images.unsplash.com/photo-1527814050087-3793815479db?auto=format&fit=crop&w=120&q=80",
+    name: "Chuột Logitech G Pro X Superlight",
+    revenue: 611940000,
+    sold: 186,
+  },
+  {
+    category: "laptop",
+    id: "TP002",
+    image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=120&q=80",
+    name: "Laptop ASUS ROG Strix G16",
+    revenue: 2807280000,
+    sold: 72,
+  },
+  {
+    category: "tai nghe",
+    id: "TP003",
+    image: "https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?auto=format&fit=crop&w=120&q=80",
+    name: "Tai nghe Razer BlackShark V2",
+    revenue: 383460000,
+    sold: 154,
+  },
+  {
+    category: "bàn phím",
+    id: "TP004",
+    image: "https://images.unsplash.com/photo-1618384887929-16ec33fab9ef?auto=format&fit=crop&w=120&q=80",
+    name: "Bàn phím Corsair K70 RGB",
+    revenue: 343170000,
+    sold: 93,
+  },
+];
+
+export const dashboardLowStockProducts = [
+  { id: "LS001", name: "Corsair K70 RGB Cherry MX Red", reorderAt: 12, sku: "KB-COR-K70-RGB", stock: 4, warehouse: "Kho trung tâm" },
+  { id: "LS002", name: "PC Gaming RTX 4070 Super", reorderAt: 10, sku: "PC-PCE-4070S", stock: 6, warehouse: "Kho Hà Nội" },
+  { id: "LS003", name: "Secretlab Titan Evo Black", reorderAt: 8, sku: "CH-SL-TITAN-BK", stock: 3, warehouse: "Kho TP.HCM" },
+  { id: "LS004", name: "SSD Samsung 990 Pro 2TB", reorderAt: 20, sku: "SSD-SS-990P-2T", stock: 9, warehouse: "Kho Đà Nẵng" },
+  { id: "LS005", name: "Nguồn Corsair RM850x", reorderAt: 15, sku: "PSU-COR-RM850X", stock: 7, warehouse: "Kho trung tâm" },
+];
+
+export const dashboardRecentActivity = [
+  { id: 1, actor: "Nguyễn Văn Khang", action: "Duyệt chiến dịch giảm giá Gaming Weekend.", time: "09/05/2026 10:21", type: "PRODUCT" },
+  { id: 2, actor: "Hệ thống", action: "Gắn cờ 5 SKU dưới ngưỡng nhập lại.", time: "09/05/2026 10:05", type: "WAREHOUSE" },
+  { id: 3, actor: "Phạm Việt Anh", action: "Xác nhận thanh toán VNPay cho đơn DH10041.", time: "09/05/2026 09:48", type: "PAYMENT" },
+  { id: 4, actor: "Hoàng Minh Huy", action: "Chuyển 12 laptop ROG sang kho Hà Nội.", time: "09/05/2026 09:31", type: "WAREHOUSE" },
+  { id: 5, actor: "Hệ thống", action: "Tạo nhắc việc xử lý 16 đơn đang chờ.", time: "09/05/2026 09:02", type: "ORDER" },
+];
+
 export const revenueData = [
   { day: "T2", revenue: 48 },
   { day: "T3", revenue: 64 },
