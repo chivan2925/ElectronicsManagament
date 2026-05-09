@@ -7,8 +7,8 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import PageHeader from "../../components/admin/PageHeader";
-import { revenueData } from "../../data/mockAdminData";
+import PageHeader from "../../components/ui/admin/PageHeader";
+import { revenueData } from "../../data/adminMock";
 
 function Revenue() {
   return (

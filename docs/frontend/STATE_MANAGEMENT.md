@@ -12,7 +12,7 @@ The project is still mostly mock-data based, so state should stay simple until r
 | --- | --- |
 | Page UI state | React local state. |
 | Mock data | Imported from `src/data`. |
-| Auth token | `localStorage` key `admin_access_token`. |
+| Auth token | `localStorage` key `accessToken`. |
 | API request state | To be added per page/service integration. |
 | Global app state | Not needed yet. |
 
@@ -72,7 +72,7 @@ If server-state needs grow, consider a dedicated library later. Do not add one b
 Current token key:
 
 ```text
-admin_access_token
+accessToken
 ```
 
 Rules:
@@ -150,7 +150,7 @@ Example:
 
 ```text
 mockAdminData.categories
-  -> api/admin/categoriesApi.js
+  -> api/categoryService.js
   -> GET /admin/categories
 ```
 

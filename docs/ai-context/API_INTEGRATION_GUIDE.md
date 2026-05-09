@@ -10,7 +10,7 @@ Current phase:
 Phase 1 — Frontend Foundation
 ```
 
-The frontend is not yet connected to real admin APIs.
+The shared frontend API layer exists, but pages are not yet connected to real admin APIs.
 
 ## Backend API Scope
 
@@ -62,9 +62,20 @@ Current behavior:
 
 - Uses `VITE_API_BASE_URL`.
 - Falls back to `http://localhost:8080/api`.
-- Reads `admin_access_token` from `localStorage`.
+- Reads `accessToken` from `localStorage`.
 - Sends `Authorization: Bearer <token>` when available.
 - Removes token on `401`.
+- Dispatches `auth:unauthorized` on `401` for future route/auth handling.
+
+Environment example:
+
+```text
+frontend/.env.example
+```
+
+```env
+VITE_API_BASE_URL=http://localhost:8080/api
+```
 
 ## Integration Rules
 
@@ -79,24 +90,29 @@ Current behavior:
 ```text
 frontend/src/api/
 ├─ client.js
-├─ admin/
-│  ├─ authApi.js
-│  ├─ categoriesApi.js
-│  ├─ brandsApi.js
-│  ├─ productsApi.js
-│  ├─ variantsApi.js
-│  ├─ mediaApi.js
-│  ├─ usersApi.js
-│  ├─ staffApi.js
-│  ├─ rolesApi.js
-│  ├─ ordersApi.js
-│  ├─ warehouseApi.js
-│  └─ couponsApi.js
-└─ storefront/
-   ├─ productsApi.js
-   ├─ cartApi.js
-   └─ checkoutApi.js
+├─ authService.js
+├─ categoryService.js
+├─ brandService.js
+├─ productService.js
+├─ userService.js
+├─ staffService.js
+├─ orderService.js
+├─ warehouseService.js
+├─ couponService.js
+└─ mediaService.js
 ```
+
+Resource services expose basic CRUD helpers:
+
+- `getAll(params)`
+- `getById(id)`
+- `create(payload)`
+- `update(id, payload)`
+- `remove(id)`
+
+`authService.js` owns login/logout and `accessToken` helpers.
+
+The homepage must continue using mock data until storefront API integration is explicitly started.
 
 ## First Integration Order
 
@@ -112,10 +128,10 @@ Recommended order:
 
 ## Auth Rules
 
-Admin token key:
+JWT token key:
 
 ```text
-admin_access_token
+accessToken
 ```
 
 Header:

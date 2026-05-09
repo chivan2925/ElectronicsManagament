@@ -1,21 +1,48 @@
-import { categories } from "../data/mockData";
+import {
+  Armchair,
+  Boxes,
+  Cpu,
+  Gamepad2,
+  Grid3X3,
+  Headphones,
+  Keyboard,
+  Laptop,
+  Monitor,
+  Mouse,
+  Phone,
+  SquareMousePointer,
+} from "lucide-react";
+import SectionTitle from "../ui/SectionTitle";
 
-function FeaturedCategories() {
+const categoryIcons = {
+  Armchair,
+  Boxes,
+  Cpu,
+  Gamepad2,
+  Grid3X3,
+  Headphones,
+  Keyboard,
+  Laptop,
+  Monitor,
+  Mouse,
+  Phone,
+  SquareMousePointer,
+};
+
+function FeaturedCategories({ categories = [] }) {
+  const featuredCategories = categories.filter((category) => category.slug !== "tat-ca");
+
   return (
     <section>
-      <div className="mb-5 flex items-end justify-between gap-4">
-        <div>
-          <h2 className="text-2xl font-black leading-tight text-white md:text-3xl">Danh mục nổi bật</h2>
-          <p className="mt-2 text-sm font-medium text-slate-400">Chọn nhanh nhóm sản phẩm bạn đang cần.</p>
-        </div>
-        <a className="premium-transition hidden text-sm font-bold text-blue-300 hover:text-white hover:drop-shadow-[0_0_14px_rgba(0,91,255,0.85)] sm:inline" href="/">
-          Xem tất cả
-        </a>
-      </div>
+      <SectionTitle
+        actionLabel="Xem tất cả"
+        subtitle="Chọn nhanh nhóm sản phẩm bạn đang cần."
+        title="Danh mục nổi bật"
+      />
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-5 xl:grid-cols-10">
-        {categories.slice(1).map((category) => {
-          const Icon = category.icon;
+        {featuredCategories.map((category) => {
+          const Icon = categoryIcons[category.iconName] ?? Grid3X3;
 
           return (
             <button

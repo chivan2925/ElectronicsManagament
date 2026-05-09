@@ -53,7 +53,7 @@ Response body:
 The frontend should save `accessToken` under:
 
 ```text
-admin_access_token
+accessToken
 ```
 
 ## Authenticated Requests
@@ -67,7 +67,7 @@ Authorization: Bearer <accessToken>
 Frontend convention:
 
 ```js
-localStorage.setItem("admin_access_token", response.data.accessToken);
+localStorage.setItem("accessToken", response.data.accessToken);
 ```
 
 The shared Axios client in `frontend/src/api/client.js` already reads this key and appends the `Authorization` header.
@@ -127,7 +127,7 @@ The actual backend message may be localized. Frontend code should branch on `sta
 
 - Keep login form state separate from admin dashboard state.
 - Store only the access token and non-sensitive display data.
-- Remove `admin_access_token` on `401`.
+- Remove `accessToken` on `401`.
 - Redirect admin users to the login page after token removal.
 - Do not store passwords.
 - Do not display raw JWT values in the UI.

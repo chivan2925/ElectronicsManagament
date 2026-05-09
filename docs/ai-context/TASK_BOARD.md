@@ -24,18 +24,24 @@
 - Dark e-commerce client homepage at `/`.
 - Gaming/electronics mock categories.
 - Axios client prepared for JWT authentication.
+- Normalized frontend folder structure under `frontend/src`.
+- Moved client homepage to `src/pages/client/Home.jsx`.
+- Centralized route definitions in `src/routes/AppRoutes.jsx`.
+- Added shared reusable UI primitives in `src/components/ui`.
+- Refactored homepage buttons, badges, cards, section titles, prices, ratings, container, and search input to use shared primitives where appropriate.
+- Added standard React Router routes for client ecommerce and admin management pages.
+- Added styled placeholder pages for unfinished client routes and `/admin/login`.
+- Added the shared Axios API layer and flat resource service modules under `frontend/src/api`.
+- Split mock data into domain modules under `frontend/src/data`.
 
 ## Near-Term Work
 
-1. Normalize the client structure:
-   - Consider moving client components into `src/components/client/`.
-   - Consider moving client pages into `src/pages/client/`.
-2. Create the admin login page.
-3. Connect admin category APIs.
-4. Connect admin brand APIs.
-5. Connect admin product APIs.
-6. Create mock public/client product listing and product detail pages.
-7. Create mock cart and checkout flows.
+1. Wire `/admin/login` to `authService`.
+2. Connect admin category pages to `categoryService`.
+3. Connect admin brand pages to `brandService`.
+4. Connect admin product pages to `productService`.
+5. Replace client route placeholders with real product listing and product detail pages.
+6. Replace cart and checkout placeholders with real mock flows.
 
 ## Backend Notes
 

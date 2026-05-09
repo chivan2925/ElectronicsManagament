@@ -114,7 +114,7 @@ Rules:
 - Do not expose JWT secrets to frontend code.
 - Do not put JWT values in logs.
 - Do not branch frontend logic on localized auth messages.
-- Frontend should remove `admin_access_token` on `401`.
+- Frontend should remove `accessToken` on `401`.
 
 ## Roles And Permissions
 

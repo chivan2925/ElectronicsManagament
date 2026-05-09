@@ -45,7 +45,7 @@ Frontend responsibilities:
 - Render client and admin interfaces.
 - Manage local UI state.
 - Call backend APIs through `frontend/src/api/client.js`.
-- Store the admin JWT in `localStorage` under `admin_access_token`.
+- Store the admin JWT in `localStorage` under `accessToken`.
 - Show loading, empty, and error states when real API integration begins.
 
 Backend responsibilities:
@@ -92,7 +92,7 @@ Backend:
 ```text
 Admin UI -> POST /api/admin/auth/login -> AuthenticationManager
   -> StaffDetailsService -> JWT generation -> AdminLoginResponseDTO
-  -> frontend stores accessToken as admin_access_token
+  -> frontend stores accessToken as accessToken
 ```
 
 ### Authenticated Admin API Request

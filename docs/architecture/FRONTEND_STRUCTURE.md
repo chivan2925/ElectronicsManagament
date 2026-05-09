@@ -25,7 +25,17 @@ Additional packages are installed, including Ant Design, react-icons, and Swiper
 ```text
 frontend/src/
 ├─ api/
-│  └─ client.js
+│  ├─ client.js
+│  ├─ authService.js
+│  ├─ categoryService.js
+│  ├─ brandService.js
+│  ├─ productService.js
+│  ├─ userService.js
+│  ├─ staffService.js
+│  ├─ orderService.js
+│  ├─ warehouseService.js
+│  ├─ couponService.js
+│  └─ mediaService.js
 ├─ components/
 │  ├─ admin/
 │  │  ├─ CrudPage.jsx
@@ -132,16 +142,11 @@ As the storefront grows, split client and admin more explicitly:
 ```text
 frontend/src/
 ├─ api/
-│  ├─ admin/
-│  │  ├─ authApi.js
-│  │  ├─ categoriesApi.js
-│  │  ├─ brandsApi.js
-│  │  └─ productsApi.js
-│  ├─ client/
-│  │  ├─ productsApi.js
-│  │  ├─ cartApi.js
-│  │  └─ checkoutApi.js
-│  └─ client.js
+│  ├─ client.js
+│  ├─ authService.js
+│  ├─ categoryService.js
+│  ├─ brandService.js
+│  └─ productService.js
 ├─ components/
 │  ├─ admin/
 │  └─ client/
@@ -167,7 +172,7 @@ Current behavior:
 - Base URL: `VITE_API_BASE_URL` or `http://localhost:8080/api`.
 - Timeout: 15 seconds.
 - Default content type: `application/json`.
-- Reads `admin_access_token` from `localStorage`.
+- Reads `accessToken` from `localStorage`.
 - Adds `Authorization: Bearer <token>` when a token exists.
 - Removes the admin token on `401`.
 
@@ -177,7 +182,7 @@ Example target pattern:
 
 ```text
 pages/admin/Categories.jsx
-  -> api/admin/categoriesApi.js
+  -> api/categoryService.js
   -> api/client.js
   -> backend /api/admin/categories
 ```

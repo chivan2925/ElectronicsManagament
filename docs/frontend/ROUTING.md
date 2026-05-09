@@ -99,9 +99,9 @@ Admin protection is not implemented yet.
 Expected future behavior:
 
 - `/admin/login` is public.
-- `/admin/*` requires `admin_access_token`.
+- `/admin/*` requires `accessToken`.
 - Missing or expired token redirects to `/admin/login`.
-- `401` responses remove `admin_access_token`.
+- `401` responses remove `accessToken`.
 
 Suggested structure:
 

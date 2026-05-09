@@ -1,6 +1,6 @@
-import CrudPage from "../../components/admin/CrudPage";
-import StatusBadge from "../../components/admin/StatusBadge";
-import { coupons } from "../../data/mockAdminData";
+import CrudPage from "../../components/ui/admin/CrudPage";
+import StatusBadge from "../../components/ui/admin/StatusBadge";
+import { coupons } from "../../data/adminMock";
 import { formatCurrency } from "../../utils/formatters";
 
 const columns = [

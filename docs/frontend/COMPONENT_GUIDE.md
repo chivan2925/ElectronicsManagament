@@ -56,7 +56,7 @@ When APIs are connected, move HTTP calls into API modules:
 
 ```text
 pages/admin/Categories.jsx
-  -> api/admin/categoriesApi.js
+  -> api/categoryService.js
   -> api/client.js
 ```
 

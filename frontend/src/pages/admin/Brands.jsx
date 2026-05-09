@@ -1,6 +1,6 @@
-import CrudPage from "../../components/admin/CrudPage";
-import StatusBadge from "../../components/admin/StatusBadge";
-import { brands } from "../../data/mockAdminData";
+import CrudPage from "../../components/ui/admin/CrudPage";
+import StatusBadge from "../../components/ui/admin/StatusBadge";
+import { brands } from "../../data/adminMock";
 
 const columns = [
   { key: "id", label: "ID", render: (item) => <span className="font-bold text-primary">#{item.id}</span> },

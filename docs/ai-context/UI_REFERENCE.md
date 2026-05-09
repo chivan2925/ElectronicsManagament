@@ -15,6 +15,12 @@ Style:
 - Glassmorphism, soft glow, subtle radial gradients.
 - Product image hover zoom is allowed.
 
+Design token source:
+
+- JavaScript tokens: `frontend/src/styles/tokens.js`.
+- CSS variables and shared UI utilities: `frontend/src/styles/index.css`.
+- Tailwind theme extension reads from `frontend/src/styles/tokens.js`.
+
 Homepage sections to preserve:
 
 - Announcement bar.
@@ -46,6 +52,20 @@ Admin pages should prioritize:
 - Fast scanning.
 - Repeated operations.
 - Search, filters, and actions.
+
+## Design Tokens
+
+The frontend token system includes:
+
+- Colors: primary, primary hover, dark backgrounds, dark surface, dark border, text, admin canvas, panel, and semantic status colors.
+- Spacing: xs through 6xl plus page/section spacing helpers.
+- Radius: sm, md, lg, xl, and full.
+- Shadows: admin card, store card, store hover, neon blue, strong neon blue, and inner highlight.
+- Typography: sans font family, font sizes, weights, and line heights.
+- zIndex: base, raised, dropdown, sticky, modal, and toast.
+- Transitions: fast, base, premium, and slow timing values.
+
+Use tokens for new shared UI work. Existing layout and visual structure should not be rewritten just to replace every Tailwind utility.
 
 ## Category Labels
 

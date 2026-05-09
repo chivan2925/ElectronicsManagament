@@ -1,6 +1,6 @@
-import DataTable from "../../components/admin/DataTable";
-import PageHeader from "../../components/admin/PageHeader";
-import { bestSellers } from "../../data/mockAdminData";
+import DataTable from "../../components/ui/admin/DataTable";
+import PageHeader from "../../components/ui/admin/PageHeader";
+import { bestSellers } from "../../data/adminMock";
 import { formatCurrency } from "../../utils/formatters";
 
 const columns = [

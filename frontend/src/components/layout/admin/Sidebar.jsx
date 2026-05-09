@@ -25,7 +25,7 @@ import { NavLink } from "react-router-dom";
 const menuGroups = [
   {
     label: "Tổng quan",
-    items: [{ label: "Dashboard", path: "/admin", icon: Home }],
+    items: [{ label: "Dashboard", path: "/admin/dashboard", icon: Home }],
   },
   {
     label: "Quản lý",
@@ -102,7 +102,7 @@ function Sidebar({ collapsed }) {
                 const Icon = item.icon;
 
                 return (
-                  <NavLink className={getNavClass} end={item.path === "/admin"} key={item.path} to={item.path}>
+                  <NavLink className={getNavClass} end={item.path === "/admin/dashboard"} key={item.path} to={item.path}>
                     <Icon className="shrink-0" size={19} />
                     {!collapsed && <span className="truncate">{item.label}</span>}
                   </NavLink>

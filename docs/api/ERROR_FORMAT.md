@@ -118,5 +118,5 @@ UI rules:
 - Use HTTP status or normalized `status` for branching.
 - Show `message` to the user when appropriate.
 - Use `details` to render field-level validation errors.
-- On `401`, remove `admin_access_token` and send the admin user back to login.
+- On `401`, remove `accessToken` and send the admin user back to login.
 - Avoid showing raw stack traces or backend exception class names.

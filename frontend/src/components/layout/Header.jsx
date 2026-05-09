@@ -1,4 +1,6 @@
 import { ChevronDown, PackageSearch, Search, ShoppingCart, UserRound, Zap } from "lucide-react";
+import Button from "../ui/Button";
+import Input from "../ui/Input";
 
 function Header() {
   return (
@@ -14,27 +16,25 @@ function Header() {
           </div>
         </a>
 
-        <button
+        <a
           className="premium-transition hidden h-11 items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-4 text-sm font-semibold text-slate-200 shadow-inner shadow-white/[0.03] backdrop-blur-xl hover:border-blue-400/70 hover:bg-blue-500/10 hover:text-white hover:shadow-[0_0_26px_rgba(0,91,255,0.18)] lg:flex"
-          type="button"
+          href="/products"
         >
           Tất cả danh mục
           <ChevronDown size={16} />
-        </button>
+        </a>
 
         <div className="premium-transition hidden flex-1 items-center rounded-xl border border-white/10 bg-slate-950/55 p-1 shadow-inner shadow-white/[0.03] backdrop-blur-xl focus-within:border-blue-400/80 focus-within:bg-slate-950/75 focus-within:shadow-[0_0_34px_rgba(0,91,255,0.22)] md:flex">
-          <Search className="ml-3 text-slate-400" size={19} />
-          <input
-            className="h-10 flex-1 bg-transparent px-3 text-sm text-white outline-none placeholder:text-slate-500"
+          <Input
+            className="flex-1 border-0 bg-transparent px-0 shadow-none backdrop-blur-none focus-within:border-transparent focus-within:bg-transparent focus-within:shadow-none"
+            inputClassName="h-10 px-1"
+            leftIcon={<Search className="ml-3" size={19} />}
             placeholder="Bạn cần tìm gì hôm nay?"
             type="search"
           />
-          <button
-            className="premium-transition h-10 rounded-lg bg-[#005BFF] px-5 text-sm font-bold text-white shadow-[0_0_24px_rgba(0,91,255,0.36)] hover:-translate-y-0.5 hover:bg-blue-500 hover:shadow-[0_0_34px_rgba(0,91,255,0.62)] active:translate-y-0"
-            type="button"
-          >
+          <Button className="h-10 rounded-lg px-5 py-0 font-bold" size="md">
             Tìm kiếm
-          </button>
+          </Button>
         </div>
 
         <nav className="ml-auto flex items-center gap-2 text-sm text-slate-300">
@@ -42,11 +42,11 @@ function Header() {
             <PackageSearch size={19} />
             Theo dõi đơn hàng
           </a>
-          <a className="premium-transition hidden items-center gap-2 rounded-xl px-3 py-2 hover:bg-white/[0.06] hover:text-white sm:flex" href="/">
+          <a className="premium-transition hidden items-center gap-2 rounded-xl px-3 py-2 hover:bg-white/[0.06] hover:text-white sm:flex" href="/login">
             <UserRound size={19} />
             Đăng nhập / Đăng ký
           </a>
-          <a className="premium-transition relative flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.06] px-3 py-2 font-bold text-white shadow-inner shadow-white/[0.03] hover:-translate-y-0.5 hover:border-blue-400/80 hover:bg-blue-500/10 hover:shadow-[0_0_30px_rgba(0,91,255,0.22)]" href="/">
+          <a className="premium-transition relative flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.06] px-3 py-2 font-bold text-white shadow-inner shadow-white/[0.03] hover:-translate-y-0.5 hover:border-blue-400/80 hover:bg-blue-500/10 hover:shadow-[0_0_30px_rgba(0,91,255,0.22)]" href="/cart">
             <ShoppingCart size={20} />
             <span className="hidden lg:inline">Giỏ hàng</span>
             <span className="absolute -right-2 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-xs font-black text-white shadow-[0_0_18px_rgba(239,68,68,0.7)]">

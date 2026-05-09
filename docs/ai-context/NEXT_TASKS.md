@@ -9,55 +9,57 @@ Always update this file after meaningful work.
 ## Current Phase
 
 ```text
-Phase 1 — Frontend Foundation
+Next phase — Design System + Client Ecommerce pages
 ```
 
 ## Immediate Priorities
 
 1. Preserve the existing homepage layout.
-2. Keep AI context docs current.
-3. Review client component structure before adding more ecommerce pages.
-4. Prepare Phase 2 design-system cleanup.
-5. Prepare Phase 3 client ecommerce pages with mock data.
-6. Keep catalog mock data aligned with the electronics/gaming category list.
+2. Keep the normalized frontend folder structure stable.
+3. Tighten design-system consistency without broad rewrites.
+4. Build client ecommerce pages with mock data.
+5. Keep modular catalog mock data aligned with the electronics/gaming category list.
+6. Keep AI context docs current.
 
 ## Next Recommended Tasks
 
-### Frontend Foundation
+### Frontend Foundation Maintenance
 
-- Review current homepage components for reusable patterns.
 - Keep client and admin components separated.
-- Move client components into `src/components/client/` later only if it reduces confusion.
 - Keep `src/api/client.js` as the only shared Axios client.
+- Keep resource API calls centralized through the service modules in `src/api`.
+- Keep mock data centralized in the domain modules under `src/data`.
+- Keep route definitions centralized in `src/routes/AppRoutes.jsx`.
 
 ### Design System Preparation
 
-- Identify repeated button/card/badge styles.
+- Expand usage of the token system where it reduces repeated classes without changing UI.
+- Reuse `src/components/ui` primitives before creating one-off button, badge, price, rating, card, input, or section-title markup.
 - Normalize section headings.
 - Define reusable client product card patterns.
 - Define reusable admin table/action patterns.
+- Keep `frontend/src/styles/tokens.js` and CSS variables in `frontend/src/styles/index.css` aligned.
 
 ### Client Ecommerce
 
-- Add product listing mock page.
-- Add product detail mock page.
-- Add category route/page.
-- Add cart page shell.
-- Add checkout page shell.
+- Replace client placeholder routes with real mock pages for product listing and product detail first.
+- Replace cart, checkout, login, and register placeholders with real mock flows after product pages.
+- Add category route/page when the category browsing plan is ready.
+- Wire product cards and header links into the new client routes.
 
 ### Auth + API Preparation
 
-- Add admin login page after frontend foundation is stable.
+- Replace the `/admin/login` placeholder with real admin authentication.
 - Add protected admin route wrapper.
-- Add `frontend/src/api/admin/authApi.js`.
-- Add `frontend/src/api/admin/categoriesApi.js`.
-- Connect admin category API first.
+- Wire `frontend/src/api/authService.js` into the admin login page.
+- Connect admin category pages through `frontend/src/api/categoryService.js` first.
+- Add loading, error, empty, and optimistic refresh states before replacing mock admin data.
 
 ## Blocked Or Not Ready
 
 - Public customer APIs are not complete.
 - Cart and checkout backend APIs are not complete.
-- Admin frontend API integration is not started.
+- Admin frontend API service modules exist, but pages are not connected to real data yet.
 - Production deployment is not ready.
 
 ## Maintenance Reminder

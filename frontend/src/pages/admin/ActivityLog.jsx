@@ -1,6 +1,6 @@
-import DataTable from "../../components/admin/DataTable";
-import PageHeader from "../../components/admin/PageHeader";
-import { activityLogs } from "../../data/mockAdminData";
+import DataTable from "../../components/ui/admin/DataTable";
+import PageHeader from "../../components/ui/admin/PageHeader";
+import { activityLogs } from "../../data/adminMock";
 
 const columns = [
   { key: "id", label: "ID", render: (item) => <span className="font-bold text-primary">#{item.id}</span> },

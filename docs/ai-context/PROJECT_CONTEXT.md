@@ -98,7 +98,7 @@ Additional backend areas:
 - Admin dashboard exists at `/admin`.
 - Admin CRUD mock pages exist.
 - Client and admin still use mock data.
-- `frontend/src/api/client.js` is ready for API integration.
+- `frontend/src/api/client.js` and flat service modules are ready for API integration.
 
 ## UI Direction
 

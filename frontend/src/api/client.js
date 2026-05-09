@@ -1,5 +1,7 @@
 import axios from "axios";
 
+export const ACCESS_TOKEN_KEY = "accessToken";
+
 const client = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:8080/api",
   timeout: 15000,
@@ -9,7 +11,7 @@ const client = axios.create({
 });
 
 client.interceptors.request.use((config) => {
-  const token = localStorage.getItem("admin_access_token");
+  const token = localStorage.getItem(ACCESS_TOKEN_KEY);
 
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
@@ -22,7 +24,8 @@ client.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem("admin_access_token");
+      localStorage.removeItem(ACCESS_TOKEN_KEY);
+      window.dispatchEvent(new CustomEvent("auth:unauthorized"));
     }
 
     return Promise.reject(error);

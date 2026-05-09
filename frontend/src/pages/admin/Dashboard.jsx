@@ -11,9 +11,9 @@ import {
   YAxis,
 } from "recharts";
 import { Package, ShoppingCart, Timer, Users, Wallet } from "lucide-react";
-import DataTable from "../../components/admin/DataTable";
-import StatCard from "../../components/admin/StatCard";
-import StatusBadge from "../../components/admin/StatusBadge";
+import DataTable from "../../components/ui/admin/DataTable";
+import StatCard from "../../components/ui/admin/StatCard";
+import StatusBadge from "../../components/ui/admin/StatusBadge";
 import {
   bestSellers,
   kpiCards,
@@ -21,7 +21,7 @@ import {
   orders,
   products,
   revenueData,
-} from "../../data/mockAdminData";
+} from "../../data/adminMock";
 import { compactCurrency, formatCurrency } from "../../utils/formatters";
 
 const statIcons = [Wallet, ShoppingCart, Package, Users, Timer];
