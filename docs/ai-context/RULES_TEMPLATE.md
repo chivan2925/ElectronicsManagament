@@ -1,55 +1,55 @@
 # RULES_TEMPLATE
 
-Dung template nay khi can them mot bo luat moi vao repo.
+Use this template when adding a new rule file to the repository.
 
-Ten file goi y:
+Suggested file names:
 
 - `CLIENT_PRODUCT_RULES.md`
 - `ADMIN_FORM_RULES.md`
 - `API_INTEGRATION_RULES.md`
 - `GIT_WORKFLOW_RULES.md`
 
-## Tieu De
+## Title
 
-`# <TEN_BO_LUAT>`
+`# <RULE_SET_NAME>`
 
-## Muc Dich
+## Purpose
 
-Mo ta ngan gon bo luat nay giup tranh loi gi hoac giu chuan nao.
+Briefly describe which errors this rule prevents or which standard it preserves.
 
-## Pham Vi Ap Dung
+## Scope
 
-Vi du:
+Examples:
 
-- Chi frontend client.
-- Chi admin dashboard.
-- Chi backend API.
-- Toan repo.
+- Client frontend only.
+- Admin dashboard only.
+- Backend API only.
+- Entire repository.
 
-## Bat Buoc
+## Required Practices
 
 - Rule 1.
 - Rule 2.
 - Rule 3.
 
-## Khong Duoc
+## Prohibited Practices
 
-- Rule cam 1.
-- Rule cam 2.
+- Prohibited rule 1.
+- Prohibited rule 2.
 
-## Vi Du Dung
-
-```text
-Mo ta hoac snippet vi du dung.
-```
-
-## Vi Du Sai
+## Good Example
 
 ```text
-Mo ta hoac snippet vi du sai.
+Description or snippet showing the preferred approach.
 ```
 
-## Lien Quan
+## Bad Example
 
-- Link den file/component/API lien quan neu co.
-- Neu rule anh huong toan repo, cap nhat tom tat vao `AGENTS.md`.
+```text
+Description or snippet showing the approach to avoid.
+```
+
+## Related Files
+
+- Link related files, components, or APIs when available.
+- If the rule affects the whole repository, also add a short summary to `AGENTS.md`.

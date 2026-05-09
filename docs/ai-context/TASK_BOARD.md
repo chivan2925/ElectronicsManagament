@@ -1,14 +1,15 @@
 # TASK_BOARD
 
-## Dang Lam
+## In Progress
 
-- On dinh docs/context cho AI va workflow lam viec.
-- Giu rieng client homepage va admin dashboard.
+- Stabilize AI docs/context and the working workflow.
+- Keep the client homepage and admin dashboard separated.
+- Document the current backend API surface in `docs/api/`.
 
-## Da Xong
+## Done
 
-- Admin dashboard mock tai `/admin`.
-- Admin CRUD mock routes:
+- Mock Admin Dashboard at `/admin`.
+- Mock admin CRUD routes:
   - categories
   - brands
   - products
@@ -20,30 +21,30 @@
   - orders
   - warehouse
   - coupons
-- Client homepage dark ecommerce tai `/`.
-- Mock categories theo shop gaming/electronics.
-- Axios client chuan bi JWT.
+- Dark e-commerce client homepage at `/`.
+- Gaming/electronics mock categories.
+- Axios client prepared for JWT authentication.
 
-## Viec Gan Nen Lam
+## Near-Term Work
 
-1. Chuan hoa cau truc client:
-   - co the chuyen component client vao `src/components/client/`.
-   - co the chuyen page client vao `src/pages/client/`.
-2. Tao admin login page.
-3. Noi API admin categories.
-4. Noi API admin brands.
-5. Noi API admin products.
-6. Tao public/client product list va product detail mock.
-7. Tao cart/checkout mock.
+1. Normalize the client structure:
+   - Consider moving client components into `src/components/client/`.
+   - Consider moving client pages into `src/pages/client/`.
+2. Create the admin login page.
+3. Connect admin category APIs.
+4. Connect admin brand APIs.
+5. Connect admin product APIs.
+6. Create mock public/client product listing and product detail pages.
+7. Create mock cart and checkout flows.
 
-## Viec Backend Can Chu Y
+## Backend Notes
 
-- Cloudinary dependency/config can kiem tra khi chay context test.
-- Payment config utility dang co key path khac voi `application.yml`.
-- Chua co day du public API cho client e-commerce.
-- Can dua secret sang env truoc khi deploy/commit that nghiem tuc.
+- Cloudinary dependency/config should be checked when running backend context tests.
+- Payment config utilities currently use key paths that differ from `application.yml`.
+- Public client e-commerce APIs are not fully available yet.
+- Move secrets to environment variables before serious deployment or commits.
 
-## Ghi Chu
+## Notes
 
-- Moi khi them feature lon, cap nhat file nay.
-- Moi khi them rule moi, tao file rieng trong `docs/ai-context/` va them tom tat vao `AGENTS.md` neu rule ap dung toan repo.
+- Update this file whenever a large feature is added.
+- When adding a new rule, create a dedicated file in `docs/ai-context/` and add a summary to `AGENTS.md` if the rule applies repository-wide.

@@ -1,46 +1,46 @@
 # CODING_RULES
 
-## Git Va File
+## Git And Files
 
-- Khong revert thay doi cua nguoi dung neu chua duoc yeu cau.
-- Khong commit build output:
+- Do not revert user changes unless explicitly requested.
+- Do not commit build outputs:
   - `frontend/node_modules/`
   - `frontend/dist/`
   - `backend/electronics/target/`
-- Chay npm trong `frontend/`.
-- Root khong nen co `package-lock.json` neu root khong co `package.json`.
+- Run npm commands inside `frontend/`.
+- The repository root should not contain `package-lock.json` unless it also contains a root `package.json`.
 
 ## Frontend
 
-- Dung Tailwind CSS cho style.
-- Dung lucide-react cho icon.
-- Dung Recharts cho chart.
-- Dung React Router cho route.
-- Dung Axios client tu `src/api/client.js`.
-- Khong hardcode API URL trong component.
-- Khong de business logic phuc tap trong UI component.
-- Khong duplicate component neu co the truyen props.
+- Use Tailwind CSS for styling.
+- Use lucide-react for icons.
+- Use Recharts for charts.
+- Use React Router for routing.
+- Use the Axios client from `src/api/client.js`.
+- Do not hardcode API URLs inside components.
+- Do not put complex business logic inside UI components.
+- Do not duplicate components when props can express the variation clearly.
 
 ## Mock Data
 
-- Mock data dat trong `src/data`.
-- Data shape nen gan backend DTO de sau nay thay API de hon.
-- Neu them mock data moi, dat ten ro ngu canh.
+- Keep mock data in `src/data`.
+- Keep mock data shapes close to backend DTOs so API replacement is easier later.
+- When adding new mock data, use names that clearly describe the context.
 
 ## API
 
-- Base API lay tu `VITE_API_BASE_URL`, fallback `http://localhost:8080/api`.
-- Admin token key: `admin_access_token`.
-- Khi noi API that, xu ly loading/error/empty state.
+- Read the API base URL from `VITE_API_BASE_URL`, with fallback `http://localhost:8080/api`.
+- Use `admin_access_token` as the admin token localStorage key.
+- When integrating real APIs, handle loading, error, and empty states.
 
 ## Backend
 
-- Backend la Spring Boot tai `backend/electronics`.
-- Uu tien sua dung pattern controller-service-repository-dto-mapper hien co.
-- Khong de secret moi trong `application.yml`.
-- Neu them migration/seed, uu tien file ro rang trong docs/database hoac migration folder neu du an chon Flyway/Liquibase sau nay.
+- The backend is the Spring Boot app in `backend/electronics`.
+- Prefer the existing controller-service-repository-dto-mapper pattern.
+- Do not add new secrets to `application.yml`.
+- If adding migrations or seed data, prefer a clear file under `docs/database` or a migration folder if the project later adopts Flyway or Liquibase.
 
-## Validation Truoc Khi Bao Xong
+## Validation Before Completion
 
 Frontend:
 
@@ -57,10 +57,10 @@ cd backend/electronics
 mvn test
 ```
 
-Neu khong chay duoc vi moi truong, ghi ro ly do.
+If validation cannot run because of the local environment, state the reason clearly.
 
-## Chat/Tra Loi
+## Communication
 
-- Tra loi ngan gon, dung trong tam.
-- Neu co thay doi file, neu duong dan quan trong thi neu ro.
-- Neu build/test fail, neu loi goc va buoc sua tiep theo.
+- Keep replies concise and focused.
+- If files changed, mention important paths.
+- If build or tests fail, mention the root error and the next repair step.

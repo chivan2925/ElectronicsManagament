@@ -1,26 +1,26 @@
 # CLIENT_UI_SPEC
 
-## Muc Tieu
+## Purpose
 
-Client la giao dien e-commerce cho khach hang mua thiet bi dien tu/gaming. Cam giac hien dai, cong nghe, dark theme, tap trung vao san pham va CTA mua hang.
+The client storefront is the e-commerce experience for customers buying electronics and gaming products. It should feel modern, technical, dark-themed, product-focused, and conversion-oriented.
 
-## Style Chung
+## Shared Style
 
 - Background: `#050B14` / `#07111F`.
 - Accent: blue `#005BFF`.
-- Border dark card: `#1E293B`.
-- Text: trang/xam nhat.
-- Card: dark gradient, border nhe, radius 12-16px.
-- Icon: lucide-react.
+- Dark card border: `#1E293B`.
+- Text: white and light gray.
+- Cards: dark gradient, subtle border, 12-16px radius.
+- Icons: lucide-react.
 
-## Homepage Bat Buoc
+## Required Homepage Sections
 
-- Announcement bar tren cung.
-- Header chinh: logo, category dropdown, search, order tracking, auth, cart badge.
-- Hero layout 3 cot:
-  - Category sidebar trai.
-  - Hero banner giua.
-  - Promo cards phai.
+- Top announcement bar.
+- Main header with logo, category dropdown, search, order tracking, auth links, and cart badge.
+- Three-column hero layout:
+  - Category sidebar on the left.
+  - Main hero banner in the center.
+  - Promo cards on the right.
 - Service bar.
 - Featured categories.
 - Featured products.
@@ -28,42 +28,42 @@ Client la giao dien e-commerce cho khach hang mua thiet bi dien tu/gaming. Cam g
 
 ## Category List
 
-Danh muc mac dinh:
+Default categories:
 
-- Tat ca danh muc
-- Dien thoai
-- Laptop
-- Tai nghe
-- Chuot
-- Ban phim
-- Lot chuot
-- PC Gaming
-- May bo
-- Linh kien PC
-- Ghe Gaming
-- Phu kien Gaming
+- All categories
+- Phones
+- Laptops
+- Headphones
+- Mice
+- Keyboards
+- Mouse pads
+- Gaming PCs
+- Prebuilt desktops
+- PC components
+- Gaming chairs
+- Gaming accessories
 
 ## Product Card
 
-Moi product card nen co:
+Each product card should include:
 
-- Badge giam gia neu co.
-- Anh san pham.
-- Ten san pham.
-- Rating + so review.
-- Gia hien tai.
-- Gia cu gach ngang neu co.
-- Button icon gio hang.
+- Discount badge when available.
+- Product image.
+- Product name.
+- Rating and review count.
+- Current price.
+- Struck-through old price when available.
+- Cart icon button.
 
 ## Responsive
 
-- Desktop 1440px la muc uu tien.
-- Tablet: hero va promo co lai nhung van doc duoc.
-- Mobile: sidebar category an hoac chuyen thanh list ngang/menu, product grid 2 cot.
+- Desktop 1440px is the priority viewport.
+- Tablet: hero and promo areas may compress but must remain readable.
+- Mobile: category sidebar should hide or become a horizontal list/menu, and the product grid should use two columns when space allows.
 
-## Khong Nen
+## Avoid
 
-- Khong dung light admin style cho client homepage.
-- Khong lam text nho den muc kho doc tren dark background.
-- Khong de CTA mua hang bi chim vao nen.
-- Khong dung anh qua toi/blur neu product can nhin ro.
+- Do not use the light admin style for the client homepage.
+- Do not make text too small to read on a dark background.
+- Do not let purchase CTAs disappear into the background.
+- Do not use images that are too dark or blurred when the product must be clearly visible.
