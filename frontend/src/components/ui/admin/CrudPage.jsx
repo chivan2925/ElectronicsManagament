@@ -1,11 +1,16 @@
 import { Search } from "lucide-react";
 import { useMemo, useState } from "react";
+import { getResourceActionPolicies } from "../../../auth/roleHelpers";
 import Card from "../Card";
 import DataTable from "./DataTable";
 import PageHeader from "./PageHeader";
 
-function CrudPage({ title, subtitle, data, columns, searchPlaceholder = "Tìm kiếm..." }) {
+function CrudPage({ title, subtitle, data, columns, permissionResource = null, searchPlaceholder = "Tìm kiếm..." }) {
   const [query, setQuery] = useState("");
+  const actionPolicies = useMemo(
+    () => (permissionResource ? getResourceActionPolicies(permissionResource) : null),
+    [permissionResource],
+  );
 
   const filteredData = useMemo(() => {
     const keyword = query.trim().toLowerCase();
@@ -23,7 +28,7 @@ function CrudPage({ title, subtitle, data, columns, searchPlaceholder = "Tìm ki
 
   return (
     <section>
-      <PageHeader title={title} subtitle={subtitle} />
+      <PageHeader actionPolicy={actionPolicies?.create} title={title} subtitle={subtitle} />
 
       <Card className="mb-4 flex flex-col gap-3 p-4 md:flex-row md:items-center md:justify-between" variant="admin">
         <div className="relative w-full md:max-w-md">
@@ -42,7 +47,7 @@ function CrudPage({ title, subtitle, data, columns, searchPlaceholder = "Tìm ki
         </p>
       </Card>
 
-      <DataTable columns={columns} data={filteredData} />
+      <DataTable actionPolicies={actionPolicies} columns={columns} data={filteredData} />
     </section>
   );
 }

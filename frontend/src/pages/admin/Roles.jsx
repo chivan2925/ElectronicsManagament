@@ -1,5 +1,6 @@
 import CrudPage from "../../components/ui/admin/CrudPage";
 import StatusBadge from "../../components/ui/admin/StatusBadge";
+import { ADMIN_RESOURCES } from "../../auth/roleHelpers";
 import { roles } from "../../data/adminMock";
 
 const columns = [
@@ -15,6 +16,7 @@ function Roles() {
     <CrudPage
       columns={columns}
       data={roles}
+      permissionResource={ADMIN_RESOURCES.roles}
       searchPlaceholder="Tìm vai trò..."
       subtitle="Quản lý vai trò, nhóm quyền và phạm vi thao tác trong admin."
       title="Vai trò / Quyền"

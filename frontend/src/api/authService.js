@@ -1,43 +1,80 @@
-import client, { ACCESS_TOKEN_KEY } from "./client";
+import { buildAuthSession } from "../auth/authHelpers";
+import {
+  ACCESS_TOKEN_KEY,
+  REFRESH_TOKEN_KEY,
+  clearAuthSession,
+  getStoredAccessToken,
+  getStoredAuthSession,
+  getStoredRefreshToken,
+  notifyAuthSessionChanged,
+  persistAuthSession,
+  setStoredAccessToken,
+  setStoredRefreshToken,
+} from "../auth/authStorage";
+import { api } from "./client";
+
+export { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY };
 
 export function getAccessToken() {
-  return localStorage.getItem(ACCESS_TOKEN_KEY);
+  return getStoredAccessToken();
+}
+
+export function getRefreshToken() {
+  return getStoredRefreshToken();
 }
 
 export function setAccessToken(token) {
-  localStorage.setItem(ACCESS_TOKEN_KEY, token);
+  setStoredAccessToken(token);
+  notifyAuthSessionChanged(getStoredAuthSession());
+}
+
+export function setRefreshToken(token) {
+  setStoredRefreshToken(token);
+  notifyAuthSessionChanged(getStoredAuthSession());
 }
 
 export function clearAccessToken() {
-  localStorage.removeItem(ACCESS_TOKEN_KEY);
+  clearAuthSession();
+  notifyAuthSessionChanged(null);
 }
 
 export async function login(credentials) {
-  const response = await client.post("/admin/auth/login", credentials);
-  const token = response.data?.accessToken;
+  const data = await api.post("/admin/auth/login", credentials, {
+    retry: false,
+    skipAuth: true,
+    skipUnauthorizedHandler: true,
+  });
+  const session = buildAuthSession(data);
 
-  if (token) {
-    setAccessToken(token);
+  if (session.accessToken) {
+    persistAuthSession(session);
+    notifyAuthSessionChanged(session);
   }
 
-  return response.data;
+  return data;
 }
 
 export async function logout() {
   try {
-    const response = await client.post("/admin/auth/logout");
-    return response.data;
+    return await api.post("/admin/auth/logout", null, {
+      retry: false,
+      skipAuthRefresh: true,
+      skipUnauthorizedHandler: true,
+    });
   } finally {
-    clearAccessToken();
+    clearAuthSession();
+    notifyAuthSessionChanged(null);
   }
 }
 
 const authService = {
   clearAccessToken,
   getAccessToken,
+  getRefreshToken,
   login,
   logout,
   setAccessToken,
+  setRefreshToken,
 };
 
 export default authService;

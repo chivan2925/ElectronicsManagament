@@ -1,5 +1,6 @@
 import CrudPage from "../../components/ui/admin/CrudPage";
 import StatusBadge from "../../components/ui/admin/StatusBadge";
+import { ADMIN_RESOURCES } from "../../auth/roleHelpers";
 import { variants } from "../../data/adminMock";
 import { formatCurrency } from "../../utils/formatters";
 
@@ -18,6 +19,7 @@ function Variants() {
     <CrudPage
       columns={columns}
       data={variants}
+      permissionResource={ADMIN_RESOURCES.variants}
       searchPlaceholder="Tìm biến thể..."
       subtitle="Quản lý cấu hình, màu sắc, giá và tồn kho theo từng biến thể."
       title="Biến thể Variant"

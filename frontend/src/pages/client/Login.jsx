@@ -5,7 +5,7 @@ function Login() {
   return (
     <AuthLayout
       badge="Customer login"
-      subtitle="Đăng nhập vào tài khoản khách hàng để chuẩn bị lưu giỏ hàng, theo dõi đơn và nhận ưu đãi cho gear yêu thích."
+      subtitle="Đăng nhập bằng email để hệ thống điều hướng đúng theo vai trò tài khoản của bạn."
       switchLabel="Tạo tài khoản"
       switchText="Chưa có tài khoản?"
       switchTo="/register"

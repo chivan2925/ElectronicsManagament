@@ -1,5 +1,6 @@
 import CrudPage from "../../components/ui/admin/CrudPage";
 import StatusBadge from "../../components/ui/admin/StatusBadge";
+import { ADMIN_RESOURCES } from "../../auth/roleHelpers";
 import { staff } from "../../data/adminMock";
 
 const columns = [
@@ -16,6 +17,7 @@ function Staff() {
     <CrudPage
       columns={columns}
       data={staff}
+      permissionResource={ADMIN_RESOURCES.staff}
       searchPlaceholder="Tìm nhân viên..."
       subtitle="Quản lý tài khoản nhân viên, vai trò và trạng thái đăng nhập admin."
       title="Nhân viên"

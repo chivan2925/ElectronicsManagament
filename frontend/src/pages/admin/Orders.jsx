@@ -1,5 +1,6 @@
 import CrudPage from "../../components/ui/admin/CrudPage";
 import StatusBadge from "../../components/ui/admin/StatusBadge";
+import { ADMIN_RESOURCES } from "../../auth/roleHelpers";
 import { orders } from "../../data/adminMock";
 import { formatCurrency } from "../../utils/formatters";
 
@@ -18,6 +19,7 @@ function Orders() {
     <CrudPage
       columns={columns}
       data={orders}
+      permissionResource={ADMIN_RESOURCES.orders}
       searchPlaceholder="Tìm đơn hàng..."
       subtitle="Theo dõi đơn hàng, thanh toán và trạng thái xử lý."
       title="Đơn hàng"

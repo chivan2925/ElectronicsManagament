@@ -1,5 +1,6 @@
 import CrudPage from "../../components/ui/admin/CrudPage";
 import StatusBadge from "../../components/ui/admin/StatusBadge";
+import { ADMIN_RESOURCES } from "../../auth/roleHelpers";
 import { warehouse } from "../../data/adminMock";
 
 const columns = [
@@ -30,6 +31,7 @@ function Warehouse() {
     <CrudPage
       columns={columns}
       data={warehouse}
+      permissionResource={ADMIN_RESOURCES.warehouse}
       searchPlaceholder="Tìm kho hàng..."
       subtitle="Quản lý kho, sức chứa và tồn kho theo khu vực."
       title="Kho hàng"

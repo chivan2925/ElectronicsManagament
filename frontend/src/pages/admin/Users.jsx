@@ -1,5 +1,6 @@
 import CrudPage from "../../components/ui/admin/CrudPage";
 import StatusBadge from "../../components/ui/admin/StatusBadge";
+import { ADMIN_RESOURCES } from "../../auth/roleHelpers";
 import { users } from "../../data/adminMock";
 import { formatCurrency } from "../../utils/formatters";
 
@@ -18,6 +19,7 @@ function Users() {
     <CrudPage
       columns={columns}
       data={users}
+      permissionResource={ADMIN_RESOURCES.users}
       searchPlaceholder="Tìm người dùng..."
       subtitle="Theo dõi tài khoản khách hàng, lịch sử mua và trạng thái hoạt động."
       title="Người dùng"

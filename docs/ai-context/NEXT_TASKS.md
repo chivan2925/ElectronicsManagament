@@ -14,6 +14,29 @@ Ready for Phase 4 — Auth + Backend Integration
 
 ## Recently Completed
 
+- Connected `/login` and `/admin/login` to the backend JWT auth flow through `frontend/src/api/authService.js`.
+- Added loading, invalid-credentials, network-error, and disabled-account handling to the login form.
+- Added a reusable dark toast notification provider under `frontend/src/components/ui/toast`.
+- Added role-based redirect after login: user-shaped sessions go to `/`, admin/staff sessions go to `/admin/dashboard`.
+- Applied route guards to protect `/admin/*` and guest-only auth routes.
+- Updated backend auth exception handling for invalid credentials and disabled/locked staff accounts.
+- Verified `npm run lint`, `npm run build`, and `mvn clean compile -DskipTests`; `mvn test` is blocked by existing backend context issues.
+- Hardened the frontend Axios API client with centralized error normalization, response error handling, bearer-token injection, safe-method retry foundation, env timeout config, and reusable `api.*` helpers.
+- Verified `npm run lint` and `npm run build` after hardening the Axios API client.
+- Completed the protected routing system with `ProtectedRoute`, `AdminRoute`, `StaffRoute`, `GuestRoute`, redirect memory, session restore, loading fallback, and graceful unauthorized UI.
+- Protected `/checkout`, the `/admin/*` shell, and admin-only user/staff/role management pages; made `/login`, `/register`, and `/admin/login` guest-only.
+- Verified `npm run lint` and `npm run build` after completing protected routing.
+- Added frontend refresh-token session persistence with app-start expiry validation, single-flight refresh, original-request retry after `401`, and logout on refresh failure.
+- Added `VITE_AUTH_REFRESH_ENDPOINT` configuration and `refreshTokenService`.
+- Verified `npm run lint`, `npm run build`, and `git diff --check` after adding refresh-token session persistence.
+- Added centralized frontend role/permission policy helpers, `usePermissions`, and `PermissionGate`.
+- Applied shared role policies to admin routes and sidebar visibility so STAFF does not see Role Management and USER cannot enter admin.
+- Added reusable admin resource action policies for CRUD create/update/delete controls without inline role checks.
+- Verified `npm run lint`, `npm run build`, and `git diff --check` after adding the role/permission system.
+- Added the centralized JWT-ready frontend auth architecture under `frontend/src/auth`, `frontend/src/guards`, and `frontend/src/store/auth`.
+- Wrapped the app with `AuthProvider` while keeping the current homepage and admin mock route behavior unchanged.
+- Updated the shared API client and auth service to use centralized auth storage/session helpers.
+- Verified `npm run lint` and `npm run build` after the auth architecture setup.
 - Completed the full Phase 3 client ecommerce review and polish across PLP, PDP, cart, checkout, auth, wishlist, recently viewed, and search surfaces.
 - Normalized repeated storefront stat-card styling with the shared `store-stat-card` utility.
 - Tightened mobile checkout/shipping/order-summary layouts to reduce overflow risk.
@@ -37,11 +60,12 @@ Ready for Phase 4 — Auth + Backend Integration
 
 1. Preserve the existing homepage layout.
 2. Keep the normalized frontend folder structure stable.
-3. Start Phase 4 by wiring admin authentication to the backend auth API.
-4. Add protected admin route handling after admin auth is working.
+3. Connect admin category pages through `frontend/src/api/categoryService.js`.
+4. Add loading, error, empty, and refresh states before replacing mock admin data.
 5. Connect admin CRUD pages to backend APIs one resource at a time.
-6. Keep public storefront customer auth, cart, checkout, payment, wishlist, and search on mock/local state until public API contracts are ready.
-7. Keep AI context docs current.
+6. Keep public storefront customer registration, cart, checkout, payment, wishlist, and search on mock/local state until public API contracts are ready.
+7. Resolve existing backend test blockers before relying on `mvn test` as a clean validation gate.
+8. Keep AI context docs current.
 
 ## Next Recommended Tasks
 
@@ -49,7 +73,13 @@ Ready for Phase 4 — Auth + Backend Integration
 
 - Keep client and admin components separated.
 - Keep `src/api/client.js` as the only shared Axios client.
+- Keep `src/api/apiErrorHandler.js` and `src/api/normalizeApiError.js` as the centralized API error layer.
+- Keep refresh-token coordination centralized in `src/api/refreshTokenService.js`.
+- Use `api.*` helpers from `src/api/client.js` in API service modules.
 - Keep resource API calls centralized through the service modules in `src/api`.
+- Keep route guard behavior centralized in `src/guards`.
+- Keep role, permission, route, sidebar, page, and action access policies centralized in `src/auth/roleHelpers.js`.
+- Use `src/auth/usePermissions.js` and `src/auth/PermissionGate.jsx` instead of inline role checks in pages/components.
 - Keep mock data centralized in the domain modules under `src/data`.
 - Keep route definitions centralized in `src/routes/AppRoutes.jsx`.
 
@@ -69,8 +99,8 @@ Ready for Phase 4 — Auth + Backend Integration
 ### Client Ecommerce
 
 - Keep Phase 3 client ecommerce UI stable while backend integration begins.
-- Keep the mock login and register flows local until public customer auth APIs are ready.
-- Wire login and register forms to customer auth APIs only after API contracts are available.
+- Keep the register flow local until public customer auth APIs are ready.
+- Move storefront customer login to a public customer auth endpoint when the API contract is available.
 - Wire product detail purchase actions, cart drawer, cart page, and checkout page into shared cart state when the cart flow moves beyond local mock state.
 - Replace wishlist and recently viewed localStorage placeholders only when customer account/product history APIs are ready.
 - Replace search overlay mock data with a real storefront search API only when the public search/catalog API is ready.
@@ -80,9 +110,11 @@ Ready for Phase 4 — Auth + Backend Integration
 
 ### Phase 4 Auth + Backend Integration
 
-- Replace the `/admin/login` placeholder with real admin authentication.
-- Add protected admin route wrapper.
-- Wire `frontend/src/api/authService.js` into the admin login page.
+- Maintain the real `/admin/login` backend JWT authentication flow.
+- Use the existing auth architecture in `frontend/src/auth`, `frontend/src/guards`, and `frontend/src/store/auth`.
+- Preserve protected routing behavior: admin/staff shell access, admin-only management pages, checkout auth gate, and guest-only auth pages.
+- Preserve centralized role/permission behavior: ADMIN full access, STAFF limited admin access, USER blocked from admin, and admin sidebar/actions filtered by policy.
+- Add backend refresh-token endpoint support for the frontend `refreshTokenService` contract when backend auth is extended.
 - Connect admin category pages through `frontend/src/api/categoryService.js` first.
 - Add loading, error, empty, and optimistic refresh states before replacing mock admin data.
 
@@ -91,6 +123,9 @@ Ready for Phase 4 — Auth + Backend Integration
 - Public customer APIs are not complete.
 - Cart and checkout backend APIs are not complete.
 - Admin frontend API service modules exist, but pages are not connected to real data yet.
+- Backend admin auth currently exposes login/logout; refresh-token endpoint support is not implemented yet.
+- Backend `mvn test` currently fails because `AddressMapper` is not registered as a bean for `AdminAddressServiceImpl`.
+- Backend startup also reports a database DDL warning for existing null `media.display_order` values.
 - Production deployment is not ready.
 
 ## Maintenance Reminder

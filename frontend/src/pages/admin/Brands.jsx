@@ -1,5 +1,6 @@
 import CrudPage from "../../components/ui/admin/CrudPage";
 import StatusBadge from "../../components/ui/admin/StatusBadge";
+import { ADMIN_RESOURCES } from "../../auth/roleHelpers";
 import { brands } from "../../data/adminMock";
 
 const columns = [
@@ -15,6 +16,7 @@ function Brands() {
     <CrudPage
       columns={columns}
       data={brands}
+      permissionResource={ADMIN_RESOURCES.brands}
       searchPlaceholder="Tìm thương hiệu..."
       subtitle="Theo dõi thương hiệu điện tử, gaming gear và linh kiện."
       title="Thương hiệu"

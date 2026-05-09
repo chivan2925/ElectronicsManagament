@@ -1,35 +1,61 @@
 import axios from "axios";
+import { ACCESS_TOKEN_KEY, getStoredAccessToken } from "../auth/authStorage";
+import { API_CONFIG } from "./apiConfig";
+import { createApiErrorHandler } from "./apiErrorHandler";
 
-export const ACCESS_TOKEN_KEY = "accessToken";
+export { ACCESS_TOKEN_KEY };
+
+const RETRYABLE_METHODS = new Set(["get", "head", "options"]);
+
+export { API_CONFIG };
+
+function setRequestHeader(headers, key, value) {
+  if (typeof headers.set === "function") {
+    headers.set(key, value);
+    return;
+  }
+
+  headers[key] = value;
+}
 
 const client = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:8080/api",
-  timeout: 15000,
+  baseURL: API_CONFIG.baseURL,
   headers: {
-    "Content-Type": "application/json",
+    Accept: "application/json",
   },
+  timeout: API_CONFIG.timeout,
 });
 
 client.interceptors.request.use((config) => {
-  const token = localStorage.getItem(ACCESS_TOKEN_KEY);
+  const token = getStoredAccessToken();
+  const method = String(config.method ?? "get").toLowerCase();
 
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+  config.headers = config.headers ?? {};
+  config.retry = config.retry ?? RETRYABLE_METHODS.has(method);
+  config.retryCount = config.retryCount ?? 1;
+  config.retryDelay = config.retryDelay ?? 500;
+
+  if (token && !config.skipAuth) {
+    setRequestHeader(config.headers, "Authorization", `Bearer ${token}`);
   }
 
   return config;
 });
 
-client.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      localStorage.removeItem(ACCESS_TOKEN_KEY);
-      window.dispatchEvent(new CustomEvent("auth:unauthorized"));
-    }
+client.interceptors.response.use((response) => response, createApiErrorHandler(client));
 
-    return Promise.reject(error);
-  },
-);
+export async function apiRequest(config) {
+  const response = await client.request(config);
+  return response.data;
+}
+
+export const api = {
+  delete: (url, config = {}) => apiRequest({ ...config, method: "delete", url }),
+  get: (url, config = {}) => apiRequest({ ...config, method: "get", url }),
+  patch: (url, data, config = {}) => apiRequest({ ...config, data, method: "patch", url }),
+  post: (url, data, config = {}) => apiRequest({ ...config, data, method: "post", url }),
+  put: (url, data, config = {}) => apiRequest({ ...config, data, method: "put", url }),
+  request: apiRequest,
+};
 
 export default client;

@@ -1,5 +1,6 @@
 import CrudPage from "../../components/ui/admin/CrudPage";
 import StatusBadge from "../../components/ui/admin/StatusBadge";
+import { ADMIN_RESOURCES } from "../../auth/roleHelpers";
 import { categories } from "../../data/adminMock";
 
 const columns = [
@@ -15,6 +16,7 @@ function Categories() {
     <CrudPage
       columns={columns}
       data={categories}
+      permissionResource={ADMIN_RESOURCES.categories}
       searchPlaceholder="Tìm danh mục..."
       subtitle="Quản lý nhóm hàng như laptop, tai nghe, chuột, bàn phím, linh kiện PC."
       title="Danh mục"

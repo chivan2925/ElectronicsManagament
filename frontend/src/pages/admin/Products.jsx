@@ -2,8 +2,13 @@ import { Image, Layers3 } from "lucide-react";
 import CrudPage from "../../components/ui/admin/CrudPage";
 import AdminIconButton from "../../components/ui/admin/AdminIconButton";
 import StatusBadge from "../../components/ui/admin/StatusBadge";
+import PermissionGate from "../../auth/PermissionGate";
+import { ADMIN_RESOURCES, getResourceActionPolicy } from "../../auth/roleHelpers";
 import { products } from "../../data/adminMock";
 import { formatCurrency } from "../../utils/formatters";
+
+const variantToolPolicy = getResourceActionPolicy(ADMIN_RESOURCES.variants, "view");
+const mediaToolPolicy = getResourceActionPolicy(ADMIN_RESOURCES.media, "view");
 
 const columns = [
   {
@@ -29,8 +34,12 @@ const columns = [
     label: "Quản lý",
     render: () => (
       <div className="flex items-center gap-2">
-        <AdminIconButton icon={Layers3} title="Biến thể" />
-        <AdminIconButton icon={Image} title="Media" />
+        <PermissionGate policy={variantToolPolicy}>
+          <AdminIconButton icon={Layers3} title="Biến thể" />
+        </PermissionGate>
+        <PermissionGate policy={mediaToolPolicy}>
+          <AdminIconButton icon={Image} title="Media" />
+        </PermissionGate>
       </div>
     ),
   },
@@ -41,6 +50,7 @@ function Products() {
     <CrudPage
       columns={columns}
       data={products}
+      permissionResource={ADMIN_RESOURCES.products}
       searchPlaceholder="Tìm sản phẩm, danh mục, thương hiệu..."
       subtitle="Quản lý sản phẩm gốc, giá bán, tồn kho và trạng thái hiển thị."
       title="Sản phẩm"

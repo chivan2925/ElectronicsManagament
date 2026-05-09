@@ -56,6 +56,12 @@ The frontend should save `accessToken` under:
 accessToken
 ```
 
+If the backend later returns a refresh token, the frontend stores it under:
+
+```text
+refreshToken
+```
+
 ## Authenticated Requests
 
 Send the token in the `Authorization` header:
@@ -123,15 +129,28 @@ Current response shape:
 
 The actual backend message may be localized. Frontend code should branch on `status` or HTTP status, not on `message`.
 
+## Login Error Responses
+
+The login endpoint returns explicit status codes for common authentication failures:
+
+| Case | HTTP status | Notes |
+| --- | --- | --- |
+| Invalid email or password | `401 Unauthorized` | Frontend should show an invalid credentials message. |
+| Disabled or blocked staff account | `403 Forbidden` | Frontend should show an account disabled/blocked message. |
+| Locked or deleted staff account | `423 Locked` | Frontend should show an account locked message. |
+
 ## Frontend Handling Rules
 
 - Keep login form state separate from admin dashboard state.
-- Store only the access token and non-sensitive display data.
-- Remove `accessToken` on `401`.
+- Store only tokens and non-sensitive display data.
+- Try the centralized frontend refresh flow on eligible `401` responses when `refreshToken` is available.
+- Remove the auth session when refresh fails or no refresh token is available.
 - Redirect admin users to the login page after token removal.
+- Redirect successful admin/staff login to `/admin/dashboard`.
+- Redirect successful user-shaped login sessions to `/`.
 - Do not store passwords.
 - Do not display raw JWT values in the UI.
-- Do not add refresh-token logic until the backend supports it.
+- The frontend refresh flow is ready, but the current backend admin auth controller exposes login/logout only. Real refresh requires backend refresh-token response and `POST /api/admin/auth/refresh` support.
 
 ## Role And Permission Notes
 

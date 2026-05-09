@@ -32,6 +32,7 @@ function Button({
     {
       className: cn(
         "transition-default inline-flex items-center justify-center gap-2 font-black outline-none focus-visible:ring-2 focus-visible:ring-blue-300/60 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950",
+        "disabled:pointer-events-none disabled:translate-y-0 disabled:opacity-60",
         variantClasses[variant] || variantClasses.primary,
         sizeClasses[size] || sizeClasses.md,
         fullWidth && "w-full",

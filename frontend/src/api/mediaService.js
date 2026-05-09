@@ -1,43 +1,37 @@
-import client from "./client";
+import { api } from "./client";
 
 const RESOURCE_PATH = "/admin/media";
 
 export async function getAll(params = {}) {
-  const response = await client.get(RESOURCE_PATH, { params });
-  return response.data;
+  return api.get(RESOURCE_PATH, { params });
 }
 
 export async function getById(id) {
-  const response = await client.get(`${RESOURCE_PATH}/${id}`);
-  return response.data;
+  return api.get(`${RESOURCE_PATH}/${id}`);
 }
 
 export async function create(payload) {
-  const response = await client.post(RESOURCE_PATH, payload);
-  return response.data;
+  return api.post(RESOURCE_PATH, payload);
 }
 
 export async function update(id, payload) {
-  const response = await client.put(`${RESOURCE_PATH}/${id}`, payload);
-  return response.data;
+  return api.put(`${RESOURCE_PATH}/${id}`, payload);
 }
 
 export async function remove(id) {
-  const response = await client.delete(`${RESOURCE_PATH}/${id}`);
-  return response.data;
+  return api.delete(`${RESOURCE_PATH}/${id}`);
 }
 
 export async function upload(file) {
   const formData = new FormData();
   formData.append("file", file);
 
-  const response = await client.post(`${RESOURCE_PATH}/upload`, formData, {
+  return api.post(`${RESOURCE_PATH}/upload`, formData, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
+    timeout: 30000,
   });
-
-  return response.data;
 }
 
 const mediaService = {

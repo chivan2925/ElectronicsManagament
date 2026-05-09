@@ -1,5 +1,6 @@
 import CrudPage from "../../components/ui/admin/CrudPage";
 import StatusBadge from "../../components/ui/admin/StatusBadge";
+import { ADMIN_RESOURCES } from "../../auth/roleHelpers";
 import { media } from "../../data/adminMock";
 
 const columns = [
@@ -15,6 +16,7 @@ function Media() {
     <CrudPage
       columns={columns}
       data={media}
+      permissionResource={ADMIN_RESOURCES.media}
       searchPlaceholder="Tìm media..."
       subtitle="Quản lý ảnh sản phẩm, ảnh gallery và thứ tự hiển thị."
       title="Media"

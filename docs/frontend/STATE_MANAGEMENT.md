@@ -12,7 +12,7 @@ The project is still mostly mock-data based, so state should stay simple until r
 | --- | --- |
 | Page UI state | React local state. |
 | Mock data | Imported from `src/data`. |
-| Auth token | `localStorage` key `accessToken`. |
+| Auth token | `localStorage` keys `accessToken` and optional `refreshToken`. |
 | API request state | To be added per page/service integration. |
 | Global app state | Not needed yet. |
 
@@ -73,15 +73,17 @@ Current token key:
 
 ```text
 accessToken
+refreshToken
 ```
 
 Rules:
 
-- Store only the access token and safe display metadata.
+- Store only tokens and safe display metadata.
 - Do not store passwords.
 - Do not display raw JWT values.
-- Remove the token on `401`.
-- Redirect to admin login once protected admin routing is implemented.
+- Try centralized refresh on eligible `401` responses when `refreshToken` is available.
+- Remove the auth session when refresh fails.
+- Redirect to login through protected route guards after token removal.
 
 ## Forms
 

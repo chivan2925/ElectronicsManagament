@@ -41,6 +41,7 @@ const defaultHighlights = [
 
 export function AuthField({
   autoComplete,
+  disabled = false,
   error,
   icon,
   id,
@@ -67,6 +68,7 @@ export function AuthField({
       <div
         className={cn(
           "premium-transition flex h-12 items-center rounded-2xl border bg-slate-950/50 px-3 shadow-inner shadow-white/[0.03] backdrop-blur-xl focus-within:bg-slate-950/75",
+          disabled && "opacity-70",
           hasError
             ? "border-red-300/70 shadow-[0_0_28px_rgba(239,68,68,0.16)]"
             : "border-white/10 focus-within:border-blue-300/80 focus-within:shadow-[0_0_30px_rgba(0,91,255,0.2)]",
@@ -79,6 +81,7 @@ export function AuthField({
           aria-required={required}
           autoComplete={autoComplete}
           className="min-w-0 flex-1 bg-transparent text-sm font-semibold text-white outline-none placeholder:text-slate-500"
+          disabled={disabled}
           id={id}
           inputMode={inputMode}
           name={id}
@@ -121,6 +124,7 @@ export function AuthCheckbox({ checked, children, id, onChange }) {
 
 export function AuthFormShell({ children, feedback, footer, onSubmit, subtitle, title }) {
   const isSuccess = feedback?.tone === "success";
+  const isError = feedback?.tone === "error";
 
   return (
     <motion.form
@@ -142,12 +146,20 @@ export function AuthFormShell({ children, feedback, footer, onSubmit, subtitle, 
             "mb-4 rounded-2xl border p-3 text-sm font-bold",
             isSuccess
               ? "border-emerald-300/30 bg-emerald-500/10 text-emerald-100"
-              : "border-blue-300/30 bg-blue-500/10 text-blue-100",
+              : isError
+                ? "border-red-300/30 bg-red-500/10 text-red-100"
+                : "border-blue-300/30 bg-blue-500/10 text-blue-100",
           )}
           role="status"
         >
           <div className="flex gap-2">
-            {isSuccess ? <CheckCircle2 className="mt-0.5 shrink-0" size={17} /> : <Sparkles className="mt-0.5 shrink-0" size={17} />}
+            {isSuccess ? (
+              <CheckCircle2 className="mt-0.5 shrink-0" size={17} />
+            ) : isError ? (
+              <AlertCircle className="mt-0.5 shrink-0" size={17} />
+            ) : (
+              <Sparkles className="mt-0.5 shrink-0" size={17} />
+            )}
             <span>{feedback.message}</span>
           </div>
         </div>
@@ -160,7 +172,7 @@ export function AuthFormShell({ children, feedback, footer, onSubmit, subtitle, 
   );
 }
 
-export function SocialAuthButtons({ onPlaceholder }) {
+export function SocialAuthButtons({ disabled = false, onPlaceholder }) {
   const providers = [
     {
       icon: Mail,
@@ -188,7 +200,8 @@ export function SocialAuthButtons({ onPlaceholder }) {
 
           return (
             <button
-              className="premium-transition inline-flex h-11 items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/[0.035] text-sm font-black text-slate-200 outline-none hover:-translate-y-0.5 hover:border-blue-300/60 hover:bg-blue-500/10 hover:text-white hover:shadow-[0_0_28px_rgba(0,91,255,0.18)] focus-visible:ring-2 focus-visible:ring-blue-300/60 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
+              className="premium-transition inline-flex h-11 items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/[0.035] text-sm font-black text-slate-200 outline-none hover:-translate-y-0.5 hover:border-blue-300/60 hover:bg-blue-500/10 hover:text-white hover:shadow-[0_0_28px_rgba(0,91,255,0.18)] focus-visible:ring-2 focus-visible:ring-blue-300/60 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 disabled:pointer-events-none disabled:translate-y-0 disabled:opacity-60"
+              disabled={disabled}
               key={provider.id}
               onClick={() => onPlaceholder(provider.label)}
               type="button"
@@ -205,8 +218,11 @@ export function SocialAuthButtons({ onPlaceholder }) {
 
 function AuthLayout({
   badge,
+  backLabel = "Về cửa hàng",
+  backTo = "/",
   children,
   highlights = defaultHighlights,
+  showStoreHeader = true,
   subtitle,
   switchLabel,
   switchText,
@@ -215,10 +231,14 @@ function AuthLayout({
 }) {
   return (
     <div className="store-page-shell">
-      <AnnouncementBar />
-      <Header />
+      {showStoreHeader && (
+        <>
+          <AnnouncementBar />
+          <Header />
+        </>
+      )}
 
-      <main className="page-container flex min-h-[calc(100vh-160px)] items-center justify-center py-8 sm:py-10">
+      <main className={cn("page-container flex items-center justify-center py-8 sm:py-10", showStoreHeader ? "min-h-[calc(100vh-160px)]" : "min-h-screen")}>
         <MotionDiv
           animate="visible"
           className="grid w-full max-w-6xl gap-6 lg:grid-cols-[minmax(0,1fr)_420px] lg:items-center"
@@ -229,9 +249,9 @@ function AuthLayout({
             <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-slate-950/36 p-5 shadow-inner shadow-white/[0.03] backdrop-blur-xl sm:p-6 lg:p-7">
               <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_0%,rgba(0,91,255,0.22),transparent_36%),linear-gradient(135deg,rgba(255,255,255,0.06),transparent_34%,rgba(0,91,255,0.08))]" />
               <div className="relative z-10">
-                <Link className="premium-transition mb-5 inline-flex items-center gap-2 text-sm font-black text-slate-400 hover:text-white" to="/">
+                <Link className="premium-transition mb-5 inline-flex items-center gap-2 text-sm font-black text-slate-400 hover:text-white" to={backTo}>
                   <ArrowLeft size={16} />
-                  Về cửa hàng
+                  {backLabel}
                 </Link>
 
                 <Badge className="mb-4 gap-2" variant="primary">

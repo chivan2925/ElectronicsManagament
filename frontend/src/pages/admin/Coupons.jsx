@@ -1,5 +1,6 @@
 import CrudPage from "../../components/ui/admin/CrudPage";
 import StatusBadge from "../../components/ui/admin/StatusBadge";
+import { ADMIN_RESOURCES } from "../../auth/roleHelpers";
 import { coupons } from "../../data/adminMock";
 import { formatCurrency } from "../../utils/formatters";
 
@@ -17,6 +18,7 @@ function Coupons() {
     <CrudPage
       columns={columns}
       data={coupons}
+      permissionResource={ADMIN_RESOURCES.coupons}
       searchPlaceholder="Tìm mã giảm giá..."
       subtitle="Quản lý voucher, điều kiện áp dụng và hiệu quả sử dụng."
       title="Mã giảm giá"

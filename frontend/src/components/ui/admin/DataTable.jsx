@@ -1,8 +1,21 @@
 import { Eye, Pencil, Trash2 } from "lucide-react";
+import usePermissions from "../../../auth/usePermissions";
 import Card from "../Card";
 import AdminIconButton from "./AdminIconButton";
 
-function DataTable({ columns, data, emptyText = "Không có dữ liệu" }) {
+const tableActions = [
+  { icon: Eye, key: "view", title: "Xem" },
+  { icon: Pencil, key: "update", title: "Sửa", tone: "warning" },
+  { icon: Trash2, key: "delete", title: "Xóa", tone: "danger" },
+];
+
+function DataTable({ columns, data, actionPolicies = null, emptyText = "Không có dữ liệu" }) {
+  const permission = usePermissions();
+  const visibleActions = actionPolicies
+    ? tableActions.filter((action) => permission.canAccess(actionPolicies[action.key]))
+    : tableActions;
+  const showActions = visibleActions.length > 0;
+
   return (
     <Card className="overflow-hidden" variant="admin">
       <div className="overflow-x-auto">
@@ -19,9 +32,11 @@ function DataTable({ columns, data, emptyText = "Không có dữ liệu" }) {
                   {column.label}
                 </th>
               ))}
-              <th className="whitespace-nowrap px-5 py-3.5 text-right text-xs font-bold uppercase tracking-normal text-slate-500">
-                Thao tác
-              </th>
+              {showActions && (
+                <th className="whitespace-nowrap px-5 py-3.5 text-right text-xs font-bold uppercase tracking-normal text-slate-500">
+                  Thao tác
+                </th>
+              )}
             </tr>
           </thead>
 
@@ -39,18 +54,25 @@ function DataTable({ columns, data, emptyText = "Không có dữ liệu" }) {
                       {column.render ? column.render(item) : item[column.key]}
                     </td>
                   ))}
-                  <td className="whitespace-nowrap px-5 py-4 text-right">
-                    <div className="inline-flex items-center gap-1 rounded-lg bg-slate-50 p-1 ring-1 ring-border">
-                      <AdminIconButton icon={Eye} title="Xem" />
-                      <AdminIconButton icon={Pencil} title="Sửa" tone="warning" />
-                      <AdminIconButton icon={Trash2} title="Xóa" tone="danger" />
-                    </div>
-                  </td>
+                  {showActions && (
+                    <td className="whitespace-nowrap px-5 py-4 text-right">
+                      <div className="inline-flex items-center gap-1 rounded-lg bg-slate-50 p-1 ring-1 ring-border">
+                        {visibleActions.map((action) => (
+                          <AdminIconButton
+                            icon={action.icon}
+                            key={action.key}
+                            title={action.title}
+                            tone={action.tone}
+                          />
+                        ))}
+                      </div>
+                    </td>
+                  )}
                 </tr>
               ))
             ) : (
               <tr>
-                <td className="px-5 py-10 text-center text-sm text-muted" colSpan={columns.length + 1}>
+                <td className="px-5 py-10 text-center text-sm text-muted" colSpan={columns.length + (showActions ? 1 : 0)}>
                   {emptyText}
                 </td>
               </tr>

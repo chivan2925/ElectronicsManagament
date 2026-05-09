@@ -310,3 +310,69 @@ Always update this file after meaningful work.
 - Replaced visible developer-facing checkout/auth/search copy with customer-facing placeholder copy while keeping flows mock/local only.
 - Verified `npm run lint`, `git diff --check`, `npm run build`, and route smoke checks for `/`, `/products`, `/products/:slug`, `/cart`, `/checkout`, `/login`, `/register`, and `/wishlist`.
 - Marked Phase 3 as completed and set the project ready for Phase 4 — Auth + Backend Integration.
+
+### Frontend Auth Architecture
+
+- Added centralized JWT-ready auth modules under `frontend/src/auth`: `AuthContext`, `AuthProvider`, `useAuth`, `authStorage`, and `authHelpers`.
+- Added reusable guard components under `frontend/src/guards`: `ProtectedRoute`, `AdminRoute`, and `GuestRoute`.
+- Added auth reducer exports under `frontend/src/store/auth` for centralized auth state transitions.
+- Updated `frontend/src/main.jsx` to mount `AuthProvider` without changing current route access behavior.
+- Updated `frontend/src/api/client.js` and `authService.js` to use centralized auth storage/session helpers and auth events.
+- Documented the auth architecture in `CURRENT_STATE.md`, `NEXT_TASKS.md`, `API_INTEGRATION_GUIDE.md`, and `FRONTEND_GUIDE.md`.
+- Verified `npm run lint` and `npm run build` pass after the auth architecture setup. Build still reports the existing Vite chunk-size warning.
+
+### Real Login Integration
+
+- Connected `/login` and `/admin/login` to the backend Spring Boot JWT login endpoint through `frontend/src/api/authService.js`.
+- Added role-based login redirects: user-shaped sessions go to `/`, admin/staff sessions go to `/admin/dashboard`.
+- Added loading, invalid credentials, network error, and disabled-account handling to the login form.
+- Added reusable dark toast notifications under `frontend/src/components/ui/toast`.
+- Applied `AdminRoute` to protect `/admin/*` and `GuestRoute` to login routes.
+- Updated the admin login page to use the dark premium auth style.
+- Updated admin topbar display data from the authenticated user session and wired admin logout to `authService.logout()`.
+- Added backend handlers for `BadCredentialsException`, `DisabledException`, and `LockedException`.
+- Updated auth/API docs for login error statuses.
+- Verified `npm run lint`, `npm run build`, and `mvn clean compile -DskipTests`. `mvn test` is still blocked by existing backend ApplicationContext issues.
+
+### Production Axios API Client
+
+- Added `frontend/src/api/apiErrorHandler.js` for centralized response error handling, `401` auth cleanup, and retry foundation.
+- Added `frontend/src/api/normalizeApiError.js` for normalized API error parsing and clean frontend messages.
+- Updated `frontend/src/api/client.js` with env-driven base URL/timeout config, automatic bearer token injection, safe-method retry defaults, and reusable `api.*` request helpers.
+- Updated API service modules to use the shared `api.*` helpers instead of duplicating Axios response parsing.
+- Added `VITE_API_TIMEOUT` to `frontend/.env.example`.
+- Updated `docs/ai-context/API_INTEGRATION_GUIDE.md`, `CURRENT_STATE.md`, and `NEXT_TASKS.md`.
+- Verified `npm run lint` and `npm run build` pass after the API client hardening.
+
+### Protected Routing System
+
+- Added `frontend/src/guards/StaffRoute.jsx`, `RouteGuardState.jsx`, `routeGuardUtils.jsx`, and guard barrel exports.
+- Updated `ProtectedRoute`, `AdminRoute`, and `GuestRoute` with default loading fallback, redirect memory, role/permission checks, and graceful unauthorized UI.
+- Updated `AuthProvider` to restore stored auth sessions during initial state creation to reduce protected-content flashing.
+- Added auth helper support for admin-only and staff/admin session checks.
+- Protected `/checkout`, the `/admin/*` shell, and admin-only user/staff/role management pages.
+- Made `/login`, `/register`, and `/admin/login` guest-only.
+- Updated `LoginForm` to redirect back to the remembered protected route when the authenticated session is allowed to open it.
+- Updated protected routing documentation in `CURRENT_STATE.md`, `NEXT_TASKS.md`, `FRONTEND_GUIDE.md`, and `API_INTEGRATION_GUIDE.md`.
+- Verified `npm run lint`, `npm run build`, and `git diff --check` pass after the protected routing update.
+
+### JWT Session Refresh Flow
+
+- Added `frontend/src/api/apiConfig.js` for shared API base URL, timeout, and auth refresh endpoint config.
+- Added `frontend/src/api/refreshTokenService.js` for app-start session restore, JWT expiry checks, single-flight refresh calls, and logout on refresh failure.
+- Extended auth storage, auth session normalization, and auth reducer state to support `refreshToken`.
+- Updated the Axios response interceptor to refresh on eligible `401` responses, retry the original request once, and avoid infinite refresh loops.
+- Updated `AuthProvider` to validate/restore stored sessions on app start before releasing protected routes from loading state.
+- Added `VITE_AUTH_REFRESH_ENDPOINT=/admin/auth/refresh` to `frontend/.env.example`.
+- Documented that the current backend admin auth controller exposes login/logout only; real refresh requires backend refresh-token response and endpoint support.
+- Updated `API_INTEGRATION_GUIDE.md`, `FRONTEND_GUIDE.md`, `CURRENT_STATE.md`, `NEXT_TASKS.md`, and `TASK_BOARD.md`.
+- Verified `npm run lint`, `npm run build`, and `git diff --check` pass after the refresh-token flow update.
+
+### Frontend Role And Permission System
+
+- Added centralized role and permission helpers in `frontend/src/auth/roleHelpers.js` for ADMIN, STAFF, USER, route policies, resource action policies, and permission normalization.
+- Added reusable `frontend/src/auth/usePermissions.js` and `frontend/src/auth/PermissionGate.jsx`.
+- Updated route guards and admin routes to consume shared access policies.
+- Filtered the admin sidebar from centralized policies so STAFF does not see Role Management and USER cannot enter admin routes.
+- Gated shared admin CRUD create/update/delete actions through resource action policies while keeping ADMIN full access.
+- Verified `npm run lint`, `npm run build`, and `git diff --check` after adding the role/permission system.

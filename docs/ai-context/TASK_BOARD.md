@@ -38,14 +38,17 @@
 - Mock cart drawer opened from the storefront header.
 - Mock full cart page at `/cart`.
 - Mock checkout page at `/checkout`.
+- Protected routing system with `ProtectedRoute`, `AdminRoute`, `StaffRoute`, and `GuestRoute`.
+- Redirect memory, auth session restore, loading fallback, and unauthorized guard UI.
+- Frontend refresh-token persistence and single-flight refresh retry flow.
 
 ## Near-Term Work
 
-1. Wire `/admin/login` to `authService`.
-2. Connect admin category pages to `categoryService`.
-3. Connect admin brand pages to `brandService`.
-4. Connect admin product pages to `productService`.
-5. Replace login and register placeholders with real mock flows.
+1. Connect admin category pages to `categoryService`.
+2. Connect admin brand pages to `brandService`.
+3. Connect admin product pages to `productService`.
+4. Add backend refresh-token endpoint support if long-lived admin sessions are required.
+5. Move storefront customer login to a public customer auth API when available.
 6. Wire storefront cart and checkout flows into shared state when ready.
 
 ## Backend Notes

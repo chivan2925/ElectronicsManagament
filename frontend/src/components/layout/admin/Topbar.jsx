@@ -1,7 +1,19 @@
 import { Bell, Menu, Moon, Search } from "lucide-react";
+import useAuth from "../../../auth/useAuth";
 import AdminIconButton from "../../ui/admin/AdminIconButton";
 
 function Topbar({ onToggleSidebar }) {
+  const { roles, user } = useAuth();
+  const displayName = user?.fullName || user?.email || "Admin PCE";
+  const displayRole = user?.role || roles[0] || "Quản trị viên";
+  const initials = displayName
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((word) => word[0])
+    .join("")
+    .toUpperCase();
+
   return (
     <header className="sticky top-0 z-30 border-b border-border bg-white/95 backdrop-blur">
       <div className="flex h-16 items-center gap-4 px-5 lg:px-7">
@@ -24,11 +36,11 @@ function Topbar({ onToggleSidebar }) {
 
           <div className="ml-2 flex items-center gap-3 rounded-lg border border-border bg-white px-2.5 py-1.5">
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-sm font-bold text-white">
-              AD
+              {initials || "AD"}
             </div>
             <div className="hidden leading-tight sm:block">
-              <p className="text-sm font-bold text-ink">Admin PCE</p>
-              <p className="text-xs text-muted">Quản trị viên</p>
+              <p className="max-w-40 truncate text-sm font-bold text-ink">{displayName}</p>
+              <p className="text-xs text-muted">{displayRole}</p>
             </div>
           </div>
         </div>

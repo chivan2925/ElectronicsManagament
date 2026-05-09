@@ -82,6 +82,9 @@ Fields:
 | --- | --- | --- | --- |
 | `IllegalArgumentException` | `400 Bad Request` | Standard | Invalid input or business argument. |
 | `MethodArgumentNotValidException` | `400 Bad Request` | Standard with `details` | Bean validation field errors. |
+| `BadCredentialsException` | `401 Unauthorized` | Standard | Invalid admin/staff login credentials. |
+| `DisabledException` | `403 Forbidden` | Standard | Staff account is disabled or blocked. |
+| `LockedException` | `423 Locked` | Standard | Staff account is locked or deleted. |
 | `EntityNotFoundException` | `404 Not Found` | Standard | Requested entity does not exist. |
 | `IllegalStateException` | `409 Conflict` | Standard | State conflict, for example invalid lifecycle transition. |
 | Missing/invalid/expired JWT | `401 Unauthorized` | Auth shape | Handled before controller logic. |

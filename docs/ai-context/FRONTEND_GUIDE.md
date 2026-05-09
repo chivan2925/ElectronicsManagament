@@ -7,7 +7,7 @@ This guide describes the frontend direction for ElectronicsManagement.
 Current phase:
 
 ```text
-Phase 1 — Frontend Foundation
+Ready for Phase 4 — Auth + Backend Integration
 ```
 
 ## Stack
@@ -59,7 +59,11 @@ Admin:
 ```text
 frontend/src/
 ├─ api/
+│  ├─ apiConfig.js
+│  ├─ apiErrorHandler.js
 │  ├─ client.js
+│  ├─ normalizeApiError.js
+│  ├─ refreshTokenService.js
 │  ├─ authService.js
 │  ├─ categoryService.js
 │  ├─ brandService.js
@@ -70,6 +74,15 @@ frontend/src/
 │  ├─ warehouseService.js
 │  ├─ couponService.js
 │  └─ mediaService.js
+├─ auth/
+│  ├─ AuthContext.jsx
+│  ├─ AuthProvider.jsx
+│  ├─ useAuth.js
+│  ├─ usePermissions.js
+│  ├─ authStorage.js
+│  ├─ authHelpers.js
+│  ├─ roleHelpers.js
+│  └─ PermissionGate.jsx
 ├─ assets/
 ├─ components/
 │  ├─ auth/
@@ -102,6 +115,14 @@ frontend/src/
 │  ├─ products.js
 │  ├─ promotions.js
 │  └─ services.js
+├─ guards/
+│  ├─ ProtectedRoute.jsx
+│  ├─ AdminRoute.jsx
+│  ├─ StaffRoute.jsx
+│  ├─ GuestRoute.jsx
+│  ├─ RouteGuardState.jsx
+│  ├─ routeGuardUtils.jsx
+│  └─ index.js
 ├─ hooks/
 ├─ layouts/
 │  └─ AdminLayout.jsx
@@ -121,6 +142,8 @@ frontend/src/
 ├─ routes/
 │  └─ AppRoutes.jsx
 ├─ services/
+├─ store/
+│  └─ auth/
 ├─ styles/
 │  ├─ globals.css
 │  ├─ animations.js
@@ -189,6 +212,45 @@ Use tokens for new shared UI work. Avoid broad rewrites of stable components whe
 - `/admin` should redirect to `/admin/dashboard`.
 - `/admin/login` stays outside `AdminLayout`.
 - Placeholder pages are acceptable while API and page-specific workflows are not ready, but they should be styled and informative.
+
+## Auth Architecture
+
+Centralized auth lives in `src/auth`, route guards live in `src/guards`, and auth reducer exports live in `src/store/auth`.
+
+Centralized role and permission policy logic lives in `src/auth/roleHelpers.js`. Components and pages should use `src/auth/usePermissions.js` or `src/auth/PermissionGate.jsx` instead of inline role checks.
+
+Current auth state supports:
+
+- `user`
+- `roles`
+- `permissions`
+- `accessToken`
+- `refreshToken`
+- `isAuthenticated`
+- `loading`
+
+`refreshTokenService` owns app-start session validation, single-flight token refresh, retry coordination after `401`, and logout-on-refresh-failure behavior. It uses `VITE_AUTH_REFRESH_ENDPOINT`, defaulting to `/admin/auth/refresh`.
+
+`AuthProvider` is mounted at the app root. `StaffRoute` protects the `/admin/*` shell, `AdminRoute` protects admin-only pages, and `GuestRoute` wraps guest-only auth routes.
+
+Current protected routing behavior:
+
+- `ProtectedRoute` protects authenticated client routes such as `/checkout`.
+- `StaffRoute` protects the `/admin/*` layout for admin/staff sessions.
+- `AdminRoute` protects admin-only management pages such as users, staff, and roles.
+- Admin route policies are centralized and reused by route guards and the admin sidebar.
+- ADMIN has full access, STAFF is limited to staff-allowed admin areas, and USER cannot enter admin routes.
+- Shared admin CRUD controls use resource action policies for create/update/delete visibility.
+- `GuestRoute` blocks authenticated users from `/login`, `/register`, and `/admin/login`.
+- Unauthenticated redirects preserve the original route in `location.state.from`.
+- Guard loading states prevent unauthorized content flashing while sessions restore.
+
+`/login` and `/admin/login` submit through `frontend/src/api/authService.js`, store the backend JWT session through auth storage, and redirect by role:
+
+- user-shaped session: `/`
+- admin/staff session: `/admin/dashboard`
+
+Reusable toast notifications live in `src/components/ui/toast`.
 
 ## Reusable UI Primitives
 
@@ -279,7 +341,7 @@ Reusable customer auth components live in `frontend/src/components/auth/`:
 - `LoginForm.jsx`
 - `RegisterForm.jsx`
 
-The auth pages use local form state, local validation, social login placeholders, remember-me UI, and forgot-password placeholder behavior until public customer auth APIs are ready.
+The login form uses local form state, local validation, `authService.login()`, AuthProvider session updates, role-based redirect, and toast notifications. `/register`, social login, and forgot-password remain placeholders until public customer auth APIs are ready.
 
 ## Wishlist And Recently Viewed
 
