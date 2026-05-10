@@ -28,7 +28,7 @@ public class WarehouseTransactionEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(unique = true, nullable = false, length = 20)
+    @Column(unique = true, nullable = false, length = 50)
     private String code;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -36,7 +36,7 @@ public class WarehouseTransactionEntity {
     private WarehouseEntity warehouse;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "staff_id", nullable = false)
+    @JoinColumn(name = "staff_id")
     private StaffEntity staff;
 
     @ManyToOne(fetch = FetchType.LAZY)

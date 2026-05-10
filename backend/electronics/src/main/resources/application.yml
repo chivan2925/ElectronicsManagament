@@ -41,8 +41,8 @@ payment:
     success-url: ${PAYMENT_FRONTEND_SUCCESS_URL:http://localhost:5173/payment/success}
     failed-url: ${PAYMENT_FRONTEND_FAILED_URL:http://localhost:5173/payment/failed}
   vnpay:
-    tmn-code: ${VNPAY_TMN_CODE:YOUR_TMN_CODE}
-    secret-key: ${VNPAY_SECRET_KEY:YOUR_SECRET_KEY}
+    tmn-code: ${VNPAY_TMN_CODE:LTUX96I3}
+    secret-key: ${VNPAY_SECRET_KEY:GXR1KZE4SE7W3RAS7YJHQHPKCKX4CKKR}
     pay-url: ${VNPAY_PAY_URL:https://sandbox.vnpayment.vn/paymentv2/vpcpay.html}
     refund-url: ${VNPAY_REFUND_URL:https://sandbox.vnpayment.vn/merchant_webapi/api/transaction}
     return-url: ${VNPAY_RETURN_URL:http://localhost:8080/api/payments/vnpay-return}

@@ -47,7 +47,7 @@ public class OrderEntity {
     @JoinColumn(name = "coupon_id")
     private CouponEntity coupon;
 
-    @Column(nullable = false, unique = true, length = 20)
+    @Column(nullable = false, unique = true, length = 50)
     private String code;
 
     @Column(name = "shipping_name", nullable = false, length = 100)
@@ -68,7 +68,7 @@ public class OrderEntity {
     @Column(name = "shipping_province", nullable = false, length = 50)
     private String shippingProvince;
 
-    @Column(name = "tracking_code", unique = true, length = 20)
+    @Column(name = "tracking_code", unique = true, length = 50)
     private String trackingCode;
 
     @Enumerated(EnumType.STRING)

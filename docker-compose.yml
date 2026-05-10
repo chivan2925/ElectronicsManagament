@@ -44,8 +44,8 @@ services:
       ELECTRONICS_JWT_EXPIRATION_MS: ${ELECTRONICS_JWT_EXPIRATION_MS:-86400000}
       PAYMENT_FRONTEND_SUCCESS_URL: ${PAYMENT_FRONTEND_SUCCESS_URL:-http://localhost:8088/payment/success}
       PAYMENT_FRONTEND_FAILED_URL: ${PAYMENT_FRONTEND_FAILED_URL:-http://localhost:8088/payment/failed}
-      VNPAY_TMN_CODE: ${VNPAY_TMN_CODE:-YOUR_TMN_CODE}
-      VNPAY_SECRET_KEY: ${VNPAY_SECRET_KEY:-YOUR_SECRET_KEY}
+      VNPAY_TMN_CODE: ${VNPAY_TMN_CODE:-LTUX96I3}
+      VNPAY_SECRET_KEY: ${VNPAY_SECRET_KEY:-GXR1KZE4SE7W3RAS7YJHQHPKCKX4CKKR}
       VNPAY_PAY_URL: ${VNPAY_PAY_URL:-https://sandbox.vnpayment.vn/paymentv2/vpcpay.html}
       VNPAY_REFUND_URL: ${VNPAY_REFUND_URL:-https://sandbox.vnpayment.vn/merchant_webapi/api/transaction}
       VNPAY_RETURN_URL: ${VNPAY_RETURN_URL:-http://localhost:8080/api/payments/vnpay-return}
