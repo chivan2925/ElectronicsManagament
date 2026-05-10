@@ -7,10 +7,10 @@ import {
 
 export const analyticsFilterDefaults = {
   channel: "all",
-  from: "2026-04-10",
+  from: "2026-04-11",
   preset: "30d",
   segment: "all",
-  to: "2026-05-09",
+  to: "2026-05-10",
 };
 
 export const adminRevenueAnalytics = {

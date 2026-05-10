@@ -5,6 +5,7 @@ import authService from "../../api/authService";
 import { getLoginErrorFeedback } from "../../api/errorUtils";
 import { buildAuthSession, canAccessAdmin } from "../../auth/authHelpers";
 import useAuth from "../../auth/useAuth";
+import { getDemoAccountsForSurface, isDemoModeEnabled } from "../../demo/demoMode";
 import { getSafeRedirectPath, isGuestOnlyPath } from "../../guards/routeGuardUtils";
 import { useToast } from "../ui/toast";
 import Button from "../ui/Button";
@@ -75,6 +76,7 @@ function getLoginRedirect(session, rememberedPath) {
 }
 
 function LoginForm({
+  demoSurface = "store",
   showSocialAuth = true,
   submitLabel = "Đăng nhập",
   subtitle = "Đăng nhập để chuẩn bị lưu giỏ hàng, theo dõi đơn và nhận ưu đãi khách hàng.",
@@ -91,6 +93,10 @@ function LoginForm({
   const [feedback, setFeedback] = useState(null);
   const [serverErrors, setServerErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const demoAccounts = useMemo(
+    () => (isDemoModeEnabled ? getDemoAccountsForSurface(demoSurface) : []),
+    [demoSurface],
+  );
 
   const validationErrors = useMemo(() => validateLogin(values), [values]);
   const visibleErrors = useMemo(
@@ -127,6 +133,21 @@ function LoginForm({
     const message = "Khôi phục mật khẩu sẽ được bật khi backend hỗ trợ luồng đặt lại mật khẩu.";
     setFeedback({ message, tone: "info" });
     toast.showInfo(message);
+  };
+
+  const handleDemoAccountSelect = (account) => {
+    setValues((currentValues) => ({
+      ...currentValues,
+      identity: account.email,
+      password: account.password,
+    }));
+    setTouchedFields({});
+    setSubmitAttempted(false);
+    setServerErrors({});
+    setFeedback({
+      message: `${account.label} đã được điền cho buổi demo.`,
+      tone: "info",
+    });
   };
 
   const handleSubmit = async (event) => {
@@ -199,6 +220,29 @@ function LoginForm({
       title={title}
     >
       {showSocialAuth && <SocialAuthButtons disabled={isSubmitting} onPlaceholder={handlePlaceholder} />}
+
+      {demoAccounts.length > 0 && (
+        <div className="rounded-2xl border border-blue-300/20 bg-blue-500/[0.08] p-3">
+          <p className="text-xs font-black uppercase tracking-normal text-blue-100">Demo accounts</p>
+          <div className="mt-3 grid gap-2">
+            {demoAccounts.map((account) => (
+              <button
+                className="premium-transition flex min-h-11 items-center justify-between gap-3 rounded-xl border border-white/10 bg-slate-950/35 px-3 py-2 text-left text-sm font-bold text-slate-200 hover:border-blue-300/60 hover:bg-blue-500/12 hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
+                disabled={isSubmitting}
+                key={account.id}
+                onClick={() => handleDemoAccountSelect(account)}
+                type="button"
+              >
+                <span className="min-w-0">
+                  <span className="block truncate font-black">{account.label}</span>
+                  <span className="block truncate text-xs text-slate-400">{account.email}</span>
+                </span>
+                <ShieldCheck className="shrink-0 text-blue-200" size={17} />
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       <AuthField
         autoComplete="username"

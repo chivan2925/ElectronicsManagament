@@ -18,6 +18,7 @@ export { clearApiCache, getApiCacheStats } from "./apiCache";
 
 const RETRYABLE_METHODS = new Set(["get", "head", "options"]);
 const REQUEST_ID_HEADER = "X-Request-Id";
+const DEMO_MODE_VALUES = new Set(["1", "true", "yes", "on", "demo"]);
 
 export { API_CONFIG };
 
@@ -36,6 +37,20 @@ function createClientRequestId() {
   }
 
   return `req-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+}
+
+function isDemoModeEnabled() {
+  return DEMO_MODE_VALUES.has(String(import.meta.env.VITE_DEMO_MODE ?? "").trim().toLowerCase());
+}
+
+async function getDemoApiResponse(config) {
+  if (!isDemoModeEnabled()) {
+    return { handled: false };
+  }
+
+  const { handleDemoApiRequest } = await import("../demo/demoApi");
+
+  return handleDemoApiRequest(config);
 }
 
 const client = axios.create({
@@ -79,6 +94,16 @@ function getAuthCachePartition(config = {}) {
 export async function apiRequest(config) {
   const method = String(config.method ?? "get").toLowerCase();
   const isReadRequest = isCacheableMethod(method);
+  const demoResponse = await getDemoApiResponse(config);
+
+  if (demoResponse.handled) {
+    if (!isReadRequest) {
+      clearApiCache();
+    }
+
+    return demoResponse.data;
+  }
+
   const shouldDedupe = isReadRequest && config.dedupe !== false;
   const cacheTtl = getResolvedCacheTtl(config);
   const cacheKey =

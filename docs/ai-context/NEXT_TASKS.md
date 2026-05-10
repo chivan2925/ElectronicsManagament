@@ -14,6 +14,10 @@ Phase 8 — Production + Deploy (Phase 7 completed)
 
 ## Recently Completed
 
+- Prepared a local demo/presentation mode gated by `VITE_DEMO_MODE=true`.
+- Added seeded frontend mock API responses for catalog browsing, checkout, payment verification, account order tracking, and admin CRUD-style demo screens without changing default backend integration.
+- Added demo account quick-fill on customer/admin login pages, a demo runbook panel on `/admin/dashboard`, and `docs/DEMO_PRESENTATION.md` with accounts, coupons, scenarios, and presenter notes.
+- Updated demo environment documentation and verified `npm run lint` and `npm run build`.
 - Completed a full project documentation pass for onboarding, setup, environment variables, API, architecture, deployment, payment sandbox, and security.
 - Rebuilt `README.md` with project overview, stack, screenshots placeholders, setup/run guides, route maps, API links, and payment sandbox guidance.
 - Added root `PAYMENT.md` plus `docs/API.md`, `docs/ARCHITECTURE.md`, `docs/SETUP.md`, and `docs/ENVIRONMENT.md`; refreshed stale API, architecture, and workflow docs.

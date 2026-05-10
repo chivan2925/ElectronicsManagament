@@ -19,6 +19,18 @@ function firstDefined(...values) {
   return values.find((value) => value !== null && value !== undefined && value !== "");
 }
 
+function getCheckoutVariantId(value) {
+  const text = String(value ?? "").trim();
+
+  if (/^\d+$/.test(text)) {
+    return Number(text);
+  }
+
+  const numericSuffix = text.match(/\d+/g)?.join("");
+
+  return numericSuffix ? Number(numericSuffix) : value;
+}
+
 function getVariantStock(variant, product) {
   return toNumber(firstDefined(variant?.stock, variant?.totalStock, product?.stock, DEFAULT_MAX_QUANTITY), DEFAULT_MAX_QUANTITY);
 }
@@ -31,7 +43,8 @@ export function getDefaultCartVariant(product = {}) {
 
 export function createCartItem(product, options = {}) {
   const selectedVariant = options.variant ?? getDefaultCartVariant(product) ?? {};
-  const variantId = firstDefined(selectedVariant.id, selectedVariant.variantId, product.variantId, product.apiId, product.id);
+  const rawVariantId = firstDefined(selectedVariant.id, selectedVariant.variantId, product.variantId, product.apiId, product.id);
+  const variantId = getCheckoutVariantId(rawVariantId);
   const variantName = firstDefined(selectedVariant.name, selectedVariant.label, selectedVariant.color, "Phiên bản tiêu chuẩn");
   const unitPrice = toNumber(firstDefined(selectedVariant.price, product.price), 0);
   const maxQuantity = Math.max(0, getVariantStock(selectedVariant, product));

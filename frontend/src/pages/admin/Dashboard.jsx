@@ -2,10 +2,12 @@ import { useState } from "react";
 import { AlertTriangle, CalendarDays, ShoppingCart, TrendingUp, Users, Wallet } from "lucide-react";
 import ActivityFeed from "../../admin/components/dashboard/ActivityFeed";
 import AnalyticsCard from "../../admin/components/dashboard/AnalyticsCard";
+import DemoPresentationPanel from "../../admin/components/dashboard/DemoPresentationPanel";
 import StatCard from "../../admin/components/dashboard/StatCard";
 import AdminRealtimeActivity from "../../admin/components/realtime/AdminRealtimeActivity";
 import { AnalyticsFilters, CustomerAnalytics, InventoryAnalytics, RevenueAnalytics } from "../../admin/analytics";
 import StatusBadge from "../../components/ui/admin/StatusBadge";
+import { isDemoModeEnabled } from "../../demo/demoMode";
 import {
   adminCustomerAnalytics,
   adminInventoryAnalytics,
@@ -90,7 +92,7 @@ function Dashboard() {
         <div>
           <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-black text-primary">
             <CalendarDays size={14} />
-            09/05/2026 · Admin analytics
+            10/05/2026 · Admin analytics
           </div>
           <h1 className="text-2xl font-black tracking-normal text-slate-950 md:text-3xl">Dashboard analytics</h1>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-500">
@@ -98,6 +100,8 @@ function Dashboard() {
           </p>
         </div>
       </div>
+
+      {isDemoModeEnabled && <DemoPresentationPanel />}
 
       <AnalyticsFilters onChange={handleFiltersChange} onExport={handleExport} value={filters} />
 

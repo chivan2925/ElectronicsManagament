@@ -183,6 +183,16 @@ For live-mounted development containers:
 docker compose -f docker-compose.dev.yml --env-file .env up --build
 ```
 
+## Demo Presentation Mode
+
+Use demo mode for rehearsals or product presentations when a live backend seed is not available:
+
+```env
+VITE_DEMO_MODE=true
+```
+
+Demo mode adds quick-fill demo accounts on login pages and serves local seeded mock API data for catalog browsing, checkout, payment return verification, account order tracking, and admin CRUD-style screens. See [docs/DEMO_PRESENTATION.md](docs/DEMO_PRESENTATION.md) for accounts, scenarios, coupons, and the presentation checklist.
+
 ## Client Routes
 
 | Route | Purpose |
@@ -270,6 +280,7 @@ See [PAYMENT.md](PAYMENT.md) for the full sandbox flow and testing checklist.
 
 - Setup instructions: [docs/SETUP.md](docs/SETUP.md)
 - Environment variables: [docs/ENVIRONMENT.md](docs/ENVIRONMENT.md)
+- Demo presentation guide: [docs/DEMO_PRESENTATION.md](docs/DEMO_PRESENTATION.md)
 - Deployment: [DEPLOYMENT.md](DEPLOYMENT.md)
 - Payment: [PAYMENT.md](PAYMENT.md)
 - Security: [SECURITY.md](SECURITY.md)

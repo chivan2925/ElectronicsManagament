@@ -8,6 +8,14 @@ Always update this file after meaningful work.
 
 ## 2026-05-10
 
+### Demo Presentation Mode
+
+- Added a frontend demo/presentation mode gated by `VITE_DEMO_MODE=true`.
+- Added seeded local mock API handling for storefront catalog browsing, product detail/reviews, checkout, coupon validation, VNPay/MoMo-style payment success verification, account profile/order tracking, and admin CRUD-style demo resources.
+- Added demo customer/admin/staff accounts with login quick-fill buttons and an admin dashboard presentation runbook panel.
+- Added `docs/DEMO_PRESENTATION.md`, updated README/environment examples, and refreshed AI context docs.
+- Verified `npm run lint` and `npm run build`.
+
 ### Project Documentation Pass
 
 - Rebuilt `README.md` into a professional onboarding guide with project overview, tech stack, screenshots placeholders, setup/run commands, client/admin route maps, API links, and payment sandbox notes.

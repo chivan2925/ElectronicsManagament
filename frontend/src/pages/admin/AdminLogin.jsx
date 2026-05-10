@@ -34,6 +34,7 @@ function AdminLogin() {
       title="Admin Console ElectronicsManagement"
     >
       <LoginForm
+        demoSurface="admin"
         showSocialAuth={false}
         submitLabel="Vào dashboard"
         subtitle="Sử dụng email và mật khẩu nhân sự đã được cấp trong hệ thống."
