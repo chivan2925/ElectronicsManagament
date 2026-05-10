@@ -16,7 +16,7 @@ Ready for Phase 6 — Ecommerce Core Features
 
 ElectronicsManagement has completed Phase 5 — Admin Dashboard System and is ready for Phase 6 — Ecommerce Core Features.
 
-The client storefront now includes the homepage, Product API-backed product listing and product detail, shared-cart cart and checkout, customer authentication, wishlist, recently viewed, product recommendations, search overlay, and authenticated account experiences. Checkout now creates real backend orders and validates coupons through backend APIs. Wishlist now uses persistent product snapshots, optimistic UI, optional backend sync, wishlist count, move-to-cart, remove, and loading/error states. Recently viewed now uses lightweight localStorage product snapshots, duplicate prevention, clear/remove support, and a reusable responsive recommendation slider on homepage, PDP, wishlist, and profile surfaces. Product recommendations now use reusable carousel and section foundations for related products, frequently bought together, trending products, best sellers, and a recommended-for-you placeholder. Search and homepage product sections still use mock/local state. Frontend admin/staff authentication is connected to the backend JWT API, the admin architecture foundation exists under `frontend/src/admin`, and the `/admin/categories`, `/admin/brands`, `/admin/products`, `/admin/variants`, `/admin/media`, `/admin/orders`, `/admin/warehouse`, `/admin/coupons`, `/admin/users`, `/admin/staff`, and `/admin/roles` modules are connected to real backend APIs with table/grid, search, filters, status controls, detail views, protected actions, and pagination. The admin dashboard and report routes still use mock analytics/report data until reporting APIs are added.
+The client storefront now includes the homepage, Product API-backed product listing and product detail, shared-cart cart and checkout, customer authentication, wishlist, recently viewed, product recommendations, order tracking, search overlay, and authenticated account experiences. Checkout now creates real backend orders and validates coupons through backend APIs. Wishlist now uses persistent product snapshots, optimistic UI, optional backend sync, wishlist count, move-to-cart, remove, and loading/error states. Recently viewed now uses lightweight localStorage product snapshots, duplicate prevention, clear/remove support, and a reusable responsive recommendation slider on homepage, PDP, wishlist, and profile surfaces. Product recommendations now use reusable carousel and section foundations for related products, frequently bought together, trending products, best sellers, and a recommended-for-you placeholder. Search and homepage product sections still use mock/local state. Frontend admin/staff authentication is connected to the backend JWT API, the admin architecture foundation exists under `frontend/src/admin`, and the `/admin/categories`, `/admin/brands`, `/admin/products`, `/admin/variants`, `/admin/media`, `/admin/orders`, `/admin/warehouse`, `/admin/coupons`, `/admin/users`, `/admin/staff`, and `/admin/roles` modules are connected to real backend APIs with table/grid, search, filters, status controls, detail views, protected actions, and pagination. The admin dashboard and report routes still use mock analytics/report data until reporting APIs are added.
 
 The frontend folder structure has been normalized without changing the current visual UI.
 
@@ -66,7 +66,7 @@ The storefront recommendation foundation now uses `ProductCarousel.jsx`, `Recomm
 
 The storefront header now includes an advanced mock-backed search overlay with debounced live suggestions, recent searches, trending searches, product/category/brand result previews, reusable result rows, search highlighting, category-aware and brand-aware scoring, loading/empty states, and keyboard navigation behavior.
 
-The authenticated storefront account area now exists at `/profile`, `/profile/orders`, and `/profile/settings` with real User Profile and User Order API integration, protected routing, profile update, order history/detail, logout, and avatar placeholder UI.
+The authenticated storefront account area now exists at `/profile`, `/profile/orders`, `/profile/orders/:id`, and `/profile/settings` with real User Profile and User Order API integration, protected routing, profile update, order history/detail, order tracking timeline, shipment progress, estimated delivery, activity history, logout, and avatar placeholder UI.
 
 Phase 2 cleanup normalized shared/admin visual patterns for cards, borders, shadows, hover states, focus states, icon buttons, typography usage, and responsive behavior without a large rewrite.
 
@@ -405,7 +405,7 @@ Homepage state:
 - The homepage now appends trending and best-seller recommendation carousels after the existing storefront sections without changing the hero or core homepage layout.
 - The PDP now renders reusable recommendation carousels for related products and frequently bought together products.
 - The profile overview now includes a recommended-for-you placeholder using the shared recommendation section foundation.
-- `/profile`, `/profile/orders`, and `/profile/settings` now render the protected customer account area with real profile/order APIs.
+- `/profile`, `/profile/orders`, `/profile/orders/:id`, and `/profile/settings` now render the protected customer account area with real profile/order APIs and a dedicated order tracking detail experience.
 - Client routes beyond homepage, product listing, product detail, cart, checkout, login, register, wishlist, and profile routes that are not fully implemented render dark ecommerce placeholder pages.
 - `/admin/login` now renders the dark premium admin auth page and submits through `authService.login()`.
 - `/admin/*` routes are protected by `StaffRoute`; unauthenticated users are redirected to `/admin/login`.
@@ -503,6 +503,8 @@ Latest validation:
 - Local Vite route smoke checks returned `200` for `/`, `/products/:slug`, and `/profile` after adding recommendation carousels and placeholders.
 - `npm run lint` and `npm run build` passed after upgrading Cart & Checkout UX. Build still reports the existing Vite chunk-size warning.
 - Local Vite route smoke checks returned `200` for `/cart` and `/checkout` after upgrading Cart & Checkout UX.
+- `npm run lint`, `npm run build`, and `git diff --check` passed after building the Order Tracking experience. Build still reports the existing Vite chunk-size warning, and `git diff --check` reported CRLF normalization warnings for edited files.
+- Local Vite route smoke checks returned `200` for `/profile/orders` and `/profile/orders/1` after adding the order tracking detail route.
 - `mvn spring-boot:run` reached Tomcat startup after the Jackson fix; the verification process was stopped after confirming startup.
 - Backend startup still logs local PostgreSQL `ddl-auto` warnings for legacy/non-null schema drift in `media`, `products`, `users`, `variants`, and `warehouse_*` tables.
 - Build still reports a Vite chunk-size warning for a JavaScript bundle over 500 kB.
@@ -535,7 +537,7 @@ Phase 6 — Ecommerce Core Features
 Next focus:
 
 - Build public storefront ecommerce APIs and connect customer-facing browsing flows.
-- Add cart persistence, real checkout/payment handoff, and customer order tracking.
+- Add cart persistence, real checkout/payment handoff, and public customer order tracking hardening.
 - Keep the completed admin CRUD system stable while Phase 6 expands storefront workflows.
 
 ## Backend State

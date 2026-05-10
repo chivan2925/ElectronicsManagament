@@ -8,6 +8,15 @@ Always update this file after meaningful work.
 
 ## 2026-05-10
 
+### Order Tracking Experience
+
+- Added the protected order tracking route `/profile/orders/:id` using the existing User Order API detail flow.
+- Added reusable account tracking components: `OrderTrackingTimeline.jsx`, `OrderStatusBadge.jsx`, and `ShipmentProgress.jsx`.
+- Added shared `orderTracking.js` helpers for backend order/shipping status mapping, estimated delivery labels, tracking dates, shipment steps, and fallback activity history.
+- Built a responsive order detail page with visual progress, shipment metadata, delivery address, item summary, payment summary, loading state, error state, and refresh action.
+- Added tracking links and shared order status badges to the account order history table/mobile cards.
+- Verified `npm run lint`, `npm run build`, `git diff --check`, and local route smoke checks for `/profile/orders` and `/profile/orders/1`. Build still reports the existing Vite chunk-size warning, and `git diff --check` reported CRLF normalization warnings for edited files.
+
 ### Cart And Checkout UX Upgrade
 
 - Upgraded cart item interactions with animated quantity and line-total transitions, clearer stock state UI, max-stock feedback, and remove feedback.

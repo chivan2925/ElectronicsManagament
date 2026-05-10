@@ -156,8 +156,12 @@ export function normalizeOrderDetail(raw = {}) {
 
   return {
     ...summary,
+    activityHistory: toArray(source.activityHistory ?? source.activities ?? source.timeline ?? source.statusHistory ?? source.histories),
+    cancelledAt: firstDefined(source.cancelledAt, null),
     couponCode: firstDefined(source.couponCode, null),
+    deliveredAt: firstDefined(source.deliveredAt, null),
     discount: toNumber(source.discount, 0),
+    estimatedDelivery: firstDefined(source.estimatedDelivery, source.estimatedDeliveryAt, source.deliveryDate, source.deliveryEta, null),
     items: toArray(source.orderDetails ?? source.items ?? source.details).map(normalizeOrderItem),
     note: firstDefined(source.note, ""),
     paidAt: firstDefined(source.paidAt, null),

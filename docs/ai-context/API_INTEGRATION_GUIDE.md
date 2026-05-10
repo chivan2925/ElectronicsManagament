@@ -10,7 +10,7 @@ Current phase:
 Ready for Phase 6 — Ecommerce Core Features
 ```
 
-The shared frontend API layer and centralized auth architecture exist. Admin/staff login is connected to the backend JWT API, storefront product listing/detail pages are connected to Product API data, authenticated checkout creates backend orders with Coupon/User API support, and authenticated account pages use User Profile/User Order APIs. Core admin CRUD modules are connected to backend APIs; Phase 6 focuses on public storefront ecommerce APIs and customer workflows.
+The shared frontend API layer and centralized auth architecture exist. Admin/staff login is connected to the backend JWT API, storefront product listing/detail pages are connected to Product API data, authenticated checkout creates backend orders with Coupon/User API support, and authenticated account pages use User Profile/User Order APIs including the `/profile/orders/:id` tracking detail route. Core admin CRUD modules are connected to backend APIs; Phase 6 focuses on public storefront ecommerce APIs and customer workflows.
 
 ## Backend API Scope
 
@@ -235,6 +235,7 @@ Current authenticated account routes:
 
 - `/profile`
 - `/profile/orders`
+- `/profile/orders/:id`
 - `/profile/settings`
 
 Account files:
@@ -244,9 +245,11 @@ frontend/src/api/accountMapper.js
 frontend/src/api/userService.js
 frontend/src/api/orderService.js
 frontend/src/hooks/useAccountProfile.js
+frontend/src/utils/orderTracking.js
 frontend/src/components/account/
 frontend/src/pages/client/ProfileOverview.jsx
 frontend/src/pages/client/ProfileOrders.jsx
+frontend/src/pages/client/ProfileOrderDetail.jsx
 frontend/src/pages/client/ProfileSettings.jsx
 ```
 
@@ -257,6 +260,8 @@ Current behavior:
 - Order history uses `GET /orders?userId=...` with pageable query params.
 - Order detail uses `GET /orders/{orderId}?userId=...`.
 - `accountMapper.js` normalizes profile, order page, order summary, order detail, and order item response shapes before data reaches UI components.
+- `/profile/orders/:id` uses the same order detail endpoint and maps backend order/shipping statuses into customer-facing tracking states: `pending`, `confirmed`, `preparing`, `shipping`, `delivered`, and `cancelled`.
+- `orderTracking.js` owns fallback estimated delivery labels and activity history derivation until the backend exposes a dedicated shipment event history contract.
 - Account logout uses the existing `authService.logout()` flow.
 
 ## Wishlist Integration

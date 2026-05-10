@@ -1,7 +1,9 @@
+import { Link } from "react-router-dom";
 import { ChevronDown, Eye, MapPin, PackageCheck, ReceiptText, Truck } from "lucide-react";
 import Badge from "../ui/Badge";
 import Button from "../ui/Button";
 import SkeletonBlock from "../skeletons/SkeletonBlock";
+import OrderStatusBadge from "./OrderStatusBadge";
 import { cn } from "../../utils/classNames";
 import { formatCurrency } from "../../utils/formatters";
 
@@ -31,7 +33,7 @@ function formatDate(value) {
   }).format(new Date(value));
 }
 
-function StatusBadge({ status }) {
+function PaymentStatusBadge({ status }) {
   if (!status) {
     return <Badge variant="muted">N/A</Badge>;
   }
@@ -86,8 +88,12 @@ function OrderDetailPanel({ detail, isLoading }) {
               <ReceiptText size={13} />
               Chi tiết đơn
             </Badge>
-            <StatusBadge status={detail.status} />
-            <StatusBadge status={detail.paymentStatus} />
+            <OrderStatusBadge order={detail} size="sm" />
+            <PaymentStatusBadge status={detail.paymentStatus} />
+            <Button as={Link} className="rounded-xl" size="sm" to={`/profile/orders/${detail.id}`} variant="outline">
+              <Truck size={15} />
+              Theo dõi
+            </Button>
           </div>
 
           <div className="mt-4 grid gap-3">
@@ -156,14 +162,14 @@ function MobileOrderCard({ detail, isActive, isLoadingDetail, onViewDetail, orde
           <p className="truncate text-sm font-black text-white">#{order.code}</p>
           <p className="text-caption mt-1 text-slate-400">{formatDate(order.createdAt)}</p>
         </div>
-        <StatusBadge status={order.status} />
+        <OrderStatusBadge order={order} size="sm" />
       </div>
 
       <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
         <div>
           <p className="text-caption text-slate-500">Thanh toán</p>
           <div className="mt-1">
-            <StatusBadge status={order.paymentStatus} />
+            <PaymentStatusBadge status={order.paymentStatus} />
           </div>
         </div>
         <div>
@@ -172,11 +178,17 @@ function MobileOrderCard({ detail, isActive, isLoadingDetail, onViewDetail, orde
         </div>
       </div>
 
-      <Button className="mt-4 w-full rounded-2xl" onClick={() => onViewDetail(order)} variant="outline">
-        <Eye size={17} />
-        {isActive ? "Ẩn bớt chi tiết" : "Xem chi tiết"}
-        <ChevronDown className={cn("transition-default", isActive && "rotate-180")} size={16} />
-      </Button>
+      <div className="mt-4 grid gap-2 sm:grid-cols-2">
+        <Button as={Link} className="rounded-2xl" to={`/profile/orders/${order.id}`} variant="outline">
+          <Truck size={17} />
+          Theo dõi
+        </Button>
+        <Button className="rounded-2xl" onClick={() => onViewDetail(order)} variant="outline">
+          <Eye size={17} />
+          {isActive ? "Ẩn bớt" : "Chi tiết"}
+          <ChevronDown className={cn("transition-default", isActive && "rotate-180")} size={16} />
+        </Button>
+      </div>
 
       {isActive && <OrderDetailPanel detail={detail} isLoading={isLoadingDetail} />}
     </article>
@@ -234,22 +246,31 @@ function OrdersTable({
                   </td>
                   <td className="px-4 py-4 text-sm font-semibold text-slate-300">{formatDate(order.createdAt)}</td>
                   <td className="px-4 py-4">
-                    <StatusBadge status={order.status} />
+                    <OrderStatusBadge order={order} size="sm" />
                   </td>
                   <td className="px-4 py-4">
-                    <StatusBadge status={order.paymentStatus} />
+                    <PaymentStatusBadge status={order.paymentStatus} />
                   </td>
                   <td className="px-4 py-4 text-right font-black text-blue-100">{formatCurrency(order.total)}</td>
                   <td className="px-4 py-4 text-right">
-                    <button
-                      className="premium-transition inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-xs font-black text-slate-200 outline-none hover:border-blue-300/50 hover:bg-blue-500/10 hover:text-white focus-visible:ring-2 focus-visible:ring-blue-300/60 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
-                      onClick={() => onViewDetail(order)}
-                      type="button"
-                    >
-                      <Eye size={15} />
-                      Xem
-                      <ChevronDown className={cn("transition-default", isActive && "rotate-180")} size={14} />
-                    </button>
+                    <div className="flex justify-end gap-2">
+                      <Link
+                        className="premium-transition inline-flex items-center justify-center gap-2 rounded-xl border border-blue-300/20 bg-blue-500/10 px-3 py-2 text-xs font-black text-blue-100 outline-none hover:border-blue-300/55 hover:bg-blue-500/16 hover:text-white focus-visible:ring-2 focus-visible:ring-blue-300/60 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
+                        to={`/profile/orders/${order.id}`}
+                      >
+                        <Truck size={15} />
+                        Theo dõi
+                      </Link>
+                      <button
+                        className="premium-transition inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-xs font-black text-slate-200 outline-none hover:border-blue-300/50 hover:bg-blue-500/10 hover:text-white focus-visible:ring-2 focus-visible:ring-blue-300/60 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
+                        onClick={() => onViewDetail(order)}
+                        type="button"
+                      >
+                        <Eye size={15} />
+                        Xem
+                        <ChevronDown className={cn("transition-default", isActive && "rotate-180")} size={14} />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               );

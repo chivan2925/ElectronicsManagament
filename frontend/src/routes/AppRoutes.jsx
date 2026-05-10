@@ -28,6 +28,7 @@ import Home from "../pages/client/Home";
 import Cart from "../pages/client/Cart";
 import Checkout from "../pages/client/Checkout";
 import Login from "../pages/client/Login";
+import ProfileOrderDetail from "../pages/client/ProfileOrderDetail";
 import ProfileOrders from "../pages/client/ProfileOrders";
 import ProfileOverview from "../pages/client/ProfileOverview";
 import ProfileSettings from "../pages/client/ProfileSettings";
@@ -81,6 +82,7 @@ function AppRoutes() {
       >
         <Route index element={<ProfileOverview />} />
         <Route element={<ProfileOrders />} path="orders" />
+        <Route element={<ProfileOrderDetail />} path="orders/:id" />
         <Route element={<ProfileSettings />} path="settings" />
       </Route>
 

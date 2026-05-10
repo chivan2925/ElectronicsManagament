@@ -14,6 +14,10 @@ Ready for Phase 6 — Ecommerce Core Features
 
 ## Recently Completed
 
+- Built the Order Tracking experience at `/profile/orders/:id` using the existing User Order API detail endpoint.
+- Added reusable tracking components: `OrderTrackingTimeline.jsx`, `OrderStatusBadge.jsx`, and `ShipmentProgress.jsx`, plus shared `orderTracking.js` status/date/activity helpers.
+- Added visual order progress, shipment steps, estimated delivery, order activity history, responsive detail layout, and tracking links from the account order list.
+- Verified `npm run lint`, `npm run build`, `git diff --check`, and route smoke checks for `/profile/orders` and `/profile/orders/1` after the Order Tracking build. Build still reports the existing Vite chunk-size warning, and `git diff --check` reported CRLF normalization warnings for edited files.
 - Upgraded Cart & Checkout UX with animated cart item quantity/total transitions, remove feedback, free-shipping progress, shipping estimates, stock validation UI, coupon apply/clear UX, mini recommendations in cart, and sticky trust-focused summaries.
 - Added reusable cart UX helpers/components: `cartInsights.js`, `FreeShippingProgress.jsx`, `StockValidationPanel.jsx`, and `CartRecommendations.jsx`.
 - Verified `npm run lint`, `npm run build`, and route smoke checks for `/cart` and `/checkout` after the Cart & Checkout UX upgrade. Build still reports the existing Vite chunk-size warning.
@@ -208,7 +212,7 @@ Ready for Phase 6 — Ecommerce Core Features
 
 1. Preserve the existing homepage layout.
 2. Keep the normalized frontend folder structure stable.
-3. Start Phase 6 by defining public storefront API contracts for customer auth, browsing, cart, checkout, payment, and order tracking.
+3. Start Phase 6 by defining public storefront API contracts for customer auth, browsing, cart, checkout, payment, and customer-owned order tracking.
 4. Keep the completed admin CRUD system stable while storefront ecommerce APIs are expanded.
 5. Use centralized feedback components for loading, error, empty, permission, and refresh states in new ecommerce workflows.
 6. Move customer auth and account ownership checks to a dedicated public customer auth contract when ready.
@@ -274,7 +278,7 @@ Ready for Phase 6 — Ecommerce Core Features
 - Add customer registration and customer login contracts separate from admin/staff auth.
 - Add cart persistence APIs and connect the existing shared cart provider to backend state.
 - Add checkout/payment handoff for COD and online gateways when backend contracts are ready.
-- Add customer order tracking backed by public customer order APIs.
+- Harden customer order tracking when backend exposes richer shipment history or public customer ownership contracts.
 - Connect wishlist, recently viewed, homepage product sections, and search overlay to matching public APIs when those contracts exist.
 
 ### Admin Dashboard Maintenance

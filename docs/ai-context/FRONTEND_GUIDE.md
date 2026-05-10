@@ -35,6 +35,7 @@ Client:
 - `/wishlist`
 - `/profile`
 - `/profile/orders`
+- `/profile/orders/:id`
 - `/profile/settings`
 
 Admin:
@@ -188,6 +189,7 @@ frontend/src/
 │     ├─ Checkout.jsx
 │     ├─ Home.jsx
 │     ├─ Login.jsx
+│     ├─ ProfileOrderDetail.jsx
 │     ├─ ProfileOrders.jsx
 │     ├─ ProfileOverview.jsx
 │     ├─ ProfileSettings.jsx
@@ -208,7 +210,9 @@ frontend/src/
 │  ├─ utilities.css
 │  └─ index.css
 ├─ utils/
-│  └─ formatters.js
+│  ├─ classNames.js
+│  ├─ formatters.js
+│  └─ orderTracking.js
 ├─ App.jsx
 └─ main.jsx
 ```
@@ -457,14 +461,18 @@ Reusable account components live in `frontend/src/components/account/`:
 - `ProfileLayout.jsx`
 - `AccountSidebar.jsx`
 - `OrdersTable.jsx`
+- `OrderStatusBadge.jsx`
+- `OrderTrackingTimeline.jsx`
+- `ShipmentProgress.jsx`
 
 Account pages live in `frontend/src/pages/client/`:
 
 - `ProfileOverview.jsx`
 - `ProfileOrders.jsx`
+- `ProfileOrderDetail.jsx`
 - `ProfileSettings.jsx`
 
-Account API normalization lives in `frontend/src/api/accountMapper.js`. Profile fetch/update uses `userService.getCurrentUserProfile()` and `userService.updateCurrentUserProfile()`. Order history/detail uses `orderService.getUserOrders()` and `orderService.getUserOrderById()`.
+Account API normalization lives in `frontend/src/api/accountMapper.js`. Profile fetch/update uses `userService.getCurrentUserProfile()` and `userService.updateCurrentUserProfile()`. Order history/detail/tracking uses `orderService.getUserOrders()` and `orderService.getUserOrderById()`. Shared order tracking status, estimated delivery, and activity fallback helpers live in `frontend/src/utils/orderTracking.js`.
 
 ## Wishlist And Recently Viewed
 
