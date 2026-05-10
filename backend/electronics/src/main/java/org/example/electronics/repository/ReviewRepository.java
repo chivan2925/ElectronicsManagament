@@ -13,9 +13,9 @@ public interface ReviewRepository extends JpaRepository<ReviewEntity, Integer> {
 
     @Query("SELECT r FROM ReviewEntity r WHERE r.product.id = :productId AND 1=1 " +
 
-            "AND (:keyword IS NULL OR ( " +
-            "    CAST(r.id AS string) LIKE CONCAT('%', :keyword, '%') " +
-            "    OR LOWER(r.content) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "AND (CAST(:keyword AS string) IS NULL OR ( " +
+            "    CAST(r.id AS string) LIKE CONCAT('%', CAST(:keyword AS string), '%') " +
+            "    OR LOWER(r.content) LIKE LOWER(CONCAT('%', CAST(:keyword AS string), '%')) " +
             ")) " +
 
             "AND (CAST(:fromDate AS timestamp) IS NULL OR " +

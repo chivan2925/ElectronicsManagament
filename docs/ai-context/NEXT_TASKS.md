@@ -14,6 +14,12 @@ Phase 8 — Production + Deploy (Completed showcase)
 
 ## Recently Completed
 
+<<<<<<< HEAD
+- Connected `/admin/dashboard`, `/admin/reports/revenue`, `/admin/reports/best-sellers`, and `/admin/reports/activity` to real Admin Report and Order APIs.
+- Added `reportService`, `reportMapper`, and `useAdminReportDashboard` to normalize dashboard KPIs, revenue series, order status mix, top products, recent orders, and order-derived activity from backend data.
+- Removed admin report page imports from `adminMock` and `adminAnalyticsMock` while keeping loading, error, retry, and empty states for API-backed report screens.
+- Verified `npm run lint`, `npm run build`, and `git diff --check` after the admin reporting frontend wiring. `git diff --check` reported only LF-to-CRLF normalization warnings.
+=======
 - Fixed authenticated add-to-cart 500s caused by a cart fetch query using SQL `DISTINCT` over PostgreSQL `json` columns.
 - Updated `CartRepository.findByUserIdWithItems` to avoid database-level distinct comparison and let `UserCartServiceImpl` select the loaded cart entity from the fetch result.
 - Smoke-tested `POST /api/cart/items`, `PATCH /api/cart/items/{variantId}`, and `DELETE /api/cart/items/{variantId}` against a local backend on port `8082`.
@@ -25,6 +31,7 @@ Phase 8 — Production + Deploy (Completed showcase)
 - Updated `CartProvider` to resolve missing variant identity from Product API detail before creating local or synced cart items.
 - Fixed guest product-card quick-add so it is not blocked by customer cart-sync variant validation, and made quick-add errors distinguish stock, variant, and API failures.
 - Verified `mvn -q -DskipTests compile`, `npm run lint`, `npm run build`, and `git diff --check` after the cart variant-resolution fix. `git diff --check` reported only LF-to-CRLF normalization warnings.
+>>>>>>> c48fa6f22f68a287cf66052c08460589e30d59a8
 - Removed the remaining recently viewed hardcoded/mock product fallback from `useRecentlyViewed.js`.
 - Added cleanup so legacy `P001`-style localStorage snapshots are purged and only API-backed product identities are kept for the "Tiếp tục xem sản phẩm" section.
 - Verified `npm run lint`, `npm run build`, and `git diff --check` after the recently viewed cleanup. `git diff --check` reported only LF-to-CRLF normalization warnings.
@@ -480,7 +487,7 @@ Phase 8 — Production + Deploy (Completed showcase)
 - Reuse admin module registry metadata for resource labels, routes, permissions, and service selection.
 - Reuse shared route/sidebar/action permission policies for every admin resource page.
 - Keep ADMIN full access and require staff resource view permissions for staff module access.
-- Keep upgraded admin analytics mock data isolated until the frontend is wired to `/api/admin/reports/*`.
+- Keep admin dashboard, revenue, best-sellers, and activity report pages on Admin Report and Order APIs; add dedicated customer/inventory analytics APIs before reintroducing deeper analytics panels with real data.
 
 ### Phase 4 Auth + Backend Integration Maintenance
 
@@ -497,7 +504,7 @@ Phase 8 — Production + Deploy (Completed showcase)
 - Client checkout/account routes are customer-session-only in the frontend, but backend ownership enforcement still needs endpoint-level tightening using the customer-auth principal.
 - Customer cart persistence exists at `/api/cart`, but production `ddl-auto=validate` deployments need controlled migration/backfill for `carts` and `cart_items`.
 - A dedicated backend wishlist persistence API is not implemented; wishlist state is local-first with optional frontend sync support through `VITE_WISHLIST_API_PATH`.
-- Admin CRUD modules are API-backed; upgraded `/admin/dashboard` and `/admin/reports/revenue` frontend screens still use isolated mock reporting data until connected to `/api/admin/reports/*`.
+- Dedicated customer and inventory analytics report APIs are not implemented yet; the admin dashboard currently stays on backend dashboard/revenue/status/top-product metrics plus order-derived activity.
 - Category API currently has no `description` field in request/response DTOs, so category description is UI-session only until backend contract is extended.
 - Backend customer/admin auth currently exposes login/logout; refresh-token endpoint support is not implemented yet.
 - Backend startup also reports a database DDL warning for existing null `media.display_order` values.

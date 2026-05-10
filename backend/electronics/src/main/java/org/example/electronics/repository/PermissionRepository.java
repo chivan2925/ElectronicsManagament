@@ -13,10 +13,10 @@ public interface PermissionRepository extends JpaRepository<PermissionEntity, In
 
     @Query("SELECT p FROM PermissionEntity p WHERE 1=1 " +
 
-            "AND (:keyword IS NULL OR ( " +
-            "    CAST(p.id AS string) LIKE CONCAT('%', :keyword, '%') " +
-            "    OR LOWER(p.code) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-            "    OR LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "AND (CAST(:keyword AS string) IS NULL OR ( " +
+            "    CAST(p.id AS string) LIKE CONCAT('%', CAST(:keyword AS string), '%') " +
+            "    OR LOWER(p.code) LIKE LOWER(CONCAT('%', CAST(:keyword AS string), '%')) " +
+            "    OR LOWER(p.name) LIKE LOWER(CONCAT('%', CAST(:keyword AS string), '%')) " +
             ")) " +
 
             "AND (CAST(:fromDate AS timestamp) IS NULL OR " +

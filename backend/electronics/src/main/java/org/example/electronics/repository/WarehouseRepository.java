@@ -19,12 +19,12 @@ public interface WarehouseRepository extends JpaRepository<WarehouseEntity, Inte
 
     @Query("SELECT w FROM WarehouseEntity w WHERE 1=1 " +
 
-            "AND (:keyword IS NULL OR ( " +
-            "    CAST(w.id AS string) LIKE CONCAT('%', :keyword, '%') " +
-            "    OR LOWER(w.name) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "AND (CAST(:keyword AS string) IS NULL OR ( " +
+            "    CAST(w.id AS string) LIKE CONCAT('%', CAST(:keyword AS string), '%') " +
+            "    OR LOWER(w.name) LIKE LOWER(CONCAT('%', CAST(:keyword AS string), '%')) " +
             ")) " +
 
-            "AND (:status IS NULL OR w.status = :status) " +
+            "AND (CAST(:status AS string) IS NULL OR w.status = :status) " +
 
             "AND (CAST(:fromDate AS timestamp) IS NULL OR " +
             "    (:dateType = 'CREATED_AT' AND w.createdAt >= :fromDate) OR " +

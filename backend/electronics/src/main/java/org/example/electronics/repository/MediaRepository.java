@@ -22,32 +22,32 @@ public interface MediaRepository extends JpaRepository<MediaEntity, Integer> {
             "LEFT JOIN FETCH m.product p " +
             "LEFT JOIN FETCH m.variant v " +
             "WHERE 1=1 " +
-            "AND (:keyword IS NULL OR ( " +
-            "    CAST(m.id AS string) LIKE CONCAT('%', :keyword, '%') " +
-            "    OR LOWER(m.imageUrl) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-            "    OR LOWER(m.publicId) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-            "    OR LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-            "    OR LOWER(v.name) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-            "    OR LOWER(v.sku) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "AND (CAST(:keyword AS string) IS NULL OR ( " +
+            "    CAST(m.id AS string) LIKE CONCAT('%', CAST(:keyword AS string), '%') " +
+            "    OR LOWER(m.imageUrl) LIKE LOWER(CONCAT('%', CAST(:keyword AS string), '%')) " +
+            "    OR LOWER(m.publicId) LIKE LOWER(CONCAT('%', CAST(:keyword AS string), '%')) " +
+            "    OR LOWER(p.name) LIKE LOWER(CONCAT('%', CAST(:keyword AS string), '%')) " +
+            "    OR LOWER(v.name) LIKE LOWER(CONCAT('%', CAST(:keyword AS string), '%')) " +
+            "    OR LOWER(v.sku) LIKE LOWER(CONCAT('%', CAST(:keyword AS string), '%')) " +
             ")) " +
-            "AND (:productId IS NULL OR p.id = :productId) " +
-            "AND (:variantId IS NULL OR v.id = :variantId) " +
-            "AND (:primary IS NULL OR m.isPrimary = :primary)",
+            "AND (CAST(:productId AS string) IS NULL OR p.id = :productId) " +
+            "AND (CAST(:variantId AS string) IS NULL OR v.id = :variantId) " +
+            "AND (CAST(:primary AS string) IS NULL OR m.isPrimary = :primary)",
             countQuery = "SELECT COUNT(m) FROM MediaEntity m " +
                     "LEFT JOIN m.product p " +
                     "LEFT JOIN m.variant v " +
                     "WHERE 1=1 " +
-                    "AND (:keyword IS NULL OR ( " +
-                    "    CAST(m.id AS string) LIKE CONCAT('%', :keyword, '%') " +
-                    "    OR LOWER(m.imageUrl) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-                    "    OR LOWER(m.publicId) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-                    "    OR LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-                    "    OR LOWER(v.name) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-                    "    OR LOWER(v.sku) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+                    "AND (CAST(:keyword AS string) IS NULL OR ( " +
+                    "    CAST(m.id AS string) LIKE CONCAT('%', CAST(:keyword AS string), '%') " +
+                    "    OR LOWER(m.imageUrl) LIKE LOWER(CONCAT('%', CAST(:keyword AS string), '%')) " +
+                    "    OR LOWER(m.publicId) LIKE LOWER(CONCAT('%', CAST(:keyword AS string), '%')) " +
+                    "    OR LOWER(p.name) LIKE LOWER(CONCAT('%', CAST(:keyword AS string), '%')) " +
+                    "    OR LOWER(v.name) LIKE LOWER(CONCAT('%', CAST(:keyword AS string), '%')) " +
+                    "    OR LOWER(v.sku) LIKE LOWER(CONCAT('%', CAST(:keyword AS string), '%')) " +
                     ")) " +
-                    "AND (:productId IS NULL OR p.id = :productId) " +
-                    "AND (:variantId IS NULL OR v.id = :variantId) " +
-                    "AND (:primary IS NULL OR m.isPrimary = :primary)")
+                    "AND (CAST(:productId AS string) IS NULL OR p.id = :productId) " +
+                    "AND (CAST(:variantId AS string) IS NULL OR v.id = :variantId) " +
+                    "AND (CAST(:primary AS string) IS NULL OR m.isPrimary = :primary)")
     Page<MediaEntity> findMediaWithFilter(
             @Param("keyword") String keyword,
             @Param("productId") Integer productId,

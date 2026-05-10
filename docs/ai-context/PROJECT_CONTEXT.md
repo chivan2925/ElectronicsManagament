@@ -101,7 +101,7 @@ Additional backend areas:
 - Admin dashboard exists at `/admin`.
 - Admin CRUD pages exist for the core backend resources.
 - Client catalog, checkout, and account routes have partial real API integration.
-- Admin CRUD pages for the core resources are connected to backend APIs; dashboard/report analytics still use mock data.
+- Admin CRUD pages and the primary admin dashboard/report pages are connected to backend APIs; deeper customer/inventory analytics still need dedicated backend report endpoints before they can show real data.
 - `frontend/src/api/client.js`, `resourceService.js`, payment service modules, and the `frontend/src/admin` architecture foundation are ready for Phase 8 production/deploy preparation.
 
 ## UI Direction

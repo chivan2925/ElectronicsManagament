@@ -19,12 +19,12 @@ public interface RoleRepository extends JpaRepository<RoleEntity, Integer> {
 
     @Query("SELECT r FROM RoleEntity r WHERE 1=1 " +
 
-            "AND (:keyword IS NULL OR ( " +
-            "    CAST(r.id AS string) LIKE CONCAT('%', :keyword, '%') " +
-            "    OR LOWER(r.name) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "AND (CAST(:keyword AS string) IS NULL OR ( " +
+            "    CAST(r.id AS string) LIKE CONCAT('%', CAST(:keyword AS string), '%') " +
+            "    OR LOWER(r.name) LIKE LOWER(CONCAT('%', CAST(:keyword AS string), '%')) " +
             ")) " +
 
-            "AND (:status IS NULL OR r.status = :status) " +
+            "AND (CAST(:status AS string) IS NULL OR r.status = :status) " +
 
             "AND (CAST(:fromDate AS timestamp) IS NULL OR " +
             "    (:dateType = 'CREATED_AT' AND r.createdAt >= :fromDate) OR " +

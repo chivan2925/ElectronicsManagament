@@ -37,7 +37,7 @@ services:
       SPRINGDOC_API_DOCS_ENABLED: ${SPRINGDOC_API_DOCS_ENABLED:-true}
       SPRINGDOC_SWAGGER_UI_ENABLED: ${SPRINGDOC_SWAGGER_UI_ENABLED:-true}
       CORS_ALLOWED_ORIGIN_PATTERNS: ${CORS_ALLOWED_ORIGIN_PATTERNS:-http://localhost:8088}
-      DB_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-electronics_management}
+      DB_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-electronics_management}?stringtype=unspecified
       DB_USERNAME: ${POSTGRES_USER:-electronics}
       DB_PASSWORD: ${POSTGRES_PASSWORD:-change-me-local-password}
       ELECTRONICS_JWT_SECRET: ${ELECTRONICS_JWT_SECRET:-replace-with-at-least-32-random-bytes}

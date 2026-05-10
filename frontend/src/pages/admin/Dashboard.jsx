@@ -1,79 +1,105 @@
 import { useState } from "react";
-import { AlertTriangle, CalendarDays, ShoppingCart, TrendingUp, Users, Wallet } from "lucide-react";
+import { AlertTriangle, CalendarDays, PackageCheck, ShoppingCart, TrendingUp, Wallet } from "lucide-react";
 import ActivityFeed from "../../admin/components/dashboard/ActivityFeed";
 import AnalyticsCard from "../../admin/components/dashboard/AnalyticsCard";
 import DemoPresentationPanel from "../../admin/components/dashboard/DemoPresentationPanel";
 import StatCard from "../../admin/components/dashboard/StatCard";
 import AdminRealtimeActivity from "../../admin/components/realtime/AdminRealtimeActivity";
-import { AnalyticsFilters, CustomerAnalytics, InventoryAnalytics, RevenueAnalytics } from "../../admin/analytics";
+import { AnalyticsFilters, RevenueAnalytics } from "../../admin/analytics";
+import useAdminReportDashboard from "../../admin/hooks/useAdminReportDashboard";
 import StatusBadge from "../../components/ui/admin/StatusBadge";
 import { isDemoModeEnabled } from "../../demo/demoMode";
-import {
-  adminCustomerAnalytics,
-  adminInventoryAnalytics,
-  adminRevenueAnalytics,
-  analyticsFilterDefaults,
-} from "../../data/adminAnalyticsMock";
-import {
-  dashboardKpis,
-  dashboardRecentActivity,
-  orders,
-} from "../../data/adminMock";
+import { getDefaultAdminReportFilters } from "../../api/reportMapper";
 import { formatCurrency } from "../../utils/formatters";
 
 const kpiIcons = {
+  cancelled: AlertTriangle,
+  items: PackageCheck,
   lowStock: AlertTriangle,
   monthRevenue: TrendingUp,
   orders: ShoppingCart,
   todayRevenue: Wallet,
-  users: Users,
 };
+
+function KpiSkeletonGrid() {
+  return (
+    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+      {Array.from({ length: 5 }).map((_, index) => (
+        <div className="admin-panel rounded-2xl p-5" key={`dashboard-kpi-loading-${index}`}>
+          <div className="flex items-start justify-between gap-4">
+            <div className="min-w-0 flex-1">
+              <div className="h-4 w-24 animate-pulse rounded-full bg-slate-100" />
+              <div className="mt-4 h-8 w-28 animate-pulse rounded-full bg-slate-100" />
+              <div className="mt-3 h-3 w-36 animate-pulse rounded-full bg-slate-100" />
+            </div>
+            <div className="h-12 w-12 animate-pulse rounded-xl bg-slate-100" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 function RecentOrders({ items }) {
   return (
     <AnalyticsCard
-      action={<span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-600">Live mock</span>}
-      description="Latest checkout activity from admin mock data."
+      action={<span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-black text-emerald-700">DB live</span>}
+      description="Latest checkout activity from the Order API."
       title="Recent orders"
     >
       <div className="overflow-x-auto px-5 pb-5 pt-4">
-        <table className="min-w-full">
-          <thead>
-            <tr className="border-b border-slate-100 text-left text-xs font-black uppercase tracking-normal text-slate-400">
-              <th className="whitespace-nowrap py-3 pr-4">Mã đơn</th>
-              <th className="whitespace-nowrap px-4 py-3">Khách hàng</th>
-              <th className="whitespace-nowrap px-4 py-3">Thanh toán</th>
-              <th className="whitespace-nowrap px-4 py-3">Tổng tiền</th>
-              <th className="whitespace-nowrap py-3 pl-4">Trạng thái</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-100">
-            {items.map((item) => (
-              <tr className="admin-table-row text-sm" key={item.id}>
-                <td className="whitespace-nowrap py-4 pr-4">
-                  <div>
-                    <p className="font-black text-primary">{item.id}</p>
-                    <p className="mt-0.5 text-xs font-semibold text-slate-400">{item.createdAt}</p>
-                  </div>
-                </td>
-                <td className="whitespace-nowrap px-4 py-4 font-bold text-slate-700">{item.customer}</td>
-                <td className="whitespace-nowrap px-4 py-4 text-slate-500">{item.payment}</td>
-                <td className="whitespace-nowrap px-4 py-4 font-black text-slate-950">{formatCurrency(item.total)}</td>
-                <td className="whitespace-nowrap py-4 pl-4">
-                  <StatusBadge status={item.status} />
-                </td>
+        {items.length ? (
+          <table className="min-w-full">
+            <thead>
+              <tr className="border-b border-slate-100 text-left text-xs font-black uppercase tracking-normal text-slate-400">
+                <th className="whitespace-nowrap py-3 pr-4">Mã đơn</th>
+                <th className="whitespace-nowrap px-4 py-3">Khách hàng</th>
+                <th className="whitespace-nowrap px-4 py-3">Thanh toán</th>
+                <th className="whitespace-nowrap px-4 py-3">Tổng tiền</th>
+                <th className="whitespace-nowrap py-3 pl-4">Trạng thái</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {items.map((item) => (
+                <tr className="admin-table-row text-sm" key={item.id}>
+                  <td className="whitespace-nowrap py-4 pr-4">
+                    <div>
+                      <p className="font-black text-primary">{item.id}</p>
+                      <p className="mt-0.5 text-xs font-semibold text-slate-400">{item.createdAt}</p>
+                    </div>
+                  </td>
+                  <td className="whitespace-nowrap px-4 py-4 font-bold text-slate-700">{item.customer}</td>
+                  <td className="whitespace-nowrap px-4 py-4 text-slate-500">{item.payment}</td>
+                  <td className="whitespace-nowrap px-4 py-4 font-black text-slate-950">{formatCurrency(item.total)}</td>
+                  <td className="whitespace-nowrap py-4 pl-4">
+                    <StatusBadge status={item.status} />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p className="rounded-xl bg-slate-50 p-4 text-sm font-semibold text-slate-500">
+            Chưa có đơn hàng trong database cho khoảng thời gian này.
+          </p>
+        )}
       </div>
     </AnalyticsCard>
   );
 }
 
 function Dashboard() {
-  const [filters, setFilters] = useState(analyticsFilterDefaults);
+  const [filters, setFilters] = useState(() => getDefaultAdminReportFilters());
   const [exportNotice, setExportNotice] = useState("");
+  const {
+    dashboardKpis,
+    error: reportError,
+    isLoading: isLoadingReport,
+    recentActivity,
+    recentOrderRows,
+    refresh: refreshReport,
+    revenueAnalytics,
+  } = useAdminReportDashboard(filters, { includeRecentOrders: true, recentOrderLimit: 5 });
 
   const handleFiltersChange = (nextFilters) => {
     setFilters(nextFilters);
@@ -82,7 +108,7 @@ function Dashboard() {
 
   const handleExport = (currentFilters) => {
     setExportNotice(
-      `Export placeholder queued for ${currentFilters.from} to ${currentFilters.to}. Reporting API integration is pending.`,
+      `Export chưa triển khai. Dữ liệu đang được lấy từ API reports cho ${currentFilters.from} đến ${currentFilters.to}.`,
     );
   };
 
@@ -93,7 +119,7 @@ function Dashboard() {
           <div className="mb-3 flex flex-wrap gap-2">
             <span className="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-black text-primary">
               <CalendarDays size={14} />
-              10/05/2026 · Admin analytics
+              {filters.to} · Admin analytics
             </span>
             <span className="inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50 px-3 py-1 text-xs font-black text-emerald-700">
               Production-ready showcase
@@ -116,23 +142,28 @@ function Dashboard() {
         </div>
       ) : null}
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
-        {dashboardKpis.map((item) => (
-          <StatCard icon={kpiIcons[item.key]} key={item.key} {...item} />
-        ))}
-      </div>
+      {isLoadingReport ? (
+        <KpiSkeletonGrid />
+      ) : (
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+          {dashboardKpis.map((item) => (
+            <StatCard icon={kpiIcons[item.key]} key={item.key} {...item} />
+          ))}
+        </div>
+      )}
 
       <AdminRealtimeActivity />
 
-      <RevenueAnalytics data={adminRevenueAnalytics} />
-
-      <CustomerAnalytics data={adminCustomerAnalytics} />
-
-      <InventoryAnalytics data={adminInventoryAnalytics} />
+      <RevenueAnalytics
+        data={revenueAnalytics}
+        error={reportError}
+        loading={isLoadingReport}
+        onRetry={refreshReport}
+      />
 
       <div className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
-        <RecentOrders items={orders} />
-        <ActivityFeed items={dashboardRecentActivity} />
+        <RecentOrders items={recentOrderRows} />
+        <ActivityFeed items={recentActivity} />
       </div>
     </section>
   );

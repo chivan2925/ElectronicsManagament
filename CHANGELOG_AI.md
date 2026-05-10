@@ -8,6 +8,14 @@ Always update this file after meaningful work.
 
 ## 2026-05-11
 
+<<<<<<< HEAD
+### Admin Report Frontend API Wiring
+
+- Connected `/admin/dashboard`, `/admin/reports/revenue`, `/admin/reports/best-sellers`, and `/admin/reports/activity` to real Admin Report and Order APIs.
+- Added `reportService`, `reportMapper`, and `useAdminReportDashboard` for API-backed dashboard KPIs, revenue analytics, top products, status mix, recent orders, and order-derived activity.
+- Removed mock analytics imports from the admin dashboard/report page entrypoints while preserving loading, error, retry, and empty states.
+- Verified `npm run lint`, `npm run build`, and `git diff --check`; `git diff --check` reported only LF-to-CRLF normalization warnings.
+=======
 ### Customer Cart PostgreSQL Fix
 
 - Fixed authenticated add-to-cart 500s caused by `CartRepository.findByUserIdWithItems` using `SELECT DISTINCT` across fetched `json` columns in PostgreSQL.
@@ -28,6 +36,7 @@ Always update this file after meaningful work.
 - Updated `CartProvider` to resolve missing variant identities from Product API detail before creating cart items, preventing product ids from being used as variant ids.
 - Fixed guest quick-add so missing variant identity is only blocking for authenticated customer cart sync, and ProductCard now distinguishes out-of-stock, variant, and API errors.
 - Verified `mvn -q -DskipTests compile`, `npm run lint`, `npm run build`, and `git diff --check`; `git diff --check` reported only LF-to-CRLF normalization warnings.
+>>>>>>> c48fa6f22f68a287cf66052c08460589e30d59a8
 
 ### Recently Viewed Hardcoded Cleanup
 

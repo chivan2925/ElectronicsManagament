@@ -28,16 +28,16 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Integer>
             "LEFT JOIN FETCH p.brand " +
             "WHERE 1=1 " +
 
-            "AND (:keyword IS NULL OR :keyword = '' OR " +
+            "AND (CAST(:keyword AS string) IS NULL OR CAST(:keyword AS string) = '' OR " +
             "    CAST(p.id AS string) LIKE CONCAT('%', COALESCE(CAST(:keyword AS string), ''), '%') " +
             "    OR LOWER(p.name) LIKE LOWER(CONCAT('%', COALESCE(CAST(:keyword AS string), ''), '%')) " +
             "    OR LOWER(p.slug) LIKE LOWER(CONCAT('%', COALESCE(CAST(:keyword AS string), ''), '%')) " +
             ") " +
 
-            "AND (:status IS NULL OR p.status = :status) " +
-            "AND (:categoryId IS NULL OR p.category.id = :categoryId) " +
-            "AND (:brandId IS NULL OR p.brand.id = :brandId) " +
-            "AND (:featured IS NULL OR p.featured = :featured) " +
+            "AND (CAST(:status AS string) IS NULL OR p.status = :status) " +
+            "AND (CAST(:categoryId AS string) IS NULL OR p.category.id = :categoryId) " +
+            "AND (CAST(:brandId AS string) IS NULL OR p.brand.id = :brandId) " +
+            "AND (CAST(:featured AS string) IS NULL OR p.featured = :featured) " +
 
             "AND (CAST(:fromDate AS timestamp) IS NULL OR " +
             "    (:dateType = 'CREATED_AT' AND p.createdAt >= :fromDate) OR " +
@@ -51,15 +51,15 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Integer>
 
             countQuery = "SELECT COUNT(p) FROM ProductEntity p " +
                     "WHERE 1=1 " +
-                    "AND (:keyword IS NULL OR :keyword = '' OR " +
+                    "AND (CAST(:keyword AS string) IS NULL OR CAST(:keyword AS string) = '' OR " +
                     "    CAST(p.id AS string) LIKE CONCAT('%', COALESCE(CAST(:keyword AS string), ''), '%') " +
                     "    OR LOWER(p.name) LIKE LOWER(CONCAT('%', COALESCE(CAST(:keyword AS string), ''), '%')) " +
                     "    OR LOWER(p.slug) LIKE LOWER(CONCAT('%', COALESCE(CAST(:keyword AS string), ''), '%')) " +
                     ") " +
-                    "AND (:status IS NULL OR p.status = :status) " +
-                    "AND (:categoryId IS NULL OR p.category.id = :categoryId) " +
-                    "AND (:brandId IS NULL OR p.brand.id = :brandId) " +
-                    "AND (:featured IS NULL OR p.featured = :featured) " +
+                    "AND (CAST(:status AS string) IS NULL OR p.status = :status) " +
+                    "AND (CAST(:categoryId AS string) IS NULL OR p.category.id = :categoryId) " +
+                    "AND (CAST(:brandId AS string) IS NULL OR p.brand.id = :brandId) " +
+                    "AND (CAST(:featured AS string) IS NULL OR p.featured = :featured) " +
 
                     "AND (CAST(:fromDate AS timestamp) IS NULL OR " +
                     "    (:dateType = 'CREATED_AT' AND p.createdAt >= :fromDate) OR " +

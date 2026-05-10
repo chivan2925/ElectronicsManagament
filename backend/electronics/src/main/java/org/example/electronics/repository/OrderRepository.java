@@ -20,18 +20,18 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Integer> {
     @EntityGraph(attributePaths = {"user"})
     @Query("SELECT o FROM OrderEntity o WHERE 1=1 " +
 
-            "AND (:keyword IS NULL OR ( " +
-            "    CAST(o.id AS string) LIKE CONCAT('%', :keyword, '%') " +
-            "    OR LOWER(o.code) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-            "    OR LOWER(o.shippingName) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-            "    OR o.shippingPhone LIKE CONCAT('%', :keyword, '%') " +
+            "AND (CAST(:keyword AS string) IS NULL OR ( " +
+            "    CAST(o.id AS string) LIKE CONCAT('%', CAST(:keyword AS string), '%') " +
+            "    OR LOWER(o.code) LIKE LOWER(CONCAT('%', CAST(:keyword AS string), '%')) " +
+            "    OR LOWER(o.shippingName) LIKE LOWER(CONCAT('%', CAST(:keyword AS string), '%')) " +
+            "    OR o.shippingPhone LIKE CONCAT('%', CAST(:keyword AS string), '%') " +
             ")) " +
 
-            "AND (:status IS NULL OR o.status = :status) " +
-            "AND (:paymentMethodType IS NULL OR o.paymentMethodType = :paymentMethodType) " +
-            "AND (:paymentStatus IS NULL OR o.paymentStatus = :paymentStatus) " +
-            "AND (:provider IS NULL OR o.shippingProvider = :provider) " +
-            "AND (:shippingStatus IS NULL OR o.shippingStatus = :shippingStatus) " +
+            "AND (CAST(:status AS string) IS NULL OR o.status = :status) " +
+            "AND (CAST(:paymentMethodType AS string) IS NULL OR o.paymentMethodType = :paymentMethodType) " +
+            "AND (CAST(:paymentStatus AS string) IS NULL OR o.paymentStatus = :paymentStatus) " +
+            "AND (CAST(:provider AS string) IS NULL OR o.shippingProvider = :provider) " +
+            "AND (CAST(:shippingStatus AS string) IS NULL OR o.shippingStatus = :shippingStatus) " +
 
             "AND (CAST(:fromDate AS timestamp) IS NULL OR " +
             "    (:dateType = 'CREATED_AT' AND o.createdAt >= :fromDate) OR " +
@@ -74,14 +74,12 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Integer> {
     @Query("SELECT o FROM OrderEntity o WHERE o.status = 'PENDING' AND o.createdAt <= :thresholdTime")
     Page<OrderEntity> findExpiredPendingOrders(@Param("thresholdTime") LocalDateTime thresholdTime, Pageable pageable);
 
-    @EntityGraph(attributePaths = {
-            "orderDetails",
-            "orderDetails.variant",
-            "orderDetails.variant.product",
-            "orderDetails.variant.product.category",
-            "orderDetails.variant.product.brand"
-    })
-    @Query("SELECT DISTINCT o FROM OrderEntity o " +
+    @Query("SELECT o FROM OrderEntity o " +
+            "LEFT JOIN FETCH o.orderDetails od " +
+            "LEFT JOIN FETCH od.variant v " +
+            "LEFT JOIN FETCH v.product p " +
+            "LEFT JOIN FETCH p.category " +
+            "LEFT JOIN FETCH p.brand " +
             "WHERE o.createdAt >= :fromDate AND o.createdAt <= :toDate")
     List<OrderEntity> findOrdersForReport(
             @Param("fromDate") LocalDateTime fromDate,
