@@ -66,6 +66,8 @@ The storefront recommendation foundation now uses `ProductCarousel.jsx`, `Recomm
 
 The storefront header now includes an advanced mock-backed search overlay with debounced live suggestions, recent searches, trending searches, product/category/brand result previews, reusable result rows, search highlighting, category-aware and brand-aware scoring, loading/empty states, and keyboard navigation behavior.
 
+The storefront notification foundation now includes a responsive dark header dropdown, animated unread badge, reusable notification rows, localStorage-backed `useNotifications.js`, order notifications, coupon notifications, a system notification placeholder, filters, and mark-as-read actions.
+
 The authenticated storefront account area now exists at `/profile`, `/profile/orders`, `/profile/orders/:id`, and `/profile/settings` with real User Profile and User Order API integration, protected routing, profile update, order history/detail, order tracking timeline, shipment progress, estimated delivery, activity history, logout, and avatar placeholder UI.
 
 Phase 2 cleanup normalized shared/admin visual patterns for cards, borders, shadows, hover states, focus states, icon buttons, typography usage, and responsive behavior without a large rewrite.
@@ -508,6 +510,7 @@ Latest validation:
 - `mvn spring-boot:run` reached Tomcat startup after the Jackson fix; the verification process was stopped after confirming startup.
 - Backend startup still logs local PostgreSQL `ddl-auto` warnings for legacy/non-null schema drift in `media`, `products`, `users`, `variants`, and `warehouse_*` tables.
 - Build still reports a Vite chunk-size warning for a JavaScript bundle over 500 kB.
+- `npm run lint`, `npm run build`, and `git diff --check` passed after building the Notification System foundation. Build still reports the existing Vite chunk-size warning, and `git diff --check` reported CRLF normalization warnings for edited files.
 
 ## Known Issues
 

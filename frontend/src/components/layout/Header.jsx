@@ -18,6 +18,7 @@ import { categories } from "../../data";
 import useWishlist from "../../hooks/useWishlist";
 import { cn } from "../../utils/classNames";
 import CartDrawer from "../cart/CartDrawer";
+import NotificationDropdown from "../notification/NotificationDropdown";
 import SearchOverlay from "../search/SearchOverlay";
 import IconButton from "../ui/IconButton";
 
@@ -71,6 +72,13 @@ function Header() {
     setIsMobileMenuOpen(false);
     setIsSearchOpen(true);
   };
+
+  const handleNotificationOpenChange = (nextOpen) => {
+    if (nextOpen) {
+      setIsMobileMenuOpen(false);
+    }
+  };
+
   const accountHref = isAuthenticated ? "/profile" : "/login";
   const accountLabel = isAuthenticated ? user?.fullName || user?.email || "Tài khoản" : "Đăng nhập / Đăng ký";
   const compactAccountLabel = "Tài khoản";
@@ -162,6 +170,7 @@ function Header() {
               </span>
               Yêu thích
             </a>
+            <NotificationDropdown onOpenChange={handleNotificationOpenChange} />
             <a className={cn(headerLinkClass, "hidden sm:flex")} href={accountHref}>
               <UserRound size={19} />
               <span className="hidden max-w-40 truncate xl:inline">{accountLabel}</span>

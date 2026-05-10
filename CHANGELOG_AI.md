@@ -8,6 +8,14 @@ Always update this file after meaningful work.
 
 ## 2026-05-10
 
+### Notification System Foundation
+
+- Added `frontend/src/hooks/useNotifications.js` with localStorage-backed notification state, cross-tab sync, unread counts, mark-as-read actions, and seeded order/coupon/system notification shapes.
+- Added `frontend/src/components/notification/NotificationDropdown.jsx` with a responsive dark dropdown, unread badge, notification type filters, mark-all-read action, and subtle Framer Motion transitions.
+- Added `frontend/src/components/notification/NotificationItem.jsx` for reusable order, coupon, and system notification rows.
+- Wired the storefront header to show the notification dropdown without changing the homepage layout.
+- Verified `npm run lint`, `npm run build`, and `git diff --check`. Build still reports the existing Vite chunk-size warning, and `git diff --check` reported CRLF normalization warnings for edited files.
+
 ### Order Tracking Experience
 
 - Added the protected order tracking route `/profile/orders/:id` using the existing User Order API detail flow.

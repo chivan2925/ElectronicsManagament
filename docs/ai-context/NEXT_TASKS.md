@@ -14,6 +14,11 @@ Ready for Phase 6 — Ecommerce Core Features
 
 ## Recently Completed
 
+- Built the Notification System foundation for the storefront header.
+- Added reusable notification files: `NotificationDropdown.jsx`, `NotificationItem.jsx`, and `useNotifications.js`.
+- Added localStorage-backed notification state, unread count, mark-as-read actions, type filters, order notifications, coupon notifications, and a system placeholder without realtime sockets.
+- Wired the responsive dark notification dropdown into the storefront header while preserving the homepage layout.
+- Verified `npm run lint`, `npm run build`, and `git diff --check` after the Notification System foundation. Build still reports the existing Vite chunk-size warning, and `git diff --check` reported CRLF normalization warnings for edited files.
 - Built the Order Tracking experience at `/profile/orders/:id` using the existing User Order API detail endpoint.
 - Added reusable tracking components: `OrderTrackingTimeline.jsx`, `OrderStatusBadge.jsx`, and `ShipmentProgress.jsx`, plus shared `orderTracking.js` status/date/activity helpers.
 - Added visual order progress, shipment steps, estimated delivery, order activity history, responsive detail layout, and tracking links from the account order list.
