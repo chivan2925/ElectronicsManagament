@@ -8,6 +8,19 @@ Always update this file after meaningful work.
 
 ## 2026-05-10
 
+### Ecommerce Security Hardening
+
+- Added backend admin role/permission enforcement with normalized `ROLE_STAFF`, inferred `ROLE_ADMIN`, and `PERM:*` authorities.
+- Added JSON `403` handling, no-store headers for sensitive auth/reset responses, safer JWT setting validation, and reduced JWT validation log detail.
+- Removed `hashedPassword` from staff API responses and sanitized frontend auth user metadata before persistence.
+- Added `VITE_AUTH_TOKEN_STORAGE=session` support for safer frontend token storage while keeping centralized auth flow intact.
+- Hardened VNPay and MoMo callback handling with required-field checks, signature/merchant/amount validation, local transaction ownership checks, and duplicate provider transaction id rejection.
+- Hardened Cloudinary media uploads with JPG/PNG/WEBP-only validation, 5MB limits, extension and magic-byte checks, and safer upload options.
+- Moved backend database, JWT, payment, and Cloudinary config values to environment-driven placeholders in `application.yml`.
+- Added root `SECURITY.md` and updated backend security, payment, and file-upload documentation.
+- Updated `CURRENT_STATE.md` and `NEXT_TASKS.md`.
+- Verified `npm run lint`, `npm run build`, `mvn -q -DskipTests compile`, and `mvn test`. `mvn test` still printed the existing local PostgreSQL `media.display_order` DDL warning.
+
 ### Logging And Monitoring Foundation
 
 - Added `frontend/src/monitoring` with structured client logging, local buffering, global error tracking, API failure tracking, payment error tracking, route preload/error tracking, and optional route-change tracking.

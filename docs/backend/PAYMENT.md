@@ -143,11 +143,13 @@ These endpoints are public because payment providers call them directly.
 
 ```text
 VNPay -> GET /api/system/payment/vnpay-ipn
+  -> validate required provider fields
   -> validate signature
   -> validate merchant code
   -> locate order
   -> locate payment transaction
   -> reject duplicate successful transaction
+  -> reject reused provider transaction ids
   -> verify amount
   -> if response code is 00:
        mark transaction SUCCESS
@@ -169,16 +171,20 @@ Provider response codes returned by current service:
 | `02` | Already confirmed. |
 | `04` | Amount mismatch. |
 | `97` | Invalid signature. |
+| `99` | Missing required provider fields or unknown error. |
 
 ## MoMo IPN Flow
 
 ```text
 MoMo -> POST /api/system/payment/momo-ipn
+  -> validate required provider fields
   -> validate signature
   -> validate merchant code
+  -> validate provider order reference and local transaction id
   -> locate order
   -> locate payment transaction
   -> reject duplicate successful transaction
+  -> reject reused provider transaction ids
   -> verify amount
   -> if resultCode is 0:
        mark transaction SUCCESS
@@ -234,8 +240,11 @@ Cancelled payment should:
 ## Security Rules
 
 - Always validate provider signatures.
+- Always validate required provider callback fields before state changes.
 - Always verify amount from provider against local transaction amount.
+- Always ensure provider callbacks map to the expected local transaction.
 - Reject duplicate successful callbacks.
+- Reject reused provider transaction ids across local transactions.
 - Do not trust client-provided payment success data.
 - Keep provider secrets on the backend only.
 - Do not log secrets or raw signed secret values.

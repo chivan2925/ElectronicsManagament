@@ -40,6 +40,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -49,6 +50,22 @@ public class SystemPaymentServiceImpl implements SystemPaymentService {
     private static final DateTimeFormatter VNPAY_DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
     private static final String VNPAY_SUCCESS_CODE = "00";
     private static final String VNPAY_CANCEL_CODE = "24";
+    private static final Set<String> REQUIRED_VNPAY_FIELDS = Set.of(
+            "vnp_Amount",
+            "vnp_ResponseCode",
+            "vnp_SecureHash",
+            "vnp_TmnCode",
+            "vnp_TxnRef"
+    );
+    private static final Set<String> REQUIRED_MOMO_FIELDS = Set.of(
+            "amount",
+            "orderId",
+            "partnerCode",
+            "requestId",
+            "responseTime",
+            "resultCode",
+            "signature"
+    );
 
     private final PaymentTransactionRepository paymentTransactionRepository;
     private final OrderRepository orderRepository;
@@ -160,7 +177,21 @@ public class SystemPaymentServiceImpl implements SystemPaymentService {
     }
 
     private VNPayCallbackResult handleVNPayCallback(Map<String, String> rawFields) {
-        Map<String, String> signedFields = new HashMap<>(rawFields);
+        Map<String, String> fields = rawFields == null ? Map.of() : rawFields;
+        String missingField = firstMissingField(fields, REQUIRED_VNPAY_FIELDS);
+
+        if (missingField != null) {
+            Integer fallbackOrderId = parseOrderId(fields.get("vnp_TxnRef"));
+            String fallbackResponseCode = fields.get("vnp_ResponseCode");
+
+            logPaymentCallbackRejected(PaymentProvider.VNPAY, "missing_" + missingField, fallbackOrderId, fallbackResponseCode);
+            return new VNPayCallbackResult(
+                    "99",
+                    buildPaymentResponse(null, null, fallbackResponseCode, "Thiếu tham số VNPay bắt buộc", false, fallbackOrderId)
+            );
+        }
+
+        Map<String, String> signedFields = new HashMap<>(fields);
         String secureHash = signedFields.remove("vnp_SecureHash");
         signedFields.remove("vnp_SecureHashType");
 
@@ -235,12 +266,29 @@ public class SystemPaymentServiceImpl implements SystemPaymentService {
             );
         }
 
-        transaction.setPayloadJson(toPayloadJson(rawFields));
+        transaction.setPayloadJson(toPayloadJson(fields));
         transaction.setPaymentTime(parseVNPayDate(signedFields.get("vnp_PayDate")));
 
         if (isSuccessfulVNPayPayment(signedFields)) {
+            String providerPaymentId = signedFields.get("vnp_TransactionNo");
+            if (providerPaymentId == null || providerPaymentId.isBlank()) {
+                logPaymentCallbackRejected(PaymentProvider.VNPAY, "missing_provider_payment_id", order.getId(), responseCode);
+                return new VNPayCallbackResult(
+                        "99",
+                        buildPaymentResponse(order, transaction, responseCode, "Thiếu mã giao dịch VNPay", false, orderId)
+                );
+            }
+
+            if (isProviderPaymentIdUsedByAnother(providerPaymentId, transaction)) {
+                logPaymentCallbackRejected(PaymentProvider.VNPAY, "duplicate_provider_payment_id", order.getId(), responseCode);
+                return new VNPayCallbackResult(
+                        "02",
+                        buildPaymentResponse(order, transaction, responseCode, "Mã giao dịch VNPay đã được ghi nhận cho giao dịch khác", false, orderId)
+                );
+            }
+
             transaction.setStatus(PaymentTransactionStatus.SUCCESS);
-            transaction.setProviderPaymentId(signedFields.get("vnp_TransactionNo"));
+            transaction.setProviderPaymentId(providerPaymentId);
             systemOrderService.confirmSuccessfulPayment(order.getId());
             logPaymentCallbackProcessed(PaymentProvider.VNPAY, order, transaction, responseCode, "success");
         } else if (VNPAY_CANCEL_CODE.equals(responseCode)) {
@@ -263,8 +311,18 @@ public class SystemPaymentServiceImpl implements SystemPaymentService {
 
     private MomoCallbackResult handleMomoCallback(Map<String, Object> rawFields) {
         Map<String, Object> fields = rawFields == null ? Map.of() : rawFields;
+        String missingField = firstMissingField(fields, REQUIRED_MOMO_FIELDS);
         String resultCode = valueOf(fields.get("resultCode"));
-        Integer orderId = parseMomoOrderId(valueOf(fields.get("orderId")));
+        String momoOrderReference = valueOf(fields.get("orderId"));
+        Integer orderId = parseMomoOrderId(momoOrderReference);
+        Integer callbackTransactionId = parseMomoTransactionId(momoOrderReference);
+
+        if (missingField != null) {
+            logPaymentCallbackRejected(PaymentProvider.MOMO, "missing_" + missingField, orderId, resultCode);
+            return new MomoCallbackResult(
+                    buildPaymentResponse(null, null, resultCode, "Thiếu tham số MoMo bắt buộc", false, orderId, PaymentProvider.MOMO)
+            );
+        }
 
         if (!momoUtils.validateSignature(fields)) {
             logPaymentCallbackRejected(PaymentProvider.MOMO, "invalid_signature", orderId, resultCode);
@@ -287,6 +345,13 @@ public class SystemPaymentServiceImpl implements SystemPaymentService {
             );
         }
 
+        if (callbackTransactionId == null) {
+            logPaymentCallbackRejected(PaymentProvider.MOMO, "invalid_transaction_id", orderId, resultCode);
+            return new MomoCallbackResult(
+                    buildPaymentResponse(null, null, resultCode, "Mã giao dịch MoMo không hợp lệ", false, orderId, PaymentProvider.MOMO)
+            );
+        }
+
         OrderEntity order = orderRepository.findById(orderId).orElse(null);
         if (order == null) {
             logPaymentCallbackRejected(PaymentProvider.MOMO, "order_not_found", orderId, resultCode);
@@ -295,7 +360,7 @@ public class SystemPaymentServiceImpl implements SystemPaymentService {
             );
         }
 
-        PaymentTransactionEntity transaction = findProviderPaymentTransaction(order.getId(), PaymentProvider.MOMO);
+        PaymentTransactionEntity transaction = findMomoPaymentTransaction(order.getId(), callbackTransactionId);
         if (transaction == null) {
             logPaymentCallbackRejected(PaymentProvider.MOMO, "transaction_not_found", order.getId(), resultCode);
             return new MomoCallbackResult(
@@ -330,8 +395,23 @@ public class SystemPaymentServiceImpl implements SystemPaymentService {
         transaction.setPaymentTime(parseMomoResponseTime(fields.get("responseTime")));
 
         if ("0".equals(resultCode)) {
+            String providerPaymentId = valueOf(fields.get("transId"));
+            if (providerPaymentId.isBlank()) {
+                logPaymentCallbackRejected(PaymentProvider.MOMO, "missing_provider_payment_id", order.getId(), resultCode);
+                return new MomoCallbackResult(
+                        buildPaymentResponse(order, transaction, resultCode, "Thiếu mã giao dịch MoMo", false, orderId, PaymentProvider.MOMO)
+                );
+            }
+
+            if (isProviderPaymentIdUsedByAnother(providerPaymentId, transaction)) {
+                logPaymentCallbackRejected(PaymentProvider.MOMO, "duplicate_provider_payment_id", order.getId(), resultCode);
+                return new MomoCallbackResult(
+                        buildPaymentResponse(order, transaction, resultCode, "Mã giao dịch MoMo đã được ghi nhận cho giao dịch khác", false, orderId, PaymentProvider.MOMO)
+                );
+            }
+
             transaction.setStatus(PaymentTransactionStatus.SUCCESS);
-            transaction.setProviderPaymentId(valueOf(fields.get("transId")));
+            transaction.setProviderPaymentId(providerPaymentId);
             systemOrderService.confirmSuccessfulPayment(order.getId());
             logPaymentCallbackProcessed(PaymentProvider.MOMO, order, transaction, resultCode, "success");
         } else if (isCancelledMomoPayment(resultCode)) {
@@ -400,6 +480,15 @@ public class SystemPaymentServiceImpl implements SystemPaymentService {
                         PaymentTransactionType.PAYMENT,
                         provider
                 )
+                .orElse(null);
+    }
+
+    private PaymentTransactionEntity findMomoPaymentTransaction(Integer orderId, Integer transactionId) {
+        return paymentTransactionRepository.findById(transactionId)
+                .filter((transaction) -> transaction.getType() == PaymentTransactionType.PAYMENT)
+                .filter((transaction) -> transaction.getProvider() == PaymentProvider.MOMO)
+                .filter((transaction) -> transaction.getOrder() != null)
+                .filter((transaction) -> Objects.equals(transaction.getOrder().getId(), orderId))
                 .orElse(null);
     }
 
@@ -566,6 +655,28 @@ public class SystemPaymentServiceImpl implements SystemPaymentService {
                 .compareTo(actual.setScale(0, RoundingMode.HALF_UP)) == 0;
     }
 
+    private boolean isProviderPaymentIdUsedByAnother(String providerPaymentId, PaymentTransactionEntity currentTransaction) {
+        if (providerPaymentId == null || providerPaymentId.isBlank() || currentTransaction == null) {
+            return false;
+        }
+
+        return paymentTransactionRepository.findByProviderPaymentId(providerPaymentId)
+                .filter((existingTransaction) -> !Objects.equals(existingTransaction.getId(), currentTransaction.getId()))
+                .isPresent();
+    }
+
+    private String firstMissingField(Map<?, ?> fields, Set<String> requiredFields) {
+        for (String requiredField : requiredFields) {
+            Object value = fields.get(requiredField);
+
+            if (value == null || String.valueOf(value).isBlank()) {
+                return requiredField;
+            }
+        }
+
+        return null;
+    }
+
     private Map<String, Object> toPayloadJson(Map<?, ?> fields) {
         Map<String, Object> payload = new HashMap<>();
         fields.forEach((key, value) -> {
@@ -598,6 +709,21 @@ public class SystemPaymentServiceImpl implements SystemPaymentService {
         }
 
         return parseOrderId(trimmedValue);
+    }
+
+    private Integer parseMomoTransactionId(String value) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+
+        String trimmedValue = value.trim();
+        int transactionMarker = trimmedValue.indexOf("-TX-");
+
+        if (transactionMarker < 0 || transactionMarker + 4 >= trimmedValue.length()) {
+            return null;
+        }
+
+        return parseOrderId(trimmedValue.substring(transactionMarker + 4));
     }
 
     private LocalDateTime parseMomoResponseTime(Object value) {

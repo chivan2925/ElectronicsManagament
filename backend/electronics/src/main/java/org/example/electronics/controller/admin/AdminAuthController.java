@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.example.electronics.dto.request.admin.AdminLoginRequestDTO;
 import org.example.electronics.dto.response.admin.AdminLoginResponseDTO;
 import org.example.electronics.service.admin.AdminAuthService;
+import org.springframework.http.CacheControl;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,7 +37,7 @@ public class AdminAuthController {
     ) {
         AdminLoginResponseDTO adminLoginResponseDTO = adminAuthService.login(adminLoginRequestDTO);
 
-        return ResponseEntity.ok(adminLoginResponseDTO);
+        return sensitiveResponse().body(adminLoginResponseDTO);
     }
 
     @PostMapping("/logout")
@@ -46,6 +48,12 @@ public class AdminAuthController {
 
         adminAuthService.logout(authHeader);
 
-        return ResponseEntity.ok("Đăng xuất thành công!");
+        return sensitiveResponse().body("Đăng xuất thành công!");
+    }
+
+    private ResponseEntity.BodyBuilder sensitiveResponse() {
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.noStore())
+                .header(HttpHeaders.PRAGMA, "no-cache");
     }
 }

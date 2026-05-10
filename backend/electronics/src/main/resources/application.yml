@@ -4,9 +4,9 @@ spring:
 
   # 1. Database Connection
   datasource:
-    url: jdbc:postgresql://localhost:5432/electronics_management
-    username: postgres
-    password: 123456
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/electronics_management}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:}
     driver-class-name: org.postgresql.Driver
 
   # 2. Hibernate
@@ -27,8 +27,8 @@ spring:
 # 3. JWT
 electronics:
   app:
-    jwtSecret: DayLaMotDoanMaBiMatCuaDuAnElectronicsDaiHon32KyTuDeBaoMat
-    jwtExpirationMs: 86400000
+    jwtSecret: ${ELECTRONICS_JWT_SECRET:dev-only-change-me-minimum-32-bytes}
+    jwtExpirationMs: ${ELECTRONICS_JWT_EXPIRATION_MS:86400000}
 
 # 4. Payment Integration
 payment:
@@ -36,22 +36,22 @@ payment:
     success-url: "http://localhost:5173/payment/success"
     failed-url: "http://localhost:5173/payment/failed"
   vnpay:
-    tmn-code: "YOUR_TMN_CODE" # Lấy trên trang Sandbox VNPay
-    secret-key: "YOUR_SECRET_KEY" # Lấy trên trang Sandbox VNPay
-    pay-url: "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"
-    refund-url: "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction"
-    return-url: "http://localhost:8080/api/payments/vnpay-return" # Đường dẫn gọi về Frontend/Backend của sếp sau khi trả tiền
+    tmn-code: ${VNPAY_TMN_CODE:YOUR_TMN_CODE}
+    secret-key: ${VNPAY_SECRET_KEY:YOUR_SECRET_KEY}
+    pay-url: ${VNPAY_PAY_URL:https://sandbox.vnpayment.vn/paymentv2/vpcpay.html}
+    refund-url: ${VNPAY_REFUND_URL:https://sandbox.vnpayment.vn/merchant_webapi/api/transaction}
+    return-url: ${VNPAY_RETURN_URL:http://localhost:8080/api/payments/vnpay-return}
   momo:
-    partner-code: "MOMO_PARTNER_CODE"
-    access-key: "MOMO_ACCESS_KEY"
-    secret-key: "MOMO_SECRET_KEY"
-    endpoint: "https://test-payment.momo.vn/v2/gateway/api/create"
-    refund-url: "https://test-payment.momo.vn/v2/gateway/api/refund"
-    return-url: "http://localhost:8080/api/payments/momo-return"
-    notify-url: "http://localhost:8080/api/system/payment/momo-ipn" # Đường dẫn Momo bắn IPN về
+    partner-code: ${MOMO_PARTNER_CODE:MOMO_PARTNER_CODE}
+    access-key: ${MOMO_ACCESS_KEY:MOMO_ACCESS_KEY}
+    secret-key: ${MOMO_SECRET_KEY:MOMO_SECRET_KEY}
+    endpoint: ${MOMO_ENDPOINT:https://test-payment.momo.vn/v2/gateway/api/create}
+    refund-url: ${MOMO_REFUND_URL:https://test-payment.momo.vn/v2/gateway/api/refund}
+    return-url: ${MOMO_RETURN_URL:http://localhost:8080/api/payments/momo-return}
+    notify-url: ${MOMO_NOTIFY_URL:http://localhost:8080/api/system/payment/momo-ipn}
 
 # Cấu hình Cloudinary
 cloudinary:
-  cloud-name: ddftruti7
-  api-key: 137853177264324
-  api-secret: _S5YYj3wj-QzsBc9KEq3z5Q10pM
+  cloud-name: ${CLOUDINARY_CLOUD_NAME:}
+  api-key: ${CLOUDINARY_API_KEY:}
+  api-secret: ${CLOUDINARY_API_SECRET:}

@@ -349,6 +349,8 @@ Current auth state supports:
 
 `refreshTokenService` owns app-start session validation, single-flight token refresh, retry coordination after `401`, and logout-on-refresh-failure behavior. It uses `VITE_AUTH_REFRESH_ENDPOINT`, defaulting to `/admin/auth/refresh`.
 
+Auth storage is centralized in `authStorage.js` and supports `VITE_AUTH_TOKEN_STORAGE=session` for safer token persistence. Stored user metadata is sanitized to display-safe fields before persistence.
+
 `AuthProvider` is mounted at the app root. `StaffRoute` protects the `/admin/*` shell, `AdminRoute` protects admin-only pages, and `GuestRoute` wraps guest-only auth routes.
 
 Current protected routing behavior:

@@ -2,19 +2,28 @@ package org.example.electronics.exception;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.example.electronics.dto.response.system.ErrorResponseDTO;
 import org.example.electronics.monitoring.MonitoringLogger;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.multipart.MultipartException;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -104,6 +113,85 @@ public class GlobalExceptionHandler {
         return buildResponse(status, "Dữ liệu đầu vào không hợp lệ", errors, request);
     }
 
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ErrorResponseDTO> handleConstraintViolationException(
+            ConstraintViolationException exception,
+            HttpServletRequest request
+    ) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        Map<String, String> errors = new HashMap<>();
+
+        exception.getConstraintViolations().forEach((violation) ->
+                errors.put(violation.getPropertyPath().toString(), violation.getMessage()));
+        MonitoringLogger.warn(log, "api.validation_failed", buildExceptionFields(status, exception, request, errors.size()));
+
+        return buildResponse(status, "Dữ liệu đầu vào không hợp lệ", errors, request);
+    }
+
+    @ExceptionHandler({
+            HttpMessageNotReadableException.class,
+            MethodArgumentTypeMismatchException.class,
+            MissingServletRequestParameterException.class
+    })
+    public ResponseEntity<ErrorResponseDTO> handleMalformedRequestException(
+            Exception exception,
+            HttpServletRequest request
+    ) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        logHandledClientException("api.malformed_request", status, exception, request);
+
+        return buildResponse(status, "Yêu cầu không hợp lệ hoặc thiếu tham số bắt buộc", null, request);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponseDTO> handleAccessDeniedException(
+            AccessDeniedException exception,
+            HttpServletRequest request
+    ) {
+        HttpStatus status = HttpStatus.FORBIDDEN;
+        logHandledClientException("auth.access_denied", status, exception, request);
+
+        return buildResponse(status, "Tài khoản hiện tại không có quyền thực hiện thao tác này", null, request);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponseDTO> handleDataIntegrityViolationException(
+            DataIntegrityViolationException exception,
+            HttpServletRequest request
+    ) {
+        HttpStatus status = HttpStatus.CONFLICT;
+        MonitoringLogger.warn(log, "api.data_integrity_violation", MonitoringLogger.fields(
+                "exception", exception.getClass().getSimpleName(),
+                "method", request == null ? null : request.getMethod(),
+                "path", request == null ? null : request.getRequestURI(),
+                "status", status.value()
+        ));
+
+        return buildResponse(status, "Dữ liệu xung đột với ràng buộc hệ thống", null, request);
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<ErrorResponseDTO> handleMaxUploadSizeExceededException(
+            MaxUploadSizeExceededException exception,
+            HttpServletRequest request
+    ) {
+        HttpStatus status = HttpStatus.PAYLOAD_TOO_LARGE;
+        logHandledClientException("api.upload_too_large", status, exception, request);
+
+        return buildResponse(status, "Kích thước file upload vượt quá giới hạn cho phép", null, request);
+    }
+
+    @ExceptionHandler(MultipartException.class)
+    public ResponseEntity<ErrorResponseDTO> handleMultipartException(
+            MultipartException exception,
+            HttpServletRequest request
+    ) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        logHandledClientException("api.multipart_invalid", status, exception, request);
+
+        return buildResponse(status, "File upload không hợp lệ", null, request);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponseDTO> handleGlobalException(Exception exception, HttpServletRequest request) {
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
@@ -135,7 +223,9 @@ public class GlobalExceptionHandler {
                 .requestId(MonitoringLogger.currentRequestId())
                 .build();
 
-        return ResponseEntity.status(status).body(response);
+        return ResponseEntity.status(status)
+                .header(HttpHeaders.CACHE_CONTROL, "no-store")
+                .body(response);
     }
 
     private void logHandledClientException(

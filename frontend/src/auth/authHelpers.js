@@ -67,16 +67,29 @@ export function normalizeUser(payload) {
     sourcePayload.userType ??
     sourcePayload.accountType ??
     (staffId ? AUTH_USER_TYPES.staff : inferUserTypeFromRole(role));
+  const roleName =
+    source.roleName ??
+    sourcePayload.roleName ??
+    (typeof source.role === "object" ? source.role?.name : source.role) ??
+    role ??
+    "";
+  const userRoles = normalizeRoles([source.roles, sourcePayload.roles, roleName]);
+  const userPermissions = normalizePermissions([source.permissions, source.authorities, sourcePayload.permissions, sourcePayload.authorities]);
 
   return {
-    ...source,
+    avatarUrl: source.avatarUrl ?? source.avatar ?? "",
     email: source.email ?? sourcePayload.email ?? "",
     fullName: source.fullName ?? source.name ?? sourcePayload.fullName ?? "",
     id: source.id ?? source.userId ?? sourcePayload.userId ?? staffId ?? sourcePayload.id ?? null,
     phone: source.phone ?? sourcePayload.phone ?? "",
-    role,
+    permissions: userPermissions,
+    role: roleName,
+    roleName,
+    roles: userRoles,
     staffId,
+    status: source.status ?? sourcePayload.status ?? "",
     type: userType,
+    username: source.username ?? sourcePayload.username ?? "",
   };
 }
 

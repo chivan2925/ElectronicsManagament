@@ -25,6 +25,7 @@ The current authentication surface is admin/staff focused. Customer authenticati
 | `JwtUtils` | Generates, validates, and reads JWT values. |
 | `JwtAuthenticationFilter` | Reads bearer tokens and populates `SecurityContext`. |
 | `JwtAuthEntryPoint` | Writes `401 Unauthorized` responses. |
+| `JwtAccessDeniedHandler` | Writes JSON `403 Forbidden` responses for authenticated users without enough permission. |
 
 ## Public Routes
 
@@ -34,6 +35,8 @@ The following routes are public:
 POST /api/admin/auth/login
 GET  /api/system/payment/vnpay-ipn
 POST /api/system/payment/momo-ipn
+GET  /api/payments/vnpay-return
+GET  /api/payments/momo-return
 /v3/api-docs/**
 /swagger-ui/**
 /swagger-ui.html
@@ -127,12 +130,25 @@ The backend has:
 
 Current state:
 
-- Endpoints are mainly protected by authentication.
-- Fine-grained endpoint permissions are not fully implemented or documented yet.
+- Admin-only account, staff, role, and permission endpoints require `ROLE_ADMIN`.
+- Other admin resources require `ROLE_ADMIN` or a matching normalized `PERM:*` authority.
+- `StaffDetails` exposes `ROLE_STAFF`, inferred `ROLE_ADMIN`, raw role/permission values, and normalized permission values such as `PERM:product:view`.
+- Disabled staff or staff assigned to an inactive role cannot authenticate.
 
-Future rule:
+Current authorization matrix:
 
-- If method-level authorization is added, document each required permission in an authorization matrix.
+| Resource | View | Create | Update | Delete |
+| --- | --- | --- | --- | --- |
+| Categories | `category:view` | `category:create` | `category:update` | `category:delete` |
+| Brands | `brand:view` | `brand:create` | `brand:update` | `brand:delete` |
+| Products | `product:view` | `product:create` | `product:update` | `product:delete` |
+| Variants | `variant:view` | `variant:create` | `variant:update` | `variant:delete` |
+| Media | `media:view` | `media:create` | `media:update` | `media:delete` |
+| Orders | `order:view` | Admin only | `order:update` | Admin only |
+| Payments | `payment:view` or `order:view` | Admin only | Admin only | Admin only |
+| Return requests | `return-request:view` or `order:view` | Admin only | `return-request:update` or `order:update` | Admin only |
+| Coupons | `coupon:view` | `coupon:create` | `coupon:update` | `coupon:delete` |
+| Warehouses and stock transactions | `warehouse:view` | `warehouse:create` | `warehouse:update` | `warehouse:delete` |
 
 ## Error Shape
 
@@ -157,7 +173,7 @@ docs/api/ERROR_FORMAT.md
 
 ## Secret Management
 
-Configuration currently includes local secrets and provider keys in `application.yml`.
+Configuration reads secrets and provider keys from environment variables and keeps committed defaults as development placeholders.
 
 Rules:
 
@@ -179,11 +195,10 @@ electronics:
 
 Before production:
 
-1. Move secrets out of `application.yml`.
-2. Add admin route protection in frontend.
-3. Add permission matrix for admin endpoints.
-4. Add customer auth if public user flows are built.
-5. Review token cleanup schedule.
-6. Review password reset flow.
-7. Ensure payment webhook signature validation is covered by tests.
-8. Disable noisy SQL logging in production.
+1. Override every placeholder secret through environment variables.
+2. Keep frontend and backend permission matrices aligned.
+3. Add customer auth if public user flows are built.
+4. Review token cleanup schedule.
+5. Review password reset flow.
+6. Ensure payment webhook signature validation is covered by tests.
+7. Disable noisy SQL logging in production.

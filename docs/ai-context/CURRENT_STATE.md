@@ -90,6 +90,8 @@ The frontend now has production-oriented route loading with route-level lazy loa
 
 The frontend and backend now have a no-SaaS logging and monitoring foundation. Frontend monitoring lives under `frontend/src/monitoring` with structured client logs, a local monitoring buffer, global error tracking, API failure tracking, payment error tracking, route preload/error tracking, route-change hooks, and `X-Request-Id` propagation from the shared API client. Backend monitoring lives under `backend/electronics/src/main/java/org/example/electronics/monitoring` with structured key-value logging helpers and request correlation through `X-Request-Id`/MDC. Auth, order, payment, webhook, unauthorized, and exception flows now emit reusable structured events.
 
+The ecommerce security hardening review added backend admin role/permission enforcement, normalized `ROLE_*` and `PERM:*` authorities, JSON `403` handling, safer JWT validation logging, no-store headers for sensitive auth/reset responses, environment-driven secrets, stricter payment callback validation, stricter media upload validation, safer frontend auth persistence, and root `SECURITY.md` documentation.
+
 The Phase 6 completion review tightened customer ecommerce UX consistency across search, reviews, wishlist, recommendations, cart, checkout, order tracking, notifications, responsive behavior, animations, and performance without a large redesign. Internal storefront header and notification navigation now stays within React Router, search and wishlist states reuse cleaner shared patterns, product identity matching is centralized, PLP search normalization handles punctuation and Vietnamese/no-accent queries more consistently, and cart recommendations use the optimized image foundation.
 
 Phase 2 cleanup normalized shared/admin visual patterns for cards, borders, shadows, hover states, focus states, icon buttons, typography usage, and responsive behavior without a large rewrite.
@@ -558,6 +560,7 @@ Latest validation:
 - `npm run lint`, `npm run build`, `git diff --check`, and local route smoke checks passed after upgrading the ecommerce image system. Smoke checks returned `200` for `/`, `/products`, `/products/:slug`, `/cart`, `/checkout`, `/admin/media`, and `/admin/products`; `git diff --check` reported only CRLF normalization warnings for edited frontend files.
 - `npm run lint`, `npm run build`, `git diff --check`, targeted dependency duplication checks with `npm ls react react-dom framer-motion lucide-react recharts axios`, and local route smoke checks passed after the production frontend architecture optimization. The main app chunk is about 105 kB, React/router/motion/http are cacheable vendor chunks, Product Detail route chunk is about 34 kB, and PLP/PDP catalog flows no longer issue per-product detail requests for listing cards.
 - `npm run lint`, `npm run build`, `git diff --check`, `mvn -q -DskipTests compile`, and `mvn test` passed after adding the frontend/backend logging and monitoring foundation. `mvn test` still printed the existing local PostgreSQL `media.display_order` DDL warning.
+- `npm run lint`, `npm run build`, `mvn -q -DskipTests compile`, and `mvn test` passed after the ecommerce security hardening review. `mvn test` still printed the existing local PostgreSQL `media.display_order` DDL warning.
 
 ## Known Issues
 
@@ -572,6 +575,7 @@ Latest validation:
 - Client checkout/profile routes are customer-session only in the frontend; backend account ownership enforcement should still be tightened when public customer auth is implemented.
 - The frontend refresh-token flow is ready, but the current backend admin auth controller only exposes login/logout; real refresh requires backend `refreshToken` response support and `POST /admin/auth/refresh`.
 - `/checkout` is frontend-auth protected and creates backend orders with VNPay Sandbox and MoMo Sandbox handoff; production payment credentials, deployed return URLs, and customer-auth ownership enforcement are not production-ready.
+- Backend config now uses environment placeholders for secrets, but real production secret injection and rotation are not configured.
 - Backend local startup may fail if port `8080` is occupied by another local service; run on another port or free `8080`.
 - Existing local PostgreSQL schema is partially legacy and still needs controlled migration/backfill for non-auth tables instead of relying on Hibernate `ddl-auto:update`.
 - Backend Category API currently does not expose `description` in request/response DTOs; category description in admin UI is session-level until backend contract is extended.
@@ -629,7 +633,7 @@ Backend gaps:
 - Customer auth APIs are not complete.
 - Cart APIs are not complete.
 - VNPay Sandbox and MoMo Sandbox handoff exist for checkout orders; production payment credentials, deployed return URLs, and public checkout ownership contracts are not complete.
-- Production secret management is not ready.
+- Production secret values and deployment-time secret injection still need environment-specific setup.
 
 ## Documentation State
 

@@ -36,6 +36,8 @@ public class JwtAuthEntryPoint implements AuthenticationEntryPoint {
 
         httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
         httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        httpServletResponse.setHeader("Cache-Control", "no-store");
+        httpServletResponse.setHeader("Pragma", "no-cache");
         httpServletResponse.setHeader(MonitoringLogger.REQUEST_ID_HEADER, MonitoringLogger.currentRequestId());
 
         final Map<String, Object> body = new HashMap<>();

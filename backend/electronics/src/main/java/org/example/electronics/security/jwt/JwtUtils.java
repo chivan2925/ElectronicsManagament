@@ -1,10 +1,9 @@
 package org.example.electronics.security.jwt;
 
-import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,6 +32,17 @@ public class JwtUtils {
 
     private SecretKey key() {
         return Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
+    }
+
+    @PostConstruct
+    void validateJwtSettings() {
+        if (jwtSecret == null || jwtSecret.getBytes(StandardCharsets.UTF_8).length < 32) {
+            throw new IllegalStateException("JWT secret must be configured and at least 32 bytes long");
+        }
+
+        if (jwtExpirationMs <= 0) {
+            throw new IllegalStateException("JWT expiration must be a positive value");
+        }
     }
 
     public String generateJwtToken(Authentication authentication) {
@@ -70,17 +80,11 @@ public class JwtUtils {
             Jwts.parser().verifyWith(key()).build().parseSignedClaims(token);
             return true;
         }
-        catch (MalformedJwtException e) {
-            logger.error("Token không đúng định dạng {}", e.getMessage());
-        }
-        catch (ExpiredJwtException e) {
-            logger.error("Token đã hết hạn: {}", e.getMessage());
-        }
-        catch (UnsupportedJwtException e) {
-            logger.error("Token không được hỗ trợ: {}", e.getMessage());
+        catch (JwtException e) {
+            logger.warn("JWT validation failed: {}", e.getClass().getSimpleName());
         }
         catch (IllegalArgumentException e) {
-            logger.error("Chuỗi JWT bị trống: {}", e.getMessage());
+            logger.warn("JWT validation failed: empty token");
         }
 
         return false;

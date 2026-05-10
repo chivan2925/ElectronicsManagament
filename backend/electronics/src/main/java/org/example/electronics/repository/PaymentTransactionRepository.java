@@ -29,6 +29,8 @@ public interface PaymentTransactionRepository extends JpaRepository<PaymentTrans
 
     boolean existsByProviderPaymentId(String id);
 
+    Optional<PaymentTransactionEntity> findByProviderPaymentId(String providerPaymentId);
+
     @Query(value = "SELECT p FROM PaymentTransactionEntity p " +
             "LEFT JOIN FETCH p.order " +
             "LEFT JOIN FETCH p.returnRequest " +

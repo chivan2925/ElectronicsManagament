@@ -68,6 +68,7 @@ Current behavior:
 
 - Uses `VITE_API_BASE_URL`.
 - Uses `VITE_API_TIMEOUT`.
+- Uses `VITE_AUTH_TOKEN_STORAGE` to choose `sessionStorage` or `localStorage` for browser auth persistence.
 - Uses `VITE_AUTH_REFRESH_ENDPOINT`.
 - Product catalog services use `VITE_PRODUCT_API_PATH`.
 - Checkout services use `VITE_COUPON_API_PATH`, `VITE_ORDER_API_PATH`, and `VITE_USER_API_PATH`.
@@ -104,6 +105,7 @@ frontend/.env.example
 ```env
 VITE_API_BASE_URL=http://localhost:8080/api
 VITE_API_TIMEOUT=15000
+VITE_AUTH_TOKEN_STORAGE=session
 VITE_AUTH_REFRESH_ENDPOINT=/admin/auth/refresh
 VITE_PRODUCT_API_PATH=/admin/products
 VITE_COUPON_API_PATH=/admin/coupons
@@ -395,6 +397,7 @@ Authorization: Bearer <token>
 Frontend should:
 
 - Store token only after successful login.
+- Prefer `VITE_AUTH_TOKEN_STORAGE=session` for safer token persistence when long-lived browser sessions are not required.
 - Store `refreshToken` only when the backend returns it.
 - Store only safe user display metadata, roles, and permissions.
 - On app start, restore the stored session and validate the access token expiry.

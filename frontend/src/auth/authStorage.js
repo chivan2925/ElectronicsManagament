@@ -14,16 +14,26 @@ export const AUTH_EVENTS = {
   unauthorized: "auth:unauthorized",
 };
 
-function getStorage() {
+const TOKEN_STORAGE_MODE = String(import.meta.env.VITE_AUTH_TOKEN_STORAGE ?? "local").toLowerCase();
+
+function getStorageByMode(mode) {
   if (typeof window === "undefined") {
     return null;
   }
 
   try {
-    return window.localStorage;
+    return mode === "session" ? window.sessionStorage : window.localStorage;
   } catch {
     return null;
   }
+}
+
+function getStorage() {
+  return getStorageByMode(TOKEN_STORAGE_MODE === "session" ? "session" : "local");
+}
+
+function getFallbackStorage() {
+  return TOKEN_STORAGE_MODE === "session" ? getStorageByMode("local") : null;
 }
 
 function readJson(key, fallback) {
@@ -34,7 +44,7 @@ function readJson(key, fallback) {
   }
 
   try {
-    const value = storage.getItem(key);
+    const value = storage.getItem(key) ?? getFallbackStorage()?.getItem(key);
     return value ? JSON.parse(value) : fallback;
   } catch {
     return fallback;
@@ -57,7 +67,7 @@ function writeJson(key, value) {
 }
 
 export function getStoredAccessToken() {
-  return getStorage()?.getItem(AUTH_STORAGE_KEYS.accessToken) ?? null;
+  return getStorage()?.getItem(AUTH_STORAGE_KEYS.accessToken) ?? getFallbackStorage()?.getItem(AUTH_STORAGE_KEYS.accessToken) ?? null;
 }
 
 export function setStoredAccessToken(accessToken) {
@@ -75,7 +85,7 @@ export function setStoredAccessToken(accessToken) {
 }
 
 export function getStoredRefreshToken() {
-  return getStorage()?.getItem(AUTH_STORAGE_KEYS.refreshToken) ?? null;
+  return getStorage()?.getItem(AUTH_STORAGE_KEYS.refreshToken) ?? getFallbackStorage()?.getItem(AUTH_STORAGE_KEYS.refreshToken) ?? null;
 }
 
 export function setStoredRefreshToken(refreshToken) {
@@ -115,7 +125,7 @@ export function getStoredAuthSession() {
 export function persistAuthSession(session = {}) {
   setStoredAccessToken(session.accessToken);
   setStoredRefreshToken(session.refreshToken);
-  writeJson(AUTH_STORAGE_KEYS.user, session.user ?? null);
+  writeJson(AUTH_STORAGE_KEYS.user, sanitizeAuthUser(session.user));
   writeJson(AUTH_STORAGE_KEYS.roles, session.roles ?? []);
   writeJson(AUTH_STORAGE_KEYS.permissions, session.permissions ?? []);
 }
@@ -127,7 +137,36 @@ export function clearAuthSession() {
     return;
   }
 
-  Object.values(AUTH_STORAGE_KEYS).forEach((key) => storage.removeItem(key));
+  Object.values(AUTH_STORAGE_KEYS).forEach((key) => {
+    storage.removeItem(key);
+    getFallbackStorage()?.removeItem(key);
+  });
+}
+
+function pickSafeArray(value) {
+  return Array.isArray(value) ? value.filter(Boolean) : [];
+}
+
+export function sanitizeAuthUser(user) {
+  if (!user || typeof user !== "object") {
+    return null;
+  }
+
+  return {
+    avatarUrl: user.avatarUrl ?? user.avatar ?? "",
+    email: user.email ?? "",
+    fullName: user.fullName ?? user.name ?? "",
+    id: user.id ?? user.userId ?? user.staffId ?? null,
+    permissions: pickSafeArray(user.permissions),
+    phone: user.phone ?? user.phoneNumber ?? "",
+    role: typeof user.role === "string" ? user.role : user.role?.name ?? user.roleName ?? "",
+    roleName: user.roleName ?? (typeof user.role === "object" ? user.role.name : user.role ?? ""),
+    roles: pickSafeArray(user.roles),
+    staffId: user.staffId ?? null,
+    status: user.status ?? "",
+    type: user.type ?? "",
+    username: user.username ?? "",
+  };
 }
 
 export function notifyAuthSessionChanged(session = null) {

@@ -3,6 +3,10 @@ import { AlertCircle, CheckCircle2, ImagePlus, Loader2, Star, Upload, X } from "
 import OptimizedImage from "../../../components/common/OptimizedImage";
 import { cn } from "../../../utils/classNames";
 
+const MAX_UPLOAD_BYTES = 5 * 1024 * 1024;
+const ALLOWED_UPLOAD_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
+const ALLOWED_UPLOAD_EXTENSIONS = new Set(["jpg", "jpeg", "png", "webp"]);
+
 function formatFileSize(size = 0) {
   if (size >= 1024 * 1024) {
     return `${(size / 1024 / 1024).toFixed(1)} MB`;
@@ -39,16 +43,42 @@ function revokeQueuePreviews(items = []) {
   items.forEach((item) => revokePreviewUrl(item.previewUrl));
 }
 
-function createQueueItem(file) {
+function getFileExtension(fileName = "") {
+  const extension = fileName.split(".").pop();
+
+  return extension ? extension.toLowerCase() : "";
+}
+
+function validateUploadFile(file) {
+  if (!file) {
+    return "File không hợp lệ.";
+  }
+
+  if (file.size > MAX_UPLOAD_BYTES) {
+    return "Ảnh không được vượt quá 5MB.";
+  }
+
+  if (!ALLOWED_UPLOAD_TYPES.has(file.type)) {
+    return "Chỉ hỗ trợ ảnh JPG, PNG hoặc WEBP.";
+  }
+
+  if (!ALLOWED_UPLOAD_EXTENSIONS.has(getFileExtension(file.name))) {
+    return "Phần mở rộng file phải là JPG, PNG hoặc WEBP.";
+  }
+
+  return "";
+}
+
+function createQueueItem(file, error = "") {
   return {
-    error: "",
+    error,
     file,
     id: `${file.name}-${file.lastModified}-${Math.random().toString(36).slice(2)}`,
     name: file.name,
     previewUrl: createObjectPreviewUrl(file),
     progress: 0,
     size: file.size,
-    status: "queued",
+    status: error ? "failed" : "queued",
   };
 }
 
@@ -93,7 +123,7 @@ function MediaUploader({
   };
 
   const handleFiles = async (fileList) => {
-    const acceptedFiles = Array.from(fileList ?? []).filter((file) => file.type?.startsWith("image/"));
+    const selectedFiles = Array.from(fileList ?? []);
 
     if (!canUpload) {
       setNotice("Bạn chưa có quyền upload media.");
@@ -105,13 +135,14 @@ function MediaUploader({
       return;
     }
 
-    if (acceptedFiles.length === 0) {
-      setNotice("Chỉ hỗ trợ file hình ảnh.");
+    if (selectedFiles.length === 0) {
+      setNotice("Chọn ít nhất một ảnh JPG, PNG hoặc WEBP.");
       return;
     }
 
     setNotice("");
-    const nextQueueItems = acceptedFiles.map(createQueueItem);
+    const nextQueueItems = selectedFiles.map((file) => createQueueItem(file, validateUploadFile(file)));
+    const uploadableQueueItems = nextQueueItems.filter((item) => item.status !== "failed");
     const uploadedItems = [];
 
     setQueue((currentQueue) => {
@@ -124,7 +155,12 @@ function MediaUploader({
       return nextQueue;
     });
 
-    for (const [index, queueItem] of nextQueueItems.entries()) {
+    if (uploadableQueueItems.length === 0) {
+      setNotice("Không có file nào đạt yêu cầu upload.");
+      return;
+    }
+
+    for (const [index, queueItem] of uploadableQueueItems.entries()) {
       updateQueueItem(queueItem.id, { progress: 4, status: "uploading" });
 
       try {
@@ -239,7 +275,7 @@ function MediaUploader({
             tabIndex={0}
           >
             <input
-              accept="image/*"
+              accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp"
               className="hidden"
               disabled={!canStartUpload}
               multiple

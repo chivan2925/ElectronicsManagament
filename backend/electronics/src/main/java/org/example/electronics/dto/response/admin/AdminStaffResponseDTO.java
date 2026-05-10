@@ -31,8 +31,6 @@ public record AdminStaffResponseDTO(
 
         String rawPassword,
 
-        String hashedPassword,
-
         UserStatus status,
 
         LocalDateTime assignedAt,

@@ -49,8 +49,13 @@ Main classes:
 
 Current service validation:
 
-- Rejects files whose content type does not start with `image/`.
+- Rejects empty files.
+- Enforces a 5MB service-level file size limit.
+- Accepts only `image/jpeg`, `image/png`, and `image/webp`.
+- Accepts only `.jpg`, `.jpeg`, `.png`, and `.webp` extensions.
+- Verifies image magic bytes for JPG, PNG, and WEBP before upload.
 - Uploads accepted images to Cloudinary folder `electronics_store`.
+- Uses Cloudinary image resource type, allowed formats, unique filenames, and no overwrite.
 - Returns the secure URL and public id.
 
 Configured local size limits:
@@ -162,14 +167,13 @@ Do not submit local object URLs to the backend.
 - Require admin authentication for upload.
 - Keep provider credentials on the backend only.
 - Do not expose Cloudinary API secret to the frontend.
-- Restrict accepted file types to images.
+- Restrict accepted file types to JPG, PNG, and WEBP images.
 - Keep size limits conservative.
-- Consider additional image validation before production.
+- Do not trust browser MIME type alone.
 
 ## Future Improvements
 
 - Normalize upload response docs and controller behavior.
 - Add Cloudinary cleanup for all media delete paths.
 - Add image dimensions or file size metadata if the UI needs it.
-- Add server-side extension and magic-byte validation.
 - Add rate limiting for upload endpoints.

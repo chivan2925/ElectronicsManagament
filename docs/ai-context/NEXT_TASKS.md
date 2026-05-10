@@ -14,6 +14,13 @@ Ready for Phase 7 — Advanced Features & Production Systems
 
 ## Recently Completed
 
+- Completed an ecommerce security hardening review across JWT handling, token storage, protected routes, role permissions, payment callbacks, uploads, API exposure, exception handling, and sensitive data handling.
+- Added backend admin role/permission enforcement with normalized `ROLE_*` and `PERM:*` authorities, JSON `403` responses, no-store sensitive responses, safer JWT validation logging, and environment-driven backend secrets.
+- Hardened VNPay/MoMo callback validation with required-field checks, merchant/signature/amount validation, local transaction ownership checks, and duplicate provider transaction id rejection.
+- Hardened media uploads with frontend/backend JPG/PNG/WEBP restrictions, 5MB limits, extension and magic-byte validation, and safer Cloudinary upload options.
+- Added safer frontend auth persistence through `VITE_AUTH_TOKEN_STORAGE=session` and sanitized stored auth user metadata.
+- Added root `SECURITY.md` and updated backend security/payment/upload docs.
+- Verified `npm run lint`, `npm run build`, `mvn -q -DskipTests compile`, and `mvn test` after the security hardening review. `mvn test` still printed the existing local PostgreSQL `media.display_order` DDL warning.
 - Built a frontend/backend logging and monitoring foundation without integrating a real SaaS monitoring service.
 - Added `frontend/src/monitoring` for structured client logs, local monitoring buffering, global error tracking, API failure tracking, payment error tracking, route preload/error tracking, and optional route-change tracking.
 - Added frontend `X-Request-Id` propagation through the shared Axios client and normalized API errors now carry backend/client request ids.
