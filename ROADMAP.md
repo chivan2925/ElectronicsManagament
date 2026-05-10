@@ -7,7 +7,7 @@ This roadmap defines the planned phases for ElectronicsManagement.
 The project is currently in:
 
 ```text
-Ready for Phase 7 — Advanced Features & Production Systems
+Phase 8 — Production + Deploy
 ```
 
 ## Product Scope
@@ -36,8 +36,8 @@ ElectronicsManagement is built for an electronics and gaming catalog with these 
 | 4 | Auth + API | Completed | Add admin login, protected routes, API modules, and real data integration. |
 | 5 | Admin Dashboard | Completed | Convert mock admin pages into authenticated API-backed CRUD workflows. |
 | 6 | Ecommerce Core | Completed | Implement real browsing, cart, checkout, payment, and order tracking foundations. |
-| 7 | Advanced Features & Production Systems | Current | Add mature ecommerce features and harden production-facing systems. |
-| 8 | Production + Deploy | Planned | Harden config, secrets, migrations, testing, performance, and deployment. |
+| 7 | Advanced Features & Production Systems | Completed | Add mature ecommerce features and harden production-facing systems. |
+| 8 | Production + Deploy | Current | Harden config, secrets, migrations, testing, performance, and deployment. |
 
 ## Phase 1 — Frontend Foundation
 
@@ -165,6 +165,7 @@ Key tasks:
 Goals:
 
 - Prepare the project for production deployment.
+- Keep the completed Phase 7 ecommerce production-ready foundation stable while real infrastructure is prepared.
 
 Key tasks:
 
@@ -178,8 +179,8 @@ Key tasks:
 
 ## Current Priority
 
-1. Start Phase 7 advanced features and production systems.
+1. Start Phase 8 production/deploy preparation without performing a real production deployment yet.
 2. Preserve homepage layout while improving quality.
 3. Reuse Phase 2 design-system primitives and visual patterns.
 4. Keep AI context files up to date.
-5. Keep the completed Phase 6 customer ecommerce and Phase 5 admin CRUD systems stable while advanced features are added.
+5. Keep the completed Phase 7 ecommerce production-ready foundation, Phase 6 customer ecommerce, and Phase 5 admin CRUD systems stable while production infrastructure is prepared.

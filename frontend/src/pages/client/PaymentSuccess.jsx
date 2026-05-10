@@ -20,6 +20,7 @@ function PaymentSuccess() {
   const paymentResult = usePaymentResult({ defaultStatus: "pending" });
   const {
     amount,
+    clientIssue,
     error,
     isVerifying,
     message,
@@ -83,6 +84,15 @@ function PaymentSuccess() {
                   error={error}
                   surface="store"
                   title="Chưa xác minh được trạng thái thanh toán"
+                />
+              )}
+
+              {clientIssue && !error && (
+                <ApiErrorAlert
+                  className="mt-5 max-w-2xl"
+                  message={message}
+                  surface="store"
+                  title="Thiếu thông tin xác minh thanh toán"
                 />
               )}
 

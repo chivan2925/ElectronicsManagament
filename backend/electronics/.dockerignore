@@ -1,0 +1,10 @@
+target
+.mvn/wrapper/maven-wrapper.jar
+.env
+.env.*
+*.log
+login-*.out
+login-body.json
+.git
+.idea
+.vscode

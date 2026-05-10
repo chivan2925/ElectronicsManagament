@@ -7,10 +7,10 @@ This guide defines how frontend API integration should be done later.
 Current phase:
 
 ```text
-Ready for Phase 7 — Advanced Features & Production Systems
+Phase 8 — Production + Deploy
 ```
 
-The shared frontend API layer and centralized auth architecture exist. Admin/staff login is connected to the backend JWT API, storefront product listing/detail pages are connected to Product API data, authenticated checkout creates backend orders with Coupon/User API support, and authenticated account pages use User Profile/User Order APIs including the `/profile/orders/:id` tracking detail route. Core admin CRUD modules are connected to backend APIs; Phase 7 focuses on advanced storefront workflows, payment hardening, and production readiness.
+The shared frontend API layer and centralized auth architecture exist. Admin/staff login is connected to the backend JWT API, storefront product listing/detail pages are connected to Product API data, authenticated checkout creates backend orders with Coupon/User API support, and authenticated account pages use User Profile/User Order APIs including the `/profile/orders/:id` tracking detail route. Core admin CRUD modules are connected to backend APIs. Phase 8 focuses on production/deploy preparation, migrations, public customer ownership contracts, and real infrastructure readiness.
 
 ## Backend API Scope
 
@@ -377,7 +377,7 @@ Phase 5 completed the core admin integration in this order:
 4. Admin variants.
 5. Admin media upload.
 
-Phase 7 should focus on advanced storefront workflows, payment hardening, customer ownership, tests, and production-ready API contracts.
+Phase 8 should focus on deployment-safe API contracts, public customer ownership, tests, migrations, production payment configuration, and real infrastructure readiness.
 
 ## Auth Rules
 

@@ -65,7 +65,11 @@ export function normalizePaymentStatus(value, fallback = PAYMENT_STATUSES.PENDIN
 }
 
 export function normalizePaymentProvider(value, fallback = "VNPAY") {
-  return String(value || fallback).trim().toUpperCase();
+  const normalizedProvider = String(value || fallback).trim().toUpperCase();
+  const normalizedFallback = String(fallback || PAYMENT_PROVIDERS.VNPAY).trim().toUpperCase();
+  const fallbackProvider = Object.values(PAYMENT_PROVIDERS).includes(normalizedFallback) ? normalizedFallback : PAYMENT_PROVIDERS.VNPAY;
+
+  return Object.values(PAYMENT_PROVIDERS).includes(normalizedProvider) ? normalizedProvider : fallbackProvider;
 }
 
 export function getPaymentProviderLabel(provider) {

@@ -9,11 +9,29 @@ Always update this file after meaningful work.
 ## Current Phase
 
 ```text
-Ready for Phase 7 — Advanced Features & Production Systems
+Phase 8 — Production + Deploy (Phase 7 completed)
 ```
 
 ## Recently Completed
 
+- Completed the Phase 7 production audit across frontend architecture, backend integration, payment flows, admin system, ecommerce UX, performance, security, responsive quality, duplication, error handling, loading states, consistency, and deployment readiness.
+- Added backend `/api/health` and `/api/health/readiness` probes without exposing sensitive config.
+- Wired the production backend Docker healthcheck to readiness and made production Compose wait for a healthy backend before starting the frontend.
+- Hardened storefront payment result handling for missing/invalid callback order ids, sanitized callback query text before display, and restricted frontend payment provider normalization to supported providers.
+- Improved route loading fallback accessibility and responsive text safety without changing page layouts.
+- Marked Phase 7 completed and the ecommerce platform production-ready foundation completed.
+- Verified `npm run lint`, `npm run build`, `mvn -q -DskipTests compile`, `mvn test`, and production `docker compose --env-file .env.example config`.
+- Added a GitHub Actions CI/CD foundation under `.github/workflows/` with separate frontend and backend check workflows.
+- Added frontend CI for npm dependency install, lint, optional test-script placeholder, and Vite production build.
+- Added backend CI for Java 21 Maven wrapper tests with a PostgreSQL service and CI-safe environment placeholders.
+- Added scalable workflow basics: path filters, dependency caching, concurrency cancellation, manual dispatch, and read-only repository permissions.
+- Kept CI limited to checks only; no production deployment step was added.
+- Verified `npm run lint`, `npm run test --if-present`, `npm run build`, `mvn test`, Prettier workflow YAML check, and `git diff --check`.
+- Added a Docker deployment foundation with production-oriented frontend/backend Dockerfiles, root `docker-compose.yml`, separate `docker-compose.dev.yml`, Postgres service wiring, root `.env.example`, and `DEPLOYMENT.md`.
+- Added unprivileged Nginx frontend serving with SPA fallback, static asset caching, security headers, and `/api` proxying to the backend service.
+- Made backend Docker/runtime settings configurable through environment variables, including server port, JPA DDL mode, SQL logging, CORS origins, SpringDoc exposure, and payment frontend URLs.
+- Documented local production-like and development Docker workflows without performing a real deployment.
+- Verified production and development Docker Compose config rendering with `.env.example`, `npm run build`, `mvn -q -DskipTests compile`, `mvn test`, and `git diff --check`; Docker image build still needs a running local Docker daemon.
 - Completed an ecommerce security hardening review across JWT handling, token storage, protected routes, role permissions, payment callbacks, uploads, API exposure, exception handling, and sensitive data handling.
 - Added backend admin role/permission enforcement with normalized `ROLE_*` and `PERM:*` authorities, JSON `403` responses, no-store sensitive responses, safer JWT validation logging, and environment-driven backend secrets.
 - Hardened VNPay/MoMo callback validation with required-field checks, merchant/signature/amount validation, local transaction ownership checks, and duplicate provider transaction id rejection.
@@ -292,9 +310,9 @@ Ready for Phase 7 — Advanced Features & Production Systems
 
 1. Preserve the existing homepage layout.
 2. Keep the normalized frontend folder structure stable.
-3. Start Phase 7 with advanced customer features and production-system hardening.
-4. Keep the completed Phase 6 customer ecommerce foundations stable while backend public APIs mature.
-5. Keep the completed admin CRUD system stable while advanced storefront workflows are added.
+3. Start Phase 8 production/deploy preparation without deploying production from this repo yet.
+4. Keep the completed Phase 7 ecommerce production-ready foundation stable while backend public APIs mature.
+5. Keep the completed Phase 6 customer ecommerce and Phase 5 admin CRUD systems stable while production infrastructure is prepared.
 6. Use centralized feedback components for loading, error, empty, permission, and refresh states in new workflows.
 7. Move customer auth and account ownership checks to a dedicated public customer auth contract when ready.
 8. Keep `mvn test` as a backend validation gate and continue reducing local schema warnings.
@@ -346,7 +364,7 @@ Ready for Phase 7 — Advanced Features & Production Systems
 
 ### Client Ecommerce
 
-- Use Phase 7 to harden and extend customer-facing ecommerce workflows without destabilizing the completed Phase 6 UI foundations.
+- Maintain the completed Phase 7 customer-facing ecommerce foundation without destabilizing the completed Phase 6 UI foundations.
 - Keep the register flow local until public customer auth APIs are ready.
 - Move storefront customer login to a public customer auth endpoint when the API contract is available.
 - Keep `/profile`, `/profile/orders`, and `/profile/settings` behind `ProtectedRoute`.
@@ -358,16 +376,16 @@ Ready for Phase 7 — Advanced Features & Production Systems
 - Keep `/categories/:categorySlug` category browsing aligned with product listing filters and canonical metadata.
 - Replace the homepage mock loading timer with real loading state when storefront data integration begins.
 
-### Phase 7 Advanced Features & Production Systems
+### Phase 8 Production + Deploy
 
-- Add returns/refunds UI and connect it to backend return request flows when customer-facing contracts are ready.
-- Deepen review workflows with moderation-ready states, ownership checks, and richer media/helpfulness behavior.
-- Add real notification, loyalty, and recommendation backends when API contracts are available; keep current local foundations as fallbacks.
+- Keep real deployment blocked until hosting, TLS, external secrets, backups, and migration automation are finalized.
+- Add controlled PostgreSQL migration/backfill scripts for legacy schema drift and switch production schema handling to validation.
+- Finalize public customer registration/login, account ownership, cart persistence, wishlist persistence, and public order tracking contracts.
+- Move VNPay/MoMo from sandbox to production only through environment-specific credentials, HTTPS return URLs, provider reconciliation checks, and critical-flow tests.
+- Connect real notification, loyalty, recommendation, search, and customer-facing returns/refunds APIs when backend contracts are available.
 - Connect a backend WebSocket/SSE notification endpoint to `VITE_REALTIME_WS_URL` when the API contract is ready.
-- Harden customer registration, customer login, account ownership, cart persistence, and public order tracking contracts.
-- Harden payment state handling with production return URLs, customer ownership checks, critical-flow tests, deployment-safe credentials, and provider reconciliation checks.
-- Replace remaining homepage, search, wishlist, recently viewed, and recommendation mock/local data with public APIs as those APIs mature.
-- Add critical-flow tests, database migration/backfill scripts, production config review, deployment docs, and monitoring/observability planning.
+- Expand test coverage around auth guards, checkout/order creation, payment callbacks/returns, upload validation, admin permissions, and health/readiness.
+- Keep using Docker Compose for local production-like validation and GitHub Actions as the check gate; add deploy workflows only after rollout policy is defined.
 - Keep backend structured logs on stable event names through `MonitoringLogger` and preserve `X-Request-Id` correlation in new controllers/services.
 
 ### Admin Dashboard Maintenance
@@ -400,7 +418,7 @@ Ready for Phase 7 — Advanced Features & Production Systems
 - Backend startup also reports a database DDL warning for existing null `media.display_order` values.
 - Backend local startup on default port may fail when another process already binds `8080`.
 - Local PostgreSQL still contains legacy drift in non-auth modules, including non-null columns and warehouse transaction foreign keys, and should be migrated with controlled SQL scripts instead of relying on `ddl-auto` alone.
-- Production deployment is not ready.
+- Docker deployment foundation exists, but real production hosting, TLS, external secrets, backups, and migration automation are not complete.
 - Dynamic SEO metadata is client-side only until a future SSR/prerendering plan exists.
 
 ## Maintenance Reminder

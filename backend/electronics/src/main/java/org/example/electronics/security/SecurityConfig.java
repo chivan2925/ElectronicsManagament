@@ -6,6 +6,7 @@ import org.example.electronics.security.auth.admin.StaffDetailsService;
 import org.example.electronics.security.jwt.JwtAccessDeniedHandler;
 import org.example.electronics.security.jwt.JwtAuthEntryPoint;
 import org.example.electronics.security.jwt.JwtAuthenticationFilter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -26,6 +27,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -39,6 +41,9 @@ public class SecurityConfig {
     private final JwtAuthEntryPoint jwtAuthEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    @Value("${app.cors.allowed-origin-patterns:http://localhost:*,http://127.0.0.1:*}")
+    private String allowedOriginPatterns;
 
     private static final String ROLE_ADMIN = "ROLE_ADMIN";
     private static final String ROLE_STAFF = "ROLE_STAFF";
@@ -99,6 +104,7 @@ public class SecurityConfig {
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/health", "/api/health/**").permitAll()
                         .requestMatchers("/api/admin/auth/login").permitAll()
                         .requestMatchers("/api/system/payment/vnpay-ipn", "/api/system/payment/momo-ipn").permitAll()
                         .requestMatchers("/api/payments/vnpay-return", "/api/payments/momo-return").permitAll()
@@ -159,10 +165,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOriginPatterns(List.of(
-                "http://localhost:*",
-                "http://127.0.0.1:*"
-        ));
+        config.setAllowedOriginPatterns(parseAllowedOriginPatterns());
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setExposedHeaders(List.of("Authorization", MonitoringLogger.REQUEST_ID_HEADER));
@@ -196,5 +199,18 @@ public class SecurityConfig {
                 .replaceAll("[._\\s-]+", ":")
                 .replaceAll(":+", ":")
                 .replaceAll("^:|:$", "");
+    }
+
+    private List<String> parseAllowedOriginPatterns() {
+        List<String> patterns = Arrays.stream(allowedOriginPatterns.split(","))
+                .map(String::trim)
+                .filter(pattern -> !pattern.isBlank())
+                .toList();
+
+        if (patterns.isEmpty()) {
+            return List.of("http://localhost:*", "http://127.0.0.1:*");
+        }
+
+        return patterns;
     }
 }

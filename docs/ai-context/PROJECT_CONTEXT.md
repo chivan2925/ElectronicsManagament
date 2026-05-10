@@ -41,16 +41,16 @@ Primary category display labels:
 ## Current Phase
 
 ```text
-Ready for Phase 7 — Advanced Features & Production Systems
+Phase 8 — Production + Deploy
 ```
 
 Focus:
 
-- Preserve the homepage while hardening customer-facing ecommerce workflows.
+- Preserve the homepage while preparing real production deployment.
 - Keep frontend structure clean.
 - Keep context docs accurate.
-- Keep the completed API-backed admin dashboard stable.
-- Harden payment, customer auth, ownership, and production readiness as backend contracts mature.
+- Keep the completed API-backed admin dashboard and Phase 7 ecommerce production-ready foundation stable.
+- Finalize migrations, secrets, TLS, backups, public customer auth, ownership, and production payment contracts before real deployment.
 
 ## Frontend Stack
 
@@ -102,7 +102,7 @@ Additional backend areas:
 - Admin CRUD pages exist for the core backend resources.
 - Client catalog, checkout, and account routes have partial real API integration.
 - Admin CRUD pages for the core resources are connected to backend APIs; dashboard/report analytics still use mock data.
-- `frontend/src/api/client.js`, `resourceService.js`, payment service modules, and the `frontend/src/admin` architecture foundation are ready for Phase 7 production hardening.
+- `frontend/src/api/client.js`, `resourceService.js`, payment service modules, and the `frontend/src/admin` architecture foundation are ready for Phase 8 production/deploy preparation.
 
 ## UI Direction
 

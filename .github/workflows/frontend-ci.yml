@@ -1,0 +1,71 @@
+name: Frontend CI
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - "frontend/**"
+      - ".github/workflows/frontend-ci.yml"
+  pull_request:
+    paths:
+      - "frontend/**"
+      - ".github/workflows/frontend-ci.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: frontend-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  frontend-checks:
+    name: Lint, test placeholder, and build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    defaults:
+      run:
+        working-directory: frontend
+
+    env:
+      CI: true
+      VITE_API_BASE_URL: http://localhost:8080/api
+      VITE_API_TIMEOUT: 15000
+      VITE_AUTH_TOKEN_STORAGE: session
+      VITE_AUTH_REFRESH_ENDPOINT: /admin/auth/refresh
+      VITE_PRODUCT_API_PATH: /admin/products
+      VITE_COUPON_API_PATH: /admin/coupons
+      VITE_ORDER_API_PATH: /orders
+      VITE_PAYMENT_API_PATH: /payments
+      VITE_REALTIME_WS_URL: ""
+      VITE_USER_API_PATH: /admin/users
+      VITE_USER_PROFILE_API_PATH: /users
+      VITE_USER_ORDER_API_PATH: /orders
+      VITE_WISHLIST_API_PATH: /wishlist
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run lint
+        run: npm run lint
+
+      - name: Run frontend tests if present
+        run: npm run test --if-present
+
+      - name: Build frontend
+        run: npm run build

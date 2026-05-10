@@ -1,0 +1,94 @@
+name: Backend CI
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - "backend/electronics/**"
+      - ".github/workflows/backend-ci.yml"
+  pull_request:
+    paths:
+      - "backend/electronics/**"
+      - ".github/workflows/backend-ci.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: backend-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend-checks:
+    name: Build and test
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_DB: electronics_management
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d electronics_management"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    defaults:
+      run:
+        working-directory: backend/electronics
+
+    env:
+      CI: true
+      DB_URL: jdbc:postgresql://localhost:5432/electronics_management
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      ELECTRONICS_JWT_SECRET: ci-only-change-me-minimum-32-bytes
+      ELECTRONICS_JWT_EXPIRATION_MS: 86400000
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_SHOW_SQL: false
+      SPRINGDOC_API_DOCS_ENABLED: true
+      SPRINGDOC_SWAGGER_UI_ENABLED: true
+      CORS_ALLOWED_ORIGIN_PATTERNS: http://localhost:5173,http://127.0.0.1:5173
+      PAYMENT_FRONTEND_SUCCESS_URL: http://localhost:5173/payment/success
+      PAYMENT_FRONTEND_FAILED_URL: http://localhost:5173/payment/failed
+      VNPAY_TMN_CODE: CI_TMN_CODE
+      VNPAY_SECRET_KEY: CI_VNPAY_SECRET_KEY
+      VNPAY_PAY_URL: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
+      VNPAY_REFUND_URL: https://sandbox.vnpayment.vn/merchant_webapi/api/transaction
+      VNPAY_RETURN_URL: http://localhost:8080/api/payments/vnpay-return
+      MOMO_PARTNER_CODE: CI_MOMO_PARTNER_CODE
+      MOMO_ACCESS_KEY: CI_MOMO_ACCESS_KEY
+      MOMO_SECRET_KEY: CI_MOMO_SECRET_KEY
+      MOMO_ENDPOINT: https://test-payment.momo.vn/v2/gateway/api/create
+      MOMO_REFUND_URL: https://test-payment.momo.vn/v2/gateway/api/refund
+      MOMO_RETURN_URL: http://localhost:8080/api/payments/momo-return
+      MOMO_NOTIFY_URL: http://localhost:8080/api/system/payment/momo-ipn
+      CLOUDINARY_CLOUD_NAME: ""
+      CLOUDINARY_API_KEY: ""
+      CLOUDINARY_API_SECRET: ""
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: maven
+
+      - name: Prepare Maven wrapper
+        run: chmod +x ./mvnw
+
+      - name: Run backend tests
+        run: ./mvnw -B -ntp test

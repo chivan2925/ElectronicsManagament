@@ -8,6 +8,39 @@ Always update this file after meaningful work.
 
 ## 2026-05-10
 
+### Phase 7 Production Audit And Completion
+
+- Reviewed the ecommerce platform as a production audit across frontend architecture, backend integration, payment flows, admin system, ecommerce UX, performance, security, responsive quality, duplication, error handling, loading states, consistency, and deployment readiness.
+- Added backend `/api/health` and `/api/health/readiness` probes with no sensitive config exposure.
+- Allowed health probes through Spring Security and wired the production backend Docker healthcheck to readiness.
+- Made production `docker-compose.yml` wait for a healthy backend before starting the frontend service.
+- Hardened storefront payment result handling for missing/invalid callback order ids, sanitized callback query text before display, and restricted frontend payment provider normalization to supported providers.
+- Improved route loading fallback accessibility and responsive text safety without changing large sections or the homepage layout.
+- Updated AI context docs, `ROADMAP.md`, `AGENTS.md`, and `DEPLOYMENT.md`.
+- Marked Phase 7 completed and the ecommerce platform production-ready foundation completed.
+- Verified `npm run lint`, `npm run build`, `mvn -q -DskipTests compile`, `mvn test`, and production `docker compose --env-file .env.example config`. `mvn test` still printed the existing local PostgreSQL `media.display_order` DDL warning.
+
+### CI CD Foundation
+
+- Added `.github/workflows/frontend-ci.yml` for frontend dependency install, lint, optional test script placeholder, and production build.
+- Added `.github/workflows/backend-ci.yml` for backend Maven wrapper tests on Java 21 with a PostgreSQL service.
+- Added GitHub Actions concurrency, path filters, manual dispatch, read-only repository permissions, and dependency caching for a scalable CI structure.
+- Kept the workflows limited to checks only; no production deployment step was added.
+- Updated `CURRENT_STATE.md` and `NEXT_TASKS.md`.
+- Verified `npm run lint`, `npm run test --if-present`, `npm run build`, `mvn test`, Prettier workflow YAML check, and `git diff --check`.
+
+### Docker Deployment Foundation
+
+- Added production-oriented Dockerfiles for the React/Vite frontend and Spring Boot backend.
+- Added unprivileged Nginx serving for the frontend with SPA fallback, static asset caching, security headers, and `/api` proxying to the backend service.
+- Added root `docker-compose.yml` for frontend, backend, and Postgres, plus `docker-compose.dev.yml` for live-mounted development containers.
+- Added root `.env.example` for Docker environment management without committing real secrets.
+- Made backend server port, JPA DDL mode, SQL logging, CORS origins, SpringDoc exposure, and payment frontend URLs configurable through environment variables.
+- Added `DEPLOYMENT.md` with local production-like and development Docker usage notes, environment guidance, and production readiness caveats.
+- Updated `CURRENT_STATE.md` and `NEXT_TASKS.md`.
+- Verified production and development Docker Compose config rendering with `.env.example`, `npm run build`, `mvn -q -DskipTests compile`, `mvn test`, and `git diff --check`.
+- Docker image build was not completed because the local Docker Desktop Linux engine was not running.
+
 ### Ecommerce Security Hardening
 
 - Added backend admin role/permission enforcement with normalized `ROLE_STAFF`, inferred `ROLE_ADMIN`, and `PERM:*` authorities.

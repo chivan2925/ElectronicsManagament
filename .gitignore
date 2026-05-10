@@ -39,3 +39,12 @@ build/
 *.sw?
 
 node_modules
+
+# --- ENVIRONMENT FILES ---
+.env
+.env.*
+!**/.env.example
+
+# --- BUILD OUTPUTS ---
+frontend/dist/
+backend/electronics/target/

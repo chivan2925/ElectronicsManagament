@@ -9,12 +9,12 @@ Always update this file after meaningful work.
 ## Current Phase
 
 ```text
-Ready for Phase 7 — Advanced Features & Production Systems
+Phase 8 — Production + Deploy (Phase 7 completed)
 ```
 
 ## Current Summary
 
-ElectronicsManagement has completed Phase 6 — Ecommerce Core Features and is ready for Phase 7 — Advanced Features & Production Systems.
+ElectronicsManagement has completed Phase 7 — Advanced Features & Production Systems. The ecommerce platform now has a production-ready foundation across storefront UX, admin operations, backend integration, payment hardening, monitoring, Docker, CI checks, and deployment readiness, while real production hosting and final public customer APIs remain future Phase 8 work.
 
 The client storefront now includes the homepage, Product API-backed product listing and product detail, shared-cart cart and checkout, customer authentication, wishlist, recently viewed, product recommendations, order tracking, search overlay, notifications, loyalty/reward UI, and authenticated account experiences. Checkout now creates real backend orders and validates coupons through backend APIs. Wishlist now uses persistent product snapshots, optimistic UI, optional backend sync, wishlist count, move-to-cart, remove, and loading/error states. Recently viewed now uses lightweight localStorage product snapshots, duplicate prevention, clear/remove support, and a reusable responsive recommendation slider on homepage, PDP, wishlist, and profile surfaces. Product recommendations now use reusable carousel and section foundations for related products, frequently bought together, trending products, best sellers, and a recommended-for-you placeholder. Search and homepage product sections still use mock/local state. Frontend admin/staff authentication is connected to the backend JWT API, the admin architecture foundation exists under `frontend/src/admin`, and the `/admin/categories`, `/admin/brands`, `/admin/products`, `/admin/variants`, `/admin/media`, `/admin/orders`, `/admin/warehouse`, `/admin/coupons`, `/admin/users`, `/admin/staff`, and `/admin/roles` modules are connected to real backend APIs with table/grid, search, filters, status controls, detail views, protected actions, and pagination. The admin dashboard and revenue report now use upgraded mock analytics widgets until reporting APIs are added.
 
@@ -92,6 +92,12 @@ The frontend and backend now have a no-SaaS logging and monitoring foundation. F
 
 The ecommerce security hardening review added backend admin role/permission enforcement, normalized `ROLE_*` and `PERM:*` authorities, JSON `403` handling, safer JWT validation logging, no-store headers for sensitive auth/reset responses, environment-driven secrets, stricter payment callback validation, stricter media upload validation, safer frontend auth persistence, and root `SECURITY.md` documentation.
 
+The Docker deployment foundation now includes production-oriented frontend/backend Dockerfiles, unprivileged Nginx SPA serving with `/api` proxying, root `docker-compose.yml` for frontend/backend/Postgres, a separate `docker-compose.dev.yml` for live-mounted development containers, root `.env.example`, environment-driven backend runtime settings, and root `DEPLOYMENT.md` documentation. No real deployment has been performed.
+
+The CI/CD foundation now includes GitHub Actions workflows for frontend and backend checks under `.github/workflows/`. Frontend CI installs npm dependencies, runs lint, keeps an optional test-script placeholder, and builds the Vite app. Backend CI runs Maven wrapper tests on Java 21 with a PostgreSQL service. The workflows use path filters, concurrency, dependency caching, manual dispatch, and read-only repository permissions, with no production deployment step.
+
+The production audit added a minimal backend health/readiness API at `/api/health` and `/api/health/readiness`, wired the production backend container healthcheck to readiness, made the production Compose frontend wait for a healthy backend, hardened storefront payment result parsing for missing/invalid callback identifiers, sanitized payment callback query text before display, restricted frontend payment provider normalization to supported providers, and improved route loading fallback accessibility/responsive safety.
+
 The Phase 6 completion review tightened customer ecommerce UX consistency across search, reviews, wishlist, recommendations, cart, checkout, order tracking, notifications, responsive behavior, animations, and performance without a large redesign. Internal storefront header and notification navigation now stays within React Router, search and wishlist states reuse cleaner shared patterns, product identity matching is centralized, PLP search normalization handles punctuation and Vietnamese/no-accent queries more consistently, and cart recommendations use the optimized image foundation.
 
 Phase 2 cleanup normalized shared/admin visual patterns for cards, borders, shadows, hover states, focus states, icon buttons, typography usage, and responsive behavior without a large rewrite.
@@ -107,7 +113,7 @@ The frontend now has a centralized global feedback system with reusable toast no
 The next phase is:
 
 ```text
-Phase 7 — Advanced Features & Production Systems
+Phase 8 — Production + Deploy
 ```
 
 ## Phase 1 Completed Items
@@ -561,6 +567,10 @@ Latest validation:
 - `npm run lint`, `npm run build`, `git diff --check`, targeted dependency duplication checks with `npm ls react react-dom framer-motion lucide-react recharts axios`, and local route smoke checks passed after the production frontend architecture optimization. The main app chunk is about 105 kB, React/router/motion/http are cacheable vendor chunks, Product Detail route chunk is about 34 kB, and PLP/PDP catalog flows no longer issue per-product detail requests for listing cards.
 - `npm run lint`, `npm run build`, `git diff --check`, `mvn -q -DskipTests compile`, and `mvn test` passed after adding the frontend/backend logging and monitoring foundation. `mvn test` still printed the existing local PostgreSQL `media.display_order` DDL warning.
 - `npm run lint`, `npm run build`, `mvn -q -DskipTests compile`, and `mvn test` passed after the ecommerce security hardening review. `mvn test` still printed the existing local PostgreSQL `media.display_order` DDL warning.
+- Docker Compose config validation now covers the production-like `docker-compose.yml` and development `docker-compose.dev.yml` files through `.env.example`; `npm run build`, `mvn -q -DskipTests compile`, `mvn test`, and `git diff --check` also passed after the Docker deployment foundation. Docker image build was blocked because the local Docker Desktop Linux engine was not running.
+- GitHub Actions CI workflow files were added for frontend and backend checks; local validation covered Prettier workflow YAML checking, frontend lint/test-placeholder/build, backend tests, and `git diff --check`.
+- The Phase 7 production audit completed with backend health/readiness probes, Docker backend readiness healthcheck wiring, safer payment result callback parsing/display, supported-provider frontend payment normalization, accessible route loading fallback polish, and Phase 7 completion documentation.
+- `npm run lint`, `npm run build`, `mvn -q -DskipTests compile`, `mvn test`, and production `docker compose --env-file .env.example config` passed after the Phase 7 production audit. `mvn test` still printed the existing local PostgreSQL `media.display_order` DDL warning.
 
 ## Known Issues
 
@@ -586,14 +596,14 @@ Latest validation:
 ## Next Phase
 
 ```text
-Phase 7 — Advanced Features & Production Systems
+Phase 8 — Production + Deploy
 ```
 
 Next focus:
 
-- Add advanced customer features such as returns/refunds, deeper review workflows, richer notifications, loyalty logic, and recommendation/search depth.
-- Harden public customer auth, cart persistence, payment handoff, account ownership, and production data contracts as backend APIs mature.
-- Prepare production systems: migrations, tests for critical flows, deployment config, observability, and security hardening.
+- Prepare real production hosting without committing secrets.
+- Add controlled database migrations/backfills and switch production schema handling away from `ddl-auto:update`.
+- Finalize public customer auth, account ownership, cart/wishlist persistence, production payment credentials, TLS, backups, and rollout policy.
 
 ## Backend State
 
@@ -626,6 +636,7 @@ Backend also includes:
 - VNPay Sandbox and MoMo Sandbox checkout handoff APIs.
 - Cloudinary upload support.
 - Structured logging helpers and request correlation through `X-Request-Id`/MDC for production observability groundwork.
+- Public health/readiness probes at `/api/health` and `/api/health/readiness`.
 
 Backend gaps:
 
@@ -634,6 +645,7 @@ Backend gaps:
 - Cart APIs are not complete.
 - VNPay Sandbox and MoMo Sandbox handoff exist for checkout orders; production payment credentials, deployed return URLs, and public checkout ownership contracts are not complete.
 - Production secret values and deployment-time secret injection still need environment-specific setup.
+- Docker Compose can run local production-like and development stacks, but real production deployment has not been performed.
 
 ## Documentation State
 
@@ -656,7 +668,7 @@ Standard AI context files:
 - Do not assume every admin CRUD page uses real API data.
 - Do not assume public ecommerce APIs are ready.
 - Do not assume production payment integration, public cart persistence, or public customer auth APIs are implemented.
-- Do not assume production deployment is ready.
+- Do not assume production deployment is ready beyond the local Docker foundation.
 
 ## Last Updated
 

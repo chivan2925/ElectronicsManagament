@@ -1,0 +1,109 @@
+name: ${COMPOSE_PROJECT_NAME:-electronics-management}
+
+services:
+  postgres:
+    image: postgres:${POSTGRES_IMAGE_TAG:-18-alpine}
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-electronics_management}
+      POSTGRES_USER: ${POSTGRES_USER:-electronics}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change-me-local-password}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - electronics
+
+  backend:
+    build:
+      context: ./backend/electronics
+      dockerfile: Dockerfile
+      target: development
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: sh -c "chmod +x ./mvnw && ./mvnw -B spring-boot:run"
+    environment:
+      SERVER_PORT: 8080
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-docker}
+      SPRING_JPA_HIBERNATE_DDL_AUTO: ${SPRING_JPA_HIBERNATE_DDL_AUTO:-update}
+      SPRING_JPA_SHOW_SQL: ${SPRING_JPA_SHOW_SQL:-true}
+      SPRINGDOC_API_DOCS_ENABLED: ${SPRINGDOC_API_DOCS_ENABLED:-true}
+      SPRINGDOC_SWAGGER_UI_ENABLED: ${SPRINGDOC_SWAGGER_UI_ENABLED:-true}
+      CORS_ALLOWED_ORIGIN_PATTERNS: ${CORS_ALLOWED_ORIGIN_PATTERNS:-http://localhost:5173,http://127.0.0.1:5173}
+      DB_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-electronics_management}
+      DB_USERNAME: ${POSTGRES_USER:-electronics}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-change-me-local-password}
+      ELECTRONICS_JWT_SECRET: ${ELECTRONICS_JWT_SECRET:-replace-with-at-least-32-random-bytes}
+      ELECTRONICS_JWT_EXPIRATION_MS: ${ELECTRONICS_JWT_EXPIRATION_MS:-86400000}
+      PAYMENT_FRONTEND_SUCCESS_URL: ${PAYMENT_DEV_FRONTEND_SUCCESS_URL:-http://localhost:5173/payment/success}
+      PAYMENT_FRONTEND_FAILED_URL: ${PAYMENT_DEV_FRONTEND_FAILED_URL:-http://localhost:5173/payment/failed}
+      VNPAY_TMN_CODE: ${VNPAY_TMN_CODE:-YOUR_TMN_CODE}
+      VNPAY_SECRET_KEY: ${VNPAY_SECRET_KEY:-YOUR_SECRET_KEY}
+      VNPAY_PAY_URL: ${VNPAY_PAY_URL:-https://sandbox.vnpayment.vn/paymentv2/vpcpay.html}
+      VNPAY_REFUND_URL: ${VNPAY_REFUND_URL:-https://sandbox.vnpayment.vn/merchant_webapi/api/transaction}
+      VNPAY_RETURN_URL: ${VNPAY_RETURN_URL:-http://localhost:8080/api/payments/vnpay-return}
+      MOMO_PARTNER_CODE: ${MOMO_PARTNER_CODE:-MOMO_PARTNER_CODE}
+      MOMO_ACCESS_KEY: ${MOMO_ACCESS_KEY:-MOMO_ACCESS_KEY}
+      MOMO_SECRET_KEY: ${MOMO_SECRET_KEY:-MOMO_SECRET_KEY}
+      MOMO_ENDPOINT: ${MOMO_ENDPOINT:-https://test-payment.momo.vn/v2/gateway/api/create}
+      MOMO_REFUND_URL: ${MOMO_REFUND_URL:-https://test-payment.momo.vn/v2/gateway/api/refund}
+      MOMO_RETURN_URL: ${MOMO_RETURN_URL:-http://localhost:8080/api/payments/momo-return}
+      MOMO_NOTIFY_URL: ${MOMO_NOTIFY_URL:-http://localhost:8080/api/system/payment/momo-ipn}
+      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME:-}
+      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY:-}
+      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET:-}
+      JAVA_OPTS: ${JAVA_OPTS:-}
+    ports:
+      - "${BACKEND_PORT:-8080}:8080"
+    volumes:
+      - ./backend/electronics:/workspace
+      - maven-cache:/root/.m2
+    networks:
+      - electronics
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: development
+    command: npm run dev -- --host 0.0.0.0 --port 5173
+    environment:
+      CHOKIDAR_USEPOLLING: "true"
+      VITE_API_BASE_URL: ${VITE_DEV_API_BASE_URL:-http://localhost:8080/api}
+      VITE_API_TIMEOUT: ${VITE_API_TIMEOUT:-15000}
+      VITE_AUTH_TOKEN_STORAGE: ${VITE_AUTH_TOKEN_STORAGE:-session}
+      VITE_AUTH_REFRESH_ENDPOINT: ${VITE_AUTH_REFRESH_ENDPOINT:-/admin/auth/refresh}
+      VITE_PRODUCT_API_PATH: ${VITE_PRODUCT_API_PATH:-/admin/products}
+      VITE_COUPON_API_PATH: ${VITE_COUPON_API_PATH:-/admin/coupons}
+      VITE_ORDER_API_PATH: ${VITE_ORDER_API_PATH:-/orders}
+      VITE_PAYMENT_API_PATH: ${VITE_PAYMENT_API_PATH:-/payments}
+      VITE_REALTIME_WS_URL: ${VITE_REALTIME_WS_URL:-}
+      VITE_USER_API_PATH: ${VITE_USER_API_PATH:-/admin/users}
+      VITE_USER_PROFILE_API_PATH: ${VITE_USER_PROFILE_API_PATH:-/users}
+      VITE_USER_ORDER_API_PATH: ${VITE_USER_ORDER_API_PATH:-/orders}
+      VITE_WISHLIST_API_PATH: ${VITE_WISHLIST_API_PATH:-/wishlist}
+    depends_on:
+      - backend
+    ports:
+      - "${FRONTEND_DEV_PORT:-5173}:5173"
+    volumes:
+      - ./frontend:/app
+      - frontend-node-modules:/app/node_modules
+    networks:
+      - electronics
+
+networks:
+  electronics:
+    driver: bridge
+
+volumes:
+  postgres-data:
+  maven-cache:
+  frontend-node-modules:

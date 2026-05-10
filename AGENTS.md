@@ -37,16 +37,15 @@ Product category display labels:
 Current phase:
 
 ```text
-Ready for Phase 7 — Advanced Features & Production Systems
+Phase 8 — Production + Deploy
 ```
 
-Phase 7 focuses on:
+Phase 8 focuses on:
 
-- Advanced customer ecommerce features.
-- Production system hardening.
-- Payment, customer auth, account ownership, and API contract hardening.
-- Tests, migrations, deployment readiness, and observability.
-- Keeping the completed Phase 5 admin dashboard and Phase 6 ecommerce foundations stable.
+- Real production deployment preparation without committing secrets.
+- Controlled migrations/backfills, tests, TLS, backups, and rollout policy.
+- Production payment credentials, public customer auth, account ownership, and API contract finalization.
+- Keeping the completed Phase 5 admin dashboard, Phase 6 ecommerce foundations, and Phase 7 production-ready foundation stable.
 
 ## Required Reading Before Work
 
