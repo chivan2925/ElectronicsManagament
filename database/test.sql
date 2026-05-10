@@ -552,26 +552,46 @@
   JOIN variants v ON v.product_id = p.id;
 
 
-  INSERT INTO carts (id, user_id, created_at, updated_at)
+INSERT INTO carts (id, user_id, created_at, updated_at)
+SELECT
+  seeded_users.cart_no,
+  seeded_users.id,
+  NOW() - (seeded_users.cart_no * INTERVAL '2 hours'),
+  NOW()
+FROM (
   SELECT
-    cart_no,
-    cart_no,
-    NOW() - (cart_no * INTERVAL '2 hours'),
-    NOW()
-  FROM generate_series(1, 10) AS cart_no;
+    id,
+    ROW_NUMBER() OVER (ORDER BY id) AS cart_no
+  FROM users
+  WHERE status = 'ACTIVE'
+  ORDER BY id
+  LIMIT 10
+) seeded_users;
 
 
-  INSERT INTO cart_items (id, cart_id, variant_id, quantity, created_at, updated_at)
+WITH active_variants AS (
   SELECT
-    ROW_NUMBER() OVER (ORDER BY c.id, item_no),
-    c.id,
-    ((c.id * 7 + item_no * 3) % (SELECT MAX(id) FROM variants)) + 1,
-    CASE WHEN item_no = 1 THEN 1 ELSE 2 END,
-    c.created_at,
-    c.updated_at
-  FROM carts c
-  CROSS JOIN generate_series(1, 3) AS item_no
-  WHERE c.id <= 10;
+    id,
+    total_stock,
+    ROW_NUMBER() OVER (ORDER BY id) AS variant_no,
+    COUNT(*) OVER () AS variant_count
+  FROM variants
+  WHERE status = 'ACTIVE'
+    AND total_stock > 0
+)
+INSERT INTO cart_items (id, cart_id, variant_id, quantity, created_at, updated_at)
+SELECT
+  ROW_NUMBER() OVER (ORDER BY c.id, item_no),
+  c.id,
+  av.id,
+  LEAST(CASE WHEN item_no = 1 THEN 1 ELSE 2 END, av.total_stock),
+  c.created_at,
+  c.updated_at
+FROM carts c
+CROSS JOIN generate_series(1, 3) AS item_no
+JOIN active_variants av
+  ON av.variant_no = ((c.id * 7 + item_no * 3) % av.variant_count) + 1
+WHERE c.id <= 10;
 
 
 

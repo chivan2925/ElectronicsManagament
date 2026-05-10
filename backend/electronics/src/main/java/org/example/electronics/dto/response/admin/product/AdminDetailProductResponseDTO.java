@@ -40,6 +40,8 @@ public record AdminDetailProductResponseDTO(
 
         Integer stock,
 
+        Integer defaultVariantId,
+
         Boolean featured,
 
         List<AdminVariantResponseDTO> variants,

@@ -26,6 +26,8 @@ public record AdminProductResponseDTO(
 
         Integer stock,
 
+        Integer defaultVariantId,
+
         Boolean featured,
 
         ProductStatus status,

@@ -127,8 +127,8 @@ function CartRecommendations({ className, compact = false, items = [], limit = 8
     [catalogProducts, items, limit],
   );
 
-  const handleAddRecommendation = (product) => {
-    const result = addItem(product);
+  const handleAddRecommendation = async (product) => {
+    const result = await addItem(product);
 
     if (!result.ok) {
       toast.showWarning("Sản phẩm gợi ý này đang hết hàng.");

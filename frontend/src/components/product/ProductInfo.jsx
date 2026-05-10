@@ -63,8 +63,8 @@ function ProductInfo({
   const productIsWishlistPending = isWishlistPending(product.id);
   const selectedCartVariant = getSelectedCartVariant(product, selectedOptions);
 
-  const handleAddToCart = () => {
-    const result = addItem(product, {
+  const handleAddToCart = async () => {
+    const result = await addItem(product, {
       quantity,
       variant: selectedCartVariant,
     });
@@ -80,8 +80,8 @@ function ProductInfo({
     return true;
   };
 
-  const handleBuyNow = () => {
-    if (handleAddToCart()) {
+  const handleBuyNow = async () => {
+    if (await handleAddToCart()) {
       navigate("/checkout");
     }
   };

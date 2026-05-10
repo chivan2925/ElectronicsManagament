@@ -14,10 +14,24 @@ Phase 8 — Production + Deploy (Completed showcase)
 
 ## Recently Completed
 
+<<<<<<< HEAD
 - Connected `/admin/dashboard`, `/admin/reports/revenue`, `/admin/reports/best-sellers`, and `/admin/reports/activity` to real Admin Report and Order APIs.
 - Added `reportService`, `reportMapper`, and `useAdminReportDashboard` to normalize dashboard KPIs, revenue series, order status mix, top products, recent orders, and order-derived activity from backend data.
 - Removed admin report page imports from `adminMock` and `adminAnalyticsMock` while keeping loading, error, retry, and empty states for API-backed report screens.
 - Verified `npm run lint`, `npm run build`, and `git diff --check` after the admin reporting frontend wiring. `git diff --check` reported only LF-to-CRLF normalization warnings.
+=======
+- Fixed authenticated add-to-cart 500s caused by a cart fetch query using SQL `DISTINCT` over PostgreSQL `json` columns.
+- Updated `CartRepository.findByUserIdWithItems` to avoid database-level distinct comparison and let `UserCartServiceImpl` select the loaded cart entity from the fetch result.
+- Smoke-tested `POST /api/cart/items`, `PATCH /api/cart/items/{variantId}`, and `DELETE /api/cart/items/{variantId}` against a local backend on port `8082`.
+- Verified `mvn -q -DskipTests compile` and `mvn test`; `mvn test` passed while still logging the existing order-cleanup scheduler warning for old local seed data.
+- Tightened `database/test.sql` cart seed data so seeded carts are created for active users and cart items only reference active variants with positive `total_stock`.
+- Confirmed customer cart persistence uses `/api/cart` with the buyer id resolved from the authenticated customer JWT, while frontend add/update/remove quantity calls sync through `cartService`.
+- Verified `mvn -q -DskipTests compile`, `npm run lint`, `npm run build`, and `git diff --check`; local `psql` is not installed, so the SQL seed was statically reviewed but not executed through PostgreSQL CLI.
+- Added `defaultVariantId` to backend product catalog responses so storefront cart actions use real purchasable variant ids instead of falling back to product ids.
+- Updated `CartProvider` to resolve missing variant identity from Product API detail before creating local or synced cart items.
+- Fixed guest product-card quick-add so it is not blocked by customer cart-sync variant validation, and made quick-add errors distinguish stock, variant, and API failures.
+- Verified `mvn -q -DskipTests compile`, `npm run lint`, `npm run build`, and `git diff --check` after the cart variant-resolution fix. `git diff --check` reported only LF-to-CRLF normalization warnings.
+>>>>>>> c48fa6f22f68a287cf66052c08460589e30d59a8
 - Removed the remaining recently viewed hardcoded/mock product fallback from `useRecentlyViewed.js`.
 - Added cleanup so legacy `P001`-style localStorage snapshots are purged and only API-backed product identities are kept for the "Tiếp tục xem sản phẩm" section.
 - Verified `npm run lint`, `npm run build`, and `git diff --check` after the recently viewed cleanup. `git diff --check` reported only LF-to-CRLF normalization warnings.

@@ -10,6 +10,7 @@ import org.example.electronics.entity.enums.ProductStatus;
 import org.mapstruct.*;
 
 import java.math.BigDecimal;
+import java.util.Comparator;
 import java.util.Set;
 
 @Mapper(
@@ -31,6 +32,7 @@ public interface ProductMapper {
     @Mapping(source = "media", target = "primaryImageUrl", qualifiedByName = "getPrimaryImageFromProduct")
     @Mapping(source = "variants", target = "price", qualifiedByName = "getMinVariantPrice")
     @Mapping(source = "variants", target = "stock", qualifiedByName = "getTotalVariantStock")
+    @Mapping(source = "variants", target = "defaultVariantId", qualifiedByName = "getDefaultPurchasableVariantId")
     AdminProductResponseDTO toAdminResponseDTO(ProductEntity productEntity);
 
     @Mapping(source = "category.id", target = "categoryId")
@@ -40,6 +42,7 @@ public interface ProductMapper {
     @Mapping(source = "media", target = "primaryImageUrl", qualifiedByName = "getPrimaryImageFromProduct")
     @Mapping(source = "variants", target = "price", qualifiedByName = "getMinVariantPrice")
     @Mapping(source = "variants", target = "stock", qualifiedByName = "getTotalVariantStock")
+    @Mapping(source = "variants", target = "defaultVariantId", qualifiedByName = "getDefaultPurchasableVariantId")
     AdminDetailProductResponseDTO toAdminDetailResponseDTO(ProductEntity productEntity);
 
     @Mapping(target = "category", ignore = true)
@@ -92,5 +95,26 @@ public interface ProductMapper {
                 .map(VariantEntity::getTotalStock)
                 .filter(stock -> stock != null)
                 .reduce(0, Integer::sum);
+    }
+
+    @SuppressWarnings("unused")
+    @Named("getDefaultPurchasableVariantId")
+    default Integer getDefaultPurchasableVariantId(Set<VariantEntity> variantEntitySet) {
+        if (variantEntitySet == null || variantEntitySet.isEmpty()) {
+            return null;
+        }
+
+        return variantEntitySet.stream()
+                .filter(variant -> variant.getStatus() == ProductStatus.ACTIVE)
+                .filter(variant -> variant.getTotalStock() != null && variant.getTotalStock() > 0)
+                .sorted(Comparator.comparing(VariantEntity::getId, Comparator.nullsLast(Integer::compareTo)))
+                .map(VariantEntity::getId)
+                .findFirst()
+                .orElseGet(() -> variantEntitySet.stream()
+                        .filter(variant -> variant.getStatus() == ProductStatus.ACTIVE)
+                        .sorted(Comparator.comparing(VariantEntity::getId, Comparator.nullsLast(Integer::compareTo)))
+                        .map(VariantEntity::getId)
+                        .findFirst()
+                        .orElse(null));
     }
 }

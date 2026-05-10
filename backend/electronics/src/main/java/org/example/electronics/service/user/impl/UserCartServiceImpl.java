@@ -125,7 +125,7 @@ public class UserCartServiceImpl implements UserCartService {
     private CartEntity getOrCreateCart(Integer userId) {
         assertActiveUser(userId);
 
-        return cartRepository.findByUserIdWithItems(userId)
+        return cartRepository.findByUserIdWithItems(userId).stream().findFirst()
                 .orElseGet(() -> cartRepository.save(CartEntity.builder()
                         .user(getActiveUser(userId))
                         .build()));

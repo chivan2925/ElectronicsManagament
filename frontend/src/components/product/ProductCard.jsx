@@ -71,11 +71,23 @@ function ProductCard({ product }) {
     addRecentlyViewed(product);
   }, [addRecentlyViewed, product]);
 
-  const handleQuickAdd = useCallback(() => {
-    const result = addItem(product);
+  const handleQuickAdd = useCallback(async () => {
+    const result = await addItem(product);
 
     if (!result.ok) {
-      toast.showWarning("Sản phẩm này đang hết hàng hoặc chưa có tồn kho khả dụng.");
+      if (result.reason === "out_of_stock") {
+        toast.showWarning("Sản phẩm này đang hết hàng hoặc chưa có tồn kho khả dụng.");
+        return;
+      }
+
+      if (result.error) {
+        toast.showApiError(result.error, { title: "Chưa thêm được vào giỏ hàng" });
+        return;
+      }
+
+      toast.showWarning("Chưa xác định được biến thể khả dụng cho sản phẩm này.", {
+        title: "Cần chọn biến thể",
+      });
       return;
     }
 

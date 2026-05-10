@@ -239,7 +239,7 @@ function WishlistPage() {
       return;
     }
 
-    const cartResult = addItem(product);
+    const cartResult = await addItem(product);
 
     if (!cartResult.ok) {
       toast.showWarning("Sản phẩm này đang hết hàng hoặc chưa có tồn kho khả dụng.");
