@@ -18,7 +18,7 @@ ElectronicsManagement currently includes:
 - Environment-driven backend secrets and provider credentials.
 - Frontend auth storage controls through `VITE_AUTH_TOKEN_STORAGE`.
 
-Customer registration is still not fully backed by public customer APIs, and final customer account ownership contracts remain Phase 8 work.
+Customer registration is backed by `POST /api/auth/register`; customer login and final customer account ownership contracts remain future work.
 
 ## Authentication
 
@@ -26,6 +26,12 @@ Admin/staff login:
 
 ```http
 POST /api/admin/auth/login
+```
+
+Customer registration:
+
+```http
+POST /api/auth/register
 ```
 
 Authenticated requests use:
@@ -144,7 +150,7 @@ Before production:
 
 ## Known Remaining Risks
 
-- Public customer registration APIs are not finalized.
+- Public customer registration exists, but customer login and customer-owned resource checks are not finalized.
 - Customer-owned resource checks need a dedicated public customer principal contract.
 - Backend refresh-token support is not complete yet.
 - Upload rate limiting and malware scanning are not implemented.

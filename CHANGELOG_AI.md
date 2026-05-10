@@ -8,6 +8,21 @@ Always update this file after meaningful work.
 
 ## 2026-05-10
 
+### Customer Registration API
+
+- Added public `POST /api/auth/register` for customer self-registration without changing the existing admin/staff JWT login flow.
+- Added customer register request/response DTOs, customer auth controller/service, BCrypt password hashing, generated unique usernames, email/phone uniqueness checks, optional phone handling, and safe `USER` role metadata in the response.
+- Updated Spring Security to permit only the register endpoint publicly under `/api/auth/register`.
+- Connected the storefront `/register` form to the new API outside demo mode while preserving demo-mode local success behavior.
+- Added focused customer registration service tests and verified `mvn test`; the run still prints the known local PostgreSQL `media.display_order` DDL warning.
+
+### Backend API Gap Audit
+
+- Audited the Spring Boot backend for Customer Register, Customer Cart, User Password Reset, and Analytics/Report API coverage after reading the required project and AI context docs.
+- Confirmed at audit time that no dedicated customer registration endpoint, cart persistence endpoint, user password reset endpoint, or analytics/report controller/service/repository/DTO module existed yet.
+- Identified related existing foundations: User/Profile/Order APIs, admin user/staff management, admin staff reset-password, order/payment/warehouse/coupon data models, and admin list/filter APIs.
+- Documented that future implementation should preserve existing admin JWT auth, add public customer auth rules carefully, and keep frontend demo mode untouched.
+
 ### Final Graduation Showcase Polish
 
 - Added a final production-quality visual polish pass across the storefront, PDP, checkout, admin dashboard, and admin analytics without restructuring the homepage or changing frontend/admin architecture.

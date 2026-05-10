@@ -149,7 +149,7 @@ See:
 
 ## Current Known Gaps
 
-- Public customer registration APIs are not finalized.
+- Public customer registration exists; customer login and ownership contracts are not finalized.
 - Customer account ownership checks need final production contracts.
 - Dashboard/report analytics remain mock-backed.
 - Homepage product sections and search overlay still use mock/local data.

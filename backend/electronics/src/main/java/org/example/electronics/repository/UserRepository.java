@@ -12,6 +12,12 @@ import java.time.LocalDateTime;
 
 public interface UserRepository extends JpaRepository<UserEntity, Integer> {
 
+    boolean existsByEmailIgnoreCase(String email);
+
+    boolean existsByPhoneNumber(String phoneNumber);
+
+    boolean existsByUsernameIgnoreCase(String username);
+
     boolean existsByEmailIgnoreCaseAndIdNot(String email, Integer id);
 
     boolean existsByPhoneNumberAndIdNot(String phoneNumber, Integer id);

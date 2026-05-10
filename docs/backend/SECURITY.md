@@ -4,7 +4,7 @@
 
 This document describes backend security behavior and rules for the Spring Boot API.
 
-The current authentication surface is admin/staff focused. Customer authentication is not complete yet.
+The current login surface is admin/staff focused. Public customer registration exists, but customer login and account ownership tokens are not complete yet.
 
 ## Security Stack
 
@@ -33,6 +33,7 @@ The following routes are public:
 
 ```text
 POST /api/admin/auth/login
+POST /api/auth/register
 GET  /api/health
 GET  /api/health/readiness
 GET  /api/system/payment/vnpay-ipn

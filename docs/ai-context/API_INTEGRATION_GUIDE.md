@@ -177,7 +177,7 @@ Admin dashboard API orchestration lives under `frontend/src/admin/services`:
 - `adminCrudService.js` provides generic list/detail/create/update/remove wrappers so pages do not duplicate CRUD calls.
 - Registered admin modules are categories, brands, products, variants, media, users, staff, roles, permissions, orders, warehouses, and coupons.
 
-`authService.js` owns login/logout and token helpers. It calls `POST /admin/auth/login` for the current backend admin/staff JWT flow.
+`authService.js` owns login/logout/register and token helpers. It calls `POST /admin/auth/login` for the current backend admin/staff JWT flow and `POST /auth/register` for public customer registration outside demo mode.
 
 The homepage product sections, storefront search overlay, and recently viewed must continue using mock/local data until their API contracts are ready. Wishlist is local-first with optional backend sync through `wishlistService.js`; cart is shared local frontend state; checkout creates backend orders through the configured Order API.
 

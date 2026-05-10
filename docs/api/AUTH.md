@@ -2,7 +2,7 @@
 
 ## Scope
 
-The current backend authentication flow is for admin staff. Customer/public authentication is not complete yet.
+The current backend authentication flow is still admin/staff focused for login. Public customer registration exists at `POST /api/auth/register`, but customer login/ownership tokens are not complete yet.
 
 Auth is implemented with Spring Security, JWT, stateless sessions, and a staff details service.
 
@@ -13,6 +13,7 @@ Public routes:
 - `GET /api/health`
 - `GET /api/health/readiness`
 - `POST /api/admin/auth/login`
+- `POST /api/auth/register`
 - `GET /api/payments/vnpay-return`
 - `GET /api/payments/momo-return`
 - `GET /api/system/payment/vnpay-ipn`
@@ -22,6 +23,47 @@ Public routes:
 - `/swagger-ui.html`
 
 All other routes require a valid JWT access token.
+
+## Customer Registration
+
+Endpoint:
+
+```http
+POST /api/auth/register
+Content-Type: application/json
+```
+
+Request body:
+
+```json
+{
+  "fullName": "Nguyễn Văn A",
+  "email": "customer@example.com",
+  "phone": "0909123456",
+  "password": "Password123!",
+  "confirmPassword": "Password123!"
+}
+```
+
+Response body:
+
+```json
+{
+  "id": 1,
+  "fullName": "Nguyễn Văn A",
+  "email": "customer@example.com",
+  "phone": "0909123456",
+  "role": "USER",
+  "status": "ACTIVE"
+}
+```
+
+Notes:
+
+- Passwords are hashed with the shared backend `PasswordEncoder`.
+- `role` is derived as customer `USER` metadata; the staff/admin `roles` table remains unchanged.
+- Clients cannot provide ADMIN or STAFF role data in the request.
+- The endpoint does not return password or hash values.
 
 ## Login
 

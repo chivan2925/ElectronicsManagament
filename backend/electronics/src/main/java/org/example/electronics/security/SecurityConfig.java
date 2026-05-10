@@ -106,6 +106,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/health", "/api/health/**").permitAll()
                         .requestMatchers("/api/admin/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
                         .requestMatchers("/api/system/payment/vnpay-ipn", "/api/system/payment/momo-ipn").permitAll()
                         .requestMatchers("/api/payments/vnpay-return", "/api/payments/momo-return").permitAll()
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()

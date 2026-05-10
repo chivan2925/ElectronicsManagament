@@ -18,6 +18,8 @@ ElectronicsManagement has completed Phase 8 — Production + Deploy as a product
 
 The final graduation showcase polish pass improved the premium ecommerce feel, PDP presentation, checkout trust UX, admin analytics quality, subtle motion, hover states, panel depth, and micro-interactions while preserving the homepage layout, frontend architecture, and admin/client separation.
 
+The backend now exposes public customer registration at `POST /api/auth/register`. It creates `ACTIVE` `users` records with BCrypt password hashing, optional unique phone handling, generated usernames, safe `USER` role metadata in the response, and a public Spring Security rule that does not change the existing admin/staff JWT login flow. Customer login, persisted cart, user password reset, and analytics/report APIs are still future work.
+
 The client storefront now includes the homepage, Product API-backed product listing and product detail, shared-cart cart and checkout, customer authentication, wishlist, recently viewed, product recommendations, order tracking, search overlay, notifications, loyalty/reward UI, and authenticated account experiences. Checkout now creates real backend orders and validates coupons through backend APIs. Wishlist now uses persistent product snapshots, optimistic UI, optional backend sync, wishlist count, move-to-cart, remove, and loading/error states. Recently viewed now uses lightweight localStorage product snapshots, duplicate prevention, clear/remove support, and a reusable responsive recommendation slider on homepage, PDP, wishlist, and profile surfaces. Product recommendations now use reusable carousel and section foundations for related products, frequently bought together, trending products, best sellers, and a recommended-for-you placeholder. Search and homepage product sections still use mock/local state. Frontend admin/staff authentication is connected to the backend JWT API, the admin architecture foundation exists under `frontend/src/admin`, and the `/admin/categories`, `/admin/brands`, `/admin/products`, `/admin/variants`, `/admin/media`, `/admin/orders`, `/admin/warehouse`, `/admin/coupons`, `/admin/users`, `/admin/staff`, and `/admin/roles` modules are connected to real backend APIs with table/grid, search, filters, status controls, detail views, protected actions, and pagination. The admin dashboard and revenue report now use upgraded mock analytics widgets until reporting APIs are added.
 
 The admin analytics system now includes reusable `AnalyticsFilters`, `RevenueAnalytics`, `CustomerAnalytics`, and `InventoryAnalytics` widgets with date range filters, export placeholders, revenue analytics, top-selling products, customer analytics, conversion placeholders, inventory analytics, order trends, sales report breakdowns, and responsive Recharts line, area, pie, and bar charts.
@@ -68,7 +70,7 @@ Checkout now supports VNPay Sandbox and MoMo Sandbox payment handoff with signed
 
 The payment experience now has reusable storefront payment UI for provider trust indicators, payment processing state, transaction summaries, payment timelines, retry guidance, and COD order confirmation. Payment result pages share the `usePaymentResult` hook and `paymentStatus` helpers so COD, VNPay, and MoMo status copy and timeline logic are centralized.
 
-The storefront customer authentication pages now exist at `/login` and `/register` with reusable dark auth layout/forms, social login placeholders, remember-me, forgot-password placeholder, local validation UI, and responsive dark glass styling. The `/login` form now calls the backend JWT auth service; `/register` remains local until customer registration APIs are ready.
+The storefront customer authentication pages now exist at `/login` and `/register` with reusable dark auth layout/forms, social login placeholders, remember-me, forgot-password placeholder, local validation UI, and responsive dark glass styling. The `/login` form still calls the current backend admin/staff JWT auth service, while `/register` now calls the public customer registration API outside demo mode and keeps a local demo success path when `VITE_DEMO_MODE=true`.
 
 The storefront wishlist page now exists at `/wishlist` with persistent localStorage-backed product snapshots, optional backend wishlist sync through `VITE_WISHLIST_API_PATH`, optimistic add/remove/clear behavior, move-to-cart actions, wishlist count, loading/error states, product-card quick toggles, recently viewed tracking, and reusable wishlist/recently-viewed hooks.
 
@@ -467,7 +469,7 @@ Homepage state:
 - `/cart` now renders the shared-cart cart page with backend coupon validation, animated quantity interactions, free-shipping progress, shipping estimate, stock validation, mini recommendations, and a sticky summary.
 - `/checkout` now renders the authenticated customer checkout page behind `ProtectedRoute`, creates backend orders through `POST /api/orders`, and includes free-shipping progress, stock validation, shipping estimate, improved coupon UX, and a sticky trust-focused summary.
 - `/login` now renders the dark auth page and submits through `authService.login()`.
-- `/register` still renders the local ecommerce registration page until customer registration APIs exist and is now guest-only.
+- `/register` is guest-only and now submits customer account creation to `POST /api/auth/register` outside demo mode; demo mode keeps local success behavior for presentations.
 - `/wishlist` now renders the production-style persistent wishlist and recently viewed page with optional backend sync, optimistic actions, move-to-cart, remove item, clear, sync status, loading states, and API error fallback.
 - The homepage, PDP, wishlist page, and profile overview now render the reusable recently viewed products slider when local history exists, with an empty-state placeholder when appropriate.
 - The homepage now appends trending and best-seller recommendation carousels after the existing storefront sections without changing the hero or core homepage layout.
@@ -608,12 +610,13 @@ Latest validation:
 ## Known Issues
 
 - Admin CRUD modules are API-backed; the upgraded `/admin/dashboard` and `/admin/reports/revenue` analytics still use isolated mock reporting data until reporting APIs exist, and the best-sellers/activity report routes remain lightweight mock tables.
+- Backend audit and follow-up implementation confirm Customer Register now exists at `POST /api/auth/register`; Customer Cart, User Password Reset, and Analytics/Report API endpoints do not exist yet.
 - Remaining future client ecommerce routes beyond the implemented homepage, product listing, product detail, cart, checkout, login, register, and wishlist pages are styled placeholders.
 - A dedicated public storefront product browsing endpoint is still not separate from the configured Product API path.
 - A dedicated backend cart persistence API is not implemented; the active cart is shared local frontend state and checkout creates backend orders.
 - A dedicated backend wishlist persistence API is not implemented in the current backend; the frontend wishlist uses local persistence and optional sync when `VITE_WISHLIST_API_PATH` points to a compatible API.
 - Product recommendation sections currently use local/mock heuristics only; no real recommendation API or AI recommendation engine is connected.
-- Public customer registration is not complete.
+- Public customer registration exists; public customer login is not complete.
 - The current real JWT login endpoint is the backend admin/staff auth endpoint; customer login should move to a public customer auth endpoint when that API exists.
 - Client checkout/profile routes are customer-session only in the frontend; backend account ownership enforcement should still be tightened when public customer auth is implemented.
 - The frontend refresh-token flow is ready, but the current backend admin auth controller only exposes login/logout; real refresh requires backend `refreshToken` response support and `POST /admin/auth/refresh`.
@@ -678,6 +681,7 @@ Backend gaps:
 - Public storefront APIs are not complete.
 - Customer auth APIs are not complete.
 - Cart APIs are not complete.
+- Customer register exists as a dedicated backend module; customer cart persistence, user password reset, and analytics/report APIs are not implemented as dedicated backend modules yet.
 - VNPay Sandbox and MoMo Sandbox handoff exist for checkout orders; production payment credentials, deployed return URLs, and public checkout ownership contracts are not complete.
 - Production secret values and deployment-time secret injection still need environment-specific setup, even though the `prod` profile now rejects obvious placeholders and sandbox/local URLs.
 - Docker Compose can run local production-like and development stacks, but real production deployment has not been performed.
@@ -699,7 +703,7 @@ Standard AI context files:
 
 ## Do Not Assume
 
-- Do not assume customer registration or public customer login APIs are implemented.
+- Do not assume public customer login APIs are implemented; customer registration exists at `POST /api/auth/register`.
 - Do not assume every admin CRUD page uses real API data.
 - Do not assume public ecommerce APIs are ready.
 - Do not assume production payment integration, public cart persistence, or public customer auth APIs are implemented.

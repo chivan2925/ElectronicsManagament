@@ -8,6 +8,8 @@ import {
   AuthFormShell,
   SocialAuthButtons,
 } from "./AuthLayout";
+import authService from "../../api/authService";
+import { normalizeApiError } from "../../api/errorUtils";
 import { cn } from "../../utils/classNames";
 import { createTouchedMap, focusFirstInvalidField, getVisibleFieldErrors } from "../../utils/formValidation";
 
@@ -59,9 +61,7 @@ function validateRegister(values) {
     errors.email = "Email chưa đúng định dạng.";
   }
 
-  if (!phone) {
-    errors.phone = "Vui lòng nhập số điện thoại.";
-  } else if (!/^(0|\+84)[0-9\s.-]{8,13}$/.test(phone)) {
+  if (phone && !/^(0|\+84)[0-9\s.-]{8,13}$/.test(phone)) {
     errors.phone = "Số điện thoại chưa đúng định dạng.";
   }
 
@@ -185,15 +185,32 @@ function RegisterForm() {
 
     setIsSubmitting(true);
     setFeedback({
-      message: "Đang kiểm tra thông tin đăng ký...",
+      message: "Đang tạo tài khoản khách hàng...",
       tone: "info",
     });
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 300));
+      const response = await authService.register({
+        confirmPassword: values.confirmPassword,
+        email: values.email.trim(),
+        fullName: values.fullName.trim(),
+        password: values.password,
+        phone: values.phone.trim() || null,
+      });
+
       setFeedback({
-        message: "Thông tin tạo tài khoản hợp lệ. Hồ sơ khách hàng sẽ được lưu khi hệ thống tích hợp sẵn sàng.",
+        message: `Tài khoản ${response?.email ?? values.email.trim()} đã được tạo. Bạn có thể đăng nhập khi luồng customer login được bật.`,
         tone: "success",
+      });
+      setValues(initialValues);
+      setTouchedFields({});
+      setSubmitAttempted(false);
+    } catch (error) {
+      const apiError = normalizeApiError(error);
+
+      setFeedback({
+        message: apiError.message || "Đăng ký chưa thành công. Vui lòng kiểm tra lại thông tin.",
+        tone: "error",
       });
     } finally {
       setIsSubmitting(false);
@@ -247,11 +264,10 @@ function RegisterForm() {
           icon={Phone}
           id="phone"
           inputMode="tel"
-          label="Số điện thoại"
+          label="Số điện thoại (tùy chọn)"
           onBlur={handleBlur("phone")}
           onChange={handleChange("phone")}
           placeholder="0901234567"
-          required
           value={values.phone}
         />
       </div>
@@ -331,7 +347,7 @@ function RegisterForm() {
 
       <Button className="h-12 rounded-2xl" disabled={isSubmitting} fullWidth type="submit">
         {isSubmitting ? <Loader2 className="animate-spin" size={18} /> : <UserPlus size={18} />}
-        {isSubmitting ? "Đang kiểm tra..." : "Tạo tài khoản"}
+        {isSubmitting ? "Đang tạo..." : "Tạo tài khoản"}
       </Button>
     </AuthFormShell>
   );

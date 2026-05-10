@@ -81,6 +81,27 @@ export async function login(credentials) {
   return data;
 }
 
+export async function register(payload) {
+  if (isDemoModeEnabled) {
+    return {
+      email: payload?.email ?? "",
+      fullName: payload?.fullName ?? "",
+      id: `demo-customer-${Date.now()}`,
+      phone: payload?.phone || null,
+      role: "USER",
+      status: "ACTIVE",
+    };
+  }
+
+  return api.post("/auth/register", payload, {
+    retry: false,
+    skipAuth: true,
+    skipAuthRefresh: true,
+    skipGlobalErrorHandler: true,
+    skipUnauthorizedHandler: true,
+  });
+}
+
 export async function logout() {
   try {
     return await api.post("/admin/auth/logout", null, {
@@ -101,6 +122,7 @@ const authService = {
   getRefreshToken,
   login,
   logout,
+  register,
   setAccessToken,
   setRefreshToken,
 };

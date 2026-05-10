@@ -43,7 +43,7 @@ public class UserEntity {
     @Column(unique = true, nullable = false)
     private String email;
 
-    @Column(unique = true, name = "phone_number", nullable = false, length = 10)
+    @Column(unique = true, name = "phone_number", length = 10)
     private String phoneNumber;
 
     @Column(name = "hashed_password", nullable = false, length = 60)

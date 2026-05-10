@@ -14,6 +14,11 @@ Phase 8 — Production + Deploy (Completed showcase)
 
 ## Recently Completed
 
+- Added public backend customer registration at `POST /api/auth/register` with DTO validation, BCrypt hashing, generated customer usernames, optional unique phone handling, safe `USER` response metadata, and a public security rule that preserves existing admin/staff auth.
+- Connected the storefront `/register` form to the new customer registration API outside demo mode while keeping demo mode local-first for presentations.
+- Added focused service tests for successful registration, optional phone handling, password confirmation mismatch, and duplicate email rejection; `mvn test` passes with the known local PostgreSQL `media.display_order` DDL warning.
+- Completed a backend API gap audit for Customer Register, Customer Cart, User Password Reset, and Analytics/Report APIs.
+- Confirmed during the audit that those four areas did not have dedicated backend endpoints/modules yet; Customer Register has now been implemented, while Customer Cart, User Password Reset, and Analytics/Report remain open.
 - Completed the final graduation showcase polish pass across homepage wow-factor, PDP presentation, checkout trust UX, admin analytics, dashboard panels, subtle motion, hover states, and shared visual utilities.
 - Marked Phase 8 completed, the ecommerce platform finalized, and the production-ready showcase completed while preserving the homepage layout and frontend/admin architecture.
 - Verified `npm run lint`, `npm run build`, and `git diff --check` after the showcase polish pass; `git diff --check` reported only CRLF normalization warnings for edited files.
@@ -413,7 +418,7 @@ Phase 8 — Production + Deploy (Completed showcase)
 ### Client Ecommerce
 
 - Maintain the completed Phase 7 customer-facing ecommerce foundation without destabilizing the completed Phase 6 UI foundations.
-- Keep the register flow local until public customer auth APIs are ready.
+- Keep the `/register` API-backed flow stable outside demo mode and preserve the local demo-mode success path.
 - Move storefront customer login to a public customer auth endpoint when the API contract is available.
 - Keep `/profile`, `/profile/orders`, and `/profile/settings` behind `ProtectedRoute`.
 - Keep account profile/order API calls centralized in `userService.js`, `orderService.js`, and `accountMapper.js`.
@@ -429,7 +434,7 @@ Phase 8 — Production + Deploy (Completed showcase)
 - Keep the finalized ecommerce showcase stable; do not make broad redesigns after completion.
 - Keep real deployment blocked until hosting, TLS, external secrets, backups, and migration automation are finalized outside committed code.
 - Add controlled PostgreSQL migration/backfill scripts for legacy schema drift before using the production `ddl-auto=validate` posture against real data.
-- Finalize public customer registration/login, account ownership, cart persistence, wishlist persistence, and public order tracking contracts.
+- Finalize public customer login, account ownership, cart persistence, wishlist persistence, and public order tracking contracts.
 - Move VNPay/MoMo from sandbox to production only through environment-specific credentials, HTTPS return URLs, provider reconciliation checks, and critical-flow tests.
 - Connect real notification, loyalty, recommendation, search, and customer-facing returns/refunds APIs when backend contracts are available.
 - Connect a backend WebSocket/SSE notification endpoint to `VITE_REALTIME_WS_URL` when the API contract is ready.

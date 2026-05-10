@@ -537,7 +537,7 @@ Reusable customer auth components live in `frontend/src/components/auth/`:
 - `LoginForm.jsx`
 - `RegisterForm.jsx`
 
-The login form uses local form state, local validation, `authService.login()`, AuthProvider session updates, role-based redirect, and toast notifications. `/register`, social login, and forgot-password remain placeholders until public customer auth APIs are ready.
+The login form uses local form state, local validation, `authService.login()`, AuthProvider session updates, role-based redirect, and toast notifications. `/register` uses `authService.register()` to call `POST /auth/register` outside demo mode and keeps local demo-mode success behavior; social login and forgot-password remain placeholders until those public customer auth APIs are ready.
 
 ## Account Components
 

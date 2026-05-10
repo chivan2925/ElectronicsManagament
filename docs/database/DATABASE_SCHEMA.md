@@ -179,7 +179,8 @@ Important columns:
 
 Notes:
 
-- `username`, `email`, and `phone_number` are unique.
+- `username` and `email` are required and unique.
+- `phone_number` is optional for customer self-registration and unique when present.
 - `status` uses `UserStatus`.
 
 ### `addresses`

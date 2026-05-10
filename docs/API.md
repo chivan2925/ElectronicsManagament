@@ -64,13 +64,43 @@ Content-Type: application/json
 }
 ```
 
+Customer registration:
+
+```http
+POST /api/auth/register
+Content-Type: application/json
+```
+
+```json
+{
+  "fullName": "Nguyễn Văn A",
+  "email": "customer@example.com",
+  "phone": "0909123456",
+  "password": "Password123!",
+  "confirmPassword": "Password123!"
+}
+```
+
+Successful registration creates an `ACTIVE` customer account and returns safe profile metadata only:
+
+```json
+{
+  "id": 1,
+  "fullName": "Nguyễn Văn A",
+  "email": "customer@example.com",
+  "phone": "0909123456",
+  "role": "USER",
+  "status": "ACTIVE"
+}
+```
+
 Authenticated request:
 
 ```http
 Authorization: Bearer <accessToken>
 ```
 
-Current frontend auth supports admin, staff, and customer-shaped sessions. Backend refresh-token support is not finalized yet.
+Current frontend auth supports admin, staff, and customer-shaped sessions. Backend customer login and refresh-token support are not finalized yet.
 
 ## Public Endpoints
 
@@ -79,6 +109,7 @@ Current frontend auth supports admin, staff, and customer-shaped sessions. Backe
 | `GET /api/health` | Liveness probe. |
 | `GET /api/health/readiness` | Readiness probe with database connectivity. |
 | `POST /api/admin/auth/login` | Admin/staff login. |
+| `POST /api/auth/register` | Customer account registration. |
 | `GET /api/payments/vnpay-return` | VNPay browser return. |
 | `GET /api/payments/momo-return` | MoMo browser return. |
 | `GET /api/system/payment/vnpay-ipn` | VNPay IPN. |
@@ -92,6 +123,7 @@ All other endpoints require authentication unless the backend policy changes.
 | Group | Paths |
 | --- | --- |
 | Admin auth | `/admin/auth/*` |
+| Customer auth | `/auth/register` |
 | Catalog | `/admin/categories`, `/admin/brands`, `/admin/products`, `/admin/variants`, `/admin/media` |
 | People and access | `/admin/users`, `/admin/staffs`, `/admin/roles`, `/admin/permissions` |
 | Sales | `/admin/orders`, `/admin/payments`, `/admin/return-requests`, `/admin/coupons` |

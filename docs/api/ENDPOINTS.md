@@ -4,7 +4,7 @@
 
 This file documents the backend endpoints that currently exist in `backend/electronics/src/main/java/org/example/electronics/controller`.
 
-The current backend surface includes admin/staff operations, authenticated storefront checkout/account flows, VNPay/MoMo sandbox payment handoff, payment callbacks, media upload, and health probes. Public customer registration/auth, persisted cart, and final customer ownership contracts are not complete yet.
+The current backend surface includes admin/staff operations, public customer registration, authenticated storefront checkout/account flows, VNPay/MoMo sandbox payment handoff, payment callbacks, media upload, and health probes. Public customer login, persisted cart, and final customer ownership contracts are not complete yet.
 
 ## Base URL
 
@@ -35,6 +35,7 @@ Public endpoints:
 - `GET /health`
 - `GET /health/readiness`
 - `POST /admin/auth/login`
+- `POST /auth/register`
 - `GET /payments/vnpay-return`
 - `GET /payments/momo-return`
 - `GET /system/payment/vnpay-ipn`
@@ -78,6 +79,12 @@ Common filters used by many admin list endpoints:
 | --- | --- | --- | --- | --- |
 | `POST` | `/admin/auth/login` | `AdminLoginRequestDTO` | `AdminLoginResponseDTO` | Public. Returns JWT access token and staff profile basics. |
 | `POST` | `/admin/auth/logout` | None | string | Requires token. Invalidates the current token id until expiry. |
+
+## Customer Authentication
+
+| Method | Path | Body | Response | Notes |
+| --- | --- | --- | --- | --- |
+| `POST` | `/auth/register` | `CustomerRegisterRequestDTO` | `CustomerRegisterResponseDTO` | Public. Creates an `ACTIVE` customer account with derived `USER` role metadata. Does not return password/hash or create ADMIN/STAFF roles. |
 
 ## Admin Catalog
 
@@ -294,6 +301,7 @@ Common filters used by many admin list endpoints:
 | DTO | Fields |
 | --- | --- |
 | `AdminLoginRequestDTO` | `email`, `password` |
+| `CustomerRegisterRequestDTO` | `fullName`, `email`, optional `phone`, `password`, `confirmPassword` |
 | `AdminCategoryRequestDTO` | `name`, `iconUrl`, `slug`, `parentId`, `status` |
 | `AdminBrandRequestDTO` | `name`, `slug`, `imageUrl`, `description`, `featured`, `status` |
 | `AdminProductRequestDTO` | `name`, `slug`, `categoryId`, `brandId`, `description`, `specsJson`, `warrantyMonths`, `featured`, `media`, `status` |
