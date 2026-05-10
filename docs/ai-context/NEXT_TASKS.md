@@ -14,6 +14,9 @@ Phase 8 — Production + Deploy (Phase 7 completed)
 
 ## Recently Completed
 
+- Completed a responsive experience audit across storefront, auth, checkout, product, account, and admin routes for phone, tablet, laptop, and ultra-wide viewports.
+- Tightened laptop storefront header behavior, mobile auth layout containment, shared button text safety, and admin CRUD table mobile card rendering without redesigning the homepage.
+- Verified `npm run lint`, `npm run build`, `git diff --check`, and Playwright responsive smoke checks; `git diff --check` reported only CRLF normalization warnings for edited frontend files.
 - Completed an ecommerce UI/UX production polish pass across storefront and admin surfaces without redesigning the homepage.
 - Added shared storefront surface/action panel utilities and admin page/panel/control/table utilities for more consistent spacing, borders, shadows, focus states, and hover treatments.
 - Polished homepage-adjacent ecommerce flows, PLP, PDP support sections, cart, checkout, profile, wishlist, dashboard, CRUD pages, media management, orders, warehouse, roles, coupons, and analytics pages.

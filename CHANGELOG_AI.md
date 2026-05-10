@@ -8,6 +8,16 @@ Always update this file after meaningful work.
 
 ## 2026-05-10
 
+### Responsive Experience Audit
+
+- Audited client, auth, checkout, product, account, and admin routes across phone, tablet, laptop, and ultra-wide viewports.
+- Fixed laptop storefront header crowding by using compact labels/icon-only secondary actions at narrower desktop widths.
+- Fixed mobile auth width containment so long admin/auth titles and forms do not clip horizontally.
+- Added mobile card rendering to shared admin CRUD tables while preserving desktop table layouts.
+- Added shared button text safety for tighter mobile and tablet controls.
+- Updated `CURRENT_STATE.md` and `NEXT_TASKS.md`.
+- Verified `npm run lint`, `npm run build`, `git diff --check`, and Playwright responsive smoke checks; `git diff --check` reported only CRLF normalization warnings for edited frontend files.
+
 ### Ecommerce UI UX Production Polish
 
 - Reviewed storefront and admin UI/UX as a production design audit covering spacing, typography, hover states, animation consistency, color, shadows, borders, hierarchy, trust cues, and ecommerce quality.

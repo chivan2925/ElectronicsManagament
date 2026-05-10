@@ -129,14 +129,14 @@ export function AuthFormShell({ children, feedback, footer, onSubmit, subtitle, 
   return (
     <motion.form
       animate="visible"
-      className="relative overflow-hidden rounded-3xl border border-blue-300/20 bg-[#07111F]/88 p-5 shadow-[0_28px_90px_rgba(0,0,0,0.34),0_0_44px_rgba(0,91,255,0.13)] backdrop-blur-2xl sm:p-6 lg:p-7"
+      className="relative w-full min-w-0 overflow-hidden rounded-3xl border border-blue-300/20 bg-[#07111F]/88 p-5 shadow-[0_28px_90px_rgba(0,0,0,0.34),0_0_44px_rgba(0,91,255,0.13)] backdrop-blur-2xl sm:p-6 lg:p-7"
       initial="hidden"
       onSubmit={onSubmit}
       variants={fadeUp}
     >
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-blue-200/55 to-transparent" />
       <div className="mb-5">
-        <h2 className="text-section text-2xl">{title}</h2>
+        <h2 className="text-section break-words text-2xl">{title}</h2>
         <p className="text-muted mt-2 text-sm">{subtitle}</p>
       </div>
 
@@ -241,11 +241,11 @@ function AuthLayout({
       <main className={cn("page-container flex items-center justify-center py-8 sm:py-10", showStoreHeader ? "min-h-[calc(100vh-160px)]" : "min-h-screen")}>
         <MotionDiv
           animate="visible"
-          className="grid w-full max-w-6xl gap-6 lg:grid-cols-[minmax(0,1fr)_420px] lg:items-center"
+          className="grid w-full max-w-6xl min-w-0 gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,420px)] lg:items-center"
           initial="hidden"
           variants={staggerContainer}
         >
-          <MotionDiv className="order-2 lg:order-1" variants={fadeUp}>
+          <MotionDiv className="order-2 min-w-0 lg:order-1" variants={fadeUp}>
             <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-slate-950/36 p-5 shadow-inner shadow-white/[0.03] backdrop-blur-xl sm:p-6 lg:p-7">
               <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_0%,rgba(0,91,255,0.22),transparent_36%),linear-gradient(135deg,rgba(255,255,255,0.06),transparent_34%,rgba(0,91,255,0.08))]" />
               <div className="relative z-10">
@@ -258,7 +258,7 @@ function AuthLayout({
                   <LockKeyhole size={13} />
                   {badge}
                 </Badge>
-                <h1 className="text-heading max-w-2xl">{title}</h1>
+                <h1 className="text-heading max-w-2xl break-words">{title}</h1>
                 <p className="text-muted mt-3 max-w-xl text-base">{subtitle}</p>
 
                 <div className="mt-7 grid gap-3">
@@ -290,7 +290,7 @@ function AuthLayout({
             </div>
           </MotionDiv>
 
-          <MotionDiv className="order-1 lg:order-2" variants={fadeUp}>
+          <MotionDiv className="order-1 min-w-0 lg:order-2" variants={fadeUp}>
             {children}
             <p className="mt-4 text-center text-sm font-semibold text-slate-400">
               {switchText}{" "}

@@ -35,7 +35,7 @@ const CartDrawer = lazyWithPreload(() => import("../cart/CartDrawer"));
 const SearchOverlay = lazyWithPreload(() => import("../search/SearchOverlay"));
 
 const headerLinkClass =
-  "premium-transition inline-flex items-center gap-2 rounded-xl px-3 py-2 font-semibold text-slate-300 hover:-translate-y-0.5 hover:bg-white/[0.06] hover:text-white hover:shadow-[0_0_24px_rgba(0,91,255,0.14)]";
+  "premium-transition inline-flex min-w-10 items-center justify-center gap-2 rounded-xl px-3 py-2 font-semibold text-slate-300 hover:-translate-y-0.5 hover:bg-white/[0.06] hover:text-white hover:shadow-[0_0_24px_rgba(0,91,255,0.14)]";
 
 const categoryItems = categories.filter((category) => category.slug !== "tat-ca");
 
@@ -179,13 +179,14 @@ function Header() {
 
           <div className="group/category relative hidden lg:block">
             <Link
-              className="premium-transition flex h-11 items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-4 text-sm font-bold text-slate-200 shadow-inner shadow-white/[0.03] backdrop-blur-xl hover:-translate-y-0.5 hover:border-blue-300/70 hover:bg-blue-500/10 hover:text-white hover:shadow-[0_0_28px_rgba(0,91,255,0.2)]"
+              className="premium-transition flex h-11 items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3 text-sm font-bold text-slate-200 shadow-inner shadow-white/[0.03] backdrop-blur-xl hover:-translate-y-0.5 hover:border-blue-300/70 hover:bg-blue-500/10 hover:text-white hover:shadow-[0_0_28px_rgba(0,91,255,0.2)] 2xl:px-4"
               onFocus={preloadProductsRoute}
               onPointerEnter={preloadProductsRoute}
               to="/products"
             >
               <Grid3X3 size={18} />
-              Tất cả danh mục
+              <span className="whitespace-nowrap 2xl:hidden">Danh mục</span>
+              <span className="hidden whitespace-nowrap 2xl:inline">Tất cả danh mục</span>
               <ChevronDown className="premium-transition group-hover/category:rotate-180" size={16} />
             </Link>
 
@@ -228,11 +229,11 @@ function Header() {
           </button>
 
           <nav className="ml-auto flex shrink-0 items-center gap-1.5 text-sm sm:gap-2">
-            <Link className={cn(headerLinkClass, "hidden xl:flex")} onFocus={preloadOrdersRoute} onPointerEnter={preloadOrdersRoute} to={ordersHref}>
+            <Link aria-label="Theo dõi đơn hàng" className={cn(headerLinkClass, "hidden xl:flex")} onFocus={preloadOrdersRoute} onPointerEnter={preloadOrdersRoute} title="Theo dõi đơn hàng" to={ordersHref}>
               <PackageSearch size={19} />
-              Theo dõi đơn hàng
+              <span className="hidden whitespace-nowrap 2xl:inline">Theo dõi đơn hàng</span>
             </Link>
-            <Link className={cn(headerLinkClass, "hidden xl:flex")} onFocus={preloadWishlistRoute} onPointerEnter={preloadWishlistRoute} to="/wishlist">
+            <Link aria-label="Yêu thích" className={cn(headerLinkClass, "hidden xl:flex")} onFocus={preloadWishlistRoute} onPointerEnter={preloadWishlistRoute} title="Yêu thích" to="/wishlist">
               <span className="relative flex">
                 <Heart size={19} />
                 {wishlistCount > 0 && (
@@ -245,17 +246,17 @@ function Header() {
                   </MotionSpan>
                 )}
               </span>
-              Yêu thích
+              <span className="hidden whitespace-nowrap 2xl:inline">Yêu thích</span>
             </Link>
             <NotificationDropdown onOpenChange={handleNotificationOpenChange} />
             <Link className={cn(headerLinkClass, "hidden sm:flex")} onFocus={preloadAccountRoute} onPointerEnter={preloadAccountRoute} to={accountHref}>
               <UserRound size={19} />
-              <span className="hidden max-w-40 truncate xl:inline">{accountLabel}</span>
-              <span className="xl:hidden">{compactAccountLabel}</span>
+              <span className="hidden max-w-40 truncate 2xl:inline">{accountLabel}</span>
+              <span className="2xl:hidden">{compactAccountLabel}</span>
             </Link>
             <button className="premium-transition relative flex h-10 min-w-10 items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.06] px-2 font-bold text-white shadow-inner shadow-white/[0.03] outline-none hover:-translate-y-0.5 hover:border-blue-300/80 hover:bg-blue-500/10 hover:shadow-[0_0_30px_rgba(0,91,255,0.24)] focus-visible:ring-2 focus-visible:ring-blue-300/60 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 sm:h-11 sm:min-w-11 sm:px-3" onClick={openCartDrawer} onFocus={preloadCartDrawer} onPointerEnter={preloadCartDrawer} type="button">
               <ShoppingCart size={20} />
-              <span className="hidden lg:inline">Giỏ hàng</span>
+              <span className="hidden whitespace-nowrap 2xl:inline">Giỏ hàng</span>
               {cartItemCount > 0 && (
                 <MotionSpan
                   animate={{ scale: [1, 1.12, 1] }}

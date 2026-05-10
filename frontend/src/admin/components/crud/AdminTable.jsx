@@ -242,7 +242,95 @@ function AdminTable({
         </div>
       ) : null}
 
-      <div className="overflow-x-auto">
+      <div className="grid gap-3 p-3 md:hidden">
+        {loading ? (
+          skeletonRows.map((index) => (
+            <div className="rounded-2xl border border-slate-200 bg-white p-4" key={`mobile-skeleton-${index}`}>
+              <div className="h-4 w-32 animate-pulse rounded bg-slate-100" />
+              <div className="mt-4 grid gap-3">
+                {columns.slice(0, 4).map((column) => (
+                  <div className="grid grid-cols-[96px_minmax(0,1fr)] gap-3" key={`${index}-${column.key}`}>
+                    <div className="h-3 w-20 animate-pulse rounded bg-slate-100" />
+                    <div className="h-3 w-full animate-pulse rounded bg-slate-100" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))
+        ) : visibleRows.length > 0 ? (
+          visibleRows.map((row, rowIndex) => {
+            const rowId = getRowId(row);
+            const isSelected = selectedSet.has(rowId);
+            const visibleActions = rowActions.filter((action) => !(typeof action.hidden === "function" ? action.hidden(row) : action.hidden));
+
+            return (
+              <article
+                className={cn(
+                  "rounded-2xl border border-slate-200 bg-white p-4 shadow-sm shadow-slate-200/60",
+                  isSelected && "border-blue-200 bg-blue-50/50",
+                )}
+                key={rowId ?? `mobile-${rowIndex}`}
+              >
+                {showSelection ? (
+                  <label className="mb-3 flex items-center gap-2 text-xs font-black uppercase tracking-normal text-slate-500">
+                    <input
+                      aria-label="Select row"
+                      checked={isSelected}
+                      className="h-4 w-4 rounded border-slate-300 text-primary focus:ring-blue-200"
+                      onChange={() => toggleRow(rowId)}
+                      type="checkbox"
+                    />
+                    Select record
+                  </label>
+                ) : null}
+
+                <dl className="grid gap-3">
+                  {columns.map((column) => (
+                    <div className="grid gap-1" key={`${rowId ?? rowIndex}-${column.key}-mobile`}>
+                      <dt className="text-[11px] font-black uppercase tracking-normal text-slate-500">{column.label}</dt>
+                      <dd className="min-w-0 break-words text-sm font-semibold text-slate-800">
+                        {renderCell(column, row, rowIndex)}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+
+                {hasRowActions && visibleActions.length > 0 ? (
+                  <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-slate-100 pt-3">
+                    {visibleActions.map((action) => {
+                      const disabled = typeof action.disabled === "function" ? action.disabled(row) : action.disabled;
+
+                      return (
+                        <button
+                          aria-label={action.label}
+                          className={cn(
+                            "inline-flex h-9 min-w-9 items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50 px-3 text-xs font-black text-slate-600 transition outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-white disabled:cursor-not-allowed disabled:text-slate-300 disabled:hover:bg-slate-50",
+                            rowActionToneClasses[resolveActionTone(action)] || rowActionToneClasses.neutral,
+                          )}
+                          disabled={disabled}
+                          key={action.key}
+                          onClick={() => action.onClick?.(row)}
+                          title={action.label}
+                          type="button"
+                        >
+                          {action.icon ? createElement(action.icon, { size: 15 }) : null}
+                          <span>{action.label}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                ) : null}
+              </article>
+            );
+          })
+        ) : (
+          <div className="rounded-2xl border border-slate-200 bg-white p-4">
+            <EmptyAdminState action={emptyAction} message={emptyMessage} title={emptyTitle} />
+          </div>
+        )}
+      </div>
+
+      <div className="hidden overflow-x-auto md:block">
         <table className="min-w-full divide-y divide-slate-200">
           <thead className="bg-slate-50/90">
             <tr>
