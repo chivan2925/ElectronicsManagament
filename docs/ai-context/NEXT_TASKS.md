@@ -14,6 +14,10 @@ Phase 8 — Production + Deploy (Phase 7 completed)
 
 ## Recently Completed
 
+- Completed a loading/error/empty-state foundation audit across API, product, auth, payment, admin, and analytics surfaces.
+- Added reusable `LoadingState`, `ProductGridSkeleton`, and admin analytics skeleton foundations.
+- Improved route/auth loading, PLP refresh transitions, PDP/account skeleton status semantics, payment verification feedback, admin table loading copy, API retry actions, and shared empty states.
+- Verified `npm run lint` and `npm run build` after the loading/error/empty-state foundation pass.
 - Completed an ecommerce accessibility foundation pass across storefront navigation, overlays, drawers, checkout forms, filter controls, product gallery, and payment/shipping selectors.
 - Added skip-to-main navigation, main landmarks, reusable focus trapping, clearer dialog labels, inert collapsed menu/filter panels, form error associations, and radio semantics while preserving the dark theme and homepage layout.
 - Verified `npm run lint` and `npm run build` after the accessibility foundation pass.

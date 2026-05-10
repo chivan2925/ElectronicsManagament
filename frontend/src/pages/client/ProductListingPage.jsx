@@ -21,13 +21,13 @@ import Pagination from "../../components/product/Pagination";
 import ProductCard from "../../components/product/ProductCard";
 import SearchProductsInput from "../../components/product/SearchProductsInput";
 import SortDropdown from "../../components/product/SortDropdown";
-import ProductCardSkeleton from "../../components/skeletons/ProductCardSkeleton";
 import SEOHead from "../../components/seo/SEOHead";
-import SkeletonBlock from "../../components/skeletons/SkeletonBlock";
+import ProductGridSkeleton from "../../components/skeletons/ProductGridSkeleton";
 import Badge from "../../components/ui/Badge";
 import Button from "../../components/ui/Button";
 import Container from "../../components/ui/Container";
 import ApiErrorAlert from "../../components/ui/feedback/ApiErrorAlert";
+import LoadingState from "../../components/ui/feedback/LoadingState";
 import IconButton from "../../components/ui/IconButton";
 import { categories as storefrontCategories } from "../../data/categories";
 import useFocusTrap from "../../hooks/useFocusTrap";
@@ -113,6 +113,8 @@ function ProductListingPage() {
   const categorySummary =
     selectedCategories.length > 1 ? `${selectedCategories.length} danh mục đã chọn` : selectedCategory?.name || "Toàn bộ catalog";
   const hasActiveFilters = activeFilters.length > 0;
+  const isInitialProductLoading = isLoading && products.length === 0 && !error;
+  const isRefreshingProducts = isLoading && products.length > 0;
   const availablePrices = products.map((product) => product.price).filter((price) => price > 0);
   const minPrice = availablePrices.length ? Math.min(...availablePrices) : 0;
 
@@ -253,7 +255,11 @@ function ProductListingPage() {
             <FilterSidebar {...filterSidebarProps} />
           </div>
 
-          <section aria-labelledby="product-results-heading" className="min-w-0 space-y-4">
+          <section
+            aria-busy={isLoading ? "true" : undefined}
+            aria-labelledby="product-results-heading"
+            className="min-w-0 space-y-4"
+          >
             <div
               className="store-surface-panel scroll-mt-28 rounded-2xl p-3 sm:p-4"
               id="product-results"
@@ -262,7 +268,7 @@ function ProductListingPage() {
                 <div>
                   <p className="text-caption text-blue-200">{categorySummary}</p>
                   <h2 className="text-section mt-1 text-xl" id="product-results-heading">
-                    {isLoading ? "Đang tải sản phẩm..." : `${filteredProducts.length} sản phẩm phù hợp`}
+                    {isInitialProductLoading ? "Đang tải sản phẩm..." : `${filteredProducts.length} sản phẩm phù hợp`}
                   </h2>
                 </div>
 
@@ -293,25 +299,27 @@ function ProductListingPage() {
 
             <ActiveFilters items={activeFilters} onClearAll={clearAllFilters} onRemove={removeActiveFilter} />
 
-            {isLoading ? (
+            {isRefreshingProducts ? (
+              <LoadingState
+                className="rounded-2xl"
+                message="Kết quả hiện tại vẫn được giữ lại trong lúc catalog đồng bộ dữ liệu mới."
+                surface="store"
+                title="Đang cập nhật danh sách"
+                variant="inline"
+              />
+            ) : null}
+
+            {isInitialProductLoading ? (
               <div className="space-y-4">
-                <div className="skeleton-card rounded-2xl p-4">
-                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <div className="space-y-2">
-                      <SkeletonBlock className="h-4 w-40 rounded-full" />
-                      <SkeletonBlock className="h-3 w-64 max-w-full rounded-full" />
-                    </div>
-                    <div className="flex gap-2">
-                      <SkeletonBlock className="h-9 w-24 rounded-xl" />
-                      <SkeletonBlock className="h-9 w-28 rounded-xl" />
-                    </div>
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4 md:gap-5 xl:grid-cols-3">
-                  {Array.from({ length: 9 }, (_, index) => (
-                    <ProductCardSkeleton key={`product-skeleton-${index}`} />
-                  ))}
-                </div>
+                <LoadingState
+                  message="Đang lấy catalog, bộ lọc và thông tin tồn kho mới nhất."
+                  showSkeleton
+                  skeletonRows={2}
+                  surface="store"
+                  title="Đang tải catalog"
+                  variant="panel"
+                />
+                <ProductGridSkeleton count={9} />
               </div>
             ) : error ? (
               <ApiErrorAlert
@@ -334,6 +342,8 @@ function ProductListingPage() {
                   <ProductCard key={product.id} product={product} />
                 ))}
               </MotionDiv>
+            ) : isRefreshingProducts ? (
+              <ProductGridSkeleton count={6} />
             ) : (
               <EmptyProductsState
                 hasActiveFilters={hasActiveFilters}

@@ -8,6 +8,7 @@ import TransactionSummary from "../../components/payment/TransactionSummary";
 import Badge from "../../components/ui/Badge";
 import Container from "../../components/ui/Container";
 import ApiErrorAlert from "../../components/ui/feedback/ApiErrorAlert";
+import LoadingState from "../../components/ui/feedback/LoadingState";
 import usePaymentResult from "../../hooks/usePaymentResult";
 import {
   getPaymentResultCopy,
@@ -61,6 +62,16 @@ function PaymentFailed() {
               </Badge>
               <h1 className="text-heading mt-5 max-w-3xl">{pageMeta.title}</h1>
               <p className="text-muted mt-3 max-w-2xl text-base md:text-lg">{pageMeta.description}</p>
+
+              {isVerifying && (
+                <LoadingState
+                  className="mt-5 max-w-2xl"
+                  message="Đang kiểm tra chữ ký, số tiền và trạng thái giao dịch trước khi cho phép thử lại."
+                  surface="store"
+                  title="Đang xác minh giao dịch"
+                  variant="inline"
+                />
+              )}
 
               {message && (
                 <div className="mt-5 max-w-2xl rounded-2xl border border-white/10 bg-white/[0.045] p-4">

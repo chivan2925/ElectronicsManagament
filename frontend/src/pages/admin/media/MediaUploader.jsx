@@ -251,7 +251,7 @@ function MediaUploader({
               type="button"
             >
               <X size={15} />
-              Clear
+              Dọn hàng đợi
             </button>
           </div>
 
@@ -348,7 +348,7 @@ function MediaUploader({
                       {item.status === "completed" ? <CheckCircle2 size={13} /> : null}
                       {item.status === "failed" ? <AlertCircle size={13} /> : null}
                       {item.status === "uploading" ? <Loader2 className="animate-spin" size={13} /> : null}
-                      {item.status === "completed" ? "Done" : item.status === "failed" ? "Failed" : "Uploading"}
+                      {item.status === "completed" ? "Hoàn tất" : item.status === "failed" ? "Thất bại" : "Đang upload"}
                     </span>
                   </div>
                 </div>

@@ -13,7 +13,10 @@ import {
   YAxis,
 } from "recharts";
 import { BadgeCheck, MousePointerClick, Repeat2, UsersRound, UserPlus } from "lucide-react";
+import AnalyticsLoadingState from "./AnalyticsLoadingState";
 import AnalyticsCard from "../components/dashboard/AnalyticsCard";
+import ApiErrorAlert from "../../components/ui/feedback/ApiErrorAlert";
+import EmptyState from "../../components/ui/feedback/EmptyState";
 import { cn } from "../../utils/classNames";
 import { compactCurrency } from "../../utils/formatters";
 
@@ -78,9 +81,41 @@ function CustomerMetric({ helper, metricKey, placeholder, title, tone = "blue", 
   );
 }
 
-function CustomerAnalytics({ className, data }) {
+function CustomerAnalytics({ className, data, error = null, loading = false, onRetry }) {
+  if (loading) {
+    return (
+      <AnalyticsLoadingState
+        className={className}
+        message="Đang tổng hợp tăng trưởng, phân khúc và retention khách hàng."
+        title="Đang tải analytics khách hàng"
+      />
+    );
+  }
+
+  if (error) {
+    return (
+      <ApiErrorAlert
+        actionLabel="Thử lại"
+        className={className}
+        error={error}
+        onAction={onRetry}
+        surface="admin"
+        title="Chưa tải được analytics khách hàng"
+      />
+    );
+  }
+
   if (!data) {
-    return null;
+    return (
+      <EmptyState
+        className={className}
+        icon={UsersRound}
+        message="Dữ liệu khách hàng sẽ hiển thị khi API reporting hoặc event tracking trả kết quả."
+        size="compact"
+        surface="admin"
+        title="Chưa có dữ liệu khách hàng"
+      />
+    );
   }
 
   return (

@@ -1,5 +1,6 @@
 import { ChevronLeft, ChevronRight, Eye, Image, Layers3, Loader2, Package, Star, Trash2 } from "lucide-react";
 import OptimizedImage from "../../../components/common/OptimizedImage";
+import EmptyState from "../../../components/ui/feedback/EmptyState";
 import { cn } from "../../../utils/classNames";
 
 const pageSizeOptions = [12, 24, 48, 96];
@@ -26,7 +27,8 @@ function formatDate(value) {
 
 function MediaGridSkeleton() {
   return (
-    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+    <div aria-busy="true" aria-label="Đang tải thư viện media" className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4" role="status">
+      <span className="sr-only">Đang tải thư viện media</span>
       {Array.from({ length: 8 }).map((_, index) => (
         <div className="admin-panel overflow-hidden rounded-2xl" key={index}>
           <div className="aspect-[4/3] animate-pulse bg-slate-100" />
@@ -141,15 +143,13 @@ function MediaGrid({
 
   if (data.length === 0) {
     return (
-      <section className="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-16 text-center shadow-admin-card">
-        <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-slate-400 ring-1 ring-slate-200">
-          <Image size={24} />
-        </span>
-        <h3 className="mt-4 text-lg font-black text-slate-950">Chưa có media phù hợp</h3>
-        <p className="mx-auto mt-2 max-w-md text-sm font-semibold leading-6 text-slate-500">
-          Upload ảnh mới hoặc đổi bộ lọc để xem các asset đang gắn với sản phẩm.
-        </p>
-      </section>
+      <EmptyState
+        icon={Image}
+        message="Upload ảnh mới hoặc đổi bộ lọc để xem các asset đang gắn với sản phẩm."
+        size="compact"
+        surface="admin"
+        title="Chưa có media phù hợp"
+      />
     );
   }
 

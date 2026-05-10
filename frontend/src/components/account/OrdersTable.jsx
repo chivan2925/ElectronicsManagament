@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { ChevronDown, Eye, MapPin, PackageCheck, ReceiptText, Truck } from "lucide-react";
 import Badge from "../ui/Badge";
 import Button from "../ui/Button";
+import EmptyState from "../ui/feedback/EmptyState";
 import SkeletonBlock from "../skeletons/SkeletonBlock";
 import OrderStatusBadge from "./OrderStatusBadge";
 import { cn } from "../../utils/classNames";
@@ -43,7 +44,8 @@ function PaymentStatusBadge({ status }) {
 
 function OrdersTableSkeleton() {
   return (
-    <div className="grid gap-3">
+    <div aria-busy="true" aria-label="Đang tải lịch sử đơn hàng" className="grid gap-3" role="status">
+      <span className="sr-only">Đang tải lịch sử đơn hàng</span>
       {[0, 1, 2].map((item) => (
         <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-4" key={item}>
           <SkeletonBlock className="h-5 w-36" />
@@ -58,7 +60,13 @@ function OrdersTableSkeleton() {
 function OrderDetailPanel({ detail, isLoading }) {
   if (isLoading) {
     return (
-      <div className="mt-3 rounded-2xl border border-blue-300/15 bg-blue-500/[0.045] p-4">
+      <div
+        aria-busy="true"
+        aria-label="Đang tải chi tiết đơn hàng"
+        className="mt-3 rounded-2xl border border-blue-300/15 bg-blue-500/[0.045] p-4"
+        role="status"
+      >
+        <span className="sr-only">Đang tải chi tiết đơn hàng</span>
         <SkeletonBlock className="h-5 w-44" />
         <SkeletonBlock className="mt-4 h-4 w-full max-w-2xl" />
         <SkeletonBlock className="mt-3 h-20 w-full" />
@@ -209,14 +217,15 @@ function OrdersTable({
 
   if (!orders.length) {
     return (
-      <div className="flex min-h-[340px] items-center justify-center rounded-3xl border border-white/10 bg-white/[0.035] p-6 text-center shadow-inner shadow-white/[0.03]">
-        <div>
-          <PackageCheck className="mx-auto text-blue-200 drop-shadow-[0_0_18px_rgba(0,91,255,0.55)]" size={52} />
-          <Badge className="mx-auto mt-5" variant="primary">Chưa có đơn hàng</Badge>
-          <h2 className="text-section mt-4">Lịch sử đơn đang trống</h2>
-          <p className="text-muted mx-auto mt-2 max-w-md text-sm">Các đơn đã tạo qua checkout sẽ xuất hiện tại đây sau khi API trả dữ liệu.</p>
-        </div>
-      </div>
+      <EmptyState
+        actionLabel="Mua sản phẩm"
+        actionTo="/products"
+        className="min-h-[340px]"
+        eyebrow="Chưa có đơn hàng"
+        icon={PackageCheck}
+        message="Các đơn đã tạo qua checkout sẽ xuất hiện tại đây sau khi API trả dữ liệu."
+        title="Lịch sử đơn đang trống"
+      />
     );
   }
 

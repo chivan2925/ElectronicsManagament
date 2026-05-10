@@ -12,7 +12,12 @@ function PaymentProcessingState({ provider }) {
   const steps = getCheckoutPaymentSteps({ isRedirecting: true, provider });
 
   return (
-    <div className="mt-4 rounded-2xl border border-blue-300/30 bg-blue-500/10 p-3 text-sm font-bold text-blue-100">
+    <div
+      aria-busy="true"
+      aria-live="polite"
+      className="mt-4 rounded-2xl border border-blue-300/30 bg-blue-500/10 p-3 text-sm font-bold text-blue-100"
+      role="status"
+    >
       <div className="flex items-start gap-3">
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-500/20 ring-1 ring-blue-300/30">
           <Loader2 className="animate-spin" size={18} />

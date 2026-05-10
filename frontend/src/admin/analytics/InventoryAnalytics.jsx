@@ -14,7 +14,10 @@ import {
   YAxis,
 } from "recharts";
 import { AlertTriangle, Boxes, PackageCheck, PackageOpen, Truck } from "lucide-react";
+import AnalyticsLoadingState from "./AnalyticsLoadingState";
 import AnalyticsCard from "../components/dashboard/AnalyticsCard";
+import ApiErrorAlert from "../../components/ui/feedback/ApiErrorAlert";
+import EmptyState from "../../components/ui/feedback/EmptyState";
 import { cn } from "../../utils/classNames";
 import { compactCurrency } from "../../utils/formatters";
 
@@ -72,9 +75,41 @@ function InventoryMetric({ helper, metricKey, title, tone = "blue", trend, value
   );
 }
 
-function InventoryAnalytics({ className, data }) {
+function InventoryAnalytics({ className, data, error = null, loading = false, onRetry }) {
+  if (loading) {
+    return (
+      <AnalyticsLoadingState
+        className={className}
+        message="Đang tải tồn kho, cảnh báo low-stock và luồng nhập xuất."
+        title="Đang tải analytics tồn kho"
+      />
+    );
+  }
+
+  if (error) {
+    return (
+      <ApiErrorAlert
+        actionLabel="Thử lại"
+        className={className}
+        error={error}
+        onAction={onRetry}
+        surface="admin"
+        title="Chưa tải được analytics tồn kho"
+      />
+    );
+  }
+
   if (!data) {
-    return null;
+    return (
+      <EmptyState
+        className={className}
+        icon={Boxes}
+        message="Kiểm tra lại bộ lọc hoặc làm mới sau khi dữ liệu warehouse được đồng bộ."
+        size="compact"
+        surface="admin"
+        title="Chưa có dữ liệu tồn kho"
+      />
+    );
   }
 
   return (

@@ -14,6 +14,7 @@ import Button from "../../components/ui/Button";
 import Container from "../../components/ui/Container";
 import ApiErrorAlert from "../../components/ui/feedback/ApiErrorAlert";
 import EmptyState from "../../components/ui/feedback/EmptyState";
+import LoadingState from "../../components/ui/feedback/LoadingState";
 import SkeletonBlock from "../../components/skeletons/SkeletonBlock";
 import { products as catalogProducts } from "../../data";
 import useRecentlyViewed from "../../hooks/useRecentlyViewed";
@@ -148,7 +149,15 @@ function ProductDetailLoading({ slug }) {
       <AnnouncementBar />
       <Header />
 
-      <Container as="main" className="pb-14 pt-6 sm:pt-8" id="main-content" tabIndex={-1}>
+      <Container as="main" aria-busy="true" className="pb-14 pt-6 sm:pt-8" id="main-content" tabIndex={-1}>
+        <LoadingState
+          className="mb-5"
+          message="Đang lấy hình ảnh, giá, biến thể và tồn kho."
+          surface="store"
+          title="Đang tải chi tiết sản phẩm"
+          variant="inline"
+        />
+
         <div className="mb-4 flex gap-2">
           <SkeletonBlock className="h-5 w-20 rounded-full" />
           <SkeletonBlock className="h-5 w-28 rounded-full" />

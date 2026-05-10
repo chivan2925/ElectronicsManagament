@@ -24,7 +24,8 @@ function formatDate(value) {
 
 function ProfileOverviewSkeleton() {
   return (
-    <div className="space-y-5">
+    <div aria-busy="true" aria-label="Đang tải hồ sơ tài khoản" className="space-y-5" role="status">
+      <span className="sr-only">Đang tải hồ sơ tài khoản</span>
       <section className="skeleton-card rounded-3xl p-5">
         <SkeletonBlock className="h-6 w-52" />
         <SkeletonBlock className="mt-5 h-20 w-full" />

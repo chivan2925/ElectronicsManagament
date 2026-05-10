@@ -1,6 +1,7 @@
 import { AlertTriangle, CreditCard, PackageCheck, ShieldAlert, Warehouse } from "lucide-react";
 import useNotifications from "../../../hooks/useNotifications";
 import { cn } from "../../../utils/classNames";
+import EmptyState from "../../../components/ui/feedback/EmptyState";
 import AnalyticsCard from "../dashboard/AnalyticsCard";
 
 const activityConfig = {
@@ -114,12 +115,15 @@ function AdminRealtimeActivity() {
           {activityItems.length ? (
             activityItems.map((notification) => <ActivityItem key={notification.id} notification={notification} />)
           ) : (
-            <div className="rounded-xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-center">
-              <p className="text-sm font-black text-slate-800">Waiting for realtime order activity</p>
-              <p className="mt-1 text-xs leading-5 text-slate-500">
-                Events from the WebSocket bridge or polling fallback will populate this feed.
-              </p>
-            </div>
+            <EmptyState
+              className="min-h-44 rounded-xl"
+              framed
+              icon={PackageCheck}
+              message="Sự kiện từ WebSocket bridge hoặc polling fallback sẽ xuất hiện tại đây."
+              size="compact"
+              surface="admin"
+              title="Chưa có hoạt động realtime"
+            />
           )}
         </div>
 
@@ -133,10 +137,15 @@ function AdminRealtimeActivity() {
           {stockAlerts.length ? (
             stockAlerts.map((notification) => <StockAlert key={notification.id} notification={notification} />)
           ) : (
-            <div className="rounded-xl border border-dashed border-slate-200 bg-slate-50 px-4 py-5 text-center">
-              <Warehouse className="mx-auto text-slate-300" size={30} />
-              <p className="mt-3 text-sm font-black text-slate-800">No realtime stock alerts</p>
-            </div>
+            <EmptyState
+              className="min-h-40 rounded-xl"
+              framed
+              icon={Warehouse}
+              message="Low-stock alert sẽ bật lên khi tồn kho chạm ngưỡng cảnh báo."
+              size="compact"
+              surface="admin"
+              title="Chưa có cảnh báo tồn kho"
+            />
           )}
         </div>
       </div>

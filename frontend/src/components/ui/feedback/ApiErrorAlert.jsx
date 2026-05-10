@@ -1,6 +1,6 @@
 import { createElement } from "react";
 import { motion } from "framer-motion";
-import { AlertTriangle, LockKeyhole, ShieldAlert, WifiOff, X, XCircle } from "lucide-react";
+import { AlertTriangle, LockKeyhole, RefreshCw, ShieldAlert, WifiOff, X, XCircle } from "lucide-react";
 import { buildApiErrorFeedback, getApiErrorDetailItems } from "../../../api/apiErrorFeedback";
 import { cn } from "../../../utils/classNames";
 
@@ -66,8 +66,15 @@ function ApiErrorAlert({
       };
   const palette = toneClasses[feedback.tone] ?? toneClasses.error;
   const detailItems = details ? getApiErrorDetailItems(details) : feedback.detailItems;
+  const fallbackMessage =
+    surface === "admin"
+      ? "Vui lòng thử lại hoặc kiểm tra kết nối API nếu lỗi tiếp diễn."
+      : "Vui lòng thử lại sau ít phút hoặc kiểm tra kết nối mạng.";
+  const resolvedMessage = feedback.message || fallbackMessage;
+  const resolvedTitle = feedback.title || "Có lỗi xảy ra";
+  const resolvedActionLabel = actionLabel || (onAction ? "Thử lại" : "");
 
-  if (!feedback.message && detailItems.length === 0) {
+  if (!resolvedTitle && !resolvedMessage && detailItems.length === 0) {
     return null;
   }
 
@@ -97,10 +104,10 @@ function ApiErrorAlert({
         <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between gap-3">
             <div>
-              <p className={cn("font-black", surface === "admin" ? "text-inherit" : "text-white")}>{feedback.title}</p>
-              {feedback.message && (
+              <p className={cn("font-black", surface === "admin" ? "text-inherit" : "text-white")}>{resolvedTitle}</p>
+              {resolvedMessage && (
                 <p className={cn("mt-1 leading-6", surface === "admin" ? "text-slate-600" : "text-slate-200")}>
-                  {feedback.message}
+                  {resolvedMessage}
                 </p>
               )}
             </div>
@@ -132,10 +139,16 @@ function ApiErrorAlert({
             </ul>
           )}
 
-          {actionLabel && onAction && (
+          {feedback.requestId ? (
+            <p className={cn("mt-3 text-xs font-bold", surface === "admin" ? "text-slate-500" : "text-slate-400")}>
+              Request ID: {feedback.requestId}
+            </p>
+          ) : null}
+
+          {resolvedActionLabel && onAction && (
             <button
               className={cn(
-                "transition-default mt-4 inline-flex h-10 items-center justify-center rounded-xl px-4 text-xs font-black outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
+                "transition-default mt-4 inline-flex h-10 items-center justify-center gap-2 rounded-xl px-4 text-xs font-black outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
                 surface === "admin"
                   ? "bg-primary text-white hover:bg-primary-hover focus-visible:ring-blue-200 focus-visible:ring-offset-white"
                   : "bg-white text-slate-950 hover:bg-blue-50 focus-visible:ring-blue-300/60 focus-visible:ring-offset-slate-950",
@@ -143,7 +156,8 @@ function ApiErrorAlert({
               onClick={onAction}
               type="button"
             >
-              {actionLabel}
+              <RefreshCw size={14} />
+              {resolvedActionLabel}
             </button>
           )}
         </div>

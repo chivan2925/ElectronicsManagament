@@ -6,11 +6,12 @@ function EmptyAdminState({
   action,
   className,
   icon: Icon = Inbox,
-  message = "Try adjusting search, filters, or refresh the data source.",
-  title = "No records found",
+  message = "Thử đổi từ khóa tìm kiếm, kiểm tra bộ lọc hoặc làm mới dữ liệu.",
+  title = "Không có bản ghi",
 }) {
   return (
     <div
+      aria-live="polite"
       className={cn(
         "flex min-h-64 flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-slate-50/80 px-6 py-12 text-center",
         className,

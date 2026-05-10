@@ -9,6 +9,7 @@ import Badge from "../../components/ui/Badge";
 import Button from "../../components/ui/Button";
 import Container from "../../components/ui/Container";
 import ApiErrorAlert from "../../components/ui/feedback/ApiErrorAlert";
+import LoadingState from "../../components/ui/feedback/LoadingState";
 import usePaymentResult from "../../hooks/usePaymentResult";
 import {
   getPaymentResultCopy,
@@ -77,6 +78,16 @@ function PaymentSuccess() {
                   ? pageMeta.description
                   : "Trang thanh toán đã quay lại, nhưng hệ thống chưa xác nhận trạng thái paid cho đơn này."}
               </p>
+
+              {isVerifying && (
+                <LoadingState
+                  className="mt-5 max-w-2xl"
+                  message={`Đang đối soát phản hồi ${providerLabel} với server trước khi cập nhật đơn hàng.`}
+                  surface="store"
+                  title="Đang xác minh thanh toán"
+                  variant="inline"
+                />
+              )}
 
               {error && (
                 <ApiErrorAlert

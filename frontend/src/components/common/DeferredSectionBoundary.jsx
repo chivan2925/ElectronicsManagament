@@ -10,7 +10,8 @@ function DeferredSectionFallback({ cardCount = 4, className, compact = false, su
       : "store-surface-panel rounded-3xl p-4 sm:p-5 lg:p-6";
 
   return (
-    <section className={cn(sectionClassName, className)}>
+    <section aria-busy="true" aria-label="Đang tải nội dung sản phẩm" className={cn(sectionClassName, className)} role="status">
+      <span className="sr-only">Đang tải nội dung sản phẩm</span>
       <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div className="space-y-2">
           <SkeletonBlock className="h-6 w-32 rounded-full" />

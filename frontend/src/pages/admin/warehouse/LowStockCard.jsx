@@ -21,10 +21,10 @@ function LowStockItem({ canAdjust, item, onAdjust }) {
         </span>
         {canAdjust ? (
           <button
-            aria-label={`Adjust ${item.variantName}`}
+            aria-label={`Điều chỉnh tồn kho ${item.variantName}`}
             className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 transition hover:border-primary hover:text-primary"
             onClick={() => onAdjust?.(item)}
-            title="Adjust stock"
+            title="Điều chỉnh tồn kho"
             type="button"
           >
             <SlidersHorizontal size={15} />
@@ -74,14 +74,14 @@ function LowStockCard({ canAdjust = false, items = [], loading = false, onAdjust
         {loading ? (
           <div className="flex items-center justify-center gap-2 rounded-xl border border-dashed border-slate-200 px-3 py-5 text-sm font-bold text-slate-500">
             <Loader2 className="animate-spin" size={16} />
-            Loading alerts...
+            Đang tải cảnh báo...
           </div>
         ) : previewItems.length > 0 ? (
           previewItems.map((item) => <LowStockItem canAdjust={canAdjust} item={item} key={item.id} onAdjust={onAdjust} />)
         ) : (
           <div className="rounded-xl border border-dashed border-emerald-200 bg-emerald-50 px-3 py-5 text-center">
-            <p className="text-sm font-black text-emerald-700">Inventory is healthy</p>
-            <p className="mt-1 text-xs font-semibold text-emerald-600">No visible stock item is below the alert threshold.</p>
+            <p className="text-sm font-black text-emerald-700">Tồn kho đang ổn định</p>
+            <p className="mt-1 text-xs font-semibold text-emerald-600">Không có dòng tồn kho nào dưới ngưỡng cảnh báo.</p>
           </div>
         )}
       </div>

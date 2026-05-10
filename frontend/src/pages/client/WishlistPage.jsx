@@ -21,7 +21,7 @@ import OptimizedImage from "../../components/common/OptimizedImage";
 import AnnouncementBar from "../../components/layout/AnnouncementBar";
 import Header from "../../components/layout/Header";
 import RecentlyViewedSection from "../../components/product/RecentlyViewedSection";
-import ProductCardSkeleton from "../../components/skeletons/ProductCardSkeleton";
+import ProductGridSkeleton from "../../components/skeletons/ProductGridSkeleton";
 import Badge from "../../components/ui/Badge";
 import Button from "../../components/ui/Button";
 import Container from "../../components/ui/Container";
@@ -53,13 +53,7 @@ function EmptyWishlistState() {
 }
 
 function WishlistLoadingGrid() {
-  return (
-    <div className="grid grid-cols-2 gap-4 md:gap-5 xl:grid-cols-3">
-      {Array.from({ length: 6 }, (_, index) => (
-        <ProductCardSkeleton key={`wishlist-skeleton-${index}`} />
-      ))}
-    </div>
-  );
+  return <ProductGridSkeleton count={6} label="Đang tải wishlist" />;
 }
 
 function SyncStatusBadge({ isHydrating, isSyncing, lastSyncedAt, syncMode }) {

@@ -7,6 +7,7 @@ import ApiErrorAlert from "../../components/ui/feedback/ApiErrorAlert";
 import Badge from "../../components/ui/Badge";
 import Button from "../../components/ui/Button";
 import { useToast } from "../../components/ui/toast";
+import { cn } from "../../utils/classNames";
 
 const PAGE_SIZE = 8;
 
@@ -120,7 +121,7 @@ function ProfileOrders() {
             Mua thêm
           </Button>
           <Button className="rounded-2xl" disabled={isLoading} onClick={fetchOrders} variant="outline">
-            <RefreshCcw size={17} />
+            <RefreshCcw className={cn(isLoading && "animate-spin")} size={17} />
             Làm mới
           </Button>
         </div>

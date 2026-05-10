@@ -221,10 +221,14 @@ function AdminTable({
   const skeletonRows = Array.from({ length: Math.min(activePageSize, 5) }, (_, index) => index);
 
   return (
-    <section className={cn("admin-panel overflow-hidden rounded-2xl", className)}>
+    <section
+      aria-busy={loading ? "true" : undefined}
+      aria-live="polite"
+      className={cn("admin-panel overflow-hidden rounded-2xl", className)}
+    >
       {selectedCount > 0 && bulkActions.length > 0 ? (
         <div className="flex flex-col gap-3 border-b border-slate-200 bg-[#07111F] px-4 py-3 text-white sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-sm font-black">{selectedCount} selected</p>
+          <p className="text-sm font-black">{selectedCount} bản ghi đã chọn</p>
           <div className="flex flex-wrap gap-2">
             {bulkActions.map((action) => (
               <button
@@ -244,19 +248,22 @@ function AdminTable({
 
       <div className="grid gap-3 p-3 md:hidden">
         {loading ? (
-          skeletonRows.map((index) => (
-            <div className="rounded-2xl border border-slate-200 bg-white p-4" key={`mobile-skeleton-${index}`}>
-              <div className="h-4 w-32 animate-pulse rounded bg-slate-100" />
-              <div className="mt-4 grid gap-3">
-                {columns.slice(0, 4).map((column) => (
-                  <div className="grid grid-cols-[96px_minmax(0,1fr)] gap-3" key={`${index}-${column.key}`}>
-                    <div className="h-3 w-20 animate-pulse rounded bg-slate-100" />
-                    <div className="h-3 w-full animate-pulse rounded bg-slate-100" />
-                  </div>
-                ))}
+          <>
+            <span className="sr-only" role="status">Đang tải bảng dữ liệu</span>
+            {skeletonRows.map((index) => (
+              <div className="rounded-2xl border border-slate-200 bg-white p-4" key={`mobile-skeleton-${index}`}>
+                <div className="h-4 w-32 animate-pulse rounded bg-slate-100" />
+                <div className="mt-4 grid gap-3">
+                  {columns.slice(0, 4).map((column) => (
+                    <div className="grid grid-cols-[96px_minmax(0,1fr)] gap-3" key={`${index}-${column.key}`}>
+                      <div className="h-3 w-20 animate-pulse rounded bg-slate-100" />
+                      <div className="h-3 w-full animate-pulse rounded bg-slate-100" />
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
-          ))
+            ))}
+          </>
         ) : visibleRows.length > 0 ? (
           visibleRows.map((row, rowIndex) => {
             const rowId = getRowId(row);
@@ -274,13 +281,13 @@ function AdminTable({
                 {showSelection ? (
                   <label className="mb-3 flex items-center gap-2 text-xs font-black uppercase tracking-normal text-slate-500">
                     <input
-                      aria-label="Select row"
+                      aria-label="Chọn bản ghi"
                       checked={isSelected}
                       className="h-4 w-4 rounded border-slate-300 text-primary focus:ring-blue-200"
                       onChange={() => toggleRow(rowId)}
                       type="checkbox"
                     />
-                    Select record
+                    Chọn bản ghi
                   </label>
                 ) : null}
 
@@ -337,7 +344,7 @@ function AdminTable({
               {showSelection ? (
                 <th className="w-12 px-4 py-3.5">
                   <input
-                    aria-label="Select all visible rows"
+                    aria-label="Chọn tất cả bản ghi đang hiển thị"
                     checked={allVisibleSelected}
                     className="h-4 w-4 rounded border-slate-300 text-primary focus:ring-blue-200"
                     disabled={loading || selectableRowIds.length === 0}
@@ -382,7 +389,7 @@ function AdminTable({
 
               {hasRowActions ? (
                 <th className="whitespace-nowrap px-5 py-3.5 text-right text-xs font-black uppercase tracking-normal text-slate-500">
-                  Actions
+                  Thao tác
                 </th>
               ) : null}
             </tr>
@@ -391,7 +398,7 @@ function AdminTable({
           <tbody className="divide-y divide-slate-200 bg-white">
             {loading ? (
               skeletonRows.map((index) => (
-                <tr key={index}>
+                <tr aria-hidden="true" key={index}>
                   {showSelection ? <td className="px-4 py-4" /> : null}
                   {columns.map((column) => (
                     <td className="px-5 py-4" key={`${index}-${column.key}`}>
@@ -411,7 +418,7 @@ function AdminTable({
                     {showSelection ? (
                       <td className="px-4 py-4">
                         <input
-                          aria-label="Select row"
+                          aria-label="Chọn bản ghi"
                           checked={isSelected}
                           className="h-4 w-4 rounded border-slate-300 text-primary focus:ring-blue-200"
                           onChange={() => toggleRow(rowId)}
@@ -476,9 +483,9 @@ function AdminTable({
       </div>
 
       {loading ? (
-        <div className="flex items-center justify-center gap-2 border-t border-slate-200 px-4 py-3 text-sm font-bold text-slate-500">
+        <div className="flex items-center justify-center gap-2 border-t border-slate-200 px-4 py-3 text-sm font-bold text-slate-500" role="status">
           <Loader2 className="animate-spin" size={16} />
-          Loading records...
+          Đang tải dữ liệu...
         </div>
       ) : null}
 

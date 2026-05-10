@@ -18,6 +18,7 @@ import OrderStatusBadge from "../../components/account/OrderStatusBadge";
 import OrderTrackingTimeline from "../../components/account/OrderTrackingTimeline";
 import ShipmentProgress from "../../components/account/ShipmentProgress";
 import ApiErrorAlert from "../../components/ui/feedback/ApiErrorAlert";
+import EmptyState from "../../components/ui/feedback/EmptyState";
 import Badge from "../../components/ui/Badge";
 import Button from "../../components/ui/Button";
 import SkeletonBlock from "../../components/skeletons/SkeletonBlock";
@@ -41,7 +42,8 @@ function getAddress(order) {
 
 function ProfileOrderDetailSkeleton() {
   return (
-    <div className="grid gap-5">
+    <div aria-busy="true" aria-label="Đang tải chi tiết đơn hàng" className="grid gap-5" role="status">
+      <span className="sr-only">Đang tải chi tiết đơn hàng</span>
       <div className="rounded-3xl border border-white/10 bg-slate-950/42 p-5">
         <SkeletonBlock className="h-5 w-36" />
         <SkeletonBlock className="mt-4 h-9 w-64 max-w-full" />
@@ -174,15 +176,14 @@ function ProfileOrderDetail() {
 
   if (!order) {
     return (
-      <section className="store-surface-panel rounded-3xl p-6 text-center">
-        <ReceiptText className="mx-auto text-blue-200 drop-shadow-[0_0_18px_rgba(0,91,255,0.55)]" size={52} />
-        <h2 className="text-section mt-4">Không tìm thấy đơn hàng</h2>
-        <p className="text-muted mx-auto mt-2 max-w-md text-sm">Đơn hàng có thể chưa đồng bộ hoặc không thuộc tài khoản hiện tại.</p>
-        <Button as={Link} className="mt-5 rounded-2xl" to="/profile/orders" variant="outline">
-          <ArrowLeft size={17} />
-          Quay lại lịch sử đơn
-        </Button>
-      </section>
+      <EmptyState
+        actionIcon={ArrowLeft}
+        actionLabel="Quay lại lịch sử đơn"
+        actionTo="/profile/orders"
+        icon={ReceiptText}
+        message="Đơn hàng có thể chưa đồng bộ hoặc không thuộc tài khoản hiện tại."
+        title="Không tìm thấy đơn hàng"
+      />
     );
   }
 

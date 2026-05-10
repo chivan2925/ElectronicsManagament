@@ -85,9 +85,9 @@ function HistoryCard({ error, items = [], loading = false, onRetry }) {
       <div className="mt-4 space-y-2">
         {error ? (
           <div className="rounded-xl border border-rose-100 bg-rose-50 px-3 py-3">
-            <p className="text-sm font-black text-rose-700">Could not load history</p>
+            <p className="text-sm font-black text-rose-700">Chưa tải được lịch sử tồn kho</p>
             <button className="mt-2 text-xs font-black text-rose-700 underline" onClick={onRetry} type="button">
-              Retry
+              Thử lại
             </button>
           </div>
         ) : loading ? (
@@ -110,8 +110,8 @@ function HistoryCard({ error, items = [], loading = false, onRetry }) {
           ))
         ) : (
           <div className="rounded-xl border border-dashed border-slate-200 bg-slate-50 px-3 py-6 text-center">
-            <p className="text-sm font-black text-slate-700">No stock movement yet</p>
-            <p className="mt-1 text-xs font-semibold text-slate-500">Recent adjustments will appear here.</p>
+            <p className="text-sm font-black text-slate-700">Chưa có biến động tồn kho</p>
+            <p className="mt-1 text-xs font-semibold text-slate-500">Các điều chỉnh gần đây sẽ xuất hiện tại đây.</p>
           </div>
         )}
       </div>

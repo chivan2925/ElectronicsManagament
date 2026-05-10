@@ -92,6 +92,8 @@ The responsive audit now tightens laptop storefront header fit, mobile auth widt
 
 The ecommerce accessibility foundation now includes skip-to-main navigation, storefront main landmarks, reusable focus trapping for search/cart/mobile filters/product gallery overlays, clearer dialog/drawer labelling, inert collapsed menus/filters, checkout form error associations, radio semantics for shipping/payment/variants, and stronger keyboard focus states while preserving the dark theme and homepage layout.
 
+The ecommerce loading/error/empty-state foundation now includes reusable `LoadingState`, `ProductGridSkeleton`, analytics loading skeletons, smoother route/auth loading, reduced PLP refresh flashing, improved payment verification feedback, cleaner API retry actions, and more consistent storefront/admin empty states across product, account, payment, media, warehouse, CRUD, realtime, and analytics surfaces.
+
 The frontend now has production-oriented route loading with route-level lazy loading, route preloading hooks, shared route/deferred-section loading boundaries, deferred header search/cart overlays, below-fold storefront section splitting, an optimized image component foundation, and targeted memoization for repeated ecommerce rows/carousels. The shared API client now has in-flight GET request deduplication plus opt-in TTL caching, and catalog product listing/detail flows avoid N+1 detail fetches. The production build emits route/vendor chunks instead of one large JavaScript bundle.
 
 The frontend and backend now have a no-SaaS logging and monitoring foundation. Frontend monitoring lives under `frontend/src/monitoring` with structured client logs, a local monitoring buffer, global error tracking, API failure tracking, payment error tracking, route preload/error tracking, route-change hooks, and `X-Request-Id` propagation from the shared API client. Backend monitoring lives under `backend/electronics/src/main/java/org/example/electronics/monitoring` with structured key-value logging helpers and request correlation through `X-Request-Id`/MDC. Auth, order, payment, webhook, unauthorized, and exception flows now emit reusable structured events.
@@ -114,7 +116,7 @@ The frontend now has a centralized JWT-ready auth architecture with AuthProvider
 
 The frontend now has a centralized role/permission system with shared route policies, sidebar filtering, reusable permission hooks, PermissionGate, and resource action policies for admin CRUD controls. ADMIN has full admin access, STAFF module access requires matching resource view permissions, and USER cannot access admin routes.
 
-The frontend now has a centralized global feedback system with reusable toast notifications, loading toasts, API error alerts, empty states, permission-denied states, and a global React error boundary.
+The frontend now has a centralized global feedback system with reusable toast notifications, loading toasts, loading states, API error alerts, empty states, permission-denied states, and a global React error boundary.
 
 The next phase is:
 
@@ -580,6 +582,7 @@ Latest validation:
 - `npm run lint`, `npm run build`, and `git diff --check` passed after the ecommerce UI/UX production polish pass. `git diff --check` reported only CRLF normalization warnings for edited frontend files.
 - `npm run lint`, `npm run build`, `git diff --check`, and Playwright responsive smoke checks passed after the full responsive experience audit. `git diff --check` reported only CRLF normalization warnings for edited frontend files.
 - `npm run lint` and `npm run build` passed after the ecommerce accessibility foundation pass.
+- `npm run lint` and `npm run build` passed after the loading/error/empty-state foundation audit.
 
 ## Known Issues
 

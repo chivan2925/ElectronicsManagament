@@ -15,8 +15,11 @@ import {
   YAxis,
 } from "recharts";
 import { CircleDollarSign, MousePointerClick, ReceiptText, ShoppingBag, TrendingUp, Wallet } from "lucide-react";
+import AnalyticsLoadingState from "./AnalyticsLoadingState";
 import AnalyticsCard from "../components/dashboard/AnalyticsCard";
 import OptimizedImage from "../../components/common/OptimizedImage";
+import ApiErrorAlert from "../../components/ui/feedback/ApiErrorAlert";
+import EmptyState from "../../components/ui/feedback/EmptyState";
 import { cn } from "../../utils/classNames";
 import { compactCurrency, formatCurrency } from "../../utils/formatters";
 
@@ -96,9 +99,41 @@ function MetricTile({ helper, metricKey, placeholder, title, tone = "blue", tren
   );
 }
 
-function RevenueAnalytics({ className, data }) {
+function RevenueAnalytics({ className, data, error = null, loading = false, onRetry }) {
+  if (loading) {
+    return (
+      <AnalyticsLoadingState
+        className={className}
+        message="Đang lấy doanh thu, đơn hàng và báo cáo bán chạy."
+        title="Đang tải báo cáo doanh thu"
+      />
+    );
+  }
+
+  if (error) {
+    return (
+      <ApiErrorAlert
+        actionLabel="Thử lại"
+        className={className}
+        error={error}
+        onAction={onRetry}
+        surface="admin"
+        title="Chưa tải được báo cáo doanh thu"
+      />
+    );
+  }
+
   if (!data) {
-    return null;
+    return (
+      <EmptyState
+        className={className}
+        icon={ReceiptText}
+        message="Chọn lại khoảng thời gian hoặc làm mới khi API reporting sẵn sàng."
+        size="compact"
+        surface="admin"
+        title="Chưa có dữ liệu doanh thu"
+      />
+    );
   }
 
   return (

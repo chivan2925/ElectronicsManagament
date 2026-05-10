@@ -1,6 +1,7 @@
 import { createElement } from "react";
 import { Loader2, Mail, MapPin, PackageCheck, Phone, Save, Truck, UserRound } from "lucide-react";
 import { StatusBadge } from "../../../admin/components";
+import LoadingState from "../../../components/ui/feedback/LoadingState";
 import OrderTimeline from "./OrderTimeline";
 import { ORDER_STAGE_OPTIONS, PAYMENT_STATUS_OPTIONS, SHIPPING_PROVIDER_OPTIONS, SHIPPING_STATUS_OPTIONS } from "./orderOptions";
 import { formatCurrency } from "../../../utils/formatters";
@@ -74,10 +75,13 @@ function OrderDetail({
 }) {
   if (loading && !order) {
     return (
-      <div className="flex min-h-80 items-center justify-center rounded-2xl border border-slate-200 bg-white text-sm font-bold text-slate-500">
-        <Loader2 className="mr-2 animate-spin" size={18} />
-        Loading order detail...
-      </div>
+      <LoadingState
+        className="min-h-80"
+        message="Đang lấy thông tin khách hàng, thanh toán và vận chuyển."
+        surface="admin"
+        title="Đang tải chi tiết đơn hàng"
+        variant="panel"
+      />
     );
   }
 
@@ -168,7 +172,7 @@ function OrderDetail({
                   {orderItems.length === 0 ? (
                     <tr>
                       <td className="px-4 py-6 text-center text-sm font-semibold text-slate-500" colSpan={3}>
-                        {loading ? "Loading items..." : "No order items found."}
+                        {loading ? "Đang tải sản phẩm..." : "Chưa có sản phẩm trong đơn hàng."}
                       </td>
                     </tr>
                   ) : null}
