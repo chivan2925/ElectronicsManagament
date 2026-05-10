@@ -152,19 +152,6 @@ function CartItem({ item, layout = "drawer", onQuantityChange, onRemove }) {
               <p className="text-caption mt-2 w-fit max-w-full truncate rounded-full border border-white/10 bg-slate-950/40 px-2.5 py-1 text-slate-400">
                 {variant}
               </p>
-              <p
-                className={cn(
-                  "text-caption mt-2 flex w-fit max-w-full items-center gap-1.5 rounded-full border px-2.5 py-1",
-                  hasStockIssue
-                    ? "border-red-300/35 bg-red-500/10 text-red-100"
-                    : isAtMaxStock || isLowStock
-                      ? "border-amber-300/30 bg-amber-500/10 text-amber-100"
-                      : "border-emerald-300/20 bg-emerald-500/10 text-emerald-100",
-                )}
-              >
-                <StockIcon size={13} />
-                {stockMessage}
-              </p>
             </div>
           </div>
 
@@ -261,19 +248,6 @@ function CartItem({ item, layout = "drawer", onQuantityChange, onRemove }) {
             <p className="text-caption w-fit max-w-full truncate rounded-full border border-white/10 bg-slate-950/40 px-2.5 py-0.5 text-slate-400">
               {variant}
             </p>
-            {(hasStockIssue || isAtMaxStock || isLowStock) && (
-              <p
-                className={cn(
-                  "text-caption flex w-fit max-w-full items-center gap-1.5 rounded-full border px-2.5 py-0.5",
-                  hasStockIssue
-                    ? "border-red-300/35 bg-red-500/10 text-red-100"
-                    : "border-amber-300/30 bg-amber-500/10 text-amber-100",
-                )}
-              >
-                <StockIcon size={12} />
-                {stockMessage}
-              </p>
-            )}
           </div>
 
           <div className="mt-3 flex flex-wrap items-end justify-between gap-3">

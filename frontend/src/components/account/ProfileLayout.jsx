@@ -2,8 +2,6 @@ import { Link, Outlet } from "react-router-dom";
 import { ChevronRight, PackageCheck, ShieldCheck, UserRound, WalletCards } from "lucide-react";
 import useAccountProfile from "../../hooks/useAccountProfile";
 import TrustSignalBar from "../common/TrustSignalBar";
-import AnnouncementBar from "../layout/AnnouncementBar";
-import Header from "../layout/Header";
 import Badge from "../ui/Badge";
 import Container from "../ui/Container";
 import AccountSidebar from "./AccountSidebar";
@@ -13,10 +11,7 @@ function ProfileLayout() {
   const { isLoadingProfile, profile } = account;
 
   return (
-    <div className="store-page-shell">
-      <AnnouncementBar />
-      <Header />
-
+    <>
       <Container as="main" className="pb-16 pt-6 sm:pt-8" id="main-content" tabIndex={-1}>
         <nav aria-label="Breadcrumb" className="mb-4 flex min-w-0 flex-wrap items-center gap-2 text-sm font-bold text-slate-400">
           <Link className="premium-transition hover:text-white" to="/">
@@ -76,7 +71,7 @@ function ProfileLayout() {
           <Outlet context={account} />
         </div>
       </Container>
-    </div>
+    </>
   );
 }
 
