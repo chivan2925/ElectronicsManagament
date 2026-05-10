@@ -214,7 +214,12 @@ function ProductDetailContent({ detail, relatedProducts }) {
 
         <div className="mt-6 grid gap-6">
           <ProductSpecs description={detail.description} specs={detail.specs} />
-          <ProductReviews breakdown={detail.ratingBreakdown} product={detail.product} reviews={detail.reviews} />
+          <ProductReviews
+            breakdown={detail.ratingBreakdown}
+            product={detail.product}
+            reviewMeta={detail.reviewMeta}
+            reviews={detail.reviews}
+          />
           <RelatedProducts products={relatedProducts} />
         </div>
       </Container>

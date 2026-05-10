@@ -496,14 +496,24 @@ export function normalizeReview(raw = {}) {
   const id = firstDefined(raw.id, raw.reviewId, raw.createdAt, raw.date, raw.content, "review");
   const rating = toNumber(firstDefined(raw.ratingStar, raw.rating, raw.stars), 5);
   const createdAt = String(firstDefined(raw.createdAt, raw.created_at, raw.date, "")).slice(0, 10);
+  const photos = toArray(raw.photosJson ?? raw.photos ?? raw.images ?? raw.media)
+    .map((photo) => (typeof photo === "string" ? photo : firstDefined(photo?.url, photo?.imageUrl, photo?.src, "")))
+    .filter(Boolean);
+  const orderId = firstDefined(raw.orderId, raw.order?.id, null);
 
   return {
     author: firstDefined(raw.userName, raw.author, raw.customerName, raw.userId ? `Khách hàng #${raw.userId}` : "Khách hàng"),
     content: firstDefined(raw.content, raw.comment, "Khách hàng đã để lại đánh giá cho sản phẩm này."),
     date: createdAt || "Đang cập nhật",
+    helpfulCount: toNumber(firstDefined(raw.helpfulCount, raw.helpfulVotes, raw.helpful), 0),
     id: String(id),
+    orderId,
+    photos,
+    productId: firstDefined(raw.productId, raw.product?.id, null),
     rating,
     title: firstDefined(raw.title, rating >= 5 ? "Rất hài lòng" : rating >= 4 ? "Trải nghiệm tốt" : "Đã đánh giá"),
+    userId: firstDefined(raw.userId, raw.user?.id, null),
+    verifiedPurchase: Boolean(firstDefined(raw.verifiedPurchase, raw.verified, orderId)),
     variant: firstDefined(raw.variantName, raw.variant, "Đơn hàng đã mua"),
   };
 }
@@ -547,6 +557,7 @@ export function createProductDetail(raw = {}, options = {}) {
     installment: "Trả góp từ 0% qua thẻ tín dụng hoặc công ty tài chính.",
     product,
     ratingBreakdown: getRatingBreakdown(product, reviews),
+    reviewMeta: options.reviewMeta ?? null,
     raw: data,
     reviews,
     shippingInfo: [

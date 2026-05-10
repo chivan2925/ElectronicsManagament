@@ -365,11 +365,16 @@ Reusable product detail components live in `frontend/src/components/product/`:
 - `QuantitySelector.jsx`
 - `ProductSpecs.jsx`
 - `ProductReviews.jsx`
+- `RatingSummary.jsx`
+- `ReviewCard.jsx`
+- `ReviewForm.jsx`
 - `RelatedProducts.jsx`
 
 Reusable product detail API state logic lives in `frontend/src/hooks/useProductDetail.js`.
 
-The detail page fetches Product API data through `frontend/src/api/productService.js`, normalizes detail, variants, media, reviews, specs, and stock state through `frontend/src/api/productMapper.js`, and renders loading, API error, not-found, and related-product states without changing the existing PDP layout.
+The detail page fetches Product API data through `frontend/src/api/productService.js`, normalizes detail, variants, media, reviews, specs, and stock state through `frontend/src/api/productMapper.js`, and renders loading, API error, not-found, reviews, and related-product states without changing the existing PDP layout.
+
+The reviews system uses Product API review pages for the list and authenticated frontend state for the write-review UI until a dedicated public customer review create endpoint is available. Keep review UI dark, readable, filterable, and reusable.
 
 ## Cart State And Drawer
 

@@ -8,6 +8,14 @@ Always update this file after meaningful work.
 
 ## 2026-05-10
 
+### Product Reviews System
+
+- Rebuilt the product detail reviews area into a modern dark ecommerce review system.
+- Added reusable review components: `RatingSummary.jsx`, `ReviewCard.jsx`, and `ReviewForm.jsx`.
+- Upgraded `ProductReviews.jsx` with review filters, sorting, rating summary, authenticated write-review UI, image review placeholders, verified purchase badges, helpful vote placeholders, empty states, and load-more pagination foundation.
+- Extended Product API review normalization for `photosJson`, `orderId`, `userId`, helpful counts, verified purchase flags, and review pagination metadata.
+- Verified `npm run lint`, `npm run build`, and `git diff --check`. Build still reports the existing Vite chunk-size warning, and `git diff --check` reported CRLF normalization warnings for edited frontend files.
+
 ### Advanced Ecommerce Search System
 
 - Upgraded the storefront search overlay into an advanced mock-backed ecommerce search experience while preserving the homepage layout.

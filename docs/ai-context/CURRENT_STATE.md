@@ -42,7 +42,9 @@ The storefront product listing page now exists at `/products` with Product API-b
 
 The Product API-backed product listing state now lives in `frontend/src/hooks/useProducts.js`.
 
-The storefront product detail page now exists at `/products/:slug` with Product API-backed gallery, variants, quantity, purchase actions, specs, description, reviews, shipping information, stock information, related products, loading, error, and not-found states.
+The storefront product detail page now exists at `/products/:slug` with Product API-backed gallery, variants, quantity, purchase actions, specs, description, an advanced reviews system, shipping information, stock information, related products, loading, error, and not-found states.
+
+The storefront product reviews system now includes reusable rating summary, review card, and review form components with review filters, sorting, authenticated write-review UI, image review placeholders, verified purchase badges, helpful vote placeholders, empty states, and load-more pagination foundation.
 
 The frontend Product API integration uses `frontend/src/api/productMapper.js` to normalize flexible backend response shapes before they reach UI components.
 
@@ -330,7 +332,7 @@ Current frontend structure:
 - Customer auth components live in `frontend/src/components/auth/`.
 - Search overlay components live in `frontend/src/components/search/`.
 - Client layout components live in `frontend/src/components/layout/`.
-- Product components live in `frontend/src/components/product/`, including listing filters, search, sorting, active filters, empty state, pagination, detail gallery, product info, variants, quantity, specs, reviews, related products, and reusable product cards.
+- Product components live in `frontend/src/components/product/`, including listing filters, search, sorting, active filters, empty state, pagination, detail gallery, product info, variants, quantity, specs, reviews, rating summary, review cards, review form, related products, and reusable product cards.
 - Product listing API state logic lives in `frontend/src/hooks/useProducts.js`.
 - Product detail API state logic lives in `frontend/src/hooks/useProductDetail.js`.
 - Checkout coupon, order creation, and profile prefill logic lives in `frontend/src/hooks/useCheckoutCoupon.js`, `useCheckoutOrder.js`, and `useCheckoutProfile.js`.
@@ -478,6 +480,7 @@ Latest validation:
 - `npm run lint`, `npm run build`, `git diff --check`, and `mvn -q -DskipTests compile` passed after the Phase 5 Admin Dashboard System polish and completion review. Build still reports the existing Vite chunk-size warning.
 - `mvn -q -DskipTests compile` passed after removing custom backend Jackson version overrides from `backend/electronics/pom.xml`.
 - `npm run lint`, `npm run build`, and `git diff --check` passed after upgrading the advanced ecommerce search system. Build still reports the existing Vite chunk-size warning, and `git diff --check` reported CRLF normalization warnings for edited frontend files.
+- `npm run lint`, `npm run build`, and `git diff --check` passed after building the Product Reviews System. Build still reports the existing Vite chunk-size warning, and `git diff --check` reported CRLF normalization warnings for edited frontend files.
 - `mvn spring-boot:run` reached Tomcat startup after the Jackson fix; the verification process was stopped after confirming startup.
 - Backend startup still logs local PostgreSQL `ddl-auto` warnings for legacy/non-null schema drift in `media`, `products`, `users`, `variants`, and `warehouse_*` tables.
 - Build still reports a Vite chunk-size warning for a JavaScript bundle over 500 kB.

@@ -108,9 +108,12 @@ export async function getCatalogProductById(id, config = {}) {
     return createProductDetail(data);
   }
 
-  const reviewPage = await getCatalogProductReviews(id, reviewParams, requestConfig).catch(() => ({ items: [] }));
+  const reviewPage = await getCatalogProductReviews(id, reviewParams, requestConfig).catch(() => ({
+    items: [],
+    meta: null,
+  }));
 
-  return createProductDetail(data, { reviews: reviewPage.items });
+  return createProductDetail(data, { reviewMeta: reviewPage.meta, reviews: reviewPage.items });
 }
 
 export async function getCatalogProductReviews(id, params = {}, config = {}) {

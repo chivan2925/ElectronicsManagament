@@ -14,6 +14,10 @@ Ready for Phase 6 — Ecommerce Core Features
 
 ## Recently Completed
 
+- Built the storefront Product Reviews System on the product detail page with reusable `RatingSummary.jsx`, `ReviewCard.jsx`, `ReviewForm.jsx`, and upgraded `ProductReviews.jsx`.
+- Added review filters, sorting, authenticated write-review UI, image review placeholders, verified purchase badges, helpful vote placeholders, empty states, and load-more pagination foundation.
+- Extended product review normalization for backend `photosJson`, `orderId`, `userId`, helpful count, verified purchase, and review pagination metadata.
+- Verified `npm run lint`, `npm run build`, and `git diff --check` after the reviews system. Build still reports the existing Vite chunk-size warning, and `git diff --check` reported CRLF normalization warnings for edited frontend files.
 - Upgraded the storefront search overlay into an advanced mock-backed ecommerce search system with reusable `SearchResultItem.jsx`, `useRecentSearches.js`, category-aware and brand-aware scoring, search highlighting, loading/empty states, recent searches, trending searches, debounce, and keyboard navigation.
 - Verified `npm run lint`, `npm run build`, and `git diff --check` after the search upgrade. Build still reports the existing Vite chunk-size warning, and `git diff --check` reported CRLF normalization warnings for edited frontend files.
 - Removed custom backend Jackson version overrides from `backend/electronics/pom.xml`, returning Jackson dependency management to Spring Boot 4.0.3 defaults.
