@@ -6,6 +6,7 @@ import App from "./App";
 import { CartProvider } from "./cart";
 import { GlobalErrorBoundary } from "./components/ui/feedback";
 import { ToastProvider } from "./components/ui/toast";
+import { WishlistProvider } from "./wishlist";
 import "./styles/index.css";
 
 createRoot(document.getElementById("root")).render(
@@ -15,7 +16,9 @@ createRoot(document.getElementById("root")).render(
         <AuthProvider>
           <ToastProvider>
             <CartProvider>
-              <App />
+              <WishlistProvider>
+                <App />
+              </WishlistProvider>
             </CartProvider>
           </ToastProvider>
         </AuthProvider>

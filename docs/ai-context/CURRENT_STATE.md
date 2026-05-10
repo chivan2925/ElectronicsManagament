@@ -16,7 +16,7 @@ Ready for Phase 6 — Ecommerce Core Features
 
 ElectronicsManagement has completed Phase 5 — Admin Dashboard System and is ready for Phase 6 — Ecommerce Core Features.
 
-The client storefront now includes the homepage, Product API-backed product listing and product detail, shared-cart cart and checkout, customer authentication, wishlist, recently viewed, search overlay, and authenticated account experiences. Checkout now creates real backend orders and validates coupons through backend APIs. Wishlist, recently viewed, search, and homepage product sections still use mock/local state. Frontend admin/staff authentication is connected to the backend JWT API, the admin architecture foundation exists under `frontend/src/admin`, and the `/admin/categories`, `/admin/brands`, `/admin/products`, `/admin/variants`, `/admin/media`, `/admin/orders`, `/admin/warehouse`, `/admin/coupons`, `/admin/users`, `/admin/staff`, and `/admin/roles` modules are connected to real backend APIs with table/grid, search, filters, status controls, detail views, protected actions, and pagination. The admin dashboard and report routes still use mock analytics/report data until reporting APIs are added.
+The client storefront now includes the homepage, Product API-backed product listing and product detail, shared-cart cart and checkout, customer authentication, wishlist, recently viewed, search overlay, and authenticated account experiences. Checkout now creates real backend orders and validates coupons through backend APIs. Wishlist now uses persistent product snapshots, optimistic UI, optional backend sync, wishlist count, move-to-cart, remove, and loading/error states. Recently viewed, search, and homepage product sections still use mock/local state. Frontend admin/staff authentication is connected to the backend JWT API, the admin architecture foundation exists under `frontend/src/admin`, and the `/admin/categories`, `/admin/brands`, `/admin/products`, `/admin/variants`, `/admin/media`, `/admin/orders`, `/admin/warehouse`, `/admin/coupons`, `/admin/users`, `/admin/staff`, and `/admin/roles` modules are connected to real backend APIs with table/grid, search, filters, status controls, detail views, protected actions, and pagination. The admin dashboard and report routes still use mock analytics/report data until reporting APIs are added.
 
 The frontend folder structure has been normalized without changing the current visual UI.
 
@@ -58,7 +58,7 @@ The storefront checkout page now exists at `/checkout` with authenticated checko
 
 The storefront customer authentication pages now exist at `/login` and `/register` with reusable dark auth layout/forms, social login placeholders, remember-me, forgot-password placeholder, local validation UI, and responsive dark glass styling. The `/login` form now calls the backend JWT auth service; `/register` remains local until customer registration APIs are ready.
 
-The storefront wishlist page now exists at `/wishlist` with localStorage-backed wishlist state, product-card wishlist toggles, recently viewed tracking, and reusable wishlist/recently-viewed hooks.
+The storefront wishlist page now exists at `/wishlist` with persistent localStorage-backed product snapshots, optional backend wishlist sync through `VITE_WISHLIST_API_PATH`, optimistic add/remove/clear behavior, move-to-cart actions, wishlist count, loading/error states, product-card quick toggles, recently viewed tracking, and reusable wishlist/recently-viewed hooks.
 
 The storefront header now includes an advanced mock-backed search overlay with debounced live suggestions, recent searches, trending searches, product/category/brand result previews, reusable result rows, search highlighting, category-aware and brand-aware scoring, loading/empty states, and keyboard navigation behavior.
 
@@ -276,7 +276,7 @@ Current admin routes:
 
 Current frontend data:
 
-- Client storefront mock data is split across `frontend/src/data/categories.js`, `products.js`, `promotions.js`, and `services.js` for homepage/search/wishlist/local flows that are not API-backed yet.
+- Client storefront mock data is split across `frontend/src/data/categories.js`, `products.js`, `promotions.js`, and `services.js` for homepage/search/local flows that are not API-backed yet.
 - `frontend/src/data/products.js` still supports mock/local storefront sections, but `/products` now uses Product API data.
 - `frontend/src/data/productDetails.js` remains available for legacy mock detail helpers, but `/products/:slug` now uses Product API data.
 - `frontend/src/data/cart.js` remains as legacy mock cart setup, but active cart drawer, `/cart`, and `/checkout` now use `frontend/src/cart`.
@@ -288,12 +288,13 @@ Current frontend data:
 - Checkout/order/coupon mapping exists at `frontend/src/api/checkoutMapper.js`.
 - Account profile/order mapping exists at `frontend/src/api/accountMapper.js`.
 - Product API response mapping exists at `frontend/src/api/productMapper.js`.
+- Wishlist API response mapping exists at `frontend/src/api/wishlistMapper.js`.
 - Media API response mapping exists at `frontend/src/api/mediaMapper.js`.
 - Admin Order API response mapping exists at `frontend/src/api/orderMapper.js`.
 - Warehouse API response mapping exists at `frontend/src/api/warehouseMapper.js`.
 - Coupon API response mapping exists at `frontend/src/api/couponMapper.js`.
 - API refresh-token handling exists at `frontend/src/api/refreshTokenService.js`.
-- API service modules now exist in `frontend/src/api` for auth, categories, brands, products, variants, users, staff, roles, permissions, orders, warehouses, coupons, and media.
+- API service modules now exist in `frontend/src/api` for auth, categories, brands, products, variants, users, staff, roles, permissions, orders, warehouses, coupons, wishlist, and media.
 - API service modules use reusable `api.*` helpers and `resourceService.js` for shared CRUD request logic.
 - Admin dashboard foundation helpers live in `frontend/src/admin`.
 - The shared API client reads the JWT through `frontend/src/auth/authStorage.js` using localStorage key `accessToken`.
@@ -301,8 +302,9 @@ Current frontend data:
 - Product API integration reads `VITE_PRODUCT_API_PATH`, defaulting to `/admin/products`.
 - Checkout integration reads `VITE_COUPON_API_PATH`, `VITE_ORDER_API_PATH`, and `VITE_USER_API_PATH`.
 - Account integration reads `VITE_USER_PROFILE_API_PATH` and `VITE_USER_ORDER_API_PATH`.
+- Wishlist sync reads `VITE_WISHLIST_API_PATH`, defaulting to `/wishlist`.
 - Auth session metadata is centralized through `frontend/src/auth` and currently stores safe user, roles, and permissions metadata only.
-- `frontend/.env.example` documents `VITE_API_BASE_URL`, `VITE_API_TIMEOUT`, `VITE_AUTH_REFRESH_ENDPOINT`, `VITE_PRODUCT_API_PATH`, `VITE_COUPON_API_PATH`, `VITE_ORDER_API_PATH`, `VITE_USER_API_PATH`, `VITE_USER_PROFILE_API_PATH`, and `VITE_USER_ORDER_API_PATH`.
+- `frontend/.env.example` documents `VITE_API_BASE_URL`, `VITE_API_TIMEOUT`, `VITE_AUTH_REFRESH_ENDPOINT`, `VITE_PRODUCT_API_PATH`, `VITE_COUPON_API_PATH`, `VITE_ORDER_API_PATH`, `VITE_USER_API_PATH`, `VITE_USER_PROFILE_API_PATH`, `VITE_USER_ORDER_API_PATH`, and `VITE_WISHLIST_API_PATH`.
 - Admin/staff login is connected to the backend JWT API.
 - `/admin/categories`, `/admin/brands`, `/admin/products`, `/admin/variants`, `/admin/media`, `/admin/orders`, `/admin/warehouse`, `/admin/coupons`, `/admin/users`, `/admin/staff`, and `/admin/roles` are connected to real backend data; remaining admin modules still use mock data.
 
@@ -320,6 +322,7 @@ Current frontend structure:
 - Role/permission policy helpers, permission hooks, and PermissionGate live in `frontend/src/auth/`.
 - Route guard components and helper UI live in `frontend/src/guards/`.
 - Shared storefront cart state lives in `frontend/src/cart/`.
+- Shared storefront wishlist state lives in `frontend/src/wishlist/`.
 - Auth reducer exports live in `frontend/src/store/auth/`.
 - Toast notification components live in `frontend/src/components/ui/toast/`.
 - Feedback components live in `frontend/src/components/ui/feedback/`.
@@ -337,7 +340,7 @@ Current frontend structure:
 - Product detail API state logic lives in `frontend/src/hooks/useProductDetail.js`.
 - Checkout coupon, order creation, and profile prefill logic lives in `frontend/src/hooks/useCheckoutCoupon.js`, `useCheckoutOrder.js`, and `useCheckoutProfile.js`.
 - Authenticated account profile state logic lives in `frontend/src/hooks/useAccountProfile.js`.
-- Wishlist and recently viewed local state logic lives in `frontend/src/hooks/useWishlist.js` and `frontend/src/hooks/useRecentlyViewed.js`.
+- Wishlist state access lives in `frontend/src/hooks/useWishlist.js`, backed by `frontend/src/wishlist/WishlistProvider.jsx`; recently viewed local state logic lives in `frontend/src/hooks/useRecentlyViewed.js`.
 - Storefront search overlay logic lives in `frontend/src/hooks/useSearch.js`, with recent-search persistence in `frontend/src/hooks/useRecentSearches.js`.
 - Skeleton loading components live in `frontend/src/components/skeletons/`.
 - Admin layout components live in `frontend/src/admin/layouts/`, with legacy compatibility exports preserved through `frontend/src/layouts/AdminLayout.jsx`.
@@ -390,7 +393,7 @@ Homepage state:
 - `/checkout` now renders the authenticated customer checkout page behind `ProtectedRoute` and creates backend orders through `POST /api/orders`.
 - `/login` now renders the dark auth page and submits through `authService.login()`.
 - `/register` still renders the local ecommerce registration page until customer registration APIs exist and is now guest-only.
-- `/wishlist` now renders the localStorage-backed wishlist and recently viewed page.
+- `/wishlist` now renders the production-style persistent wishlist and recently viewed page with optional backend sync, optimistic actions, move-to-cart, remove item, clear, sync status, loading states, and API error fallback.
 - `/profile`, `/profile/orders`, and `/profile/settings` now render the protected customer account area with real profile/order APIs.
 - Client routes beyond homepage, product listing, product detail, cart, checkout, login, register, wishlist, and profile routes that are not fully implemented render dark ecommerce placeholder pages.
 - `/admin/login` now renders the dark premium admin auth page and submits through `authService.login()`.
@@ -481,6 +484,8 @@ Latest validation:
 - `mvn -q -DskipTests compile` passed after removing custom backend Jackson version overrides from `backend/electronics/pom.xml`.
 - `npm run lint`, `npm run build`, and `git diff --check` passed after upgrading the advanced ecommerce search system. Build still reports the existing Vite chunk-size warning, and `git diff --check` reported CRLF normalization warnings for edited frontend files.
 - `npm run lint`, `npm run build`, and `git diff --check` passed after building the Product Reviews System. Build still reports the existing Vite chunk-size warning, and `git diff --check` reported CRLF normalization warnings for edited frontend files.
+- `npm run lint`, `npm run build`, and `git diff --check` passed after upgrading the Wishlist System. Build still reports the existing Vite chunk-size warning, and `git diff --check` reported CRLF normalization warnings for edited files.
+- Local Vite route smoke checks returned `200` for `/wishlist` and `/products` after upgrading the Wishlist System.
 - `mvn spring-boot:run` reached Tomcat startup after the Jackson fix; the verification process was stopped after confirming startup.
 - Backend startup still logs local PostgreSQL `ddl-auto` warnings for legacy/non-null schema drift in `media`, `products`, `users`, `variants`, and `warehouse_*` tables.
 - Build still reports a Vite chunk-size warning for a JavaScript bundle over 500 kB.
@@ -491,6 +496,7 @@ Latest validation:
 - Remaining future client ecommerce routes beyond the implemented homepage, product listing, product detail, cart, checkout, login, register, and wishlist pages are styled placeholders.
 - A dedicated public storefront product browsing endpoint is still not separate from the configured Product API path.
 - A dedicated backend cart persistence API is not implemented; the active cart is shared local frontend state and checkout creates backend orders.
+- A dedicated backend wishlist persistence API is not implemented in the current backend; the frontend wishlist uses local persistence and optional sync when `VITE_WISHLIST_API_PATH` points to a compatible API.
 - Public customer registration is not complete.
 - The current real JWT login endpoint is the backend admin/staff auth endpoint; customer login should move to a public customer auth endpoint when that API exists.
 - Client checkout/profile routes are customer-session only in the frontend; backend account ownership enforcement should still be tightened when public customer auth is implemented.

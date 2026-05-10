@@ -4,6 +4,7 @@ import {
   CheckCircle2,
   CreditCard,
   Heart,
+  Loader2,
   PackageCheck,
   ShieldCheck,
   ShoppingCart,
@@ -25,6 +26,7 @@ import QuantitySelector from "./QuantitySelector";
 import VariantSelector from "./VariantSelector";
 
 const MotionDiv = motion.div;
+const MotionSpan = motion.span;
 
 const stockTone = {
   ready: "success",
@@ -54,9 +56,10 @@ function ProductInfo({
   const { addItem } = useCart();
   const navigate = useNavigate();
   const toast = useToast();
-  const { isWishlisted, toggleWishlist } = useWishlist();
+  const { isWishlistPending, isWishlisted, toggleWishlist } = useWishlist();
   const isOutOfStock = maxQuantity <= 0;
   const productIsWishlisted = isWishlisted(product.id);
+  const productIsWishlistPending = isWishlistPending(product.id);
   const selectedCartVariant = getSelectedCartVariant(product, selectedOptions);
 
   const handleAddToCart = () => {
@@ -80,6 +83,22 @@ function ProductInfo({
     if (handleAddToCart()) {
       navigate("/checkout");
     }
+  };
+
+  const handleWishlistToggle = async () => {
+    const result = await toggleWishlist(product);
+
+    if (!result.ok) {
+      toast.showError("Không thể đồng bộ wishlist. Thao tác đã được hoàn tác.", {
+        title: "Wishlist chưa cập nhật",
+      });
+      return;
+    }
+
+    toast.showSuccess(result.wishlisted ? "Đã lưu sản phẩm vào wishlist." : "Đã bỏ sản phẩm khỏi wishlist.", {
+      duration: 2400,
+      title: "Wishlist đã cập nhật",
+    });
   };
 
   return (
@@ -178,11 +197,25 @@ function ProductInfo({
           className={cn(
             "h-12 w-full gap-2 rounded-2xl border-white/10 bg-white/[0.05] px-4 text-white hover:border-blue-300/70 hover:bg-blue-500/10 sm:w-12 sm:gap-0 sm:px-0",
             productIsWishlisted && "border-red-200/50 bg-red-500/15 text-red-100 shadow-[0_0_26px_rgba(239,68,68,0.2)]",
+            productIsWishlistPending && "pointer-events-none opacity-70",
           )}
-          onClick={() => toggleWishlist(product)}
+          disabled={productIsWishlistPending}
+          onClick={handleWishlistToggle}
           variant="outline"
         >
-          <Heart fill={productIsWishlisted ? "currentColor" : "none"} size={20} />
+          {productIsWishlistPending ? (
+            <Loader2 className="animate-spin" size={20} />
+          ) : (
+            <MotionSpan
+              animate={productIsWishlisted ? { rotate: [0, -8, 0], scale: [1, 1.2, 1] } : { rotate: 0, scale: 1 }}
+              className="relative flex"
+              key={productIsWishlisted ? "wishlisted" : "wishlist"}
+              transition={{ duration: 0.36, ease: [0.22, 1, 0.36, 1] }}
+            >
+              {productIsWishlisted && <span className="absolute inset-0 rounded-full bg-red-400/30 blur-sm" />}
+              <Heart className="relative z-10" fill={productIsWishlisted ? "currentColor" : "none"} size={20} />
+            </MotionSpan>
+          )}
           <span className="text-sm font-black sm:hidden">Yêu thích</span>
         </IconButton>
       </div>

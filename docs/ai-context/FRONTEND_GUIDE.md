@@ -72,6 +72,7 @@ frontend/src/
 │  ├─ checkoutMapper.js
 │  ├─ accountMapper.js
 │  ├─ productMapper.js
+│  ├─ wishlistMapper.js
 │  ├─ refreshTokenService.js
 │  ├─ authService.js
 │  ├─ categoryService.js
@@ -85,6 +86,7 @@ frontend/src/
 │  ├─ orderService.js
 │  ├─ warehouseService.js
 │  ├─ couponService.js
+│  ├─ wishlistService.js
 │  └─ mediaService.js
 ├─ admin/
 │  ├─ analytics/
@@ -117,6 +119,10 @@ frontend/src/
 │  ├─ cartUtils.js
 │  ├─ index.js
 │  └─ useCart.js
+├─ wishlist/
+│  ├─ WishlistContext.js
+│  ├─ WishlistProvider.jsx
+│  └─ index.js
 ├─ assets/
 ├─ components/
 │  ├─ auth/
@@ -447,12 +453,14 @@ Account API normalization lives in `frontend/src/api/accountMapper.js`. Profile 
 
 The `/wishlist` page lives at `frontend/src/pages/client/WishlistPage.jsx`.
 
+Shared storefront wishlist state lives in `frontend/src/wishlist/` and is mounted through `WishlistProvider` at the app root. `frontend/src/hooks/useWishlist.js` reads that provider and exposes wishlist count, product snapshots, optimistic add/remove/clear/toggle actions, item pending state, loading/error state, sync mode, and refresh.
+
 Reusable wishlist/recently viewed state hooks live in `frontend/src/hooks/`:
 
 - `useWishlist.js`
 - `useRecentlyViewed.js`
 
-The wishlist and recently viewed flows use localStorage persistence placeholders and shared product card UI until customer account/product history APIs are ready.
+Wishlist API sync lives in `frontend/src/api/wishlistService.js` and `wishlistMapper.js`. The current frontend is local-first and uses `VITE_WISHLIST_API_PATH` only when a compatible backend wishlist API exists; missing or unauthorized APIs fall back to local persistence. Recently viewed remains localStorage-backed until product history APIs are ready.
 
 ## Search Overlay
 

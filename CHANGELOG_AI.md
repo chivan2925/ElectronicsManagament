@@ -8,6 +8,14 @@ Always update this file after meaningful work.
 
 ## 2026-05-10
 
+### Production Wishlist System
+
+- Upgraded the storefront wishlist from ID-only local storage to a shared `WishlistProvider` with persistent product snapshots, optimistic add/remove/clear actions, item pending state, and cross-tab sync.
+- Added optional backend sync through `frontend/src/api/wishlistService.js`, `wishlistMapper.js`, and `VITE_WISHLIST_API_PATH`, with local fallback when no compatible API exists.
+- Rebuilt `/wishlist` with sync status, loading/error states, move-to-cart, remove item, clear all, premium item cards, and recently viewed continuity.
+- Updated ProductCard, ProductInfo, and Header with shared wishlist state, animated heart transitions, toasts, and a live wishlist count.
+- Verified `npm run lint`, `npm run build`, `git diff --check`, and local `/wishlist` + `/products` route smoke checks. Build still reports the existing Vite chunk-size warning, and `git diff --check` reported CRLF normalization warnings for edited files.
+
 ### Product Reviews System
 
 - Rebuilt the product detail reviews area into a modern dark ecommerce review system.

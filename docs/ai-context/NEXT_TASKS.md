@@ -14,6 +14,10 @@ Ready for Phase 6 — Ecommerce Core Features
 
 ## Recently Completed
 
+- Upgraded the storefront Wishlist System into a production-style persistent wishlist with `WishlistProvider`, product snapshots, optimistic UI, optional backend sync, loading/error states, sync status, wishlist count, quick heart transitions, move-to-cart, remove item, and clear actions.
+- Added `frontend/src/api/wishlistService.js`, `wishlistMapper.js`, `frontend/src/wishlist/`, and `VITE_WISHLIST_API_PATH` for future backend wishlist integration while keeping local persistence as the fallback.
+- Updated ProductCard, ProductInfo, Header, and `/wishlist` to use the shared wishlist state, animated heart transitions, item pending states, toasts, and premium ecommerce interactions.
+- Verified `npm run lint`, `npm run build`, `git diff --check`, and local `/wishlist` + `/products` route smoke checks after the wishlist upgrade. Build still reports the existing Vite chunk-size warning, and `git diff --check` reported CRLF normalization warnings for edited files.
 - Built the storefront Product Reviews System on the product detail page with reusable `RatingSummary.jsx`, `ReviewCard.jsx`, `ReviewForm.jsx`, and upgraded `ProductReviews.jsx`.
 - Added review filters, sorting, authenticated write-review UI, image review placeholders, verified purchase badges, helpful vote placeholders, empty states, and load-more pagination foundation.
 - Extended product review normalization for backend `photosJson`, `orderId`, `userId`, helpful count, verified purchase, and review pagination metadata.
@@ -248,7 +252,7 @@ Ready for Phase 6 — Ecommerce Core Features
 - Keep `/profile`, `/profile/orders`, and `/profile/settings` behind `ProtectedRoute`.
 - Keep account profile/order API calls centralized in `userService.js`, `orderService.js`, and `accountMapper.js`.
 - Keep the shared cart provider as the single cart state source for header drawer, cart page, product cards, product detail, and checkout.
-- Replace wishlist and recently viewed localStorage placeholders only when customer account/product history APIs are ready.
+- Connect the production-ready wishlist sync layer to a real public wishlist API when the backend contract is ready; recently viewed remains local until product history APIs exist.
 - Replace homepage product sections, wishlist/recently viewed lookup, and search overlay mock data with real storefront APIs when those contracts are ready.
 - Add real online payment gateway handoff when the payment task starts.
 - Add category route/page when the category browsing plan is ready.
@@ -262,7 +266,7 @@ Ready for Phase 6 — Ecommerce Core Features
 - Add cart persistence APIs and connect the existing shared cart provider to backend state.
 - Add checkout/payment handoff for COD and online gateways when backend contracts are ready.
 - Add customer order tracking backed by public customer order APIs.
-- Replace wishlist, recently viewed, homepage product sections, and search overlay mock/local data only when matching public APIs exist.
+- Connect wishlist, recently viewed, homepage product sections, and search overlay to matching public APIs when those contracts exist.
 
 ### Admin Dashboard Maintenance
 
@@ -287,6 +291,7 @@ Ready for Phase 6 — Ecommerce Core Features
 - Public customer auth is not complete; account APIs are authenticated and user-id scoped until a customer-auth principal contract is available.
 - Client checkout/account routes are customer-session-only in the frontend, but backend ownership enforcement still needs the future customer-auth principal contract.
 - A dedicated backend cart persistence API is not implemented; cart state is shared local frontend state.
+- A dedicated backend wishlist persistence API is not implemented; wishlist state is local-first with optional frontend sync support through `VITE_WISHLIST_API_PATH`.
 - Admin CRUD modules are API-backed; `/admin/dashboard` and `/admin/reports/*` still use mock analytics/report data until reporting APIs exist.
 - Category API currently has no `description` field in request/response DTOs, so category description is UI-session only until backend contract is extended.
 - Backend admin auth currently exposes login/logout; refresh-token endpoint support is not implemented yet.

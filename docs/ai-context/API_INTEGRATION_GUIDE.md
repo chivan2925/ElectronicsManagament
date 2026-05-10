@@ -72,6 +72,7 @@ Current behavior:
 - Product catalog services use `VITE_PRODUCT_API_PATH`.
 - Checkout services use `VITE_COUPON_API_PATH`, `VITE_ORDER_API_PATH`, and `VITE_USER_API_PATH`.
 - Account services use `VITE_USER_PROFILE_API_PATH` and `VITE_USER_ORDER_API_PATH`.
+- Wishlist sync uses `VITE_WISHLIST_API_PATH` when a compatible backend endpoint exists.
 - Falls back to `http://localhost:8080/api`.
 - Defaults request timeout to `15000` ms.
 - Reads `accessToken` through `frontend/src/auth/authStorage.js`.
@@ -106,6 +107,7 @@ VITE_ORDER_API_PATH=/orders
 VITE_USER_API_PATH=/admin/users
 VITE_USER_PROFILE_API_PATH=/users
 VITE_USER_ORDER_API_PATH=/orders
+VITE_WISHLIST_API_PATH=/wishlist
 ```
 
 ## Integration Rules
@@ -131,6 +133,7 @@ frontend/src/api/
 ├─ checkoutMapper.js
 ├─ accountMapper.js
 ├─ productMapper.js
+├─ wishlistMapper.js
 ├─ refreshTokenService.js
 ├─ authService.js
 ├─ categoryService.js
@@ -144,6 +147,7 @@ frontend/src/api/
 ├─ orderService.js
 ├─ warehouseService.js
 ├─ couponService.js
+├─ wishlistService.js
 └─ mediaService.js
 ```
 
@@ -165,7 +169,7 @@ Admin dashboard API orchestration lives under `frontend/src/admin/services`:
 
 `authService.js` owns login/logout and token helpers. It calls `POST /admin/auth/login` for the current backend admin/staff JWT flow.
 
-The homepage product sections, storefront search overlay, wishlist, and recently viewed must continue using mock/local data until their API contracts are ready. Cart is shared local frontend state; checkout creates backend orders through the configured Order API.
+The homepage product sections, storefront search overlay, and recently viewed must continue using mock/local data until their API contracts are ready. Wishlist is local-first with optional backend sync through `wishlistService.js`; cart is shared local frontend state; checkout creates backend orders through the configured Order API.
 
 ## Product Catalog Integration
 
@@ -254,6 +258,30 @@ Current behavior:
 - Order detail uses `GET /orders/{orderId}?userId=...`.
 - `accountMapper.js` normalizes profile, order page, order summary, order detail, and order item response shapes before data reaches UI components.
 - Account logout uses the existing `authService.logout()` flow.
+
+## Wishlist Integration
+
+Current storefront wishlist route:
+
+- `/wishlist`
+
+Wishlist files:
+
+```text
+frontend/src/wishlist/
+frontend/src/hooks/useWishlist.js
+frontend/src/api/wishlistMapper.js
+frontend/src/api/wishlistService.js
+frontend/src/pages/client/WishlistPage.jsx
+```
+
+Current behavior:
+
+- `WishlistProvider` is mounted at the app root and is the single wishlist state source for Header, ProductCard, ProductInfo, and `/wishlist`.
+- Wishlist items persist product snapshots in localStorage so API-backed products survive reloads.
+- Mutations use optimistic UI with rollback on real sync errors.
+- When a compatible backend endpoint exists, `wishlistService.js` uses `VITE_WISHLIST_API_PATH` for `GET /wishlist`, `PUT /wishlist`, `POST /wishlist/items`, `DELETE /wishlist/items/{productId}`, and `DELETE /wishlist`.
+- Missing or unauthorized wishlist APIs are treated as local fallback so the storefront remains usable until public wishlist APIs are implemented.
 
 ## Auth Architecture
 

@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Heart, PackageCheck, ShoppingCart, Zap } from "lucide-react";
+import { Heart, Loader2, PackageCheck, ShoppingCart, Zap } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useCart } from "../../cart";
 import { useToast } from "../ui/toast";
@@ -16,6 +16,7 @@ import Rating from "../ui/Rating";
 const MotionArticle = motion.article;
 const MotionButton = motion.button;
 const MotionImg = motion.img;
+const MotionSpan = motion.span;
 
 function getStockBadge(stock = 0) {
   if (stock <= 0) {
@@ -33,14 +34,30 @@ function ProductCard({ product }) {
   const { addItem } = useCart();
   const { addRecentlyViewed } = useRecentlyViewed();
   const toast = useToast();
-  const { isWishlisted, toggleWishlist } = useWishlist();
+  const { isWishlistPending, isWishlisted, toggleWishlist } = useWishlist();
   const stockBadge = getStockBadge(product.stock);
   const primaryTag = product.tags?.[0];
   const productIsWishlisted = isWishlisted(product.id);
+  const productIsWishlistPending = isWishlistPending(product.id);
   const isOutOfStock = product.stock <= 0;
 
-  const handleWishlistToggle = () => {
-    toggleWishlist(product);
+  const handleWishlistToggle = async (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const result = await toggleWishlist(product);
+
+    if (!result.ok) {
+      toast.showError("Không thể đồng bộ wishlist. Thao tác đã được hoàn tác.", {
+        title: "Wishlist chưa cập nhật",
+      });
+      return;
+    }
+
+    toast.showSuccess(result.wishlisted ? "Đã lưu sản phẩm vào wishlist." : "Đã bỏ sản phẩm khỏi wishlist.", {
+      duration: 2400,
+      title: "Wishlist đã cập nhật",
+    });
   };
 
   const handleProductOpen = () => {
@@ -79,15 +96,28 @@ function ProductCard({ product }) {
           aria-label={productIsWishlisted ? "Bỏ khỏi yêu thích" : "Thêm vào yêu thích"}
           aria-pressed={productIsWishlisted}
           className={cn(
-            "absolute right-3 top-3 z-20 border-white/15 bg-slate-950/55 text-slate-200 hover:border-blue-200/70 hover:bg-blue-500/20 hover:text-white",
+            "absolute right-3 top-3 z-20 border-white/15 bg-slate-950/55 text-slate-200 hover:border-blue-200/70 hover:bg-blue-500/20 hover:text-white disabled:pointer-events-none disabled:opacity-70",
             productIsWishlisted && "border-red-200/50 bg-red-500/18 text-red-100 shadow-[0_0_24px_rgba(239,68,68,0.24)]",
           )}
+          disabled={productIsWishlistPending}
           onClick={handleWishlistToggle}
           size="sm"
           title={productIsWishlisted ? "Bỏ khỏi yêu thích" : "Thêm vào yêu thích"}
           variant="outline"
         >
-          <Heart fill={productIsWishlisted ? "currentColor" : "none"} size={17} />
+          {productIsWishlistPending ? (
+            <Loader2 className="animate-spin" size={17} />
+          ) : (
+            <MotionSpan
+              animate={productIsWishlisted ? { rotate: [0, -8, 0], scale: [1, 1.24, 1] } : { rotate: 0, scale: 1 }}
+              className="relative flex"
+              key={productIsWishlisted ? "wishlisted" : "wishlist"}
+              transition={{ duration: 0.36, ease: [0.22, 1, 0.36, 1] }}
+            >
+              {productIsWishlisted && <span className="absolute inset-0 rounded-full bg-red-400/30 blur-sm" />}
+              <Heart className="relative z-10" fill={productIsWishlisted ? "currentColor" : "none"} size={17} />
+            </MotionSpan>
+          )}
         </IconButton>
 
         <Link className="relative z-10 flex h-full w-full items-center justify-center" onClick={handleProductOpen} to={`/products/${product.slug}`}>

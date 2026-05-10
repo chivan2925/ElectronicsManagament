@@ -15,6 +15,7 @@ import {
 import useAuth from "../../auth/useAuth";
 import { useCart } from "../../cart";
 import { categories } from "../../data";
+import useWishlist from "../../hooks/useWishlist";
 import { cn } from "../../utils/classNames";
 import CartDrawer from "../cart/CartDrawer";
 import SearchOverlay from "../search/SearchOverlay";
@@ -30,6 +31,7 @@ const categoryItems = categories.filter((category) => category.slug !== "tat-ca"
 function Header() {
   const { isAuthenticated, user } = useAuth();
   const { itemCount: cartItemCount, items: cartItems, removeItem, subtotal: cartSubtotal, updateQuantity } = useCart();
+  const { wishlistCount } = useWishlist();
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -146,7 +148,18 @@ function Header() {
               Theo dõi đơn hàng
             </a>
             <a className={cn(headerLinkClass, "hidden xl:flex")} href="/wishlist">
-              <Heart size={19} />
+              <span className="relative flex">
+                <Heart size={19} />
+                {wishlistCount > 0 && (
+                  <MotionSpan
+                    animate={{ scale: [1, 1.12, 1] }}
+                    className="absolute -right-2.5 -top-2.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-black text-white shadow-[0_0_16px_rgba(239,68,68,0.7)]"
+                    transition={{ duration: 1.2, repeat: Infinity, repeatDelay: 3 }}
+                  >
+                    {wishlistCount}
+                  </MotionSpan>
+                )}
+              </span>
               Yêu thích
             </a>
             <a className={cn(headerLinkClass, "hidden sm:flex")} href={accountHref}>
@@ -218,7 +231,18 @@ function Header() {
                   Theo dõi đơn
                 </a>
                 <a className={cn(headerLinkClass, "justify-center border border-white/10 bg-white/[0.04]")} href="/wishlist">
-                  <Heart size={18} />
+                  <span className="relative flex">
+                    <Heart size={18} />
+                    {wishlistCount > 0 && (
+                      <MotionSpan
+                        animate={{ scale: [1, 1.12, 1] }}
+                        className="absolute -right-2.5 -top-2.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-black text-white shadow-[0_0_16px_rgba(239,68,68,0.7)]"
+                        transition={{ duration: 1.2, repeat: Infinity, repeatDelay: 3 }}
+                      >
+                        {wishlistCount}
+                      </MotionSpan>
+                    )}
+                  </span>
                   Yêu thích
                 </a>
                 <a className={cn(headerLinkClass, "justify-center border border-white/10 bg-white/[0.04] sm:col-span-2")} href={accountHref}>
