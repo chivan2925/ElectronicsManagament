@@ -242,16 +242,13 @@ function CartItem({ item, layout = "drawer", onQuantityChange, onRemove }) {
 
         <div className="min-w-0">
           <div className="flex items-start justify-between gap-2">
-            <div className="min-w-0">
-              <p className="text-caption text-blue-200">{product.brand}</p>
-              <Link className="mt-1 line-clamp-2 text-sm font-black leading-snug text-white hover:text-blue-100" to={`/products/${product.slug}`}>
-                {product.name}
-              </Link>
-            </div>
+            <Link className="line-clamp-2 text-sm font-black leading-snug text-white hover:text-blue-100" to={`/products/${product.slug}`}>
+              {product.name}
+            </Link>
 
             <IconButton
               aria-label={`Xóa ${product.name} khỏi giỏ hàng`}
-              className="h-9 w-9 rounded-xl border-white/10 bg-slate-950/40 text-slate-400 hover:border-red-300/50 hover:bg-red-500/10 hover:text-red-100"
+              className="h-9 w-9 shrink-0 rounded-xl border-white/10 bg-slate-950/40 text-slate-400 hover:border-red-300/50 hover:bg-red-500/10 hover:text-red-100"
               onClick={handleRemove}
               size="sm"
               variant="outline"
@@ -260,38 +257,42 @@ function CartItem({ item, layout = "drawer", onQuantityChange, onRemove }) {
             </IconButton>
           </div>
 
-          <p className="text-caption mt-2 w-fit max-w-full truncate rounded-full border border-white/10 bg-slate-950/40 px-2.5 py-1 text-slate-400">
-            {variant}
-          </p>
-          <p
-            className={cn(
-              "text-caption mt-2 flex w-fit max-w-full items-center gap-1.5 rounded-full border px-2.5 py-1",
-              hasStockIssue
-                ? "border-red-300/35 bg-red-500/10 text-red-100"
-                : isAtMaxStock || isLowStock
-                  ? "border-amber-300/30 bg-amber-500/10 text-amber-100"
-                  : "border-white/10 bg-slate-950/40 text-slate-500",
+          <div className="mt-1.5 flex flex-wrap items-center gap-2">
+            <p className="text-caption w-fit max-w-full truncate rounded-full border border-white/10 bg-slate-950/40 px-2.5 py-0.5 text-slate-400">
+              {variant}
+            </p>
+            {(hasStockIssue || isAtMaxStock || isLowStock) && (
+              <p
+                className={cn(
+                  "text-caption flex w-fit max-w-full items-center gap-1.5 rounded-full border px-2.5 py-0.5",
+                  hasStockIssue
+                    ? "border-red-300/35 bg-red-500/10 text-red-100"
+                    : "border-amber-300/30 bg-amber-500/10 text-amber-100",
+                )}
+              >
+                <StockIcon size={12} />
+                {stockMessage}
+              </p>
             )}
-          >
-            <StockIcon size={13} />
-            {stockMessage}
-          </p>
+          </div>
 
           <div className="mt-3 flex flex-wrap items-end justify-between gap-3">
             <div>
               <p className="text-sm font-black text-blue-200">{formatCurrency(product.price)}</p>
-              <AnimatePresence mode="wait" initial={false}>
-                <MotionSpan
-                  animate={{ opacity: 1, y: 0 }}
-                  className="text-caption mt-1 block text-slate-500"
-                  exit={{ opacity: 0, y: -6 }}
-                  initial={{ opacity: 0, y: 6 }}
-                  key={lineTotal}
-                  transition={{ duration: 0.18 }}
-                >
-                  Tổng: {formatCurrency(lineTotal)}
-                </MotionSpan>
-              </AnimatePresence>
+              {quantity > 1 && (
+                <AnimatePresence mode="wait" initial={false}>
+                  <MotionSpan
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-caption mt-0.5 block text-slate-500"
+                    exit={{ opacity: 0, y: -6 }}
+                    initial={{ opacity: 0, y: 6 }}
+                    key={lineTotal}
+                    transition={{ duration: 0.18 }}
+                  >
+                    Tổng: {formatCurrency(lineTotal)}
+                  </MotionSpan>
+                </AnimatePresence>
+              )}
             </div>
 
             {quantityControls()}

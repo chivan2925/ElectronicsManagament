@@ -40,7 +40,13 @@ import ProtectedRoute from "../guards/ProtectedRoute";
 import StaffRoute from "../guards/StaffRoute";
 import RouteLoadingBoundary from "./RouteLoadingBoundary";
 
-const storeRoute = (element) => <RouteLoadingBoundary surface="store">{element}</RouteLoadingBoundary>;
+import ClientLayout from "../components/layout/ClientLayout";
+
+const storeRoute = (element) => (
+  <RouteLoadingBoundary surface="store">
+    <ClientLayout>{element}</ClientLayout>
+  </RouteLoadingBoundary>
+);
 const adminRoute = (element) => <RouteLoadingBoundary surface="admin">{element}</RouteLoadingBoundary>;
 const withStaffRoute = (element, policy) => <StaffRoute policy={policy}>{adminRoute(element)}</StaffRoute>;
 const withAdminRoute = (element, policy) => <AdminRoute policy={policy}>{adminRoute(element)}</AdminRoute>;

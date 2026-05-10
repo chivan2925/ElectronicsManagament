@@ -12,8 +12,6 @@ import {
 } from "lucide-react";
 import OptimizedImage from "../../components/common/OptimizedImage";
 import TrustSignalBar from "../../components/common/TrustSignalBar";
-import AnnouncementBar from "../../components/layout/AnnouncementBar";
-import Header from "../../components/layout/Header";
 import ActiveFilters from "../../components/product/ActiveFilters";
 import EmptyProductsState from "../../components/product/EmptyProductsState";
 import FilterSidebar from "../../components/product/FilterSidebar";
@@ -223,10 +221,8 @@ function ProductListingPage() {
   const categoryCanonicalPath = selectedCategory ? `/categories/${selectedCategory.slug || slugify(selectedCategory.name)}` : "/products";
 
   return (
-    <div className="store-page-shell">
+    <>
       <SEOHead metadata={seoMetadata} />
-      <AnnouncementBar />
-      <Header />
 
       <Container as="main" className="pb-14 pt-6 sm:pt-8" id="main-content" tabIndex={-1}>
         <nav aria-label="Breadcrumb" className="mb-4 flex min-w-0 flex-wrap items-center gap-2 text-sm font-bold text-slate-400">
@@ -486,7 +482,7 @@ function ProductListingPage() {
           </div>
         </aside>
       </div>
-    </div>
+    </>
   );
 }
 

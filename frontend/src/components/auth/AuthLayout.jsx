@@ -13,8 +13,6 @@ import {
   Zap,
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import AnnouncementBar from "../layout/AnnouncementBar";
-import Header from "../layout/Header";
 import Badge from "../ui/Badge";
 import FormFieldMessage from "../ui/form/FormFieldMessage";
 import { cn } from "../../utils/classNames";
@@ -266,14 +264,7 @@ function AuthLayout({
   title,
 }) {
   return (
-    <div className="store-page-shell">
-      {showStoreHeader && (
-        <>
-          <AnnouncementBar />
-          <Header />
-        </>
-      )}
-
+    <>
       <main
         className={cn("page-container flex items-center justify-center py-8 sm:py-10", showStoreHeader ? "min-h-[calc(100vh-160px)]" : "min-h-screen")}
         id="main-content"
@@ -341,7 +332,7 @@ function AuthLayout({
           </MotionDiv>
         </MotionDiv>
       </main>
-    </div>
+    </>
   );
 }
 
