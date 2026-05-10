@@ -96,7 +96,7 @@ services:
       VITE_USER_API_PATH: ${VITE_USER_API_PATH:-/admin/users}
       VITE_USER_PROFILE_API_PATH: ${VITE_USER_PROFILE_API_PATH:-/users}
       VITE_USER_ORDER_API_PATH: ${VITE_USER_ORDER_API_PATH:-/orders}
-      VITE_WISHLIST_API_PATH: ${VITE_WISHLIST_API_PATH:-/wishlist}
+      VITE_WISHLIST_API_PATH: ${VITE_WISHLIST_API_PATH:-}
     depends_on:
       - backend
     ports:

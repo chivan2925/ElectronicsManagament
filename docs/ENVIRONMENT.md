@@ -96,7 +96,7 @@ Vite exposes only variables prefixed with `VITE_`.
 | `VITE_USER_API_PATH` | `/admin/users` | Admin user API path. |
 | `VITE_USER_PROFILE_API_PATH` | `/users` | Account profile API path. |
 | `VITE_USER_ORDER_API_PATH` | `/orders` | Account order API path. |
-| `VITE_WISHLIST_API_PATH` | `/wishlist` | Optional wishlist backend path. |
+| `VITE_WISHLIST_API_PATH` | empty | Optional wishlist backend path. Leave empty until a compatible backend wishlist API exists. |
 
 ## Payment Variables
 

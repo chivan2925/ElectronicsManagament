@@ -75,7 +75,7 @@ Current behavior:
 - Payment services use `VITE_PAYMENT_API_PATH`.
 - Realtime notification bridge uses `VITE_REALTIME_WS_URL` when a compatible WebSocket endpoint exists.
 - Account services use `VITE_USER_PROFILE_API_PATH` and `VITE_USER_ORDER_API_PATH`.
-- Wishlist sync uses `VITE_WISHLIST_API_PATH` when a compatible backend endpoint exists.
+- Wishlist sync uses `VITE_WISHLIST_API_PATH` only when a compatible backend endpoint is configured.
 - Falls back to `http://localhost:8080/api`.
 - Defaults request timeout to `15000` ms.
 - Reads `accessToken` through `frontend/src/auth/authStorage.js`.
@@ -115,7 +115,7 @@ VITE_REALTIME_WS_URL=
 VITE_USER_API_PATH=/admin/users
 VITE_USER_PROFILE_API_PATH=/users
 VITE_USER_ORDER_API_PATH=/orders
-VITE_WISHLIST_API_PATH=/wishlist
+VITE_WISHLIST_API_PATH=
 ```
 
 ## Integration Rules
@@ -300,7 +300,7 @@ Current behavior:
 - `WishlistProvider` is mounted at the app root and is the single wishlist state source for Header, ProductCard, ProductInfo, and `/wishlist`.
 - Wishlist items persist product snapshots in localStorage so API-backed products survive reloads.
 - Mutations use optimistic UI with rollback on real sync errors.
-- When a compatible backend endpoint exists, `wishlistService.js` uses `VITE_WISHLIST_API_PATH` for `GET /wishlist`, `PUT /wishlist`, `POST /wishlist/items`, `DELETE /wishlist/items/{productId}`, and `DELETE /wishlist`.
+- When a compatible backend endpoint exists, set `VITE_WISHLIST_API_PATH` and `wishlistService.js` uses it for `GET`, `PUT`, item add/remove, and clear operations.
 - Missing or unauthorized wishlist APIs are treated as local fallback so the storefront remains usable until public wishlist APIs are implemented.
 
 ## Auth Architecture

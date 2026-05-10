@@ -14,6 +14,9 @@ Phase 8 — Production + Deploy (Phase 7 completed)
 
 ## Recently Completed
 
+- Completed a final QA stability pass across storefront, auth, payment result pages, account, checkout, admin analytics, CRUD routes, and media upload.
+- Made wishlist backend sync opt-in by leaving `VITE_WISHLIST_API_PATH` empty by default, preventing `/api/wishlist` 404 console noise while the public wishlist API is not implemented.
+- Verified clean demo preview smoke checks across desktop/mobile routes, customer/admin demo login, category create, and media upload, plus `npm run lint`, `npm run build:production`, `mvn test`, production/development Docker Compose config rendering, and `git diff --check`.
 - Completed a Phase 8 production build audit across frontend build, backend build, bundle size, env handling, Docker configs, CI configs, API URLs, Cloudinary config, and VNPay/MoMo payment config.
 - Added production env separation through root and frontend `.env.production.example` templates, production SEO/monitoring build variables, and a frontend production `/api` default when `VITE_API_BASE_URL` is omitted.
 - Tuned frontend production builds with npm-only lockfile usage, `build:production` scripts, optional source maps, and a lazy `charts-vendor` chunk so Recharts no longer bloats the admin analytics mock chunk.

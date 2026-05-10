@@ -293,7 +293,7 @@ function WishlistProvider({ children }) {
   }, []);
 
   const hydrateRemoteWishlist = useCallback(async () => {
-    if (!isAuthenticated) {
+    if (!isAuthenticated || !wishlistService.isWishlistSyncConfigured()) {
       setSyncMode("local");
       setError(null);
       return { ok: true, syncMode: "local" };

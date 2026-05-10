@@ -8,6 +8,14 @@ Always update this file after meaningful work.
 
 ## 2026-05-10
 
+### Final QA Stability Pass
+
+- Ran a final QA pass across client ecommerce, admin dashboard, auth, payment result pages, uploads, CRUD flows, analytics, and responsive route coverage without redesigning the homepage.
+- Made wishlist backend sync opt-in through `VITE_WISHLIST_API_PATH`; empty env values now keep wishlist local-first and avoid default `/api/wishlist` 404 console noise before a public wishlist API exists.
+- Updated root/frontend env templates, Docker Compose build args, `docs/ENVIRONMENT.md`, and `docs/ai-context/API_INTEGRATION_GUIDE.md` to document the optional wishlist backend path.
+- Verified Vite preview smoke checks for 35 storefront/customer/admin routes with no console/page/runtime errors, plus category create and media upload demo flows.
+- Verified `npm run lint`, `npm run build:production`, `mvn test`, production/development Docker Compose config rendering, and `git diff --check`; `mvn test` still printed the known local PostgreSQL `media.display_order` DDL warning.
+
 ### Production Build Audit
 
 - Audited frontend build, backend build, bundle size, env handling, Docker configs, CI configs, API URLs, Cloudinary config, and VNPay/MoMo payment config for Phase 8 production readiness.
