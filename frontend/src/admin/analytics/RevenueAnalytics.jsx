@@ -229,7 +229,7 @@ function RevenueAnalytics({ className, data, error = null, loading = false, onRe
       </div>
 
       <div className="grid gap-6 xl:grid-cols-[0.8fr_1.2fr]">
-        <AnalyticsCard description="Channel revenue share for sales reporting." title="Revenue mix">
+        <AnalyticsCard description="Tỷ trọng trạng thái đơn hàng và giá trị đơn trong kỳ." title="Order status mix">
           <div className="grid gap-4 px-5 pb-5 pt-4 lg:grid-cols-[0.82fr_1fr]">
             <div className="h-[260px]">
               <ResponsiveContainer height="100%" width="100%">
@@ -260,7 +260,7 @@ function RevenueAnalytics({ className, data, error = null, loading = false, onRe
           </div>
         </AnalyticsCard>
 
-        <AnalyticsCard description="Top selling products by quantity with revenue and margin context." title="Top selling products">
+        <AnalyticsCard description="Sản phẩm bán chạy theo số lượng và doanh thu từ đơn hàng thật." title="Top selling products">
           <div className="grid gap-5 px-5 pb-5 pt-4 lg:grid-cols-[0.9fr_1.1fr]">
             <div className="h-[280px]">
               <ResponsiveContainer height="100%" width="100%">
@@ -298,7 +298,7 @@ function RevenueAnalytics({ className, data, error = null, loading = false, onRe
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-black text-slate-950">{item.name}</p>
                     <p className="mt-0.5 text-xs font-semibold text-slate-500">
-                      {item.sold} sold · {item.margin}% margin
+                      {item.sold} sold · {item.orderCount} orders
                     </p>
                   </div>
                   <span className="shrink-0 text-sm font-black text-slate-950">{compactCurrency(item.revenue)}</span>
@@ -311,7 +311,7 @@ function RevenueAnalytics({ className, data, error = null, loading = false, onRe
 
       <AnalyticsCard
         action={<span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-600">Sales reports</span>}
-        description="Dense sales reporting placeholder until backend reporting endpoints are available."
+        description="Doanh thu, số đơn và AOV được tổng hợp từ API reporting."
         title="Sales report breakdown"
       >
         <div className="overflow-x-auto px-5 pb-5 pt-4">

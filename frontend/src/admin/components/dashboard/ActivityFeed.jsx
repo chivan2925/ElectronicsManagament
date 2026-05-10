@@ -29,7 +29,7 @@ function ActivityFeed({ items }) {
   return (
     <AnalyticsCard description="Cập nhật vận hành mới nhất." title="Recent activity">
       <div className="space-y-4 px-5 pb-5 pt-4">
-        {items.map((item) => {
+        {items.length ? items.map((item) => {
           const style = activityStyles[item.type] || activityStyles.SYSTEM;
           const Icon = style.icon;
 
@@ -47,7 +47,11 @@ function ActivityFeed({ items }) {
               </div>
             </div>
           );
-        })}
+        }) : (
+          <p className="rounded-xl bg-slate-50 p-4 text-sm font-semibold text-slate-500">
+            Chưa có hoạt động đơn hàng để hiển thị.
+          </p>
+        )}
       </div>
     </AnalyticsCard>
   );

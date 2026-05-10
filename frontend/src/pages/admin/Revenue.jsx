@@ -1,11 +1,18 @@
 import { useState } from "react";
 import { AnalyticsFilters, RevenueAnalytics } from "../../admin/analytics";
+import useAdminReportDashboard from "../../admin/hooks/useAdminReportDashboard";
+import { getDefaultAdminReportFilters } from "../../api/reportMapper";
 import PageHeader from "../../components/ui/admin/PageHeader";
-import { adminRevenueAnalytics, analyticsFilterDefaults } from "../../data/adminAnalyticsMock";
 
 function Revenue() {
-  const [filters, setFilters] = useState(analyticsFilterDefaults);
+  const [filters, setFilters] = useState(() => getDefaultAdminReportFilters());
   const [exportNotice, setExportNotice] = useState("");
+  const {
+    error: reportError,
+    isLoading: isLoadingReport,
+    refresh: refreshReport,
+    revenueAnalytics,
+  } = useAdminReportDashboard(filters);
 
   const handleFiltersChange = (nextFilters) => {
     setFilters(nextFilters);
@@ -14,14 +21,14 @@ function Revenue() {
 
   const handleExport = (currentFilters) => {
     setExportNotice(
-      `Export placeholder queued for revenue report from ${currentFilters.from} to ${currentFilters.to}.`,
+      `Export chưa triển khai. Báo cáo đang lấy dữ liệu thật từ ${currentFilters.from} đến ${currentFilters.to}.`,
     );
   };
 
   return (
     <section className="admin-page-shell">
       <PageHeader
-        subtitle="Theo dõi doanh thu, order trends, sản phẩm bán chạy, conversion placeholder và sales reports."
+        subtitle="Theo dõi doanh thu, đơn hàng và sản phẩm bán chạy từ API báo cáo backend."
         title="Báo cáo doanh thu"
       />
 
@@ -33,7 +40,12 @@ function Revenue() {
         </div>
       ) : null}
 
-      <RevenueAnalytics data={adminRevenueAnalytics} />
+      <RevenueAnalytics
+        data={revenueAnalytics}
+        error={reportError}
+        loading={isLoadingReport}
+        onRetry={refreshReport}
+      />
     </section>
   );
 }

@@ -8,6 +8,13 @@ Always update this file after meaningful work.
 
 ## 2026-05-11
 
+### Admin Report Frontend API Wiring
+
+- Connected `/admin/dashboard`, `/admin/reports/revenue`, `/admin/reports/best-sellers`, and `/admin/reports/activity` to real Admin Report and Order APIs.
+- Added `reportService`, `reportMapper`, and `useAdminReportDashboard` for API-backed dashboard KPIs, revenue analytics, top products, status mix, recent orders, and order-derived activity.
+- Removed mock analytics imports from the admin dashboard/report page entrypoints while preserving loading, error, retry, and empty states.
+- Verified `npm run lint`, `npm run build`, and `git diff --check`; `git diff --check` reported only LF-to-CRLF normalization warnings.
+
 ### Recently Viewed Hardcoded Cleanup
 
 - Removed the remaining hardcoded/mock catalog fallback from `useRecentlyViewed.js`.

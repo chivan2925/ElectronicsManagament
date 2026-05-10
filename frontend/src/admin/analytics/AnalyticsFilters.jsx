@@ -60,7 +60,7 @@ function AnalyticsFilters({
         <div className="min-w-0">
           <p className="text-sm font-black text-slate-950">Analytics filters</p>
           <p className="mt-1 text-xs font-semibold text-slate-500">
-            Date range, channel, segment, and export placeholders for reporting APIs.
+            Date range, channel, segment, and export controls for reporting APIs.
           </p>
         </div>
       </div>
