@@ -114,7 +114,7 @@ function CartRecommendations({ className, compact = false, items = [], limit = 8
   }
 
   return (
-    <section className={cn("rounded-3xl border border-white/10 bg-slate-950/36 p-4 shadow-inner shadow-white/[0.03] backdrop-blur-xl sm:p-5", className)}>
+    <section className={cn("store-surface-panel rounded-3xl p-4 sm:p-5", className)}>
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <Badge className="mb-3 gap-2" variant="primary">

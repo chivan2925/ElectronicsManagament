@@ -423,7 +423,7 @@ function Checkout() {
           <span className="text-blue-200">Thanh toán</span>
         </nav>
 
-        <section className="relative isolate overflow-hidden rounded-3xl border border-blue-300/20 bg-[radial-gradient(circle_at_14%_0%,rgba(0,91,255,0.34),transparent_34%),radial-gradient(circle_at_88%_18%,rgba(56,189,248,0.14),transparent_30%),linear-gradient(135deg,rgba(15,23,42,0.9),rgba(7,17,31,0.96))] p-5 shadow-[0_28px_90px_rgba(0,0,0,0.34),0_0_42px_rgba(0,91,255,0.14)] backdrop-blur-xl sm:p-7 lg:p-8">
+        <section className="store-hero-panel p-5 sm:p-7 lg:p-8">
           <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.08),transparent_32%,rgba(0,91,255,0.12))]" />
           <div className="relative z-10 grid gap-6 lg:grid-cols-[1fr_420px] lg:items-center">
             <div>

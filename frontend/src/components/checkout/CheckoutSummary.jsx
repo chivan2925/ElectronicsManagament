@@ -53,7 +53,7 @@ function CheckoutSummary({
   const isDigitalPayment = paymentMethod?.apiValue === "DIGITAL";
 
   return (
-    <aside className="rounded-3xl border border-blue-300/20 bg-[#07111F]/96 p-4 shadow-[0_28px_90px_rgba(0,0,0,0.34),0_0_36px_rgba(0,91,255,0.12)] backdrop-blur-2xl lg:sticky lg:top-28 lg:p-5">
+    <aside className="store-surface-panel-strong rounded-3xl p-4 lg:sticky lg:top-28 lg:p-5">
       <div className="mb-4 flex items-start justify-between gap-3">
         <div>
           <p className="text-caption text-blue-200">Tổng quan đơn</p>

@@ -221,7 +221,7 @@ function AdminTable({
   const skeletonRows = Array.from({ length: Math.min(activePageSize, 5) }, (_, index) => index);
 
   return (
-    <section className={cn("overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-admin-card", className)}>
+    <section className={cn("admin-panel overflow-hidden rounded-2xl", className)}>
       {selectedCount > 0 && bulkActions.length > 0 ? (
         <div className="flex flex-col gap-3 border-b border-slate-200 bg-[#07111F] px-4 py-3 text-white sm:flex-row sm:items-center sm:justify-between">
           <p className="text-sm font-black">{selectedCount} selected</p>
@@ -244,7 +244,7 @@ function AdminTable({
 
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-slate-200">
-          <thead className="bg-slate-50">
+          <thead className="bg-slate-50/90">
             <tr>
               {showSelection ? (
                 <th className="w-12 px-4 py-3.5">
@@ -319,7 +319,7 @@ function AdminTable({
                 const isSelected = selectedSet.has(rowId);
 
                 return (
-                  <tr className={cn("transition-colors hover:bg-slate-50", isSelected && "bg-blue-50/40")} key={rowId ?? rowIndex}>
+                  <tr className={cn("admin-table-row", isSelected && "bg-blue-50/50")} key={rowId ?? rowIndex}>
                     {showSelection ? (
                       <td className="px-4 py-4">
                         <input
@@ -347,7 +347,7 @@ function AdminTable({
 
                     {hasRowActions ? (
                       <td className="whitespace-nowrap px-5 py-4 text-right">
-                        <div className="inline-flex items-center gap-1 rounded-xl bg-slate-50 p-1 ring-1 ring-slate-200">
+                        <div className="inline-flex items-center gap-1 rounded-xl bg-slate-50/90 p-1 ring-1 ring-slate-200">
                           {rowActions
                             .filter((action) => !(typeof action.hidden === "function" ? action.hidden(row) : action.hidden))
                             .map((action) => {

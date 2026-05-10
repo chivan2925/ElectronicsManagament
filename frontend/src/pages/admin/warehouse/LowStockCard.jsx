@@ -41,7 +41,7 @@ function LowStockCard({ canAdjust = false, items = [], loading = false, onAdjust
   const previewItems = items.slice(0, 5);
 
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-admin-card">
+    <section className="admin-panel rounded-2xl p-4">
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3">
           <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-50 text-amber-600 ring-1 ring-amber-100">

@@ -14,10 +14,10 @@ function CrudPage({ title, subtitle, data, columns, onCreate, permissionResource
   );
 
   return (
-    <section>
+    <section className="admin-page-shell">
       <PageHeader actionLabel="Thêm mới" actionPolicy={actionPolicies?.create} onAction={onCreate} title={title} subtitle={subtitle} />
 
-      <Card className="mb-4 flex flex-col gap-3 p-4 md:flex-row md:items-center md:justify-between" variant="admin">
+      <Card className="flex flex-col gap-3 p-4 md:flex-row md:items-center md:justify-between" variant="admin">
         <AdminSearch className="md:max-w-md" onChange={table.setQuery} placeholder={searchPlaceholder} value={table.query} />
 
         <p className="text-sm font-semibold text-slate-500">

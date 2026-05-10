@@ -86,6 +86,8 @@ The profile overview now includes a loyalty/reward UI foundation with `LoyaltyCa
 
 The customer ecommerce experience now has a reusable trust-signal foundation, stronger CTA/hover/focus interactions, shared store empty-state trust hints, improved PLP/PDP skeletons, and consistent trust indicators across homepage, PLP, PDP, cart, checkout, and profile without a homepage redesign.
 
+The ecommerce UI/UX production polish pass now standardizes storefront hero/surface/action panels and admin page/panel/control/table treatments across homepage-adjacent ecommerce flows, PLP, PDP support sections, cart, checkout, profile, dashboard, CRUD, media, order, warehouse, role, coupon, and analytics pages while preserving the existing homepage layout.
+
 The frontend now has production-oriented route loading with route-level lazy loading, route preloading hooks, shared route/deferred-section loading boundaries, deferred header search/cart overlays, below-fold storefront section splitting, an optimized image component foundation, and targeted memoization for repeated ecommerce rows/carousels. The shared API client now has in-flight GET request deduplication plus opt-in TTL caching, and catalog product listing/detail flows avoid N+1 detail fetches. The production build emits route/vendor chunks instead of one large JavaScript bundle.
 
 The frontend and backend now have a no-SaaS logging and monitoring foundation. Frontend monitoring lives under `frontend/src/monitoring` with structured client logs, a local monitoring buffer, global error tracking, API failure tracking, payment error tracking, route preload/error tracking, route-change hooks, and `X-Request-Id` propagation from the shared API client. Backend monitoring lives under `backend/electronics/src/main/java/org/example/electronics/monitoring` with structured key-value logging helpers and request correlation through `X-Request-Id`/MDC. Auth, order, payment, webhook, unauthorized, and exception flows now emit reusable structured events.
@@ -571,6 +573,7 @@ Latest validation:
 - GitHub Actions CI workflow files were added for frontend and backend checks; local validation covered Prettier workflow YAML checking, frontend lint/test-placeholder/build, backend tests, and `git diff --check`.
 - The Phase 7 production audit completed with backend health/readiness probes, Docker backend readiness healthcheck wiring, safer payment result callback parsing/display, supported-provider frontend payment normalization, accessible route loading fallback polish, and Phase 7 completion documentation.
 - `npm run lint`, `npm run build`, `mvn -q -DskipTests compile`, `mvn test`, and production `docker compose --env-file .env.example config` passed after the Phase 7 production audit. `mvn test` still printed the existing local PostgreSQL `media.display_order` DDL warning.
+- `npm run lint`, `npm run build`, and `git diff --check` passed after the ecommerce UI/UX production polish pass. `git diff --check` reported only CRLF normalization warnings for edited frontend files.
 
 ## Known Issues
 

@@ -48,7 +48,7 @@ function AnalyticsFilters({
   return (
     <section
       className={cn(
-        "rounded-2xl border border-slate-200 bg-white p-4 shadow-admin-card",
+        "admin-panel rounded-2xl p-4",
         "xl:flex xl:items-center xl:justify-between xl:gap-5",
         className,
       )}
@@ -89,7 +89,7 @@ function AnalyticsFilters({
           <span className="sr-only">Start date</span>
           <CalendarDays className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
           <input
-            className="h-11 w-full rounded-xl border border-slate-200 bg-white pl-9 pr-3 text-sm font-bold text-slate-700 outline-none transition focus:border-primary focus:ring-2 focus:ring-blue-100"
+            className="admin-control h-11 w-full rounded-xl pl-9 pr-3 text-sm font-bold text-slate-700 outline-none"
             onChange={(event) => updateFilter("from", event.target.value)}
             type="date"
             value={filters.from}
@@ -100,7 +100,7 @@ function AnalyticsFilters({
           <span className="sr-only">End date</span>
           <CalendarDays className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
           <input
-            className="h-11 w-full rounded-xl border border-slate-200 bg-white pl-9 pr-3 text-sm font-bold text-slate-700 outline-none transition focus:border-primary focus:ring-2 focus:ring-blue-100"
+            className="admin-control h-11 w-full rounded-xl pl-9 pr-3 text-sm font-bold text-slate-700 outline-none"
             onChange={(event) => updateFilter("to", event.target.value)}
             type="date"
             value={filters.to}
@@ -111,7 +111,7 @@ function AnalyticsFilters({
           <label>
             <span className="sr-only">Channel</span>
             <select
-              className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-bold text-slate-700 outline-none transition focus:border-primary focus:ring-2 focus:ring-blue-100"
+              className="admin-control h-11 w-full rounded-xl px-3 text-sm font-bold text-slate-700 outline-none"
               onChange={(event) => updateFilter("channel", event.target.value)}
               value={filters.channel}
             >
@@ -126,7 +126,7 @@ function AnalyticsFilters({
           <label>
             <span className="sr-only">Customer segment</span>
             <select
-              className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-bold text-slate-700 outline-none transition focus:border-primary focus:ring-2 focus:ring-blue-100"
+              className="admin-control h-11 w-full rounded-xl px-3 text-sm font-bold text-slate-700 outline-none"
               onChange={(event) => updateFilter("segment", event.target.value)}
               value={filters.segment}
             >

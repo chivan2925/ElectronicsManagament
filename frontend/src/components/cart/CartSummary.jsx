@@ -55,7 +55,7 @@ function CartSummary({
       className={cn(
         "bg-[#07111F]/96 p-4 backdrop-blur-2xl",
         isPage
-          ? "rounded-3xl border border-blue-300/20 shadow-[0_28px_90px_rgba(0,0,0,0.34),0_0_36px_rgba(0,91,255,0.12)]"
+          ? "store-surface-panel-strong rounded-3xl"
           : "border-t border-white/10 shadow-[0_-18px_60px_rgba(0,0,0,0.34)]",
         className,
       )}

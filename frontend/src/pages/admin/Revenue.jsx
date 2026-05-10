@@ -19,7 +19,7 @@ function Revenue() {
   };
 
   return (
-    <section className="space-y-6">
+    <section className="admin-page-shell">
       <PageHeader
         subtitle="Theo dõi doanh thu, order trends, sản phẩm bán chạy, conversion placeholder và sales reports."
         title="Báo cáo doanh thu"

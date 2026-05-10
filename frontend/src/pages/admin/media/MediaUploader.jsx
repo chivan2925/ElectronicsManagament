@@ -229,23 +229,23 @@ function MediaUploader({
   };
 
   return (
-    <section className="overflow-hidden rounded-3xl border border-slate-800 bg-slate-950 text-white shadow-2xl shadow-slate-950/20">
+    <section className="admin-panel overflow-hidden rounded-2xl">
       <div className="grid gap-0 xl:grid-cols-[minmax(0,1fr)_340px]">
         <div className="p-4 sm:p-5">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div>
-              <div className="inline-flex items-center gap-2 rounded-full border border-blue-400/20 bg-blue-500/10 px-3 py-1 text-xs font-black text-blue-100">
+              <div className="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-black text-primary">
                 <ImagePlus size={14} />
                 Cloudinary uploader
               </div>
-              <h2 className="mt-3 text-xl font-black text-white">Media Management</h2>
-              <p className="mt-1 max-w-2xl text-sm font-semibold leading-6 text-slate-400">
+              <h2 className="mt-3 text-xl font-black text-slate-950">Media Management</h2>
+              <p className="mt-1 max-w-2xl text-sm font-semibold leading-6 text-slate-500">
                 Kéo thả ảnh, theo dõi tiến trình upload và lưu ảnh vào sản phẩm đã chọn.
               </p>
             </div>
 
             <button
-              className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-sm font-black text-slate-200 transition hover:border-blue-400 hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
+              className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-black text-slate-600 transition hover:border-primary hover:bg-blue-50 hover:text-primary disabled:cursor-not-allowed disabled:opacity-60"
               disabled={!queue.some((item) => item.status !== "uploading")}
               onClick={clearFinished}
               type="button"
@@ -259,8 +259,8 @@ function MediaUploader({
             className={cn(
               "mt-5 flex min-h-56 cursor-pointer flex-col items-center justify-center rounded-3xl border border-dashed px-6 py-10 text-center outline-none transition",
               dragActive
-                ? "border-blue-400 bg-blue-500/10 shadow-inner shadow-blue-500/10"
-                : "border-slate-700 bg-slate-900/70 hover:border-blue-400/70 hover:bg-slate-900",
+                ? "border-primary bg-blue-50 shadow-inner shadow-blue-100"
+                : "border-slate-300 bg-slate-50/80 hover:border-blue-300 hover:bg-white",
               !canStartUpload ? "cursor-not-allowed opacity-75" : "",
             )}
             onClick={handleBrowse}
@@ -289,19 +289,19 @@ function MediaUploader({
             <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-500 text-white shadow-lg shadow-blue-500/30">
               {isUploading ? <Loader2 className="animate-spin" size={25} /> : <Upload size={25} />}
             </span>
-            <h3 className="mt-4 text-base font-black text-white">Thả ảnh vào đây hoặc bấm để chọn file</h3>
-            <p className="mt-2 max-w-lg text-sm font-semibold leading-6 text-slate-400">
+            <h3 className="mt-4 text-base font-black text-slate-950">Thả ảnh vào đây hoặc bấm để chọn file</h3>
+            <p className="mt-2 max-w-lg text-sm font-semibold leading-6 text-slate-500">
               JPG, PNG, WEBP. Ảnh sẽ được upload lên Cloudinary, sau đó tạo media record cho sản phẩm.
             </p>
             {!selectedProductId ? (
-              <p className="mt-3 rounded-full bg-amber-400/10 px-3 py-1 text-xs font-black text-amber-200">
+              <p className="mt-3 rounded-full bg-amber-50 px-3 py-1 text-xs font-black text-amber-700">
                 Chọn sản phẩm ở panel bên phải để bắt đầu.
               </p>
             ) : null}
           </div>
 
           {notice ? (
-            <div className="mt-4 flex items-center gap-2 rounded-2xl border border-amber-300/20 bg-amber-400/10 px-4 py-3 text-sm font-bold text-amber-100">
+            <div className="mt-4 flex items-center gap-2 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-bold text-amber-700">
               <AlertCircle size={17} />
               {notice}
             </div>
@@ -310,21 +310,21 @@ function MediaUploader({
           {queue.length > 0 ? (
             <div className="mt-5 space-y-3">
               {queue.map((item) => (
-                <div key={item.id} className="rounded-2xl border border-slate-800 bg-slate-900/80 p-3">
+                <div key={item.id} className="rounded-2xl border border-slate-200 bg-slate-50 p-3">
                   <div className="grid gap-3 sm:grid-cols-[64px_minmax(0,1fr)_auto] sm:items-start">
                     <OptimizedImage
                       alt={item.name}
                       className="h-full w-full object-cover"
                       fallbackKind="media"
-                      placeholderClassName="rounded-xl bg-slate-800"
+                      placeholderClassName="rounded-xl bg-slate-100"
                       sizes="64px"
                       src={item.previewUrl}
-                      wrapperClassName="h-16 w-16 rounded-xl border border-slate-800 bg-slate-950"
+                      wrapperClassName="h-16 w-16 rounded-xl border border-slate-200 bg-white"
                     />
                     <div className="min-w-0">
-                      <p className="truncate text-sm font-black text-slate-100">{item.name}</p>
+                      <p className="truncate text-sm font-black text-slate-950">{item.name}</p>
                       <p className="mt-1 text-xs font-semibold text-slate-500">{formatFileSize(item.size)}</p>
-                      <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-800">
+                      <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-200">
                         <div
                           className={cn(
                             "h-full rounded-full transition-all",
@@ -333,16 +333,16 @@ function MediaUploader({
                           style={{ width: `${Math.max(4, Math.min(100, item.progress))}%` }}
                         />
                       </div>
-                      {item.error ? <p className="mt-2 text-xs font-semibold leading-5 text-rose-200">{item.error}</p> : null}
+                      {item.error ? <p className="mt-2 text-xs font-semibold leading-5 text-rose-600">{item.error}</p> : null}
                     </div>
                     <span
                       className={cn(
                         "inline-flex w-fit shrink-0 items-center gap-1 rounded-full px-2.5 py-1 text-xs font-black",
                         item.status === "completed"
-                          ? "bg-emerald-400/10 text-emerald-200"
+                          ? "bg-emerald-50 text-emerald-700"
                           : item.status === "failed"
-                            ? "bg-rose-400/10 text-rose-200"
-                            : "bg-blue-400/10 text-blue-200",
+                            ? "bg-rose-50 text-rose-700"
+                            : "bg-blue-50 text-primary",
                       )}
                     >
                       {item.status === "completed" ? <CheckCircle2 size={13} /> : null}
@@ -357,11 +357,11 @@ function MediaUploader({
           ) : null}
         </div>
 
-        <aside className="border-t border-slate-800 bg-slate-900/80 p-4 sm:p-5 xl:border-l xl:border-t-0">
+        <aside className="border-t border-slate-200 bg-slate-50/80 p-4 sm:p-5 xl:border-l xl:border-t-0">
           <label className="block">
-            <span className="text-xs font-black uppercase tracking-normal text-slate-400">Attach to product</span>
+            <span className="text-xs font-black uppercase tracking-normal text-slate-500">Attach to product</span>
             <select
-              className="mt-2 h-12 w-full rounded-2xl border border-slate-700 bg-slate-950 px-3 text-sm font-bold text-white outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-500/20 disabled:cursor-not-allowed disabled:opacity-60"
+              className="admin-control mt-2 h-12 w-full rounded-xl px-3 text-sm font-bold text-slate-700 outline-none disabled:cursor-not-allowed disabled:opacity-60"
               disabled={isDisabled || loadingProducts}
               onChange={(event) => onProductChange?.(event.target.value)}
               value={selectedProductId}
@@ -375,23 +375,23 @@ function MediaUploader({
             </select>
           </label>
 
-          <label className="mt-4 flex items-center gap-3 rounded-2xl border border-slate-800 bg-slate-950/80 p-3">
+          <label className="mt-4 flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-3">
             <input
               checked={makePrimary}
-              className="h-4 w-4 rounded border-slate-600 text-blue-500 focus:ring-blue-500"
+              className="h-4 w-4 rounded border-slate-300 text-blue-500 focus:ring-blue-500"
               disabled={isDisabled}
               onChange={(event) => setMakePrimary(event.target.checked)}
               type="checkbox"
             />
-            <span className="flex min-w-0 items-center gap-2 text-sm font-bold text-slate-200">
-              <Star className="shrink-0 text-amber-300" size={16} />
+            <span className="flex min-w-0 items-center gap-2 text-sm font-bold text-slate-700">
+              <Star className="shrink-0 text-amber-500" size={16} />
               Đặt ảnh đầu tiên làm ảnh chính
             </span>
           </label>
 
-          <div className="mt-4 rounded-2xl border border-slate-800 bg-slate-950/80 p-4">
+          <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-4">
             <p className="text-xs font-black uppercase tracking-normal text-slate-500">Upload target</p>
-            <p className="mt-2 text-sm font-black text-white">{selectedProduct?.name || "Chưa chọn sản phẩm"}</p>
+            <p className="mt-2 text-sm font-black text-slate-950">{selectedProduct?.name || "Chưa chọn sản phẩm"}</p>
             <p className="mt-2 text-xs font-semibold leading-5 text-slate-500">
               Gắn variant sẽ được bổ sung ở bước sau; module hiện ưu tiên upload và gắn ảnh cấp sản phẩm.
             </p>

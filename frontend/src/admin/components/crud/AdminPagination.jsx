@@ -30,7 +30,7 @@ function AdminPagination({
 
       <div className="flex flex-wrap items-center gap-2">
         <select
-          className="h-9 rounded-lg border border-slate-200 bg-white px-2 text-sm font-bold text-slate-700 outline-none transition focus:border-primary focus:ring-2 focus:ring-blue-100"
+          className="admin-control h-9 rounded-lg px-2 text-sm font-bold text-slate-700 outline-none"
           onChange={(event) => onPageSizeChange?.(Number(event.target.value))}
           value={pageSize}
         >

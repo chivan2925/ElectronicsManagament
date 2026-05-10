@@ -55,7 +55,7 @@ function CustomerMetric({ helper, metricKey, placeholder, title, tone = "blue", 
   const Icon = metricIcons[metricKey] || UsersRound;
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+    <div className="admin-panel admin-panel-hover rounded-2xl p-4">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="truncate text-xs font-black uppercase tracking-normal text-slate-400">{title}</p>
@@ -198,7 +198,7 @@ function CustomerAnalytics({ className, data }) {
             </thead>
             <tbody className="divide-y divide-slate-100">
               {data.topCustomers.map((customer) => (
-                <tr className="text-sm" key={customer.email}>
+                <tr className="admin-table-row text-sm" key={customer.email}>
                   <td className="whitespace-nowrap py-4 pr-4">
                     <p className="font-black text-slate-950">{customer.name}</p>
                     <p className="mt-0.5 text-xs font-semibold text-slate-500">{customer.email}</p>

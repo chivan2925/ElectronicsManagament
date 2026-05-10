@@ -73,7 +73,7 @@ function MetricTile({ helper, metricKey, placeholder, title, tone = "blue", tren
   const Icon = metricIcons[metricKey] || TrendingUp;
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+    <div className="admin-panel admin-panel-hover rounded-2xl p-4">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="truncate text-xs font-black uppercase tracking-normal text-slate-400">{title}</p>
@@ -293,7 +293,7 @@ function RevenueAnalytics({ className, data }) {
             </thead>
             <tbody className="divide-y divide-slate-100">
               {data.salesReports.map((report) => (
-                <tr className="text-sm" key={report.label}>
+                <tr className="admin-table-row text-sm" key={report.label}>
                   <td className="whitespace-nowrap py-4 pr-4 font-black text-slate-950">{report.label}</td>
                   <td className="whitespace-nowrap px-4 py-4 font-bold text-slate-700">{report.orders}</td>
                   <td className="whitespace-nowrap px-4 py-4 font-black text-slate-950">{formatCurrency(report.revenue)}</td>

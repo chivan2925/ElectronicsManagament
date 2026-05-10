@@ -12,7 +12,7 @@ const columns = [
 
 function BestSellers() {
   return (
-    <section>
+    <section className="admin-page-shell">
       <PageHeader subtitle="Danh sách sản phẩm có doanh số tốt nhất trong kỳ." title="Sản phẩm bán chạy" />
       <DataTable columns={columns} data={bestSellers} />
     </section>

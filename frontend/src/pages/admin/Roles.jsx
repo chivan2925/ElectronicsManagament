@@ -74,13 +74,13 @@ function SecurityMetric({ icon, label, value }) {
   const IconComponent = icon;
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-admin-card">
+    <div className="admin-panel admin-panel-hover rounded-2xl p-4">
       <div className="flex items-center justify-between gap-3">
         <div>
           <p className="text-xs font-black uppercase tracking-normal text-slate-500">{label}</p>
           <p className="mt-2 text-2xl font-black text-slate-950">{value}</p>
         </div>
-        <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#07111F] text-white">
+        <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-primary ring-1 ring-blue-100">
           <IconComponent size={19} />
         </span>
       </div>
@@ -442,7 +442,7 @@ function Roles() {
   };
 
   return (
-    <section className="space-y-5">
+    <section className="admin-page-shell">
       <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
         <div>
           <h1 className="text-2xl font-black text-slate-900">Roles & Permissions</h1>
@@ -574,7 +574,7 @@ function Roles() {
       />
 
       <div className="grid gap-5 xl:grid-cols-[minmax(0,1.4fr)_minmax(340px,0.6fr)]">
-        <section className="space-y-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-admin-card">
+        <section className="admin-panel space-y-4 rounded-2xl p-4">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <div className="flex flex-wrap items-center gap-2">
@@ -610,7 +610,7 @@ function Roles() {
           />
         </section>
 
-        <section className="rounded-2xl border border-slate-200 bg-white shadow-admin-card">
+        <section className="admin-panel rounded-2xl">
           <div className="flex items-center justify-between gap-3 border-b border-slate-200 px-4 py-3">
             <div>
               <h2 className="text-sm font-black text-slate-950">Gán vai trò cho nhân viên</h2>

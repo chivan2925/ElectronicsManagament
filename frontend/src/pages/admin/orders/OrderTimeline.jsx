@@ -98,7 +98,7 @@ function OrderTimeline({ order }) {
   }
 
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+    <section className="admin-panel rounded-2xl p-4">
       <div className="flex items-center justify-between gap-3">
         <div>
           <h3 className="text-sm font-black text-slate-950">Order timeline</h3>

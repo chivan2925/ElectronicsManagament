@@ -140,7 +140,7 @@ function validateCouponForm(values = {}) {
 
 function StatCard({ icon, label, value }) {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-admin-card">
+    <div className="admin-panel admin-panel-hover rounded-2xl p-4">
       <div className="flex items-center justify-between gap-3">
         <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-50 text-primary ring-1 ring-blue-100">
           {createElement(icon, { size: 18 })}
@@ -417,7 +417,7 @@ function Coupons() {
   };
 
   return (
-    <section className="space-y-4">
+    <section className="admin-page-shell">
       <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <h1 className="text-2xl font-black text-slate-900">Coupon Management</h1>

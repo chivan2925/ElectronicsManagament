@@ -211,7 +211,7 @@ function PermissionMatrix({
   };
 
   return (
-    <section className={cn("overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-admin-card", className)}>
+    <section className={cn("admin-panel overflow-hidden rounded-2xl", className)}>
       <div className="flex flex-col gap-3 border-b border-slate-200 bg-slate-50 px-4 py-3 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex min-w-0 items-center gap-3">
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#07111F] text-white">

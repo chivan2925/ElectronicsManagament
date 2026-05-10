@@ -60,7 +60,7 @@ function RewardsWidget({
     <MotionDiv
       animate="visible"
       className={cn(
-        "rounded-3xl border border-white/10 bg-slate-950/36 p-5 shadow-inner shadow-white/[0.03] backdrop-blur-xl lg:p-6",
+        "store-surface-panel rounded-3xl p-5 lg:p-6",
         className,
       )}
       initial="hidden"

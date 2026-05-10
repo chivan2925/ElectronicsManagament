@@ -12,7 +12,7 @@ const columns = [
 
 function ActivityLog() {
   return (
-    <section>
+    <section className="admin-page-shell">
       <PageHeader subtitle="Theo dõi thao tác quan trọng trong hệ thống quản trị." title="Nhật ký hoạt động" />
       <DataTable columns={columns} data={activityLogs} />
     </section>

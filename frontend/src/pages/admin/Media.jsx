@@ -44,12 +44,12 @@ function sameMediaOwner(source, target) {
 
 function MediaStat({ icon, label, value }) {
   return (
-    <div className="rounded-3xl border border-slate-800 bg-slate-950 p-4 text-white">
+    <div className="admin-panel admin-panel-hover rounded-2xl p-4">
       <div className="flex items-center justify-between gap-3">
-        <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-500/10 text-blue-200 ring-1 ring-blue-400/20">
+        <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-50 text-primary ring-1 ring-blue-100">
           {createElement(icon, { size: 18 })}
         </span>
-        <span className="text-2xl font-black text-white">{value}</span>
+        <span className="text-2xl font-black text-slate-950">{value}</span>
       </div>
       <p className="mt-3 text-xs font-black uppercase tracking-normal text-slate-500">{label}</p>
     </div>
@@ -291,16 +291,16 @@ function Media() {
   };
 
   return (
-    <section className="space-y-5">
-      <div className="overflow-hidden rounded-3xl border border-slate-800 bg-slate-950 text-white shadow-2xl shadow-slate-950/20">
+    <section className="admin-page-shell">
+      <div className="admin-panel overflow-hidden rounded-2xl">
         <div className="grid gap-5 p-5 lg:grid-cols-[minmax(0,1fr)_minmax(360px,0.8fr)] lg:items-end">
           <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-blue-400/20 bg-blue-500/10 px-3 py-1 text-xs font-black text-blue-100">
+            <div className="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-black text-primary">
               <Image size={14} />
               Asset manager
             </div>
-            <h1 className="mt-4 text-2xl font-black text-white">Media Library</h1>
-            <p className="mt-2 max-w-2xl text-sm font-semibold leading-6 text-slate-400">
+            <h1 className="mt-4 text-2xl font-black text-slate-950 md:text-3xl">Media Library</h1>
+            <p className="mt-2 max-w-2xl text-sm font-semibold leading-6 text-slate-500">
               Quản lý ảnh sản phẩm, upload Cloudinary, preview nhanh, đặt ảnh chính và xóa asset khỏi thư viện.
             </p>
           </div>
@@ -324,20 +324,20 @@ function Media() {
         selectedProductId={uploadProductId}
       />
 
-      <section className="rounded-3xl border border-slate-800 bg-slate-950 p-4 text-white shadow-2xl shadow-slate-950/10">
+      <section className="admin-panel rounded-2xl p-4">
         <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div className="flex items-center gap-2">
-            <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-900 text-blue-200 ring-1 ring-slate-800">
+            <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-50 text-primary ring-1 ring-blue-100">
               <Filter size={18} />
             </span>
             <div>
-              <h2 className="text-sm font-black text-white">Library filters</h2>
+              <h2 className="text-sm font-black text-slate-950">Library filters</h2>
               <p className="text-xs font-semibold text-slate-500">Tìm asset theo sản phẩm, URL, publicId hoặc trạng thái ảnh chính.</p>
             </div>
           </div>
 
           <button
-            className="inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-700 bg-slate-900 px-3 py-2 text-sm font-black text-slate-200 transition hover:border-blue-400 hover:text-white"
+            className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-black text-slate-600 transition hover:border-primary hover:bg-blue-50 hover:text-primary"
             onClick={handleResetFilters}
             type="button"
           >
@@ -348,9 +348,9 @@ function Media() {
 
         <div className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_260px_200px]">
           <label className="relative block">
-            <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+            <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
             <input
-              className="h-12 w-full rounded-2xl border border-slate-700 bg-slate-900 pl-10 pr-3 text-sm font-bold text-white outline-none transition placeholder:text-slate-500 focus:border-blue-400 focus:ring-4 focus:ring-blue-500/20 disabled:cursor-not-allowed disabled:opacity-60"
+              className="admin-control h-12 w-full rounded-xl pl-10 pr-3 text-sm font-bold text-slate-700 outline-none placeholder:text-slate-400 disabled:cursor-not-allowed disabled:opacity-60"
               disabled={loading}
               onChange={(event) => {
                 setQuery(event.target.value);
@@ -363,7 +363,7 @@ function Media() {
           </label>
 
           <select
-            className="h-12 rounded-2xl border border-slate-700 bg-slate-900 px-3 text-sm font-bold text-white outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-500/20 disabled:cursor-not-allowed disabled:opacity-60"
+            className="admin-control h-12 rounded-xl px-3 text-sm font-bold text-slate-700 outline-none disabled:cursor-not-allowed disabled:opacity-60"
             disabled={loading || productLoading}
             onChange={(event) => handleProductFilterChange(event.target.value)}
             value={productFilter}
@@ -377,7 +377,7 @@ function Media() {
           </select>
 
           <select
-            className="h-12 rounded-2xl border border-slate-700 bg-slate-900 px-3 text-sm font-bold text-white outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-500/20 disabled:cursor-not-allowed disabled:opacity-60"
+            className="admin-control h-12 rounded-xl px-3 text-sm font-bold text-slate-700 outline-none disabled:cursor-not-allowed disabled:opacity-60"
             disabled={loading}
             onChange={(event) => {
               setPrimaryFilter(event.target.value);

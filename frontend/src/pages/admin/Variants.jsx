@@ -403,7 +403,7 @@ function Variants() {
   };
 
   return (
-    <section className="space-y-4">
+    <section className="admin-page-shell">
       <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <h1 className="text-2xl font-black text-slate-900">Biến thể Variant</h1>

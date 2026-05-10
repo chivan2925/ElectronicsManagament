@@ -318,7 +318,7 @@ function Users() {
   );
 
   return (
-    <section className="space-y-4">
+    <section className="admin-page-shell">
       <div>
         <h1 className="text-2xl font-black text-slate-900">Người dùng</h1>
         <p className="mt-1 text-sm font-semibold text-slate-500">
@@ -420,7 +420,7 @@ function Users() {
       >
         {viewedUser ? (
           <div className="space-y-5">
-            <div className="flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-4">
+            <div className="admin-panel flex items-center gap-4 rounded-2xl p-4">
               <Avatar item={viewedUser} size="lg" />
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2">

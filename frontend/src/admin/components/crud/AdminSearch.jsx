@@ -22,7 +22,7 @@ function AdminSearch({
     <div className={cn("relative w-full", className)}>
       <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
       <input
-        className="h-11 w-full rounded-xl border border-slate-200 bg-white pl-10 pr-10 text-sm font-semibold text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-primary focus:ring-4 focus:ring-blue-100 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400"
+        className="admin-control h-11 w-full rounded-xl pl-10 pr-10 text-sm font-semibold text-slate-700 outline-none placeholder:text-slate-400 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400"
         disabled={disabled}
         onChange={handleChange}
         placeholder={placeholder}

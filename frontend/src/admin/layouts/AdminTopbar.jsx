@@ -250,7 +250,7 @@ function AdminTopbar({ collapsed, onOpenMobileSidebar, onToggleSidebar }) {
         <form className="relative hidden w-full max-w-md lg:block" onSubmit={handleSearchSubmit} ref={searchRef}>
           <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
           <input
-            className="h-10 w-full rounded-xl border border-slate-200 bg-slate-50/90 pl-10 pr-10 text-sm font-semibold text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-primary focus:bg-white focus:ring-4 focus:ring-blue-100"
+            className="admin-control h-10 w-full rounded-xl pl-10 pr-10 text-sm font-semibold text-slate-700 outline-none placeholder:text-slate-400"
             onChange={(event) => {
               setSearchQuery(event.target.value);
               setIsSearchOpen(true);

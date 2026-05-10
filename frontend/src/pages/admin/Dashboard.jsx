@@ -47,7 +47,7 @@ function RecentOrders({ items }) {
           </thead>
           <tbody className="divide-y divide-slate-100">
             {items.map((item) => (
-              <tr className="text-sm" key={item.id}>
+              <tr className="admin-table-row text-sm" key={item.id}>
                 <td className="whitespace-nowrap py-4 pr-4">
                   <div>
                     <p className="font-black text-primary">{item.id}</p>
@@ -85,7 +85,7 @@ function Dashboard() {
   };
 
   return (
-    <section className="space-y-6">
+    <section className="admin-page-shell">
       <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-end">
         <div>
           <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-black text-primary">

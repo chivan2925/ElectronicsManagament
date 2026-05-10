@@ -3,7 +3,7 @@ import { cn } from "../../../utils/classNames";
 const variantClasses = {
   dark:
     "border-white/10 bg-[radial-gradient(circle_at_top_left,rgba(0,91,255,0.24),transparent_34%),linear-gradient(135deg,#07111F,#0B1729)] text-white shadow-2xl shadow-slate-950/20",
-  light: "border-slate-200 bg-white text-slate-950 shadow-admin-card",
+  light: "admin-panel text-slate-950",
 };
 
 function AnalyticsCard({
@@ -18,7 +18,7 @@ function AnalyticsCard({
   const isDark = variant === "dark";
 
   return (
-    <article className={cn("overflow-hidden rounded-2xl border", variantClasses[variant] || variantClasses.light, className)}>
+    <article className={cn("overflow-hidden rounded-2xl", variantClasses[variant] || variantClasses.light, className)}>
       {(title || description || action) && (
         <div className={cn("flex items-start justify-between gap-4 px-5 pt-5", headerClassName)}>
           <div className="min-w-0">

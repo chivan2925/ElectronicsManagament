@@ -14,6 +14,10 @@ Phase 8 — Production + Deploy (Phase 7 completed)
 
 ## Recently Completed
 
+- Completed an ecommerce UI/UX production polish pass across storefront and admin surfaces without redesigning the homepage.
+- Added shared storefront surface/action panel utilities and admin page/panel/control/table utilities for more consistent spacing, borders, shadows, focus states, and hover treatments.
+- Polished homepage-adjacent ecommerce flows, PLP, PDP support sections, cart, checkout, profile, wishlist, dashboard, CRUD pages, media management, orders, warehouse, roles, coupons, and analytics pages.
+- Verified `npm run lint`, `npm run build`, and `git diff --check`; `git diff --check` reported only CRLF normalization warnings for edited frontend files.
 - Completed the Phase 7 production audit across frontend architecture, backend integration, payment flows, admin system, ecommerce UX, performance, security, responsive quality, duplication, error handling, loading states, consistency, and deployment readiness.
 - Added backend `/api/health` and `/api/health/readiness` probes without exposing sensitive config.
 - Wired the production backend Docker healthcheck to readiness and made production Compose wait for a healthy backend before starting the frontend.

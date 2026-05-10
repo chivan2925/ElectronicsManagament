@@ -42,7 +42,7 @@ function StatCard({ helper, icon, title, tone = "blue", trend, trendType = "up",
   const TrendIcon = trendIcons[trendType] || ArrowUpRight;
 
   return (
-    <article className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-admin-card transition duration-200 hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-xl hover:shadow-slate-200/70">
+    <article className="admin-panel admin-panel-hover group relative overflow-hidden rounded-2xl p-5">
       <div className={cn("pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b to-transparent", toneClass.glow)} />
 
       <div className="relative flex items-start justify-between gap-4">

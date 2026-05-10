@@ -570,7 +570,7 @@ function Brands() {
   );
 
   return (
-    <section className="space-y-4">
+    <section className="admin-page-shell">
       <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
         <div>
           <h1 className="text-2xl font-black text-slate-900">Thương hiệu</h1>

@@ -85,7 +85,7 @@ function ShipmentProgress({ className, order }) {
   const progressWidth = isCancelled ? 0 : (currentIndex / Math.max(ORDER_TRACKING_STEPS.length - 1, 1)) * 100;
 
   return (
-    <section className={cn("rounded-3xl border border-white/10 bg-slate-950/42 p-5 shadow-inner shadow-white/[0.03] lg:p-6", className)}>
+    <section className={cn("store-surface-panel-strong rounded-3xl p-5 lg:p-6", className)}>
       <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
         <div>
           <Badge className="mb-3 gap-2" variant="primary">

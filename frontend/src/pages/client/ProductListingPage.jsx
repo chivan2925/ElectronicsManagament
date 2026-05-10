@@ -175,7 +175,7 @@ function ProductListingPage() {
 
         <section
           aria-labelledby="catalog-heading"
-          className="relative isolate overflow-hidden rounded-3xl border border-blue-300/20 bg-[radial-gradient(circle_at_16%_0%,rgba(0,91,255,0.34),transparent_34%),radial-gradient(circle_at_92%_22%,rgba(56,189,248,0.14),transparent_28%),linear-gradient(135deg,rgba(15,23,42,0.9),rgba(7,17,31,0.96))] p-5 shadow-[0_28px_90px_rgba(0,0,0,0.34),0_0_42px_rgba(0,91,255,0.14)] backdrop-blur-xl sm:p-7 lg:p-8"
+          className="store-hero-panel p-5 sm:p-7 lg:p-8"
         >
           <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.08),transparent_32%,rgba(0,91,255,0.12))]" />
           <div className="relative z-10 grid gap-7 lg:grid-cols-[1fr_360px] lg:items-center">
@@ -247,7 +247,7 @@ function ProductListingPage() {
 
           <section aria-labelledby="product-results-heading" className="min-w-0 space-y-4">
             <div
-              className="scroll-mt-28 rounded-2xl border border-white/10 bg-slate-950/36 p-3 shadow-inner shadow-white/[0.03] backdrop-blur-xl sm:p-4"
+              className="store-surface-panel scroll-mt-28 rounded-2xl p-3 sm:p-4"
               id="product-results"
             >
               <div className="flex flex-col gap-3 xl:flex-row xl:items-start xl:justify-between">

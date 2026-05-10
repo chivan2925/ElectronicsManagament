@@ -73,7 +73,7 @@ function ProfileOverview() {
         />
       )}
 
-      <section className="rounded-3xl border border-white/10 bg-slate-950/36 p-5 shadow-inner shadow-white/[0.03] backdrop-blur-xl lg:p-6">
+      <section className="store-surface-panel rounded-3xl p-5 lg:p-6">
         <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
           <div>
             <Badge className="mb-4 gap-2" variant="primary">
@@ -115,7 +115,7 @@ function ProfileOverview() {
 
       <section className="grid gap-4 md:grid-cols-2">
         <Link
-          className="premium-transition rounded-3xl border border-white/10 bg-white/[0.035] p-5 shadow-inner shadow-white/[0.03] hover:-translate-y-0.5 hover:border-blue-300/40 hover:bg-blue-500/[0.065]"
+          className="store-action-card rounded-3xl p-5"
           to="/profile/orders"
         >
           <PackageSearch className="text-blue-200" size={24} />
@@ -128,7 +128,7 @@ function ProfileOverview() {
         </Link>
 
         <Link
-          className="premium-transition rounded-3xl border border-white/10 bg-white/[0.035] p-5 shadow-inner shadow-white/[0.03] hover:-translate-y-0.5 hover:border-blue-300/40 hover:bg-blue-500/[0.065]"
+          className="store-action-card rounded-3xl p-5"
           to="/profile/settings"
         >
           <Settings className="text-blue-200" size={24} />

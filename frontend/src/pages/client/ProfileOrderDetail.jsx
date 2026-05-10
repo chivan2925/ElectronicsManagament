@@ -61,7 +61,7 @@ function SummaryTile({ children, className, icon, label, value }) {
   const IconComponent = icon;
 
   return (
-    <div className={cn("rounded-2xl border border-white/10 bg-white/[0.035] p-4 shadow-inner shadow-white/[0.03]", className)}>
+    <div className={cn("store-action-card rounded-2xl p-4", className)}>
       <div className="flex items-start gap-3">
         <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-blue-300/20 bg-blue-500/12 text-blue-100">
           <IconComponent size={18} />
@@ -162,7 +162,7 @@ function ProfileOrderDetail() {
 
   if (error && !order) {
     return (
-      <section className="rounded-3xl border border-white/10 bg-slate-950/36 p-5 shadow-inner shadow-white/[0.03] lg:p-6">
+      <section className="store-surface-panel rounded-3xl p-5 lg:p-6">
         <Button as={Link} className="mb-5 rounded-2xl" to="/profile/orders" variant="outline">
           <ArrowLeft size={17} />
           Quay lại đơn hàng
@@ -174,7 +174,7 @@ function ProfileOrderDetail() {
 
   if (!order) {
     return (
-      <section className="rounded-3xl border border-white/10 bg-slate-950/36 p-6 text-center shadow-inner shadow-white/[0.03]">
+      <section className="store-surface-panel rounded-3xl p-6 text-center">
         <ReceiptText className="mx-auto text-blue-200 drop-shadow-[0_0_18px_rgba(0,91,255,0.55)]" size={52} />
         <h2 className="text-section mt-4">Không tìm thấy đơn hàng</h2>
         <p className="text-muted mx-auto mt-2 max-w-md text-sm">Đơn hàng có thể chưa đồng bộ hoặc không thuộc tài khoản hiện tại.</p>
@@ -188,7 +188,7 @@ function ProfileOrderDetail() {
 
   return (
     <section className="grid gap-5">
-      <div className="rounded-3xl border border-white/10 bg-slate-950/36 p-5 shadow-inner shadow-white/[0.03] lg:p-6">
+      <div className="store-surface-panel rounded-3xl p-5 lg:p-6">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <div className="min-w-0">
             <Button as={Link} className="mb-4 rounded-2xl" size="sm" to="/profile/orders" variant="outline">
@@ -229,7 +229,7 @@ function ProfileOrderDetail() {
 
       <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_360px]">
         <div className="grid gap-5">
-          <section className="rounded-3xl border border-white/10 bg-slate-950/42 p-5 shadow-inner shadow-white/[0.03] lg:p-6">
+          <section className="store-surface-panel-strong rounded-3xl p-5 lg:p-6">
             <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
               <div>
                 <Badge className="mb-3 gap-2" variant="primary">
@@ -247,7 +247,7 @@ function ProfileOrderDetail() {
         </div>
 
         <aside className="grid gap-5 xl:sticky xl:top-28 xl:self-start">
-          <section className="rounded-3xl border border-white/10 bg-slate-950/42 p-5 shadow-inner shadow-white/[0.03]">
+          <section className="store-surface-panel-strong rounded-3xl p-5">
             <Badge className="mb-4 gap-2" variant="primary">
               <MapPin size={13} />
               Giao hàng
@@ -270,7 +270,7 @@ function ProfileOrderDetail() {
             </div>
           </section>
 
-          <section className="rounded-3xl border border-white/10 bg-slate-950/42 p-5 shadow-inner shadow-white/[0.03]">
+          <section className="store-surface-panel-strong rounded-3xl p-5">
             <Badge className="mb-4 gap-2" variant="primary">
               <ReceiptText size={13} />
               Tóm tắt

@@ -4,7 +4,7 @@ import { cn } from "../../../utils/classNames";
 function renderFilterControl(filter, values, onChange) {
   const value = values?.[filter.key] ?? filter.value ?? "";
   const commonClass =
-    "h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-700 outline-none transition focus:border-primary focus:ring-4 focus:ring-blue-100 disabled:cursor-not-allowed disabled:bg-slate-50";
+    "admin-control h-11 w-full rounded-xl px-3 text-sm font-semibold text-slate-700 outline-none disabled:cursor-not-allowed disabled:bg-slate-50";
 
   if (typeof filter.render === "function") {
     return filter.render({ onChange: (nextValue) => onChange?.(filter.key, nextValue), value, values });
@@ -59,7 +59,7 @@ function AdminFilters({
   }
 
   return (
-    <section className={cn("rounded-2xl border border-slate-200 bg-white p-4 shadow-admin-card", className)}>
+    <section className={cn("admin-panel rounded-2xl p-4", className)}>
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-2">
           <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-primary">
@@ -73,7 +73,7 @@ function AdminFilters({
 
         {onReset ? (
           <button
-            className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-black text-slate-600 transition hover:border-primary hover:text-primary"
+            className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-black text-slate-600 transition hover:border-primary hover:bg-blue-50 hover:text-primary"
             onClick={onReset}
             type="button"
           >

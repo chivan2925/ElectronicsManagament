@@ -99,7 +99,7 @@ function OrderDetailPanel({ detail, isLoading }) {
           <div className="mt-4 grid gap-3">
             {detail.items.map((item) => (
               <div
-                className="grid gap-3 rounded-2xl border border-white/10 bg-slate-950/42 p-3 sm:grid-cols-[minmax(0,1fr)_92px_120px]"
+                className="store-surface-panel-strong grid gap-3 rounded-2xl p-3 sm:grid-cols-[minmax(0,1fr)_92px_120px]"
                 key={`${item.variantId}-${item.variantName}`}
               >
                 <div className="min-w-0">
@@ -113,7 +113,7 @@ function OrderDetailPanel({ detail, isLoading }) {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-white/10 bg-slate-950/42 p-4">
+        <div className="store-surface-panel-strong rounded-2xl p-4">
           <p className="text-sm font-black text-white">Thông tin giao hàng</p>
           <div className="mt-3 space-y-3 text-sm font-semibold text-slate-300">
             <p>{detail.shippingName}</p>
@@ -156,7 +156,7 @@ function OrderDetailPanel({ detail, isLoading }) {
 
 function MobileOrderCard({ detail, isActive, isLoadingDetail, onViewDetail, order }) {
   return (
-    <article className="rounded-2xl border border-white/10 bg-white/[0.035] p-4 shadow-inner shadow-white/[0.03]">
+    <article className="store-action-card rounded-2xl p-4">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="truncate text-sm font-black text-white">#{order.code}</p>
@@ -222,7 +222,7 @@ function OrdersTable({
 
   return (
     <div>
-      <div className="hidden overflow-hidden rounded-3xl border border-white/10 bg-slate-950/36 shadow-inner shadow-white/[0.03] md:block">
+      <div className="store-surface-panel hidden overflow-hidden rounded-3xl md:block">
         <table className="w-full table-fixed text-left">
           <thead className="border-b border-white/10 bg-white/[0.035] text-xs font-black uppercase text-slate-500">
             <tr>

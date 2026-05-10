@@ -23,7 +23,7 @@ function formatAddress(address = {}) {
 
 function InfoCard({ children, icon, title }) {
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+    <section className="admin-panel rounded-2xl p-4">
       <div className="mb-3 flex items-center gap-2">
         <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-primary">
           {createElement(icon, { size: 17 })}
@@ -48,7 +48,7 @@ function SelectField({ disabled, label, onChange, options, value }) {
   return (
     <Field label={label}>
       <select
-        className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-bold text-slate-700 outline-none transition focus:border-primary focus:ring-4 focus:ring-blue-100 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400"
+        className="admin-control h-11 w-full rounded-xl px-3 text-sm font-bold text-slate-700 outline-none disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400"
         disabled={disabled}
         onChange={(event) => onChange?.(event.target.value)}
         value={value}
@@ -91,11 +91,11 @@ function OrderDetail({
 
   return (
     <div className="space-y-4">
-      <section className="rounded-2xl border border-slate-200 bg-slate-950 p-4 text-white shadow-sm">
+      <section className="admin-panel rounded-2xl p-4">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <div>
             <p className="text-xs font-black uppercase tracking-normal text-slate-500">Order</p>
-            <h2 className="mt-1 text-2xl font-black text-white">{order.code || `#${order.id}`}</h2>
+            <h2 className="mt-1 text-2xl font-black text-slate-950">{order.code || `#${order.id}`}</h2>
             <div className="mt-3 flex flex-wrap gap-2">
               <StatusBadge
                 label={order.stageLabel}
@@ -106,9 +106,9 @@ function OrderDetail({
               <StatusBadge label={`Shipping ${order.shippingStatus}`} status={order.shippingStatus} tone={statusTone[order.shippingStatus]} />
             </div>
           </div>
-          <div className="rounded-2xl border border-slate-800 bg-slate-900 px-4 py-3 text-right">
+          <div className="rounded-2xl border border-blue-100 bg-blue-50/70 px-4 py-3 text-right">
             <p className="text-xs font-black uppercase tracking-normal text-slate-500">Total</p>
-            <p className="mt-1 text-2xl font-black text-white">{formatCurrency(order.total || 0)}</p>
+            <p className="mt-1 text-2xl font-black text-slate-950">{formatCurrency(order.total || 0)}</p>
           </div>
         </div>
       </section>
@@ -179,7 +179,7 @@ function OrderDetail({
         </div>
 
         <aside className="space-y-4">
-          <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+          <section className="admin-panel rounded-2xl p-4">
             <div className="mb-4 flex items-center gap-2">
               <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-primary">
                 <Truck size={17} />
@@ -221,7 +221,7 @@ function OrderDetail({
               />
               <Field label="Tracking code">
                 <input
-                  className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-bold text-slate-700 outline-none transition focus:border-primary focus:ring-4 focus:ring-blue-100 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400"
+                  className="admin-control h-11 w-full rounded-xl px-3 text-sm font-bold text-slate-700 outline-none disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400"
                   disabled={isUpdateDisabled}
                   maxLength={20}
                   onChange={(event) => onChange?.("trackingCode", event.target.value)}
@@ -242,7 +242,7 @@ function OrderDetail({
             </button>
           </section>
 
-          <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+          <section className="admin-panel rounded-2xl p-4">
             <h3 className="text-sm font-black text-slate-950">Payment summary</h3>
             <div className="mt-3 space-y-2 text-sm font-semibold text-slate-600">
               <div className="flex justify-between gap-4">
