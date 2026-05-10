@@ -116,7 +116,7 @@ function Cart() {
       <AnnouncementBar />
       <Header />
 
-      <Container as="main" className="pb-16 pt-6 sm:pt-8">
+      <Container as="main" className="pb-16 pt-6 sm:pt-8" id="main-content" tabIndex={-1}>
         <nav aria-label="Breadcrumb" className="mb-4 flex min-w-0 flex-wrap items-center gap-2 text-sm font-bold text-slate-400">
           <Link className="premium-transition hover:text-white" to="/">
             Trang chủ
@@ -185,7 +185,7 @@ function Cart() {
                 <span />
               </div>
 
-              <MotionDiv animate="visible" className="grid gap-3" initial="hidden" variants={staggerContainer}>
+              <MotionDiv animate="visible" className="grid gap-3" initial="hidden" role="list" variants={staggerContainer}>
                 {cartItems.map((item) => (
                   <MotionDiv key={item.id} variants={fadeUp}>
                     <CartItem item={item} layout="page" onQuantityChange={updateQuantity} onRemove={removeItem} />

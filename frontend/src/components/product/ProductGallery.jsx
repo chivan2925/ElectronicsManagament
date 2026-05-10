@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   ChevronLeft,
@@ -8,6 +8,7 @@ import {
   X,
 } from "lucide-react";
 import { cn } from "../../utils/classNames";
+import useFocusTrap from "../../hooks/useFocusTrap";
 import OptimizedImage from "../common/OptimizedImage";
 import SkeletonBlock from "../skeletons/SkeletonBlock";
 import Badge from "../ui/Badge";
@@ -26,6 +27,7 @@ function normalizeIndex(index, length) {
 }
 
 function ProductGallery({ images = [], productName }) {
+  const previewDialogRef = useRef(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [imageOrigin, setImageOrigin] = useState("50% 50%");
   const [isMainLoaded, setIsMainLoaded] = useState(false);
@@ -35,6 +37,11 @@ function ProductGallery({ images = [], productName }) {
   const activeImage = images[activeIndex] || images[0];
   const previewImage = images[previewIndex] || activeImage;
   const hasManyImages = images.length > 1;
+  const closePreview = useCallback(() => {
+    setIsPreviewOpen(false);
+  }, []);
+
+  useFocusTrap(previewDialogRef, isPreviewOpen, { onEscape: closePreview });
 
   useEffect(() => {
     if (!isPreviewOpen) {
@@ -56,7 +63,7 @@ function ProductGallery({ images = [], productName }) {
 
     const handleKeyDown = (event) => {
       if (event.key === "Escape") {
-        setIsPreviewOpen(false);
+        closePreview();
         return;
       }
 
@@ -74,7 +81,7 @@ function ProductGallery({ images = [], productName }) {
     window.addEventListener("keydown", handleKeyDown);
 
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [hasManyImages, images.length, isPreviewOpen]);
+  }, [closePreview, hasManyImages, images.length, isPreviewOpen]);
 
   if (!activeImage) {
     return null;
@@ -152,16 +159,25 @@ function ProductGallery({ images = [], productName }) {
               key={activeImage.id}
               alt={`${productName} - ${activeImage.label}`}
               animate={{ opacity: isMainLoaded ? 1 : 0, scale: 1, x: 0 }}
-              className="premium-transition relative z-10 h-full max-h-[520px] w-full cursor-zoom-in object-contain drop-shadow-[0_28px_70px_rgba(0,0,0,0.5)] group-hover:drop-shadow-[0_34px_80px_rgba(0,91,255,0.3)]"
+              className="premium-transition relative z-10 h-full max-h-[520px] w-full cursor-zoom-in rounded-2xl object-contain drop-shadow-[0_28px_70px_rgba(0,0,0,0.5)] outline-none group-hover:drop-shadow-[0_34px_80px_rgba(0,91,255,0.3)] focus-visible:ring-2 focus-visible:ring-blue-300/60 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
               exit={{ opacity: 0, scale: 0.98, x: -18 }}
               initial={{ opacity: 0, scale: 0.96, x: 18 }}
+              aria-label="Mở xem ảnh toàn màn hình"
               onClick={() => openPreview(activeIndex)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  openPreview(activeIndex);
+                }
+              }}
               fallbackKind="product"
               onLoad={() => setIsMainLoaded(true)}
               priority
+              role="button"
               sizes="(max-width: 1024px) 92vw, 620px"
               src={activeImage.image}
               style={{ transformOrigin: imageOrigin }}
+              tabIndex={0}
               transition={{ duration: 0.34, ease: [0.22, 1, 0.36, 1] }}
               whileHover={{ scale: 1.16 }}
             />
@@ -240,35 +256,38 @@ function ProductGallery({ images = [], productName }) {
         {isPreviewOpen && previewImage && (
           <MotionDiv
             animate={{ opacity: 1 }}
-            aria-modal="true"
             className="fixed inset-0 z-[90] flex items-center justify-center bg-slate-950/88 p-3 backdrop-blur-2xl sm:p-6"
             exit={{ opacity: 0 }}
             initial={{ opacity: 0 }}
-            role="dialog"
           >
             <button
               aria-label="Đóng xem ảnh toàn màn hình"
               className="absolute inset-0 cursor-default"
-              onClick={() => setIsPreviewOpen(false)}
+              onClick={closePreview}
               type="button"
             />
 
             <MotionDiv
               animate={{ opacity: 1, scale: 1, y: 0 }}
+              aria-labelledby="product-gallery-preview-title"
+              aria-modal="true"
               className="relative z-10 flex max-h-[94vh] w-full max-w-6xl flex-col overflow-hidden rounded-3xl border border-blue-200/20 bg-[#07111F]/96 shadow-[0_30px_100px_rgba(0,0,0,0.55),0_0_52px_rgba(0,91,255,0.2)]"
               exit={{ opacity: 0, scale: 0.98, y: 12 }}
               initial={{ opacity: 0, scale: 0.98, y: 12 }}
+              ref={previewDialogRef}
+              role="dialog"
+              tabIndex={-1}
               transition={{ duration: 0.26, ease: [0.22, 1, 0.36, 1] }}
             >
               <div className="flex items-center justify-between gap-3 border-b border-white/10 px-4 py-3">
                 <div>
-                  <p className="text-sm font-black text-white">{productName}</p>
+                  <p className="text-sm font-black text-white" id="product-gallery-preview-title">{productName}</p>
                   <p className="text-caption mt-1 text-slate-400">{previewImage.label}</p>
                 </div>
                 <IconButton
                   aria-label="Đóng xem ảnh"
                   className="border-white/10 bg-white/[0.05]"
-                  onClick={() => setIsPreviewOpen(false)}
+                  onClick={closePreview}
                   variant="outline"
                 >
                   <X size={19} />

@@ -1,7 +1,8 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { PackageSearch, ShoppingCart, X } from "lucide-react";
 import { getShippingEstimate, getStandardShippingAmount } from "../../cart/cartInsights";
+import useFocusTrap from "../../hooks/useFocusTrap";
 import Button from "../ui/Button";
 import IconButton from "../ui/IconButton";
 import CartItem from "./CartItem";
@@ -11,8 +12,11 @@ const MotionAside = motion.aside;
 const MotionDiv = motion.div;
 
 function CartDrawer({ isOpen, itemCount, items, onClose, onQuantityChange, onRemove, subtotal }) {
+  const drawerRef = useRef(null);
   const shippingAmount = getStandardShippingAmount(subtotal);
   const shippingEstimate = getShippingEstimate({ subtotal });
+
+  useFocusTrap(drawerRef, isOpen, { onEscape: onClose });
 
   useEffect(() => {
     if (!isOpen) {
@@ -45,10 +49,15 @@ function CartDrawer({ isOpen, itemCount, items, onClose, onQuantityChange, onRem
 
           <MotionAside
             animate={{ x: 0 }}
-            aria-label="Giỏ hàng"
+            aria-labelledby="cart-drawer-title"
+            aria-modal="true"
             className="absolute right-0 top-0 flex h-full w-full max-w-[460px] flex-col overflow-hidden border-l border-blue-200/20 bg-[#07111F]/96 shadow-[0_0_80px_rgba(0,0,0,0.55),0_0_52px_rgba(0,91,255,0.18)] backdrop-blur-2xl sm:rounded-l-3xl"
             exit={{ x: "100%" }}
+            id="cart-drawer"
             initial={{ x: "100%" }}
+            ref={drawerRef}
+            role="dialog"
+            tabIndex={-1}
             transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
           >
             <div className="relative border-b border-white/10 p-4">
@@ -59,8 +68,8 @@ function CartDrawer({ isOpen, itemCount, items, onClose, onQuantityChange, onRem
                     <ShoppingCart size={21} />
                   </div>
                   <div>
-                    <h2 className="text-section text-xl">Giỏ hàng</h2>
-                    <p className="text-caption mt-1 text-slate-400">{itemCount} sản phẩm trong giỏ</p>
+                    <h2 className="text-section text-xl" id="cart-drawer-title">Giỏ hàng</h2>
+                    <p aria-live="polite" className="text-caption mt-1 text-slate-400">{itemCount} sản phẩm trong giỏ</p>
                   </div>
                 </div>
 
@@ -77,7 +86,7 @@ function CartDrawer({ isOpen, itemCount, items, onClose, onQuantityChange, onRem
 
             <div className="min-h-0 flex-1 overflow-y-auto p-4">
               {items.length ? (
-                <div className="grid gap-3">
+                <div aria-label="Sản phẩm trong giỏ hàng" className="grid gap-3" role="list">
                   {items.map((item) => (
                     <CartItem
                       item={item}

@@ -388,7 +388,7 @@ function Checkout() {
         <AnnouncementBar />
         <Header />
 
-        <Container as="main" className="pb-16 pt-6 sm:pt-8">
+        <Container as="main" className="pb-16 pt-6 sm:pt-8" id="main-content" tabIndex={-1}>
           <section className="flex min-h-[520px] items-center justify-center">
             <EmptyState
               actionIcon={ChevronRight}
@@ -410,7 +410,7 @@ function Checkout() {
       <AnnouncementBar />
       <Header />
 
-      <Container as="main" className="pb-16 pt-6 sm:pt-8">
+      <Container as="main" className="pb-16 pt-6 sm:pt-8" id="main-content" tabIndex={-1}>
         <nav aria-label="Breadcrumb" className="mb-4 flex min-w-0 flex-wrap items-center gap-2 text-sm font-bold text-slate-400">
           <Link className="premium-transition hover:text-white" to="/">
             Trang chủ

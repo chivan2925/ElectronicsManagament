@@ -121,7 +121,7 @@ function ProductNotFound({ slug }) {
       <AnnouncementBar />
       <Header />
 
-      <Container as="main" className="py-10">
+      <Container as="main" className="py-10" id="main-content" tabIndex={-1}>
         <EmptyState
           actionLabel="Quay lại danh sách"
           actionTo="/products"
@@ -148,7 +148,7 @@ function ProductDetailLoading({ slug }) {
       <AnnouncementBar />
       <Header />
 
-      <Container as="main" className="pb-14 pt-6 sm:pt-8">
+      <Container as="main" className="pb-14 pt-6 sm:pt-8" id="main-content" tabIndex={-1}>
         <div className="mb-4 flex gap-2">
           <SkeletonBlock className="h-5 w-20 rounded-full" />
           <SkeletonBlock className="h-5 w-28 rounded-full" />
@@ -207,7 +207,7 @@ function ProductDetailError({ error, onRetry, slug }) {
       <AnnouncementBar />
       <Header />
 
-      <Container as="main" className="py-10">
+      <Container as="main" className="py-10" id="main-content" tabIndex={-1}>
         <ApiErrorAlert
           actionLabel="Thử tải lại"
           error={error}
@@ -302,7 +302,7 @@ function ProductDetailContent({ detail, relatedProducts }) {
       <AnnouncementBar />
       <Header />
 
-      <Container as="main" className="pb-14 pt-6 sm:pt-8">
+      <Container as="main" className="pb-14 pt-6 sm:pt-8" id="main-content" tabIndex={-1}>
         <nav aria-label="Breadcrumb" className="mb-4 flex min-w-0 flex-wrap items-center gap-2 text-sm font-bold text-slate-400">
           <Link className="premium-transition hover:text-white" to="/">
             Trang chủ

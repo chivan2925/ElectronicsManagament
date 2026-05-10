@@ -8,20 +8,21 @@ function VariantSelector({ groups, onSelect, selectedOptions }) {
       {groups.map((group) => (
         <section key={group.id}>
           <div className="mb-3 flex items-center justify-between gap-3">
-            <h3 className="text-sm font-black text-white">{group.label}</h3>
+            <h3 className="text-sm font-black text-white" id={`variant-${group.id}-heading`}>{group.label}</h3>
             <span className="text-caption text-slate-400">
               {group.options.find((option) => option.id === selectedOptions[group.id])?.label}
             </span>
           </div>
 
-          <div className="grid gap-2 sm:grid-cols-2">
+          <div aria-labelledby={`variant-${group.id}-heading`} className="grid gap-2 sm:grid-cols-2" role="radiogroup">
             {group.options.map((option) => {
               const isActive = selectedOptions[group.id] === option.id;
               const isDisabled = option.stock <= 0;
 
               return (
                 <button
-                  aria-pressed={isActive}
+                  aria-checked={isActive}
+                  aria-disabled={isDisabled}
                   className={cn(
                     "transition-default relative min-h-16 rounded-2xl border p-3 text-left outline-none focus-visible:ring-2 focus-visible:ring-blue-300/60 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950",
                     isActive
@@ -32,6 +33,7 @@ function VariantSelector({ groups, onSelect, selectedOptions }) {
                   disabled={isDisabled}
                   key={option.id}
                   onClick={() => onSelect(group.id, option.id)}
+                  role="radio"
                   type="button"
                 >
                   <span className="flex items-start justify-between gap-3">

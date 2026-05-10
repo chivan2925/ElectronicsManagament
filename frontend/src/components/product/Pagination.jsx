@@ -49,6 +49,7 @@ function Pagination({ currentPage, onPageChange, pageCount, totalItems }) {
         {visiblePages.map((page) =>
           typeof page === "number" ? (
             <button
+              aria-label={`Trang ${page}`}
               aria-current={page === currentPage ? "page" : undefined}
               className={cn(
                 "transition-default h-10 min-w-10 rounded-xl border px-3 text-sm font-black outline-none focus-visible:ring-2 focus-visible:ring-blue-300/60 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950",
@@ -63,7 +64,7 @@ function Pagination({ currentPage, onPageChange, pageCount, totalItems }) {
               {page}
             </button>
           ) : (
-            <span className="flex h-10 min-w-8 items-center justify-center text-sm font-black text-slate-500" key={page}>
+            <span aria-hidden="true" className="flex h-10 min-w-8 items-center justify-center text-sm font-black text-slate-500" key={page}>
               ...
             </span>
           ),

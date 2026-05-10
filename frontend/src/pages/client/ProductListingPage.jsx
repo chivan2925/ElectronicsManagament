@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
@@ -30,6 +30,7 @@ import Container from "../../components/ui/Container";
 import ApiErrorAlert from "../../components/ui/feedback/ApiErrorAlert";
 import IconButton from "../../components/ui/IconButton";
 import { categories as storefrontCategories } from "../../data/categories";
+import useFocusTrap from "../../hooks/useFocusTrap";
 import useProducts from "../../hooks/useProducts";
 import { buildCategoryMetadata, buildProductListingMetadata, slugify } from "../../seo/metadata";
 import { motionViewport, staggerContainer } from "../../styles/animations";
@@ -40,6 +41,7 @@ const MotionDiv = motion.div;
 
 function ProductListingPage() {
   const { categorySlug = null } = useParams();
+  const mobileFiltersRef = useRef(null);
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
   const {
     activeFilters,
@@ -75,6 +77,12 @@ function ProductListingPage() {
     togglePriceRange,
     toggleStock,
   } = useProducts({ routeCategorySlug: categorySlug });
+
+  const closeMobileFilters = useCallback(() => {
+    setIsMobileFiltersOpen(false);
+  }, []);
+
+  useFocusTrap(mobileFiltersRef, isMobileFiltersOpen, { onEscape: closeMobileFilters });
 
   useEffect(() => {
     if (!isMobileFiltersOpen) {
@@ -154,7 +162,7 @@ function ProductListingPage() {
       <AnnouncementBar />
       <Header />
 
-      <Container as="main" className="pb-14 pt-6 sm:pt-8">
+      <Container as="main" className="pb-14 pt-6 sm:pt-8" id="main-content" tabIndex={-1}>
         <nav aria-label="Breadcrumb" className="mb-4 flex min-w-0 flex-wrap items-center gap-2 text-sm font-bold text-slate-400">
           <Link className="premium-transition hover:text-white" to="/">
             Trang chủ
@@ -269,6 +277,8 @@ function ProductListingPage() {
                   <div className="grid grid-cols-[1fr_auto] gap-3 sm:grid-cols-[auto_auto]">
                     <SortDropdown onChange={setSort} options={sortOptions} value={filters.sort} />
                     <Button
+                      aria-controls="mobile-product-filters"
+                      aria-expanded={isMobileFiltersOpen}
                       className="h-11 rounded-xl px-4 py-0 lg:hidden"
                       onClick={() => setIsMobileFiltersOpen(true)}
                       variant="outline"
@@ -358,6 +368,7 @@ function ProductListingPage() {
           "fixed inset-0 z-[70] lg:hidden",
           isMobileFiltersOpen ? "pointer-events-auto" : "pointer-events-none",
         )}
+        inert={!isMobileFiltersOpen ? "" : undefined}
       >
         <button
           aria-label="Đóng bộ lọc"
@@ -365,26 +376,31 @@ function ProductListingPage() {
             "absolute inset-0 bg-slate-950/70 backdrop-blur-sm transition-opacity duration-300",
             isMobileFiltersOpen ? "opacity-100" : "opacity-0",
           )}
-          onClick={() => setIsMobileFiltersOpen(false)}
+          onClick={closeMobileFilters}
           type="button"
         />
 
         <aside
-          aria-label="Bộ lọc sản phẩm trên di động"
+          aria-labelledby="mobile-filters-title"
+          aria-modal="true"
           className={cn(
             "absolute inset-x-0 bottom-0 max-h-[88vh] overflow-hidden rounded-t-3xl border border-blue-200/20 bg-[#07111F]/96 shadow-[0_-24px_80px_rgba(0,0,0,0.5),0_0_42px_rgba(0,91,255,0.2)] backdrop-blur-2xl transition-[transform,opacity] duration-300 ease-out",
             isMobileFiltersOpen ? "translate-y-0 opacity-100" : "translate-y-full opacity-0",
           )}
+          id="mobile-product-filters"
+          ref={mobileFiltersRef}
+          role="dialog"
+          tabIndex={-1}
         >
           <div className="flex items-center justify-between gap-3 border-b border-white/10 px-4 py-3">
             <div>
-              <p className="text-sm font-black text-white">Bộ lọc sản phẩm</p>
+              <p className="text-sm font-black text-white" id="mobile-filters-title">Bộ lọc sản phẩm</p>
               <p className="text-caption mt-1 text-slate-400">{filteredProducts.length} kết quả phù hợp</p>
             </div>
             <IconButton
               aria-label="Đóng bộ lọc"
               className="border-white/10 bg-white/[0.05]"
-              onClick={() => setIsMobileFiltersOpen(false)}
+              onClick={closeMobileFilters}
               variant="outline"
             >
               <X size={19} />

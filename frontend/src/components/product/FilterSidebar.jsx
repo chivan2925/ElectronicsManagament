@@ -1,4 +1,4 @@
-import { createElement, useState } from "react";
+import { createElement, useId, useState } from "react";
 import {
   Check,
   ChevronDown,
@@ -15,7 +15,7 @@ import Button from "../ui/Button";
 function OptionButton({ active, count, label, mode = "checkbox", onClick }) {
   return (
     <button
-      aria-pressed={active}
+      aria-checked={active}
       className={cn(
         "transition-default flex min-h-11 w-full items-center justify-between gap-3 rounded-xl border px-3 py-2 text-left text-sm font-bold outline-none focus-visible:ring-2 focus-visible:ring-blue-300/60 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950",
         active
@@ -23,6 +23,7 @@ function OptionButton({ active, count, label, mode = "checkbox", onClick }) {
           : "border-white/10 bg-white/[0.035] text-slate-300 hover:border-blue-300/45 hover:bg-blue-500/10 hover:text-white",
       )}
       onClick={onClick}
+      role={mode === "radio" ? "radio" : "checkbox"}
       type="button"
     >
       <span className="flex min-w-0 items-center gap-2.5">
@@ -48,12 +49,14 @@ function OptionButton({ active, count, label, mode = "checkbox", onClick }) {
 }
 
 function FilterGroup({ children, defaultOpen = true, icon, meta, onClear, title }) {
+  const panelId = useId();
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
   return (
     <section className="rounded-2xl border border-white/10 bg-white/[0.025] p-3">
       <div className="flex items-center gap-2">
         <button
+          aria-controls={panelId}
           aria-expanded={isOpen}
           className="transition-default flex min-w-0 flex-1 items-center gap-2 text-left text-sm font-black text-white outline-none hover:text-blue-100 focus-visible:ring-2 focus-visible:ring-blue-300/60 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
           onClick={() => setIsOpen((current) => !current)}
@@ -67,7 +70,7 @@ function FilterGroup({ children, defaultOpen = true, icon, meta, onClear, title 
 
         {onClear && (
           <button
-            className="transition-default rounded-lg px-2 py-1 text-xs font-black text-slate-400 hover:bg-white/[0.06] hover:text-white"
+            className="transition-default rounded-lg px-2 py-1 text-xs font-black text-slate-400 outline-none hover:bg-white/[0.06] hover:text-white focus-visible:ring-2 focus-visible:ring-blue-300/60 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
             onClick={onClear}
             type="button"
           >
@@ -77,10 +80,13 @@ function FilterGroup({ children, defaultOpen = true, icon, meta, onClear, title 
       </div>
 
       <div
+        aria-hidden={!isOpen}
         className={cn(
           "grid overflow-hidden transition-[grid-template-rows,opacity,margin] duration-300 ease-out",
           isOpen ? "mt-3 grid-rows-[1fr] opacity-100" : "mt-0 grid-rows-[0fr] opacity-0",
         )}
+        id={panelId}
+        inert={!isOpen ? "" : undefined}
       >
         <div className="grid min-h-0 gap-2">{children}</div>
       </div>
@@ -108,8 +114,11 @@ function FilterSidebar({
   stockOptions,
   surface = true,
 }) {
+  const headingId = useId();
+
   return (
     <aside
+      aria-labelledby={headingId}
       className={cn(
         surface && "store-glass-soft rounded-2xl p-4 lg:sticky lg:top-28 lg:max-h-[calc(100vh-8rem)] lg:overflow-y-auto lg:overscroll-contain",
         !surface && "p-0",
@@ -120,7 +129,7 @@ function FilterSidebar({
         <div>
           <div className="flex items-center gap-2">
             <ListFilter className="text-blue-200" size={19} />
-            <h2 className="text-section text-lg">Bộ lọc</h2>
+            <h2 className="text-section text-lg" id={headingId}>Bộ lọc</h2>
           </div>
           <p className="text-caption mt-1 text-slate-400">{resultCount} sản phẩm phù hợp</p>
         </div>

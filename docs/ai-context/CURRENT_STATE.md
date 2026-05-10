@@ -90,6 +90,8 @@ The ecommerce UI/UX production polish pass now standardizes storefront hero/surf
 
 The responsive audit now tightens laptop storefront header fit, mobile auth width containment, and admin CRUD table behavior. Admin tables now render mobile card rows below tablet widths while retaining desktop tables, and the audited client/auth/checkout/product/account/admin routes avoid document-level horizontal overflow across phone, tablet, laptop, and ultra-wide checks.
 
+The ecommerce accessibility foundation now includes skip-to-main navigation, storefront main landmarks, reusable focus trapping for search/cart/mobile filters/product gallery overlays, clearer dialog/drawer labelling, inert collapsed menus/filters, checkout form error associations, radio semantics for shipping/payment/variants, and stronger keyboard focus states while preserving the dark theme and homepage layout.
+
 The frontend now has production-oriented route loading with route-level lazy loading, route preloading hooks, shared route/deferred-section loading boundaries, deferred header search/cart overlays, below-fold storefront section splitting, an optimized image component foundation, and targeted memoization for repeated ecommerce rows/carousels. The shared API client now has in-flight GET request deduplication plus opt-in TTL caching, and catalog product listing/detail flows avoid N+1 detail fetches. The production build emits route/vendor chunks instead of one large JavaScript bundle.
 
 The frontend and backend now have a no-SaaS logging and monitoring foundation. Frontend monitoring lives under `frontend/src/monitoring` with structured client logs, a local monitoring buffer, global error tracking, API failure tracking, payment error tracking, route preload/error tracking, route-change hooks, and `X-Request-Id` propagation from the shared API client. Backend monitoring lives under `backend/electronics/src/main/java/org/example/electronics/monitoring` with structured key-value logging helpers and request correlation through `X-Request-Id`/MDC. Auth, order, payment, webhook, unauthorized, and exception flows now emit reusable structured events.
@@ -577,6 +579,7 @@ Latest validation:
 - `npm run lint`, `npm run build`, `mvn -q -DskipTests compile`, `mvn test`, and production `docker compose --env-file .env.example config` passed after the Phase 7 production audit. `mvn test` still printed the existing local PostgreSQL `media.display_order` DDL warning.
 - `npm run lint`, `npm run build`, and `git diff --check` passed after the ecommerce UI/UX production polish pass. `git diff --check` reported only CRLF normalization warnings for edited frontend files.
 - `npm run lint`, `npm run build`, `git diff --check`, and Playwright responsive smoke checks passed after the full responsive experience audit. `git diff --check` reported only CRLF normalization warnings for edited frontend files.
+- `npm run lint` and `npm run build` passed after the ecommerce accessibility foundation pass.
 
 ## Known Issues
 

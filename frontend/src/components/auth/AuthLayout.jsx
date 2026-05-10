@@ -88,6 +88,7 @@ export function AuthField({
           onBlur={onBlur}
           onChange={onChange}
           placeholder={placeholder}
+          required={required}
           type={type}
           value={value}
         />
@@ -106,7 +107,7 @@ export function AuthField({
 export function AuthCheckbox({ checked, children, id, onChange }) {
   return (
     <label className="group flex cursor-pointer items-start gap-3 text-sm font-semibold text-slate-300" htmlFor={id}>
-      <span className="relative mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-white/15 bg-slate-950/55 transition-default group-hover:border-blue-300/70">
+      <span className="relative mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-white/15 bg-slate-950/55 transition-default group-hover:border-blue-300/70 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-blue-300/60 has-[:focus-visible]:ring-offset-2 has-[:focus-visible]:ring-offset-slate-950">
         <input
           checked={checked}
           className="peer sr-only"
@@ -142,6 +143,7 @@ export function AuthFormShell({ children, feedback, footer, onSubmit, subtitle, 
 
       {feedback?.message && (
         <div
+          aria-live={isError ? "assertive" : "polite"}
           className={cn(
             "mb-4 rounded-2xl border p-3 text-sm font-bold",
             isSuccess
@@ -150,7 +152,7 @@ export function AuthFormShell({ children, feedback, footer, onSubmit, subtitle, 
                 ? "border-red-300/30 bg-red-500/10 text-red-100"
                 : "border-blue-300/30 bg-blue-500/10 text-blue-100",
           )}
-          role="status"
+          role={isError ? "alert" : "status"}
         >
           <div className="flex gap-2">
             {isSuccess ? (
@@ -238,7 +240,11 @@ function AuthLayout({
         </>
       )}
 
-      <main className={cn("page-container flex items-center justify-center py-8 sm:py-10", showStoreHeader ? "min-h-[calc(100vh-160px)]" : "min-h-screen")}>
+      <main
+        className={cn("page-container flex items-center justify-center py-8 sm:py-10", showStoreHeader ? "min-h-[calc(100vh-160px)]" : "min-h-screen")}
+        id="main-content"
+        tabIndex={-1}
+      >
         <MotionDiv
           animate="visible"
           className="grid w-full max-w-6xl min-w-0 gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,420px)] lg:items-center"

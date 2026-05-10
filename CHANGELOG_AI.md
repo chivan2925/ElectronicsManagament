@@ -8,6 +8,16 @@ Always update this file after meaningful work.
 
 ## 2026-05-10
 
+### Ecommerce Accessibility Foundation
+
+- Audited storefront semantic structure, headings, buttons, form labels, keyboard navigation, focus states, contrast-sensitive helpers, and modal/drawer behavior.
+- Added skip-to-main navigation and main landmarks across customer ecommerce pages.
+- Added reusable focus trapping for storefront search, cart drawer, mobile filters, and product gallery preview.
+- Improved dialog/drawer labelling, inert collapsed mobile menus and filter groups, checkout/auth form error associations, and radio semantics for shipping, payment, variants, and filters.
+- Preserved the dark storefront design and existing homepage layout.
+- Updated `CURRENT_STATE.md` and `NEXT_TASKS.md`.
+- Verified `npm run lint` and `npm run build`.
+
 ### Responsive Experience Audit
 
 - Audited client, auth, checkout, product, account, and admin routes across phone, tablet, laptop, and ultra-wide viewports.

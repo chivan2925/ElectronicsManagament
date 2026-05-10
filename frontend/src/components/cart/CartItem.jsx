@@ -57,9 +57,13 @@ function CartItem({ item, layout = "drawer", onQuantityChange, onRemove }) {
   };
 
   const quantityControls = (className) => (
-    <div className={cn("flex h-10 items-center rounded-xl border border-white/10 bg-slate-950/45 p-1", className)}>
+    <div
+      aria-label={`Số lượng ${product.name}`}
+      className={cn("flex h-10 items-center rounded-xl border border-white/10 bg-slate-950/45 p-1", className)}
+      role="group"
+    >
       <IconButton
-        aria-label="Giảm số lượng"
+        aria-label={`Giảm số lượng ${product.name}`}
         className="h-8 w-8 rounded-lg disabled:pointer-events-none disabled:opacity-40"
         disabled={!canDecrease}
         onClick={handleDecrease}
@@ -85,7 +89,7 @@ function CartItem({ item, layout = "drawer", onQuantityChange, onRemove }) {
       </span>
 
       <IconButton
-        aria-label="Tăng số lượng"
+        aria-label={`Tăng số lượng ${product.name}`}
         className="h-8 w-8 rounded-lg disabled:pointer-events-none disabled:opacity-40"
         disabled={!canIncrease}
         onClick={handleIncrease}
@@ -105,6 +109,7 @@ function CartItem({ item, layout = "drawer", onQuantityChange, onRemove }) {
           hasStockIssue ? "border-red-300/35" : "border-white/10",
         )}
         layout
+        role="listitem"
       >
         <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_116px_154px_134px_44px] md:items-center">
           <div className="grid min-w-0 grid-cols-[88px_1fr] gap-3 sm:grid-cols-[104px_1fr]">
@@ -216,6 +221,7 @@ function CartItem({ item, layout = "drawer", onQuantityChange, onRemove }) {
         hasStockIssue ? "border-red-300/35" : "border-white/10",
       )}
       layout
+      role="listitem"
     >
       <div className="grid grid-cols-[88px_1fr] gap-3">
         <Link

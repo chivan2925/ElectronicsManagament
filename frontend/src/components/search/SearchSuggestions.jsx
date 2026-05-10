@@ -6,7 +6,11 @@ import SearchResultItem from "./SearchResultItem";
 function SearchTermButton({ icon, label, onRemove, onSelect }) {
   return (
     <span className="inline-flex min-w-0 items-center rounded-full border border-white/10 bg-white/[0.045] text-sm font-bold text-slate-200 shadow-inner shadow-white/[0.03] transition-default hover:border-blue-300/50 hover:bg-blue-500/10 hover:text-white">
-      <button className="inline-flex min-w-0 items-center gap-2 px-3 py-2" onClick={() => onSelect(label)} type="button">
+      <button
+        className="inline-flex min-w-0 items-center gap-2 rounded-full px-3 py-2 outline-none focus-visible:ring-2 focus-visible:ring-blue-300/60 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
+        onClick={() => onSelect(label)}
+        type="button"
+      >
         {icon}
         <span className="truncate">{label}</span>
       </button>
@@ -39,7 +43,7 @@ function SuggestionGroup({ children, count, icon, title }) {
           </span>
         )}
       </div>
-      <div className="grid gap-2" role="listbox">
+      <div aria-label={title} className="grid gap-2" role="listbox">
         {children}
       </div>
     </section>
@@ -119,7 +123,7 @@ function SearchSuggestions({
             </div>
             {recentSearches.length > 0 && (
               <button
-                className="text-xs font-black text-slate-400 transition-default hover:text-white"
+                className="rounded-lg px-2 py-1 text-xs font-black text-slate-400 outline-none transition-default hover:text-white focus-visible:ring-2 focus-visible:ring-blue-300/60 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
                 onClick={onClearRecent}
                 type="button"
               >

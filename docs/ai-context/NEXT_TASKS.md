@@ -14,6 +14,9 @@ Phase 8 — Production + Deploy (Phase 7 completed)
 
 ## Recently Completed
 
+- Completed an ecommerce accessibility foundation pass across storefront navigation, overlays, drawers, checkout forms, filter controls, product gallery, and payment/shipping selectors.
+- Added skip-to-main navigation, main landmarks, reusable focus trapping, clearer dialog labels, inert collapsed menu/filter panels, form error associations, and radio semantics while preserving the dark theme and homepage layout.
+- Verified `npm run lint` and `npm run build` after the accessibility foundation pass.
 - Completed a responsive experience audit across storefront, auth, checkout, product, account, and admin routes for phone, tablet, laptop, and ultra-wide viewports.
 - Tightened laptop storefront header behavior, mobile auth layout containment, shared button text safety, and admin CRUD table mobile card rendering without redesigning the homepage.
 - Verified `npm run lint`, `npm run build`, `git diff --check`, and Playwright responsive smoke checks; `git diff --check` reported only CRLF normalization warnings for edited frontend files.

@@ -1,8 +1,9 @@
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, Search, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import useSearch from "../../hooks/useSearch";
+import useFocusTrap from "../../hooks/useFocusTrap";
 import { fadeUp, tapSoft } from "../../styles/animations";
 import { cn } from "../../utils/classNames";
 import IconButton from "../ui/IconButton";
@@ -12,6 +13,7 @@ const MotionDiv = motion.div;
 
 function SearchOverlay({ isOpen, onClose }) {
   const navigate = useNavigate();
+  const dialogRef = useRef(null);
   const inputRef = useRef(null);
   const {
     activeResult,
@@ -37,6 +39,16 @@ function SearchOverlay({ isOpen, onClose }) {
     trendingSearches,
   } = useSearch();
 
+  const handleClose = useCallback(() => {
+    setQuery("");
+    onClose();
+  }, [onClose, setQuery]);
+
+  useFocusTrap(dialogRef, isOpen, {
+    initialFocusRef: inputRef,
+    onEscape: handleClose,
+  });
+
   useEffect(() => {
     if (!isOpen) {
       return undefined;
@@ -57,11 +69,6 @@ function SearchOverlay({ isOpen, onClose }) {
   if (!isOpen) {
     return null;
   }
-
-  const handleClose = () => {
-    setQuery("");
-    onClose();
-  };
 
   const handleSearchTerm = (term) => {
     setQuery(term);
@@ -119,7 +126,13 @@ function SearchOverlay({ isOpen, onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 z-[90]" role="dialog" aria-modal="true" aria-label="Tìm kiếm sản phẩm">
+    <div
+      aria-labelledby="search-dialog-title"
+      aria-modal="true"
+      className="fixed inset-0 z-[90]"
+      id="store-search-dialog"
+      role="dialog"
+    >
       <button
         aria-label="Đóng tìm kiếm"
         className="absolute inset-0 bg-slate-950/75 backdrop-blur-md"
@@ -137,8 +150,11 @@ function SearchOverlay({ isOpen, onClose }) {
           className="relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-3xl border border-blue-300/20 bg-[#07111F]/96 shadow-[0_28px_90px_rgba(0,0,0,0.48),0_0_44px_rgba(0,91,255,0.16)] backdrop-blur-2xl"
           onKeyDown={handleKeyDown}
           onSubmit={handleSubmit}
+          ref={dialogRef}
+          tabIndex={-1}
         >
           <div className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-blue-200/60 to-transparent" />
+          <h2 className="sr-only" id="search-dialog-title">Tìm kiếm sản phẩm</h2>
 
           <div className="border-b border-white/10 p-3 sm:p-4">
             <div className="flex items-center gap-2 rounded-2xl border border-white/10 bg-slate-950/60 p-2 shadow-inner shadow-white/[0.03] focus-within:border-blue-300/80 focus-within:shadow-[0_0_34px_rgba(0,91,255,0.22)]">

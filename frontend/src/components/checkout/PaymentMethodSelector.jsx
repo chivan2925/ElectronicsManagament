@@ -16,7 +16,7 @@ function PaymentMethodSelector({ onChange, options, value }) {
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <p className="text-caption text-blue-200">Thanh toán đơn hàng</p>
-          <h2 className="text-section mt-1 text-xl">Phương thức thanh toán</h2>
+          <h2 className="text-section mt-1 text-xl" id="payment-method-heading">Phương thức thanh toán</h2>
         </div>
         <Badge className="gap-1.5" variant="success">
           <ShieldCheck size={13} />
@@ -24,7 +24,7 @@ function PaymentMethodSelector({ onChange, options, value }) {
         </Badge>
       </div>
 
-      <div className="grid gap-3 lg:grid-cols-3">
+      <div aria-labelledby="payment-method-heading" className="grid gap-3 lg:grid-cols-3" role="radiogroup">
         {options.map((option) => {
           const Icon = methodIcons[option.id] || CreditCard;
           const isSelected = value === option.id;
@@ -32,6 +32,8 @@ function PaymentMethodSelector({ onChange, options, value }) {
 
           return (
             <button
+              aria-checked={isSelected}
+              aria-disabled={isDisabled}
               className={cn(
                 "premium-transition min-h-[156px] rounded-2xl border p-4 text-left outline-none focus-visible:ring-2 focus-visible:ring-blue-300/60 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 disabled:cursor-not-allowed disabled:opacity-60",
                 isSelected
@@ -41,6 +43,7 @@ function PaymentMethodSelector({ onChange, options, value }) {
               disabled={isDisabled}
               key={option.id}
               onClick={() => onChange(option.id)}
+              role="radio"
               type="button"
             >
               <div className="flex h-full flex-col">

@@ -7,15 +7,16 @@ function ShippingMethodSelector({ onChange, options, value }) {
     <section className="store-surface-panel rounded-3xl p-4 sm:p-5">
       <div className="mb-4">
         <p className="text-caption text-blue-200">Cách nhận hàng</p>
-        <h2 className="text-section mt-1 text-xl">Phương thức giao hàng</h2>
+        <h2 className="text-section mt-1 text-xl" id="shipping-method-heading">Phương thức giao hàng</h2>
       </div>
 
-      <div className="grid gap-3">
+      <div aria-labelledby="shipping-method-heading" className="grid gap-3" role="radiogroup">
         {options.map((option) => {
           const isSelected = value === option.id;
 
           return (
             <button
+              aria-checked={isSelected}
               className={cn(
                 "premium-transition w-full rounded-2xl border p-4 text-left outline-none focus-visible:ring-2 focus-visible:ring-blue-300/60 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950",
                 isSelected
@@ -24,6 +25,7 @@ function ShippingMethodSelector({ onChange, options, value }) {
               )}
               key={option.id}
               onClick={() => onChange(option.id)}
+              role="radio"
               type="button"
             >
               <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">

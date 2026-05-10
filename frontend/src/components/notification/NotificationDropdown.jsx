@@ -162,6 +162,7 @@ function NotificationDropdown({ className, onOpenChange }) {
   return (
     <div className={cn("relative", className)} ref={dropdownRef}>
       <button
+        aria-controls={isOpen ? "store-notification-panel" : undefined}
         aria-expanded={isOpen}
         aria-haspopup="dialog"
         aria-label={unreadCount ? `Thông báo, ${unreadCount} chưa đọc` : "Thông báo"}
@@ -171,6 +172,7 @@ function NotificationDropdown({ className, onOpenChange }) {
             ? "border-blue-300/80 bg-blue-500/14 shadow-[0_0_30px_rgba(0,91,255,0.24)]"
             : "border-white/10 bg-white/[0.06] hover:-translate-y-0.5 hover:border-blue-300/80 hover:bg-blue-500/10 hover:shadow-[0_0_30px_rgba(0,91,255,0.24)]",
         )}
+        id="store-notification-button"
         onClick={() => updateOpen(!isOpen)}
         type="button"
       >
@@ -190,9 +192,10 @@ function NotificationDropdown({ className, onOpenChange }) {
         {isOpen && (
           <MotionDiv
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            aria-label="Thông báo"
+            aria-labelledby="store-notification-title"
             className="fixed left-3 right-3 top-[72px] z-[70] max-h-[calc(100dvh-88px)] overflow-hidden rounded-3xl border border-blue-200/15 bg-[#07111F]/97 shadow-[0_26px_90px_rgba(0,0,0,0.5),0_0_42px_rgba(0,91,255,0.16)] backdrop-blur-2xl sm:absolute sm:left-auto sm:right-0 sm:top-[calc(100%+12px)] sm:w-[420px] sm:max-w-[calc(100vw-24px)]"
             exit={{ opacity: 0, scale: 0.98, y: -8 }}
+            id="store-notification-panel"
             initial={{ opacity: 0, scale: 0.98, y: -8 }}
             role="dialog"
             transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
@@ -206,7 +209,7 @@ function NotificationDropdown({ className, onOpenChange }) {
                     <BellRing size={21} />
                   </span>
                   <span className="min-w-0">
-                    <span className="block text-base font-black leading-tight text-white">Thông báo</span>
+                    <span className="block text-base font-black leading-tight text-white" id="store-notification-title">Thông báo</span>
                     <span className="mt-1 flex flex-wrap items-center gap-2">
                       <span className="text-caption text-slate-400">
                         {unreadCount ? `${unreadCount} thông báo chưa đọc` : "Tất cả thông báo đã đọc"}
@@ -241,6 +244,7 @@ function NotificationDropdown({ className, onOpenChange }) {
 
                   return (
                     <button
+                      aria-pressed={isActive}
                       className={cn(
                         "premium-transition inline-flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-black outline-none focus-visible:ring-2 focus-visible:ring-blue-300/60 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950",
                         isActive

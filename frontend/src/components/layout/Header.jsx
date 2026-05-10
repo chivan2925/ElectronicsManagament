@@ -91,6 +91,22 @@ function Header() {
     return () => window.removeEventListener("keydown", handleSearchShortcut);
   }, []);
 
+  useEffect(() => {
+    if (!isMobileMenuOpen) {
+      return undefined;
+    }
+
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isMobileMenuOpen]);
+
   useEffect(
     () => () => {
       if (cartUnmountTimerRef.current) {
@@ -157,6 +173,9 @@ function Header() {
 
   return (
     <>
+    <a className="skip-link" href="#main-content">
+      Bỏ qua đến nội dung chính
+    </a>
     <header
       className={cn(
         "sticky top-0 z-50 border-b backdrop-blur-2xl transition-default",
@@ -167,7 +186,7 @@ function Header() {
     >
       <div className="page-container">
         <div className="flex items-center gap-3 py-3 lg:gap-4 lg:py-4">
-          <Link className="group flex min-w-fit items-center gap-2 sm:gap-3" to="/">
+          <Link aria-label="ElectroStore - về trang chủ" className="group flex min-w-fit items-center gap-2 sm:gap-3" to="/">
             <div className="premium-transition flex h-10 w-10 items-center justify-center rounded-xl bg-[#005BFF] text-white shadow-[0_0_28px_rgba(0,91,255,0.45)] group-hover:scale-105 group-hover:shadow-[0_0_42px_rgba(0,91,255,0.72)] sm:h-11 sm:w-11">
               <Zap size={24} fill="currentColor" />
             </div>
@@ -213,6 +232,9 @@ function Header() {
           </div>
 
           <button
+            aria-controls="store-search-dialog"
+            aria-haspopup="dialog"
+            aria-label="Mở tìm kiếm sản phẩm"
             className="premium-transition hidden h-12 flex-1 items-center gap-3 rounded-2xl border border-white/10 bg-slate-950/50 px-4 text-left shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] outline-none backdrop-blur-xl hover:border-blue-300/70 hover:bg-slate-950/76 hover:shadow-[0_0_34px_rgba(0,91,255,0.22),inset_0_1px_0_rgba(255,255,255,0.05)] focus-visible:ring-2 focus-visible:ring-blue-300/60 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 md:flex"
             onFocus={preloadSearchOverlay}
             onClick={openSearchOverlay}
@@ -228,7 +250,7 @@ function Header() {
             </span>
           </button>
 
-          <nav className="ml-auto flex shrink-0 items-center gap-1.5 text-sm sm:gap-2">
+          <nav aria-label="Điều hướng cửa hàng" className="ml-auto flex shrink-0 items-center gap-1.5 text-sm sm:gap-2">
             <Link aria-label="Theo dõi đơn hàng" className={cn(headerLinkClass, "hidden xl:flex")} onFocus={preloadOrdersRoute} onPointerEnter={preloadOrdersRoute} title="Theo dõi đơn hàng" to={ordersHref}>
               <PackageSearch size={19} />
               <span className="hidden whitespace-nowrap 2xl:inline">Theo dõi đơn hàng</span>
@@ -254,7 +276,7 @@ function Header() {
               <span className="hidden max-w-40 truncate 2xl:inline">{accountLabel}</span>
               <span className="2xl:hidden">{compactAccountLabel}</span>
             </Link>
-            <button className="premium-transition relative flex h-10 min-w-10 items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.06] px-2 font-bold text-white shadow-inner shadow-white/[0.03] outline-none hover:-translate-y-0.5 hover:border-blue-300/80 hover:bg-blue-500/10 hover:shadow-[0_0_30px_rgba(0,91,255,0.24)] focus-visible:ring-2 focus-visible:ring-blue-300/60 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 sm:h-11 sm:min-w-11 sm:px-3" onClick={openCartDrawer} onFocus={preloadCartDrawer} onPointerEnter={preloadCartDrawer} type="button">
+            <button aria-controls="cart-drawer" aria-expanded={isCartOpen} aria-haspopup="dialog" aria-label={`Mở giỏ hàng, ${cartItemCount} sản phẩm`} className="premium-transition relative flex h-10 min-w-10 items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.06] px-2 font-bold text-white shadow-inner shadow-white/[0.03] outline-none hover:-translate-y-0.5 hover:border-blue-300/80 hover:bg-blue-500/10 hover:shadow-[0_0_30px_rgba(0,91,255,0.24)] focus-visible:ring-2 focus-visible:ring-blue-300/60 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 sm:h-11 sm:min-w-11 sm:px-3" onClick={openCartDrawer} onFocus={preloadCartDrawer} onPointerEnter={preloadCartDrawer} type="button">
               <ShoppingCart size={20} />
               <span className="hidden whitespace-nowrap 2xl:inline">Giỏ hàng</span>
               {cartItemCount > 0 && (
@@ -269,6 +291,7 @@ function Header() {
             </button>
 
             <IconButton
+              aria-controls="mobile-store-menu"
               aria-expanded={isMobileMenuOpen}
               aria-label={isMobileMenuOpen ? "Đóng menu" : "Mở menu"}
               className="border-white/10 bg-white/[0.06] text-white hover:border-blue-300/70 hover:bg-blue-500/10 lg:hidden"
@@ -281,14 +304,20 @@ function Header() {
         </div>
 
         <div
+          aria-hidden={!isMobileMenuOpen}
           className={cn(
             "grid overflow-hidden transition-[grid-template-rows,opacity,padding] duration-300 ease-out lg:hidden",
             isMobileMenuOpen ? "grid-rows-[1fr] pb-4 opacity-100" : "grid-rows-[0fr] opacity-0",
           )}
+          id="mobile-store-menu"
+          inert={!isMobileMenuOpen ? "" : undefined}
         >
           <div className="min-h-0">
-            <div className="rounded-2xl border border-blue-200/15 bg-slate-950/52 p-3 shadow-[0_18px_60px_rgba(0,0,0,0.34)] backdrop-blur-2xl">
+            <nav aria-label="Điều hướng cửa hàng trên di động" className="rounded-2xl border border-blue-200/15 bg-slate-950/52 p-3 shadow-[0_18px_60px_rgba(0,0,0,0.34)] backdrop-blur-2xl">
               <button
+                aria-controls="store-search-dialog"
+                aria-haspopup="dialog"
+                aria-label="Mở tìm kiếm sản phẩm"
                 className="premium-transition flex h-12 w-full items-center gap-3 rounded-2xl border border-white/10 bg-slate-950/60 px-4 text-left outline-none hover:border-blue-300/80 hover:bg-blue-500/10 hover:shadow-[0_0_30px_rgba(0,91,255,0.22)] focus-visible:ring-2 focus-visible:ring-blue-300/60 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
                 onFocus={preloadSearchOverlay}
                 onClick={openSearchOverlay}
@@ -342,7 +371,7 @@ function Header() {
                   Tài khoản
                 </Link>
               </div>
-            </div>
+            </nav>
           </div>
         </div>
       </div>

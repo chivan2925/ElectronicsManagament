@@ -26,6 +26,7 @@ function CheckoutField({
 }) {
   const hasError = Boolean(error);
   const Icon = icon;
+  const errorId = `${id}-error`;
 
   return (
     <div>
@@ -46,6 +47,9 @@ function CheckoutField({
         {Icon && <Icon className={cn("mr-2 shrink-0", hasError ? "text-red-200" : "text-blue-200")} size={18} />}
         {textarea ? (
           <textarea
+            aria-describedby={hasError ? errorId : undefined}
+            aria-invalid={hasError}
+            aria-required={required}
             autoComplete={autoComplete}
             className="min-h-24 min-w-0 flex-1 resize-none bg-transparent text-sm font-semibold text-white outline-none placeholder:text-slate-500"
             id={id}
@@ -53,10 +57,14 @@ function CheckoutField({
             onBlur={() => onBlur(id)}
             onChange={(event) => onChange(id, event.target.value)}
             placeholder={placeholder}
+            required={required}
             value={value}
           />
         ) : (
           <input
+            aria-describedby={hasError ? errorId : undefined}
+            aria-invalid={hasError}
+            aria-required={required}
             autoComplete={autoComplete}
             className="min-w-0 flex-1 bg-transparent text-sm font-semibold text-white outline-none placeholder:text-slate-500"
             id={id}
@@ -65,6 +73,7 @@ function CheckoutField({
             onBlur={() => onBlur(id)}
             onChange={(event) => onChange(id, event.target.value)}
             placeholder={placeholder}
+            required={required}
             type={type}
             value={value}
           />
@@ -72,7 +81,7 @@ function CheckoutField({
       </div>
 
       {hasError && (
-        <p className="mt-2 flex items-center gap-1.5 text-xs font-bold text-red-200">
+        <p className="mt-2 flex items-center gap-1.5 text-xs font-bold text-red-200" id={errorId}>
           <AlertCircle size={14} />
           {error}
         </p>

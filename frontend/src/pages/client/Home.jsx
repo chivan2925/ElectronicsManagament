@@ -53,7 +53,7 @@ function Home() {
       <AnnouncementBar />
       {isLoadingDemo ? <HeaderSkeleton /> : <Header />}
 
-      <Container as="main" className="section-wrapper">
+      <Container as="main" className="section-wrapper" id="main-content" tabIndex={-1}>
         {isLoadingDemo ? (
           <>
             <section className="grid gap-5 xl:grid-cols-[280px_1fr_320px]">

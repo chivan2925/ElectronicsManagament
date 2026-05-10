@@ -60,7 +60,7 @@ function PaymentSuccess() {
       <AnnouncementBar />
       <Header />
 
-      <Container as="main" className="pb-16 pt-6 sm:pt-8">
+      <Container as="main" className="pb-16 pt-6 sm:pt-8" id="main-content" tabIndex={-1}>
         <section className="relative isolate overflow-hidden rounded-3xl border border-emerald-300/25 bg-[radial-gradient(circle_at_18%_0%,rgba(16,185,129,0.24),transparent_34%),radial-gradient(circle_at_85%_16%,rgba(0,91,255,0.24),transparent_34%),linear-gradient(135deg,rgba(7,17,31,0.98),rgba(2,6,23,0.96))] p-5 shadow-[0_28px_90px_rgba(0,0,0,0.34),0_0_42px_rgba(16,185,129,0.12)] sm:p-8 lg:p-10">
           <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.08),transparent_36%,rgba(16,185,129,0.1))]" />
           <div className="relative z-10 grid gap-8 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-center">

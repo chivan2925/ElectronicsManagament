@@ -9,7 +9,11 @@ function QuantitySelector({ className, max = 1, onChange, value }) {
 
   return (
     <div className={cn("flex items-center gap-3", className)}>
-      <div className="flex h-12 items-center rounded-2xl border border-white/10 bg-slate-950/45 p-1 shadow-inner shadow-white/[0.03]">
+      <div
+        aria-label="Chọn số lượng sản phẩm"
+        className="flex h-12 items-center rounded-2xl border border-white/10 bg-slate-950/45 p-1 shadow-inner shadow-white/[0.03]"
+        role="group"
+      >
         <IconButton
           aria-label="Giảm số lượng"
           className="h-10 w-10 rounded-xl disabled:pointer-events-none disabled:opacity-40"
@@ -21,7 +25,7 @@ function QuantitySelector({ className, max = 1, onChange, value }) {
           <Minus size={17} />
         </IconButton>
 
-        <span className="flex h-10 min-w-12 items-center justify-center rounded-xl bg-white/[0.04] px-3 text-sm font-black text-white">
+        <span aria-live="polite" className="flex h-10 min-w-12 items-center justify-center rounded-xl bg-white/[0.04] px-3 text-sm font-black text-white">
           {value}
         </span>
 
