@@ -193,7 +193,7 @@ function NotificationDropdown({ className, onOpenChange }) {
           <MotionDiv
             animate={{ opacity: 1, scale: 1, y: 0 }}
             aria-labelledby="store-notification-title"
-            className="fixed left-3 right-3 top-[72px] z-[70] max-h-[calc(100dvh-88px)] overflow-hidden rounded-3xl border border-blue-200/15 bg-[#07111F]/97 shadow-[0_26px_90px_rgba(0,0,0,0.5),0_0_42px_rgba(0,91,255,0.16)] backdrop-blur-2xl sm:absolute sm:left-auto sm:right-0 sm:top-[calc(100%+12px)] sm:w-[420px] sm:max-w-[calc(100vw-24px)]"
+            className="fixed left-3 right-3 top-[72px] z-[70] max-h-[calc(100dvh-88px)] overflow-hidden rounded-3xl border border-blue-200/15 bg-[#07111F]/80 shadow-[0_26px_90px_rgba(0,0,0,0.5),0_0_42px_rgba(0,91,255,0.16)] backdrop-blur-3xl sm:absolute sm:left-auto sm:right-0 sm:top-[calc(100%+12px)] sm:w-[420px] sm:max-w-[calc(100vw-24px)]"
             exit={{ opacity: 0, scale: 0.98, y: -8 }}
             id="store-notification-panel"
             initial={{ opacity: 0, scale: 0.98, y: -8 }}

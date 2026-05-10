@@ -18,8 +18,6 @@ import {
 } from "lucide-react";
 import { useCart } from "../../cart";
 import OptimizedImage from "../../components/common/OptimizedImage";
-import AnnouncementBar from "../../components/layout/AnnouncementBar";
-import Header from "../../components/layout/Header";
 import RecentlyViewedSection from "../../components/product/RecentlyViewedSection";
 import ProductGridSkeleton from "../../components/skeletons/ProductGridSkeleton";
 import Badge from "../../components/ui/Badge";
@@ -308,10 +306,7 @@ function WishlistPage() {
   };
 
   return (
-    <div className="store-page-shell">
-      <AnnouncementBar />
-      <Header />
-
+    <>
       <Container as="main" className="pb-16 pt-6 sm:pt-8" id="main-content" tabIndex={-1}>
         <nav aria-label="Breadcrumb" className="mb-4 flex min-w-0 flex-wrap items-center gap-2 text-sm font-bold text-slate-400">
           <Link className="premium-transition hover:text-white" to="/">
@@ -413,7 +408,7 @@ function WishlistPage() {
           <RecentlyViewedSection />
         </div>
       </Container>
-    </div>
+    </>
   );
 }
 

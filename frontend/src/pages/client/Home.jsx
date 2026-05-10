@@ -1,8 +1,6 @@
 import { lazy, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import DeferredSectionBoundary from "../../components/common/DeferredSectionBoundary";
-import AnnouncementBar from "../../components/layout/AnnouncementBar";
-import Header from "../../components/layout/Header";
 import CategorySidebar from "../../components/home/CategorySidebar";
 import FeaturedCategories from "../../components/home/FeaturedCategories";
 import FlashSaleCard from "../../components/home/FlashSaleCard";
@@ -69,10 +67,8 @@ function Home() {
   }, []);
 
   return (
-    <div className="store-page-shell">
+    <>
       <SEOHead metadata={buildHomeMetadata({ categories, products: featuredProducts })} />
-      <AnnouncementBar />
-      {isLoadingDemo ? <HeaderSkeleton /> : <Header />}
 
       <Container as="main" className="section-wrapper" id="main-content" tabIndex={-1}>
         {isLoadingDemo ? (
@@ -221,7 +217,7 @@ function Home() {
           </>
         )}
       </Container>
-    </div>
+    </>
   );
 }
 

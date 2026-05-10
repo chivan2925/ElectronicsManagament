@@ -4,8 +4,6 @@ import { motion } from "framer-motion";
 import { ChevronRight, PackageSearch, ShoppingBag } from "lucide-react";
 import DeferredSectionBoundary from "../../components/common/DeferredSectionBoundary";
 import TrustSignalBar from "../../components/common/TrustSignalBar";
-import AnnouncementBar from "../../components/layout/AnnouncementBar";
-import Header from "../../components/layout/Header";
 import ProductGallery from "../../components/product/ProductGallery";
 import ProductInfo from "../../components/product/ProductInfo";
 import ProductSpecs from "../../components/product/ProductSpecs";
@@ -110,7 +108,7 @@ function getMaxQuantity(product, selectedVariantOptions) {
 
 function ProductNotFound({ slug }) {
   return (
-    <div className="store-page-shell">
+    <>
       <SEOHead
         metadata={buildNoIndexMetadata({
           canonicalPath: slug ? `/products/${slug}` : "/products",
@@ -118,8 +116,6 @@ function ProductNotFound({ slug }) {
           title: "Sản phẩm không tồn tại",
         })}
       />
-      <AnnouncementBar />
-      <Header />
 
       <Container as="main" className="py-10" id="main-content" tabIndex={-1}>
         <EmptyState
@@ -131,13 +127,13 @@ function ProductNotFound({ slug }) {
           title="Sản phẩm không tồn tại"
         />
       </Container>
-    </div>
+    </>
   );
 }
 
 function ProductDetailLoading({ slug }) {
   return (
-    <div className="store-page-shell">
+    <>
       <SEOHead
         metadata={buildNoIndexMetadata({
           canonicalPath: slug ? `/products/${slug}` : "/products",
@@ -145,8 +141,6 @@ function ProductDetailLoading({ slug }) {
           title: "Đang tải sản phẩm",
         })}
       />
-      <AnnouncementBar />
-      <Header />
 
       <Container as="main" aria-busy="true" className="pb-14 pt-6 sm:pt-8" id="main-content" tabIndex={-1}>
         <LoadingState
@@ -198,13 +192,13 @@ function ProductDetailLoading({ slug }) {
           </div>
         </div>
       </Container>
-    </div>
+    </>
   );
 }
 
 function ProductDetailError({ error, onRetry, slug }) {
   return (
-    <div className="store-page-shell">
+    <>
       <SEOHead
         metadata={buildNoIndexMetadata({
           canonicalPath: slug ? `/products/${slug}` : "/products",
@@ -212,8 +206,6 @@ function ProductDetailError({ error, onRetry, slug }) {
           title: "Không tải được sản phẩm",
         })}
       />
-      <AnnouncementBar />
-      <Header />
 
       <Container as="main" className="py-10" id="main-content" tabIndex={-1}>
         <ApiErrorAlert
@@ -227,7 +219,7 @@ function ProductDetailError({ error, onRetry, slug }) {
           Quay lại danh sách
         </Button>
       </Container>
-    </div>
+    </>
   );
 }
 
@@ -305,10 +297,8 @@ function ProductDetailContent({ detail, relatedProducts }) {
   };
 
   return (
-    <div className="store-page-shell">
+    <>
       <SEOHead metadata={buildProductDetailMetadata({ detail })} />
-      <AnnouncementBar />
-      <Header />
 
       <Container as="main" className="pb-14 pt-6 sm:pt-8" id="main-content" tabIndex={-1}>
         <nav aria-label="Breadcrumb" className="mb-4 flex min-w-0 flex-wrap items-center gap-2 text-sm font-bold text-slate-400">
@@ -397,7 +387,7 @@ function ProductDetailContent({ detail, relatedProducts }) {
           </DeferredSectionBoundary>
         </div>
       </Container>
-    </div>
+    </>
   );
 }
 
