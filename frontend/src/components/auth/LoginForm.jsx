@@ -9,6 +9,7 @@ import { getSafeRedirectPath, isGuestOnlyPath } from "../../guards/routeGuardUti
 import { useToast } from "../ui/toast";
 import Button from "../ui/Button";
 import IconButton from "../ui/IconButton";
+import { createTouchedMap, focusFirstInvalidField, getVisibleFieldErrors } from "../../utils/formValidation";
 import {
   AuthCheckbox,
   AuthField,
@@ -21,6 +22,8 @@ const initialValues = {
   password: "",
   remember: true,
 };
+
+const LOGIN_FIELD_ORDER = ["identity", "password"];
 
 function validateLogin(values) {
   const errors = {};
@@ -90,16 +93,10 @@ function LoginForm({
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const validationErrors = useMemo(() => validateLogin(values), [values]);
-  const visibleErrors = Object.keys(validationErrors).reduce((currentErrors, fieldName) => {
-    if (submitAttempted || touchedFields[fieldName]) {
-      return {
-        ...currentErrors,
-        [fieldName]: validationErrors[fieldName],
-      };
-    }
-
-    return currentErrors;
-  }, serverErrors);
+  const visibleErrors = useMemo(
+    () => getVisibleFieldErrors(validationErrors, touchedFields, submitAttempted, serverErrors),
+    [serverErrors, submitAttempted, touchedFields, validationErrors],
+  );
 
   const handleChange = (fieldName) => (event) => {
     setValues((currentValues) => ({
@@ -136,15 +133,13 @@ function LoginForm({
     event.preventDefault();
     setServerErrors({});
     setSubmitAttempted(true);
-    setTouchedFields({
-      identity: true,
-      password: true,
-    });
+    setTouchedFields(createTouchedMap(LOGIN_FIELD_ORDER));
 
     if (Object.keys(validationErrors).length > 0) {
       const message = "Vui lòng kiểm tra thông tin đăng nhập trước khi tiếp tục.";
       setFeedback({ message, tone: "info" });
       toast.showWarning(message);
+      focusFirstInvalidField(validationErrors, LOGIN_FIELD_ORDER);
       return;
     }
 
@@ -177,6 +172,7 @@ function LoginForm({
       const mappedErrors = mapBackendDetails(loginError.details);
 
       setServerErrors(mappedErrors);
+      focusFirstInvalidField(mappedErrors, LOGIN_FIELD_ORDER);
       setFeedback({
         message: loginError.message,
         tone: "error",
@@ -196,6 +192,7 @@ function LoginForm({
 
   return (
     <AuthFormShell
+      busy={isSubmitting}
       feedback={feedback}
       onSubmit={handleSubmit}
       subtitle={subtitle}
@@ -248,6 +245,7 @@ function LoginForm({
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <AuthCheckbox
           checked={values.remember}
+          disabled={isSubmitting}
           id="remember"
           onChange={(checked) => {
             if (isSubmitting) {
@@ -264,7 +262,7 @@ function LoginForm({
         </AuthCheckbox>
 
         <button
-          className="w-fit text-sm font-black text-blue-200 transition-default hover:text-white"
+          className="w-fit text-sm font-black text-blue-200 transition-default hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
           disabled={isSubmitting}
           onClick={handleForgotPassword}
           type="button"

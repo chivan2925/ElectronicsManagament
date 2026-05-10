@@ -2,7 +2,7 @@ import { CheckCircle2, Clock3, Truck } from "lucide-react";
 import { cn } from "../../utils/classNames";
 import { formatCurrency } from "../../utils/formatters";
 
-function ShippingMethodSelector({ onChange, options, value }) {
+function ShippingMethodSelector({ disabled = false, onChange, options, value }) {
   return (
     <section className="store-surface-panel rounded-3xl p-4 sm:p-5">
       <div className="mb-4">
@@ -17,12 +17,14 @@ function ShippingMethodSelector({ onChange, options, value }) {
           return (
             <button
               aria-checked={isSelected}
+              aria-disabled={disabled}
               className={cn(
-                "premium-transition w-full rounded-2xl border p-4 text-left outline-none focus-visible:ring-2 focus-visible:ring-blue-300/60 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950",
+                "premium-transition w-full rounded-2xl border p-4 text-left outline-none focus-visible:ring-2 focus-visible:ring-blue-300/60 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 disabled:cursor-not-allowed disabled:opacity-60",
                 isSelected
                   ? "border-blue-300/70 bg-blue-500/12 shadow-[0_0_30px_rgba(0,91,255,0.18)]"
                   : "border-white/10 bg-white/[0.035] hover:border-blue-300/45 hover:bg-blue-500/[0.07]",
               )}
+              disabled={disabled}
               key={option.id}
               onClick={() => onChange(option.id)}
               role="radio"

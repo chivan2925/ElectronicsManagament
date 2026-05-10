@@ -13,24 +13,35 @@ const sizeClasses = {
 
 function Input({
   className,
+  error = false,
   inputClassName,
   leftIcon,
   rightIcon,
   size = "md",
   variant = "dark",
+  disabled,
   ...props
 }) {
+  const hasError = Boolean(error);
+
   return (
     <label
       className={cn(
         "premium-transition flex items-center border px-3 shadow-inner shadow-white/[0.03] backdrop-blur-xl",
         variantClasses[variant] || variantClasses.dark,
         sizeClasses[size] || sizeClasses.md,
+        hasError && (variant === "light" ? "border-rose-300 ring-2 ring-rose-100" : "border-red-300/70 shadow-[0_0_28px_rgba(239,68,68,0.16)]"),
+        disabled && "cursor-not-allowed opacity-70",
         className,
       )}
     >
       {leftIcon && <span className="mr-2 flex shrink-0 text-slate-400">{leftIcon}</span>}
-      <input className={cn("min-w-0 flex-1 bg-transparent outline-none", inputClassName)} {...props} />
+      <input
+        aria-invalid={hasError || undefined}
+        className={cn("min-w-0 flex-1 bg-transparent outline-none disabled:cursor-not-allowed", inputClassName)}
+        disabled={disabled}
+        {...props}
+      />
       {rightIcon && <span className="ml-2 flex shrink-0 text-slate-400">{rightIcon}</span>}
     </label>
   );

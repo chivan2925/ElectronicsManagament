@@ -83,7 +83,7 @@ function validateBrandForm(values) {
   return errors;
 }
 
-function LogoUploadPlaceholder({ brandName, onChange, value }) {
+function LogoUploadPlaceholder({ brandName, describedBy, disabled = false, error, fieldId, onChange, value }) {
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-3">
@@ -96,7 +96,14 @@ function LogoUploadPlaceholder({ brandName, onChange, value }) {
         </div>
         <div className="min-w-0 flex-1">
           <input
-            className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-primary focus:ring-4 focus:ring-blue-100"
+            aria-describedby={describedBy}
+            aria-invalid={Boolean(error)}
+            className={cn(
+              "h-11 w-full rounded-xl border bg-white px-3 text-sm font-semibold text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-primary focus:ring-4 focus:ring-blue-100 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400",
+              error ? "border-rose-300 ring-2 ring-rose-100" : "border-slate-200",
+            )}
+            disabled={disabled}
+            id={fieldId}
             onChange={(event) => onChange?.(event.target.value)}
             placeholder="https://cdn.example.com/brand-logo.png"
             type="url"
@@ -113,7 +120,8 @@ function LogoUploadPlaceholder({ brandName, onChange, value }) {
             </button>
             {value ? (
               <button
-                className="rounded-xl px-3 py-2 text-xs font-black text-slate-500 transition hover:bg-white hover:text-primary"
+                className="rounded-xl px-3 py-2 text-xs font-black text-slate-500 transition hover:bg-white hover:text-primary disabled:cursor-not-allowed disabled:opacity-60"
+                disabled={disabled}
                 onClick={() => onChange?.("")}
                 type="button"
               >
@@ -541,8 +549,16 @@ function Brands() {
         helper: "Logo hiện được nhập bằng URL; nút upload là placeholder cho bước Media API.",
         label: "Logo",
         name: "logo",
-        render: ({ onChange, value, values }) => (
-          <LogoUploadPlaceholder brandName={values.name} onChange={onChange} value={value} />
+        render: ({ describedBy, disabled, error, fieldId, onChange, value, values }) => (
+          <LogoUploadPlaceholder
+            brandName={values.name}
+            describedBy={describedBy}
+            disabled={disabled}
+            error={error}
+            fieldId={fieldId}
+            onChange={onChange}
+            value={value}
+          />
         ),
       },
       {

@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { CheckCircle2, Eye, EyeOff, KeyRound, Mail, Phone, UserPlus, UserRound } from "lucide-react";
+import { CheckCircle2, Eye, EyeOff, KeyRound, Loader2, Mail, Phone, UserPlus, UserRound } from "lucide-react";
 import Button from "../ui/Button";
 import IconButton from "../ui/IconButton";
 import {
@@ -9,6 +9,7 @@ import {
   SocialAuthButtons,
 } from "./AuthLayout";
 import { cn } from "../../utils/classNames";
+import { createTouchedMap, focusFirstInvalidField, getVisibleFieldErrors } from "../../utils/formValidation";
 
 const initialValues = {
   acceptTerms: false,
@@ -19,6 +20,8 @@ const initialValues = {
   password: "",
   phone: "",
 };
+
+const REGISTER_FIELD_ORDER = ["fullName", "email", "phone", "password", "confirmPassword", "acceptTerms"];
 
 function getPasswordChecks(password) {
   return [
@@ -123,19 +126,14 @@ function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [feedback, setFeedback] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const passwordChecks = useMemo(() => getPasswordChecks(values.password), [values.password]);
   const validationErrors = useMemo(() => validateRegister(values), [values]);
-  const visibleErrors = Object.keys(validationErrors).reduce((currentErrors, fieldName) => {
-    if (submitAttempted || touchedFields[fieldName]) {
-      return {
-        ...currentErrors,
-        [fieldName]: validationErrors[fieldName],
-      };
-    }
-
-    return currentErrors;
-  }, {});
+  const visibleErrors = useMemo(
+    () => getVisibleFieldErrors(validationErrors, touchedFields, submitAttempted),
+    [submitAttempted, touchedFields, validationErrors],
+  );
 
   const handleChange = (fieldName) => (event) => {
     setValues((currentValues) => ({
@@ -171,43 +169,50 @@ function RegisterForm() {
     });
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     setSubmitAttempted(true);
-    setTouchedFields({
-      acceptTerms: true,
-      confirmPassword: true,
-      email: true,
-      fullName: true,
-      password: true,
-      phone: true,
-    });
+    setTouchedFields(createTouchedMap(REGISTER_FIELD_ORDER));
 
     if (Object.keys(validationErrors).length > 0) {
       setFeedback({
         message: "Vui lòng hoàn tất các trường bắt buộc trước khi tạo tài khoản.",
         tone: "info",
       });
+      focusFirstInvalidField(validationErrors, REGISTER_FIELD_ORDER);
       return;
     }
 
+    setIsSubmitting(true);
     setFeedback({
-      message: "Thông tin tạo tài khoản hợp lệ. Hồ sơ khách hàng sẽ được lưu khi hệ thống tích hợp sẵn sàng.",
-      tone: "success",
+      message: "Đang kiểm tra thông tin đăng ký...",
+      tone: "info",
     });
+
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 300));
+      setFeedback({
+        message: "Thông tin tạo tài khoản hợp lệ. Hồ sơ khách hàng sẽ được lưu khi hệ thống tích hợp sẵn sàng.",
+        tone: "success",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <AuthFormShell
+      busy={isSubmitting}
       feedback={feedback}
       onSubmit={handleSubmit}
       subtitle="Tạo hồ sơ khách hàng để chuẩn bị cho checkout nhanh và ưu đãi cá nhân hóa."
       title="Tạo tài khoản"
     >
-      <SocialAuthButtons onPlaceholder={handlePlaceholder} />
+      <SocialAuthButtons disabled={isSubmitting} onPlaceholder={handlePlaceholder} />
 
       <AuthField
         autoComplete="name"
+        disabled={isSubmitting}
         error={visibleErrors.fullName}
         icon={UserRound}
         id="fullName"
@@ -222,6 +227,7 @@ function RegisterForm() {
       <div className="grid gap-4 sm:grid-cols-2">
         <AuthField
           autoComplete="email"
+          disabled={isSubmitting}
           error={visibleErrors.email}
           icon={Mail}
           id="email"
@@ -236,6 +242,7 @@ function RegisterForm() {
         />
         <AuthField
           autoComplete="tel"
+          disabled={isSubmitting}
           error={visibleErrors.phone}
           icon={Phone}
           id="phone"
@@ -251,6 +258,7 @@ function RegisterForm() {
 
       <AuthField
         autoComplete="new-password"
+        disabled={isSubmitting}
         error={visibleErrors.password}
         icon={KeyRound}
         id="password"
@@ -263,6 +271,7 @@ function RegisterForm() {
           <IconButton
             aria-label={showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
             className="h-8 w-8 rounded-lg border-white/10 bg-white/[0.04] text-slate-300 hover:text-white"
+            disabled={isSubmitting}
             onClick={() => setShowPassword((current) => !current)}
             size="sm"
             variant="outline"
@@ -278,6 +287,7 @@ function RegisterForm() {
 
       <AuthField
         autoComplete="new-password"
+        disabled={isSubmitting}
         error={visibleErrors.confirmPassword}
         icon={KeyRound}
         id="confirmPassword"
@@ -290,6 +300,7 @@ function RegisterForm() {
           <IconButton
             aria-label={showConfirmPassword ? "Ẩn mật khẩu xác nhận" : "Hiện mật khẩu xác nhận"}
             className="h-8 w-8 rounded-lg border-white/10 bg-white/[0.04] text-slate-300 hover:text-white"
+            disabled={isSubmitting}
             onClick={() => setShowConfirmPassword((current) => !current)}
             size="sm"
             variant="outline"
@@ -302,19 +313,25 @@ function RegisterForm() {
       />
 
       <div className="grid gap-3">
-        <AuthCheckbox checked={values.acceptTerms} id="acceptTerms" onChange={handleCheckboxChange("acceptTerms")}>
+        <AuthCheckbox
+          checked={values.acceptTerms}
+          disabled={isSubmitting}
+          error={visibleErrors.acceptTerms}
+          id="acceptTerms"
+          onChange={handleCheckboxChange("acceptTerms")}
+          required
+        >
           Tôi đồng ý với điều khoản mua hàng và chính sách bảo hành.
         </AuthCheckbox>
-        {visibleErrors.acceptTerms && <p className="text-xs font-bold text-red-200">{visibleErrors.acceptTerms}</p>}
 
-        <AuthCheckbox checked={values.marketing} id="marketing" onChange={handleCheckboxChange("marketing")}>
+        <AuthCheckbox checked={values.marketing} disabled={isSubmitting} id="marketing" onChange={handleCheckboxChange("marketing")}>
           Nhận thông tin ưu đãi gaming gear và sản phẩm mới.
         </AuthCheckbox>
       </div>
 
-      <Button className="h-12 rounded-2xl" fullWidth type="submit">
-        <UserPlus size={18} />
-        Tạo tài khoản
+      <Button className="h-12 rounded-2xl" disabled={isSubmitting} fullWidth type="submit">
+        {isSubmitting ? <Loader2 className="animate-spin" size={18} /> : <UserPlus size={18} />}
+        {isSubmitting ? "Đang kiểm tra..." : "Tạo tài khoản"}
       </Button>
     </AuthFormShell>
   );

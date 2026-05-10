@@ -1,32 +1,52 @@
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Loader2, Save } from "lucide-react";
+import FormFieldMessage from "../../../components/ui/form/FormFieldMessage";
 import { cn } from "../../../utils/classNames";
+import { focusFirstInvalidField, getFormFieldDescribedBy } from "../../../utils/formValidation";
 
-function renderField(field, values, errors, onChange) {
+function renderField(field, values, errors, onChange, formLoading = false) {
   const value = values?.[field.name] ?? field.value ?? "";
   const error = errors?.[field.name];
+  const hasError = Boolean(error);
+  const hasHelper = Boolean(field.helper);
   const fieldId = field.id || `admin-form-${field.name}`;
+  const errorId = `${fieldId}-error`;
+  const helperId = `${fieldId}-helper`;
+  const describedBy = getFormFieldDescribedBy({ errorId, hasError, hasHelper, helperId });
+  const disabled = formLoading || field.disabled;
   const inputClass = cn(
     "w-full rounded-xl border bg-white px-3 text-sm font-semibold text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-primary focus:ring-4 focus:ring-blue-100 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400",
     field.type === "textarea" ? "min-h-28 py-3" : "h-11",
-    error ? "border-rose-300 ring-rose-100" : "border-slate-200",
+    hasError ? "border-rose-300 ring-2 ring-rose-100" : "border-slate-200",
   );
 
   if (typeof field.render === "function") {
-    return field.render({ error, onChange: (nextValue) => onChange?.(field.name, nextValue), value, values });
+    return field.render({
+      describedBy,
+      disabled,
+      error,
+      errorId,
+      fieldId,
+      helperId,
+      onChange: (nextValue) => onChange?.(field.name, nextValue),
+      value,
+      values,
+    });
   }
 
   if (field.type === "select") {
     return (
       <select
-        aria-invalid={Boolean(error)}
+        aria-describedby={describedBy}
+        aria-invalid={hasError}
         className={inputClass}
-        disabled={field.disabled}
+        disabled={disabled}
         id={fieldId}
         onChange={(event) => onChange?.(field.name, event.target.value)}
         required={field.required}
         value={value}
       >
-        <option value="">{field.placeholder || "Select option"}</option>
+        <option value="">{field.placeholder || "Chọn tùy chọn"}</option>
         {(field.options ?? []).map((option) => {
           const optionValue = typeof option === "object" ? option.value : option;
           const optionLabel = typeof option === "object" ? option.label : option;
@@ -44,9 +64,10 @@ function renderField(field, values, errors, onChange) {
   if (field.type === "textarea") {
     return (
       <textarea
-        aria-invalid={Boolean(error)}
+        aria-describedby={describedBy}
+        aria-invalid={hasError}
         className={inputClass}
-        disabled={field.disabled}
+        disabled={disabled}
         id={fieldId}
         onChange={(event) => onChange?.(field.name, event.target.value)}
         placeholder={field.placeholder}
@@ -58,28 +79,36 @@ function renderField(field, values, errors, onChange) {
 
   if (field.type === "checkbox") {
     return (
-      <div className="inline-flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-3 py-2.5">
+      <label
+        className={cn(
+          "inline-flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-3 py-2.5",
+          disabled && "cursor-not-allowed opacity-70",
+        )}
+        htmlFor={fieldId}
+      >
         <input
-          aria-invalid={Boolean(error)}
+          aria-describedby={describedBy}
+          aria-invalid={hasError}
           checked={Boolean(value)}
           className="h-4 w-4 rounded border-slate-300 text-primary focus:ring-blue-200"
-          disabled={field.disabled}
+          disabled={disabled}
           id={fieldId}
           onChange={(event) => onChange?.(field.name, event.target.checked)}
           required={field.required}
           type="checkbox"
         />
         <span className="text-sm font-bold text-slate-700">{field.checkboxLabel || field.label}</span>
-      </div>
+      </label>
     );
   }
 
   return (
     <input
-      aria-invalid={Boolean(error)}
+      aria-describedby={describedBy}
+      aria-invalid={hasError}
       className={inputClass}
       autoComplete={field.autoComplete}
-      disabled={field.disabled}
+      disabled={disabled}
       id={fieldId}
       inputMode={field.inputMode}
       max={field.max}
@@ -95,7 +124,7 @@ function renderField(field, values, errors, onChange) {
 }
 
 function AdminForm({
-  cancelLabel = "Cancel",
+  cancelLabel = "Hủy",
   children,
   className,
   columns = 2,
@@ -105,38 +134,62 @@ function AdminForm({
   onCancel,
   onChange,
   onSubmit,
-  submitLabel = "Save changes",
+  submitLabel = "Lưu thay đổi",
   values = {},
 }) {
   const gridClass = columns === 1 ? "grid-cols-1" : "grid-cols-1 md:grid-cols-2";
+  const [submitNonce, setSubmitNonce] = useState(0);
+  const lastFocusedSubmitRef = useRef(0);
+  const fieldOrder = useMemo(() => fields.map((field) => field.name), [fields]);
+
+  useEffect(() => {
+    const hasErrors = Object.values(errors).some(Boolean);
+
+    if (!hasErrors || submitNonce === lastFocusedSubmitRef.current) {
+      return;
+    }
+
+    focusFirstInvalidField(errors, fieldOrder);
+    lastFocusedSubmitRef.current = submitNonce;
+  }, [errors, fieldOrder, submitNonce]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    setSubmitNonce((currentNonce) => currentNonce + 1);
     onSubmit?.(values, event);
   };
 
   return (
-    <form className={cn("space-y-5", className)} onSubmit={handleSubmit}>
+    <form aria-busy={loading} className={cn("space-y-5", className)} noValidate onSubmit={handleSubmit}>
       <div className={cn("grid gap-4", gridClass)}>
         {fields.map((field) => {
           const fieldId = field.id || `admin-form-${field.name}`;
-          const labelProps = field.render ? {} : { htmlFor: fieldId };
+          const errorId = `${fieldId}-error`;
+          const helperId = `${fieldId}-helper`;
+          const error = errors?.[field.name];
 
           return (
-            <label className={cn("space-y-1.5", field.fullWidth && "md:col-span-2")} key={field.name} {...labelProps}>
+            <div
+              className={cn("space-y-1.5", field.fullWidth && "md:col-span-2")}
+              data-field-name={field.name}
+              key={field.name}
+            >
               {field.type !== "checkbox" ? (
-                <span className="text-sm font-black text-slate-700">
+                <label className="block text-sm font-black text-slate-700" htmlFor={fieldId}>
                   {field.label}
                   {field.required ? <span className="ml-1 text-rose-500">*</span> : null}
-                </span>
+                </label>
               ) : null}
-              {renderField(field, values, errors, onChange)}
-              {errors?.[field.name] ? (
-                <span className="text-xs font-semibold text-rose-600">{errors[field.name]}</span>
-              ) : field.helper ? (
-                <span className="text-xs font-semibold text-slate-500">{field.helper}</span>
-              ) : null}
-            </label>
+              {renderField(field, values, errors, onChange, loading)}
+              <FormFieldMessage id={errorId} surface="admin" tone="error">
+                {error}
+              </FormFieldMessage>
+              {!error && (
+                <FormFieldMessage id={helperId} surface="admin" tone="helper">
+                  {field.helper}
+                </FormFieldMessage>
+              )}
+            </div>
           );
         })}
       </div>

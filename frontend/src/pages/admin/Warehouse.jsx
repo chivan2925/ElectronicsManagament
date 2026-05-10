@@ -11,6 +11,7 @@ import ApiErrorAlert from "../../components/ui/feedback/ApiErrorAlert";
 import useToast from "../../components/ui/toast/useToast";
 import { publishRealtimeEvent } from "../../hooks/useRealtime";
 import { REALTIME_EVENT_TYPES } from "../../realtime/realtimeEvents";
+import { focusFirstInvalidField } from "../../utils/formValidation";
 import LowStockCard from "./warehouse/LowStockCard";
 import StockAdjustModal from "./warehouse/StockAdjustModal";
 import WarehouseTable from "./warehouse/WarehouseTable";
@@ -34,6 +35,8 @@ const INITIAL_ADJUST_VALUES = {
   variantId: "",
   warehouseId: "",
 };
+
+const STOCK_ADJUST_FIELD_ORDER = ["warehouseId", "variantId", "type", "quantity", "note"];
 
 function formatDateTime(value) {
   if (!value) {
@@ -387,6 +390,7 @@ function Warehouse() {
     setAdjustErrors(errors);
 
     if (Object.keys(errors).length > 0) {
+      focusFirstInvalidField(errors, STOCK_ADJUST_FIELD_ORDER);
       return;
     }
 

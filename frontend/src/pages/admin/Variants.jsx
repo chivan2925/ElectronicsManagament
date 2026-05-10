@@ -9,6 +9,7 @@ import { ADMIN_RESOURCES } from "../../auth/roleHelpers";
 import usePermissions from "../../auth/usePermissions";
 import ApiErrorAlert from "../../components/ui/feedback/ApiErrorAlert";
 import useToast from "../../components/ui/toast/useToast";
+import { focusFirstInvalidField } from "../../utils/formValidation";
 import VariantForm from "./variants/VariantForm";
 import VariantTable from "./variants/VariantTable";
 
@@ -33,6 +34,8 @@ const INITIAL_FORM_VALUES = {
   stock: 0,
   thumbnailUrl: "",
 };
+
+const VARIANT_FIELD_ORDER = ["productId", "status", "sku", "slug", "name", "color", "price", "stock", "thumbnailUrl", "attributes"];
 
 function toFormValues(variant = {}) {
   return {
@@ -320,6 +323,7 @@ function Variants() {
     setFormErrors(nextErrors);
 
     if (Object.keys(nextErrors).length > 0) {
+      focusFirstInvalidField(nextErrors, VARIANT_FIELD_ORDER);
       return;
     }
 

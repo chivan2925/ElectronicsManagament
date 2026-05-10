@@ -14,6 +14,10 @@ Phase 8 — Production + Deploy (Phase 7 completed)
 
 ## Recently Completed
 
+- Completed a system form UX audit across login/register, checkout, admin CRUD, product, coupon, profile, role, variant, and warehouse adjustment forms.
+- Added reusable form feedback and validation helpers for inline messages, touched/submit visibility, first-invalid-field focus, and consistent `aria-describedby` wiring.
+- Improved submit loading, disabled states, focus states, modal/drawer labels, and mobile-safe form spacing while preserving existing storefront/admin architecture and visual design.
+- Verified `npm run lint`, `npm run build`, and `git diff --check`; `git diff --check` reported only CRLF normalization warnings for edited frontend files.
 - Completed a loading/error/empty-state foundation audit across API, product, auth, payment, admin, and analytics surfaces.
 - Added reusable `LoadingState`, `ProductGridSkeleton`, and admin analytics skeleton foundations.
 - Improved route/auth loading, PLP refresh transitions, PDP/account skeleton status semantics, payment verification feedback, admin table loading copy, API retry actions, and shared empty states.
@@ -373,6 +377,7 @@ Phase 8 — Production + Deploy (Phase 7 completed)
 - Reuse the homepage visual depth patterns on future client ecommerce pages without changing their layout structure.
 - Reuse `src/components/skeletons` for future mock-backed and API-backed loading states.
 - Reuse `src/components/ui` primitives before creating one-off button, badge, price, rating, card, input, or section-title markup.
+- Reuse `src/components/ui/form/FormFieldMessage.jsx` and `src/utils/formValidation.js` for inline form feedback, touched-state validation, and first-invalid-field focus in new forms.
 - Reuse `src/components/ui/feedback` before creating page-specific error, empty, or permission-denied states.
 - Keep `frontend/src/styles/theme.js`, `tokens.js`, `globals.css`, and `utilities.css` aligned.
 

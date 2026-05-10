@@ -8,7 +8,7 @@ const methodIcons = {
   vnpay: CreditCard,
 };
 
-function PaymentMethodSelector({ onChange, options, value }) {
+function PaymentMethodSelector({ disabled = false, onChange, options, value }) {
   const selectedOption = options.find((option) => option.id === value) || options[0];
 
   return (
@@ -28,7 +28,7 @@ function PaymentMethodSelector({ onChange, options, value }) {
         {options.map((option) => {
           const Icon = methodIcons[option.id] || CreditCard;
           const isSelected = value === option.id;
-          const isDisabled = Boolean(option.disabled || option.placeholder);
+          const isDisabled = disabled || Boolean(option.disabled || option.placeholder);
 
           return (
             <button

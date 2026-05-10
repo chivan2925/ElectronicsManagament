@@ -28,6 +28,7 @@ import useCheckoutProfile from "../../hooks/useCheckoutProfile";
 import { trackPaymentError } from "../../monitoring";
 import { fadeUp, staggerContainer } from "../../styles/animations";
 import { formatCurrency } from "../../utils/formatters";
+import { createTouchedMap, focusFirstInvalidField, getVisibleFieldErrors } from "../../utils/formValidation";
 
 const MotionDiv = motion.div;
 
@@ -41,6 +42,8 @@ const initialCheckoutValues = {
   phone: "",
   ward: "",
 };
+
+const CHECKOUT_FIELD_ORDER = ["fullName", "phone", "email", "address", "city", "district", "ward"];
 
 const paymentMethods = [
   {
@@ -229,21 +232,16 @@ function Checkout() {
       }),
     [selectedShippingMethod, subtotal, values.city],
   );
-  const validationErrors = validateCheckout(values);
-  const visibleErrors = Object.keys(validationErrors).reduce((currentErrors, fieldName) => {
-    if (submitAttempted || touchedFields[fieldName]) {
-      return {
-        ...currentErrors,
-        [fieldName]: validationErrors[fieldName],
-      };
-    }
-
-    return currentErrors;
-  }, {});
+  const validationErrors = useMemo(() => validateCheckout(values), [values]);
+  const visibleErrors = useMemo(
+    () => getVisibleFieldErrors(validationErrors, touchedFields, submitAttempted),
+    [submitAttempted, touchedFields, validationErrors],
+  );
   const validationMessage =
     submitAttempted && Object.keys(validationErrors).length
       ? "Vui lòng kiểm tra các trường bắt buộc trước khi xác nhận đơn hàng."
       : "";
+  const isCheckoutLocked = isCreatingOrder || paymentHandoff.isRedirecting;
 
   const handleFieldChange = (fieldName, nextValue) => {
     setValues((currentValues) => ({
@@ -298,21 +296,10 @@ function Checkout() {
 
   const handlePlaceOrder = async () => {
     setSubmitAttempted(true);
-    setTouchedFields(
-      Object.keys(initialCheckoutValues).reduce(
-        (fields, fieldName) => ({
-          ...fields,
-          [fieldName]: true,
-        }),
-        {},
-      ),
-    );
+    setTouchedFields(createTouchedMap(Object.keys(initialCheckoutValues)));
 
     if (Object.keys(validationErrors).length > 0) {
-      const firstErrorField = Object.keys(validationErrors)[0];
-      window.requestAnimationFrame(() => {
-        document.getElementById(firstErrorField)?.scrollIntoView({ behavior: "smooth", block: "center" });
-      });
+      focusFirstInvalidField(validationErrors, CHECKOUT_FIELD_ORDER);
       setOrderPlaced(false);
       return;
     }
@@ -476,12 +463,14 @@ function Checkout() {
         >
           <MotionDiv className="min-w-0 space-y-4" variants={fadeUp}>
             <CheckoutForm
+              disabled={isCheckoutLocked}
               errors={visibleErrors}
               onBlur={handleFieldBlur}
               onChange={handleFieldChange}
               values={values}
             />
             <ShippingMethodSelector
+              disabled={isCheckoutLocked}
               onChange={(nextMethodId) => {
                 setShippingMethodId(nextMethodId);
                 setOrderPlaced(false);
@@ -492,6 +481,7 @@ function Checkout() {
               value={shippingMethodId}
             />
             <PaymentMethodSelector
+              disabled={isCheckoutLocked}
               onChange={(nextMethodId) => {
                 setPaymentMethodId(nextMethodId);
                 setOrderPlaced(false);

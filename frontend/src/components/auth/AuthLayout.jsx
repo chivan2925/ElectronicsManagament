@@ -16,8 +16,10 @@ import { Link } from "react-router-dom";
 import AnnouncementBar from "../layout/AnnouncementBar";
 import Header from "../layout/Header";
 import Badge from "../ui/Badge";
+import FormFieldMessage from "../ui/form/FormFieldMessage";
 import { cn } from "../../utils/classNames";
 import { fadeUp, staggerContainer } from "../../styles/animations";
+import { getFormFieldDescribedBy } from "../../utils/formValidation";
 
 const MotionDiv = motion.div;
 
@@ -43,6 +45,7 @@ export function AuthField({
   autoComplete,
   disabled = false,
   error,
+  helper,
   icon,
   id,
   inputMode,
@@ -57,10 +60,13 @@ export function AuthField({
 }) {
   const Icon = icon;
   const hasError = Boolean(error);
+  const hasHelper = Boolean(helper);
   const errorId = `${id}-error`;
+  const helperId = `${id}-helper`;
+  const describedBy = getFormFieldDescribedBy({ errorId, hasError, hasHelper, helperId });
 
   return (
-    <div>
+    <div data-field-name={id}>
       <label className="mb-2 block text-sm font-black text-slate-200" htmlFor={id}>
         {label}
         {required && <span className="ml-1 text-red-300">*</span>}
@@ -68,7 +74,7 @@ export function AuthField({
       <div
         className={cn(
           "premium-transition flex h-12 items-center rounded-2xl border bg-slate-950/50 px-3 shadow-inner shadow-white/[0.03] backdrop-blur-xl focus-within:bg-slate-950/75",
-          disabled && "opacity-70",
+          disabled && "cursor-not-allowed opacity-70",
           hasError
             ? "border-red-300/70 shadow-[0_0_28px_rgba(239,68,68,0.16)]"
             : "border-white/10 focus-within:border-blue-300/80 focus-within:shadow-[0_0_30px_rgba(0,91,255,0.2)]",
@@ -76,11 +82,11 @@ export function AuthField({
       >
         {Icon && <Icon className={cn("mr-2 shrink-0", hasError ? "text-red-200" : "text-blue-200")} size={18} />}
         <input
-          aria-describedby={hasError ? errorId : undefined}
+          aria-describedby={describedBy}
           aria-invalid={hasError}
           aria-required={required}
           autoComplete={autoComplete}
-          className="min-w-0 flex-1 bg-transparent text-sm font-semibold text-white outline-none placeholder:text-slate-500"
+          className="min-w-0 flex-1 bg-transparent text-sm font-semibold text-white outline-none placeholder:text-slate-500 disabled:cursor-not-allowed"
           disabled={disabled}
           id={id}
           inputMode={inputMode}
@@ -94,44 +100,72 @@ export function AuthField({
         />
         {rightElement && <div className="ml-2 flex shrink-0">{rightElement}</div>}
       </div>
-      {hasError && (
-        <p className="mt-2 flex items-center gap-1.5 text-xs font-bold text-red-200" id={errorId}>
-          <AlertCircle size={14} />
-          {error}
-        </p>
+      <FormFieldMessage id={errorId} tone="error">
+        {error}
+      </FormFieldMessage>
+      {!hasError && (
+        <FormFieldMessage id={helperId} tone="helper">
+          {helper}
+        </FormFieldMessage>
       )}
     </div>
   );
 }
 
-export function AuthCheckbox({ checked, children, id, onChange }) {
+export function AuthCheckbox({ checked, children, disabled = false, error, id, onChange, required = false }) {
+  const hasError = Boolean(error);
+  const errorId = `${id}-error`;
+
   return (
-    <label className="group flex cursor-pointer items-start gap-3 text-sm font-semibold text-slate-300" htmlFor={id}>
-      <span className="relative mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-white/15 bg-slate-950/55 transition-default group-hover:border-blue-300/70 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-blue-300/60 has-[:focus-visible]:ring-offset-2 has-[:focus-visible]:ring-offset-slate-950">
-        <input
-          checked={checked}
-          className="peer sr-only"
-          id={id}
-          name={id}
-          onChange={(event) => onChange(event.target.checked)}
-          type="checkbox"
-        />
-        <CheckCircle2 className="scale-75 text-blue-200 opacity-0 transition-default peer-checked:opacity-100" size={16} />
-      </span>
-      <span className="leading-relaxed">{children}</span>
-    </label>
+    <div data-field-name={id}>
+      <label
+        className={cn(
+          "group flex cursor-pointer items-start gap-3 text-sm font-semibold text-slate-300",
+          disabled && "cursor-not-allowed opacity-65",
+        )}
+        htmlFor={id}
+      >
+        <span
+          className={cn(
+            "relative mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md border bg-slate-950/55 transition-default group-hover:border-blue-300/70 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-blue-300/60 has-[:focus-visible]:ring-offset-2 has-[:focus-visible]:ring-offset-slate-950",
+            hasError ? "border-red-300/70" : "border-white/15",
+          )}
+        >
+          <input
+            aria-describedby={hasError ? errorId : undefined}
+            aria-invalid={hasError}
+            aria-required={required}
+            checked={checked}
+            className="peer sr-only"
+            disabled={disabled}
+            id={id}
+            name={id}
+            onChange={(event) => onChange(event.target.checked)}
+            required={required}
+            type="checkbox"
+          />
+          <CheckCircle2 className="scale-75 text-blue-200 opacity-0 transition-default peer-checked:opacity-100" size={16} />
+        </span>
+        <span className="leading-relaxed">{children}</span>
+      </label>
+      <FormFieldMessage id={errorId} tone="error">
+        {error}
+      </FormFieldMessage>
+    </div>
   );
 }
 
-export function AuthFormShell({ children, feedback, footer, onSubmit, subtitle, title }) {
+export function AuthFormShell({ busy = false, children, feedback, footer, onSubmit, subtitle, title }) {
   const isSuccess = feedback?.tone === "success";
   const isError = feedback?.tone === "error";
 
   return (
     <motion.form
       animate="visible"
+      aria-busy={busy}
       className="relative w-full min-w-0 overflow-hidden rounded-3xl border border-blue-300/20 bg-[#07111F]/88 p-5 shadow-[0_28px_90px_rgba(0,0,0,0.34),0_0_44px_rgba(0,91,255,0.13)] backdrop-blur-2xl sm:p-6 lg:p-7"
       initial="hidden"
+      noValidate
       onSubmit={onSubmit}
       variants={fadeUp}
     >

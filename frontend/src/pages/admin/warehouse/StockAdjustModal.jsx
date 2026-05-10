@@ -1,7 +1,9 @@
-import { useMemo } from "react";
+import { cloneElement, isValidElement, useMemo } from "react";
 import { Loader2, PackageCheck, X } from "lucide-react";
 import { AdminModal } from "../../../admin/components";
+import FormFieldMessage from "../../../components/ui/form/FormFieldMessage";
 import { cn } from "../../../utils/classNames";
+import { getFormFieldDescribedBy } from "../../../utils/formValidation";
 
 const TYPE_OPTIONS = [
   { helper: "Increase on-hand quantity", label: "Stock in", tone: "emerald", value: "IMPORT" },
@@ -9,20 +11,37 @@ const TYPE_OPTIONS = [
   { helper: "Returned stock", label: "Return", tone: "blue", value: "RETURN" },
 ];
 
-function Field({ children, error, label, required = false }) {
+function Field({ children, error, id, label, required = false }) {
+  const fieldId = id || label;
+  const hasError = Boolean(error);
+  const errorId = `${fieldId}-error`;
+  const describedBy = getFormFieldDescribedBy({ errorId, hasError });
+  const canEnhanceChild = isValidElement(children) && ["input", "select", "textarea"].includes(children.type);
+  const content = canEnhanceChild
+    ? cloneElement(children, {
+        "aria-describedby": describedBy,
+        "aria-invalid": hasError,
+        className: cn(children.props.className, hasError && "border-rose-300 ring-2 ring-rose-100"),
+        id: children.props.id || fieldId,
+        name: children.props.name || fieldId,
+      })
+    : children;
+
   return (
-    <label className="space-y-1.5">
-      <span className="text-xs font-black uppercase tracking-normal text-slate-500">
+    <div className="space-y-1.5" data-field-name={fieldId}>
+      <label className="block text-xs font-black uppercase tracking-normal text-slate-500" htmlFor={fieldId}>
         {label}
         {required ? <span className="text-rose-500"> *</span> : null}
-      </span>
-      {children}
-      {error ? <p className="text-xs font-bold text-rose-600">{error}</p> : null}
-    </label>
+      </label>
+      {content}
+      <FormFieldMessage id={errorId} surface="admin" tone="error">
+        {error}
+      </FormFieldMessage>
+    </div>
   );
 }
 
-function TypeOption({ active, option, onClick }) {
+function TypeOption({ active, disabled = false, option, onClick }) {
   const activeTone = {
     blue: "border-blue-200 bg-blue-50 text-primary",
     emerald: "border-emerald-200 bg-emerald-50 text-emerald-700",
@@ -31,10 +50,12 @@ function TypeOption({ active, option, onClick }) {
 
   return (
     <button
+      aria-pressed={active}
       className={cn(
-        "rounded-xl border px-3 py-2 text-left transition hover:border-primary hover:bg-blue-50",
+        "rounded-xl border px-3 py-2 text-left transition hover:border-primary hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-60",
         active ? activeTone[option.tone] : "border-slate-200 bg-white text-slate-700",
       )}
+      disabled={disabled}
       onClick={() => onClick?.(option.value)}
       type="button"
     >
@@ -140,7 +161,7 @@ function StockAdjustModal({
       size="lg"
       title="Inventory adjustment"
     >
-      <div className="space-y-4">
+      <div aria-busy={submitting} className="space-y-4">
         {selectedStock ? (
           <div className="grid gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-3 sm:grid-cols-3">
             <div>
@@ -159,10 +180,10 @@ function StockAdjustModal({
         ) : null}
 
         <div className="grid gap-3 md:grid-cols-2">
-          <Field error={errors.warehouseId} label="Warehouse" required>
+          <Field error={errors.warehouseId} id="warehouseId" label="Warehouse" required>
             <select
               className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-700 outline-none transition focus:border-primary focus:ring-4 focus:ring-blue-100 disabled:cursor-not-allowed disabled:bg-slate-50"
-              disabled={lockStockTarget || loadingOptions}
+              disabled={lockStockTarget || loadingOptions || submitting}
               onChange={(event) => onChange?.("warehouseId", event.target.value)}
               value={values.warehouseId ?? ""}
             >
@@ -175,10 +196,10 @@ function StockAdjustModal({
             </select>
           </Field>
 
-          <Field error={errors.variantId} label="Variant" required>
+          <Field error={errors.variantId} id="variantId" label="Variant" required>
             <select
               className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-700 outline-none transition focus:border-primary focus:ring-4 focus:ring-blue-100 disabled:cursor-not-allowed disabled:bg-slate-50"
-              disabled={lockStockTarget || loadingOptions}
+              disabled={lockStockTarget || loadingOptions || submitting}
               onChange={(event) => onChange?.("variantId", event.target.value)}
               value={values.variantId ?? ""}
             >
@@ -192,18 +213,19 @@ function StockAdjustModal({
           </Field>
         </div>
 
-        <Field error={errors.type} label="Movement type" required>
+        <Field error={errors.type} id="type" label="Movement type" required>
           <div className="grid gap-2 sm:grid-cols-3">
             {TYPE_OPTIONS.map((option) => (
-              <TypeOption active={values.type === option.value} key={option.value} onClick={(nextType) => onChange?.("type", nextType)} option={option} />
+              <TypeOption active={values.type === option.value} disabled={submitting} key={option.value} onClick={(nextType) => onChange?.("type", nextType)} option={option} />
             ))}
           </div>
         </Field>
 
         <div className="grid gap-3 md:grid-cols-[180px_minmax(0,1fr)]">
-          <Field error={errors.quantity} label="Quantity" required>
+          <Field error={errors.quantity} id="quantity" label="Quantity" required>
             <input
-              className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-700 outline-none transition focus:border-primary focus:ring-4 focus:ring-blue-100"
+              className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-700 outline-none transition focus:border-primary focus:ring-4 focus:ring-blue-100 disabled:cursor-not-allowed disabled:bg-slate-50"
+              disabled={submitting}
               min="1"
               onChange={(event) => onChange?.("quantity", event.target.value)}
               type="number"
@@ -211,9 +233,10 @@ function StockAdjustModal({
             />
           </Field>
 
-          <Field error={errors.note} label="Note">
+          <Field error={errors.note} id="note" label="Note">
             <input
-              className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-primary focus:ring-4 focus:ring-blue-100"
+              className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-primary focus:ring-4 focus:ring-blue-100 disabled:cursor-not-allowed disabled:bg-slate-50"
+              disabled={submitting}
               maxLength={255}
               onChange={(event) => onChange?.("note", event.target.value)}
               placeholder="Cycle count, receiving, damaged item..."

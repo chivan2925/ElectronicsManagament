@@ -1,5 +1,6 @@
 import { ShieldCheck } from "lucide-react";
 import { AdminForm, StatusBadge } from "../../../admin/components";
+import FormFieldMessage from "../../../components/ui/form/FormFieldMessage";
 import PermissionMatrix from "./PermissionMatrix";
 
 const ROLE_STATUS_OPTIONS = [
@@ -50,7 +51,7 @@ function RoleForm({
       values={values}
     >
       <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_240px]">
-        <div>
+        <div data-field-name="permissionIds">
           <PermissionMatrix
             disabled={loading}
             onChange={(nextIds) => onChange?.("permissionIds", nextIds)}
@@ -61,9 +62,9 @@ function RoleForm({
             showSearch
             title="Gán quyền"
           />
-          {errors.permissionIds ? (
-            <p className="mt-2 text-xs font-semibold text-rose-600">{errors.permissionIds}</p>
-          ) : null}
+          <FormFieldMessage id="permissionIds-error" surface="admin" tone="error">
+            {errors.permissionIds}
+          </FormFieldMessage>
         </div>
 
         <aside className="rounded-2xl border border-slate-200 bg-slate-50 p-4">

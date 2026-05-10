@@ -8,6 +8,15 @@ Always update this file after meaningful work.
 
 ## 2026-05-10
 
+### System Form UX Audit
+
+- Audited login/register, checkout, admin CRUD, product, coupon, profile, role, variant, and warehouse adjustment forms.
+- Added reusable `FormFieldMessage` and form validation helpers for inline feedback, touched/submit-attempt visibility, `aria-describedby`, and first-invalid-field focus.
+- Improved submit loading, disabled states, focus states, and modal/drawer labelling without changing the homepage layout or dark storefront theme.
+- Preserved the existing frontend/admin architecture and applied the pattern through existing form components instead of rewriting flows.
+- Updated `CURRENT_STATE.md` and `NEXT_TASKS.md`.
+- Verified `npm run lint`, `npm run build`, and `git diff --check`; `git diff --check` reported only CRLF normalization warnings for edited frontend files.
+
 ### Loading Error Empty State Foundation
 
 - Audited API, product, auth, payment, admin, and analytics loading/error/empty states.

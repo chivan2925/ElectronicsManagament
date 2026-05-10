@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
-import { Camera, Save, UserRound } from "lucide-react";
+import { Camera, Loader2, Save, UserRound } from "lucide-react";
 import { normalizePhoneNumber } from "../../api/accountMapper";
 import OptimizedImage from "../../components/common/OptimizedImage";
 import ApiErrorAlert from "../../components/ui/feedback/ApiErrorAlert";
 import Badge from "../../components/ui/Badge";
 import Button from "../../components/ui/Button";
 import Input from "../../components/ui/Input";
+import FormFieldMessage from "../../components/ui/form/FormFieldMessage";
 import { useToast } from "../../components/ui/toast";
+import { createTouchedMap, focusFirstInvalidField, getVisibleFieldErrors } from "../../utils/formValidation";
 
 const initialValues = {
   avatarUrl: "",
@@ -18,6 +20,8 @@ const initialValues = {
   phoneNumber: "",
   username: "",
 };
+
+const PROFILE_FIELD_ORDER = ["fullName", "username", "email", "phoneNumber"];
 
 function getInitials(profile) {
   const name = profile?.fullName || profile?.username || profile?.email || "EM";
@@ -70,12 +74,19 @@ function validateProfile(values) {
   return errors;
 }
 
-function Field({ error, label, children }) {
+function Field({ children, error, id, label, required = false }) {
+  const errorId = `${id}-error`;
+
   return (
-    <div>
-      <p className="mb-2 text-sm font-black text-slate-200">{label}</p>
+    <div data-field-name={id}>
+      <label className="mb-2 block text-sm font-black text-slate-200" htmlFor={id}>
+        {label}
+        {required ? <span className="ml-1 text-red-300">*</span> : null}
+      </label>
       {children}
-      {error && <p className="mt-2 text-xs font-bold text-red-200">{error}</p>}
+      <FormFieldMessage id={errorId} tone="error">
+        {error}
+      </FormFieldMessage>
     </div>
   );
 }
@@ -84,14 +95,29 @@ function ProfileSettings() {
   const { error, isSavingProfile, profile, updateProfile } = useOutletContext();
   const toast = useToast();
   const [values, setValues] = useState(initialValues);
+  const [touchedFields, setTouchedFields] = useState({});
   const [submitAttempted, setSubmitAttempted] = useState(false);
 
   useEffect(() => {
-    setValues(buildFormValues(profile));
+    let isActive = true;
+
+    Promise.resolve().then(() => {
+      if (!isActive) {
+        return;
+      }
+
+      setValues(buildFormValues(profile));
+      setTouchedFields({});
+      setSubmitAttempted(false);
+    });
+
+    return () => {
+      isActive = false;
+    };
   }, [profile]);
 
   const errors = validateProfile(values);
-  const visibleErrors = submitAttempted ? errors : {};
+  const visibleErrors = getVisibleFieldErrors(errors, touchedFields, submitAttempted);
 
   const handleChange = (fieldName, nextValue) => {
     setValues((currentValues) => ({
@@ -100,11 +126,20 @@ function ProfileSettings() {
     }));
   };
 
+  const handleBlur = (fieldName) => {
+    setTouchedFields((currentFields) => ({
+      ...currentFields,
+      [fieldName]: true,
+    }));
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     setSubmitAttempted(true);
+    setTouchedFields(createTouchedMap(PROFILE_FIELD_ORDER));
 
     if (Object.keys(errors).length) {
+      focusFirstInvalidField(errors, PROFILE_FIELD_ORDER);
       return;
     }
 
@@ -153,29 +188,41 @@ function ProfileSettings() {
 
       {error && <ApiErrorAlert className="mt-5" error={error} surface="store" title="Có lỗi hồ sơ" />}
 
-      <form className="mt-6 grid gap-5" onSubmit={handleSubmit}>
+      <form aria-busy={isSavingProfile} className="mt-6 grid gap-5" noValidate onSubmit={handleSubmit}>
         <div className="grid gap-4 md:grid-cols-2">
-          <Field error={visibleErrors.fullName} label="Họ tên">
+          <Field error={visibleErrors.fullName} id="fullName" label="Họ tên" required>
             <Input
+              aria-describedby={visibleErrors.fullName ? "fullName-error" : undefined}
+              disabled={isSavingProfile}
+              error={visibleErrors.fullName}
               id="fullName"
+              onBlur={() => handleBlur("fullName")}
               onChange={(event) => handleChange("fullName", event.target.value)}
               placeholder="Nguyễn Văn A"
               value={values.fullName}
             />
           </Field>
 
-          <Field error={visibleErrors.username} label="Username">
+          <Field error={visibleErrors.username} id="username" label="Username" required>
             <Input
+              aria-describedby={visibleErrors.username ? "username-error" : undefined}
+              disabled={isSavingProfile}
+              error={visibleErrors.username}
               id="username"
+              onBlur={() => handleBlur("username")}
               onChange={(event) => handleChange("username", event.target.value)}
               placeholder="username"
               value={values.username}
             />
           </Field>
 
-          <Field error={visibleErrors.email} label="Email">
+          <Field error={visibleErrors.email} id="email" label="Email" required>
             <Input
+              aria-describedby={visibleErrors.email ? "email-error" : undefined}
+              disabled={isSavingProfile}
+              error={visibleErrors.email}
               id="email"
+              onBlur={() => handleBlur("email")}
               onChange={(event) => handleChange("email", event.target.value)}
               placeholder="you@example.com"
               type="email"
@@ -183,18 +230,23 @@ function ProfileSettings() {
             />
           </Field>
 
-          <Field error={visibleErrors.phoneNumber} label="Số điện thoại">
+          <Field error={visibleErrors.phoneNumber} id="phoneNumber" label="Số điện thoại" required>
             <Input
+              aria-describedby={visibleErrors.phoneNumber ? "phoneNumber-error" : undefined}
+              disabled={isSavingProfile}
+              error={visibleErrors.phoneNumber}
               id="phoneNumber"
+              onBlur={() => handleBlur("phoneNumber")}
               onChange={(event) => handleChange("phoneNumber", event.target.value)}
               placeholder="0901234567"
               value={values.phoneNumber}
             />
           </Field>
 
-          <Field label="Giới tính">
+          <Field id="gender" label="Giới tính">
             <select
-              className="premium-transition h-10 w-full rounded-lg border border-white/10 bg-slate-950/55 px-3 text-sm font-semibold text-white outline-none backdrop-blur-xl focus:border-blue-400/80 focus:shadow-[0_0_34px_rgba(0,91,255,0.22)]"
+              className="premium-transition h-10 w-full rounded-lg border border-white/10 bg-slate-950/55 px-3 text-sm font-semibold text-white outline-none backdrop-blur-xl focus:border-blue-400/80 focus:shadow-[0_0_34px_rgba(0,91,255,0.22)] disabled:cursor-not-allowed disabled:opacity-70"
+              disabled={isSavingProfile}
               onChange={(event) => handleChange("gender", event.target.value)}
               value={values.gender}
             >
@@ -205,8 +257,9 @@ function ProfileSettings() {
             </select>
           </Field>
 
-          <Field label="Ngày sinh">
+          <Field id="dateOfBirth" label="Ngày sinh">
             <Input
+              disabled={isSavingProfile}
               id="dateOfBirth"
               onChange={(event) => handleChange("dateOfBirth", event.target.value)}
               type="date"
@@ -215,8 +268,9 @@ function ProfileSettings() {
           </Field>
         </div>
 
-        <Field label="Avatar URL">
+        <Field id="avatarUrl" label="Avatar URL">
           <Input
+            disabled={isSavingProfile}
             id="avatarUrl"
             leftIcon={<Camera size={17} />}
             onChange={(event) => handleChange("avatarUrl", event.target.value)}
@@ -227,7 +281,7 @@ function ProfileSettings() {
 
         <div className="flex flex-col gap-3 border-t border-white/10 pt-5 sm:flex-row sm:justify-end">
           <Button className="rounded-2xl" disabled={isSavingProfile} type="submit">
-            <Save size={17} />
+            {isSavingProfile ? <Loader2 className="animate-spin" size={17} /> : <Save size={17} />}
             {isSavingProfile ? "Đang lưu..." : "Lưu thay đổi"}
           </Button>
         </div>

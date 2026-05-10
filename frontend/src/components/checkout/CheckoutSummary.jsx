@@ -102,7 +102,8 @@ function CheckoutSummary({
           <p className="text-sm font-black text-white">Mã ưu đãi</p>
           {appliedCoupon && onCouponClear && (
             <button
-              className="inline-flex items-center gap-1 text-xs font-black text-slate-400 transition-default hover:text-white"
+              className="inline-flex items-center gap-1 text-xs font-black text-slate-400 transition-default hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
+              disabled={isSubmitting}
               onClick={onCouponClear}
               type="button"
             >
@@ -118,7 +119,9 @@ function CheckoutSummary({
             <BadgePercent className="shrink-0 text-blue-200" size={18} />
           )}
           <input
+            aria-label="Mã giảm giá"
             className="min-w-0 flex-1 bg-transparent text-sm font-bold uppercase text-white outline-none placeholder:normal-case placeholder:text-slate-500"
+            disabled={isSubmitting}
             onChange={(event) => onCouponChange(event.target.value)}
             placeholder="Mã giảm giá"
             type="text"
@@ -126,7 +129,7 @@ function CheckoutSummary({
           />
           <button
             className="inline-flex min-w-[58px] items-center justify-center gap-1 text-xs font-black text-blue-200 hover:text-white disabled:cursor-not-allowed disabled:text-slate-600"
-            disabled={isApplyingCoupon || !couponCode.trim()}
+            disabled={isSubmitting || isApplyingCoupon || !couponCode.trim()}
             onClick={onCouponApply}
             type="button"
           >
@@ -186,7 +189,7 @@ function CheckoutSummary({
       </div>
 
       {validationMessage && (
-        <div className="mt-4 rounded-2xl border border-red-300/30 bg-red-500/10 p-3 text-sm font-bold text-red-100">
+        <div className="mt-4 rounded-2xl border border-red-300/30 bg-red-500/10 p-3 text-sm font-bold text-red-100" role="alert">
           <div className="flex gap-2">
             <AlertCircle className="mt-0.5 shrink-0" size={17} />
             <span>{validationMessage}</span>

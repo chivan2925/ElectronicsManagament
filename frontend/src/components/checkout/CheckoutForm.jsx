@@ -1,5 +1,4 @@
 import {
-  AlertCircle,
   Building2,
   Mail,
   MapPin,
@@ -8,10 +7,14 @@ import {
   UserRound,
 } from "lucide-react";
 import { cn } from "../../utils/classNames";
+import FormFieldMessage from "../ui/form/FormFieldMessage";
+import { getFormFieldDescribedBy } from "../../utils/formValidation";
 
 function CheckoutField({
   autoComplete,
+  disabled = false,
   error,
+  helper,
   icon,
   id,
   inputMode,
@@ -25,11 +28,14 @@ function CheckoutField({
   value,
 }) {
   const hasError = Boolean(error);
+  const hasHelper = Boolean(helper);
   const Icon = icon;
   const errorId = `${id}-error`;
+  const helperId = `${id}-helper`;
+  const describedBy = getFormFieldDescribedBy({ errorId, hasError, hasHelper, helperId });
 
   return (
-    <div>
+    <div data-field-name={id}>
       <label className="mb-2 block text-sm font-black text-slate-200" htmlFor={id}>
         {label}
         {required && <span className="ml-1 text-red-300">*</span>}
@@ -39,6 +45,7 @@ function CheckoutField({
         className={cn(
           "premium-transition flex rounded-2xl border bg-slate-950/45 px-3 shadow-inner shadow-white/[0.03] backdrop-blur-xl focus-within:bg-slate-950/70",
           textarea ? "items-start py-3" : "h-12 items-center",
+          disabled && "cursor-not-allowed opacity-70",
           hasError
             ? "border-red-300/70 shadow-[0_0_28px_rgba(239,68,68,0.16)]"
             : "border-white/10 focus-within:border-blue-300/80 focus-within:shadow-[0_0_30px_rgba(0,91,255,0.2)]",
@@ -47,11 +54,12 @@ function CheckoutField({
         {Icon && <Icon className={cn("mr-2 shrink-0", hasError ? "text-red-200" : "text-blue-200")} size={18} />}
         {textarea ? (
           <textarea
-            aria-describedby={hasError ? errorId : undefined}
+            aria-describedby={describedBy}
             aria-invalid={hasError}
             aria-required={required}
             autoComplete={autoComplete}
-            className="min-h-24 min-w-0 flex-1 resize-none bg-transparent text-sm font-semibold text-white outline-none placeholder:text-slate-500"
+            className="min-h-24 min-w-0 flex-1 resize-none bg-transparent text-sm font-semibold text-white outline-none placeholder:text-slate-500 disabled:cursor-not-allowed"
+            disabled={disabled}
             id={id}
             name={id}
             onBlur={() => onBlur(id)}
@@ -62,11 +70,12 @@ function CheckoutField({
           />
         ) : (
           <input
-            aria-describedby={hasError ? errorId : undefined}
+            aria-describedby={describedBy}
             aria-invalid={hasError}
             aria-required={required}
             autoComplete={autoComplete}
-            className="min-w-0 flex-1 bg-transparent text-sm font-semibold text-white outline-none placeholder:text-slate-500"
+            className="min-w-0 flex-1 bg-transparent text-sm font-semibold text-white outline-none placeholder:text-slate-500 disabled:cursor-not-allowed"
+            disabled={disabled}
             id={id}
             inputMode={inputMode}
             name={id}
@@ -80,11 +89,13 @@ function CheckoutField({
         )}
       </div>
 
-      {hasError && (
-        <p className="mt-2 flex items-center gap-1.5 text-xs font-bold text-red-200" id={errorId}>
-          <AlertCircle size={14} />
-          {error}
-        </p>
+      <FormFieldMessage id={errorId} tone="error">
+        {error}
+      </FormFieldMessage>
+      {!hasError && (
+        <FormFieldMessage id={helperId} tone="helper">
+          {helper}
+        </FormFieldMessage>
       )}
     </div>
   );
@@ -102,13 +113,14 @@ function CheckoutSection({ children, eyebrow, title }) {
   );
 }
 
-function CheckoutForm({ errors, onBlur, onChange, values }) {
+function CheckoutForm({ disabled = false, errors, onBlur, onChange, values }) {
   return (
     <div className="grid gap-4">
       <CheckoutSection eyebrow="Thông tin liên hệ" title="Thông tin khách hàng">
         <div className="grid gap-4 md:grid-cols-2">
           <CheckoutField
             autoComplete="name"
+            disabled={disabled}
             error={errors.fullName}
             icon={UserRound}
             id="fullName"
@@ -121,6 +133,7 @@ function CheckoutForm({ errors, onBlur, onChange, values }) {
           />
           <CheckoutField
             autoComplete="tel"
+            disabled={disabled}
             error={errors.phone}
             icon={Phone}
             id="phone"
@@ -135,6 +148,7 @@ function CheckoutForm({ errors, onBlur, onChange, values }) {
           <div className="md:col-span-2">
             <CheckoutField
               autoComplete="email"
+              disabled={disabled}
               error={errors.email}
               icon={Mail}
               id="email"
@@ -156,6 +170,7 @@ function CheckoutForm({ errors, onBlur, onChange, values }) {
           <div className="md:col-span-2">
             <CheckoutField
               autoComplete="street-address"
+              disabled={disabled}
               error={errors.address}
               icon={MapPin}
               id="address"
@@ -169,6 +184,7 @@ function CheckoutForm({ errors, onBlur, onChange, values }) {
           </div>
           <CheckoutField
             autoComplete="address-level1"
+            disabled={disabled}
             error={errors.city}
             icon={Building2}
             id="city"
@@ -181,6 +197,7 @@ function CheckoutForm({ errors, onBlur, onChange, values }) {
           />
           <CheckoutField
             autoComplete="address-level2"
+            disabled={disabled}
             error={errors.district}
             icon={Building2}
             id="district"
@@ -193,6 +210,7 @@ function CheckoutForm({ errors, onBlur, onChange, values }) {
           />
           <CheckoutField
             autoComplete="address-level3"
+            disabled={disabled}
             error={errors.ward}
             icon={MapPin}
             id="ward"
@@ -206,6 +224,7 @@ function CheckoutForm({ errors, onBlur, onChange, values }) {
           <div className="md:col-span-2">
             <CheckoutField
               error={errors.note}
+              disabled={disabled}
               icon={MessageSquare}
               id="note"
               label="Ghi chú giao hàng"
