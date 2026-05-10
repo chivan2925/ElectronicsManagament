@@ -14,6 +14,13 @@ Ready for Phase 7 — Advanced Features & Production Systems
 
 ## Recently Completed
 
+- Built a frontend/backend logging and monitoring foundation without integrating a real SaaS monitoring service.
+- Added `frontend/src/monitoring` for structured client logs, local monitoring buffering, global error tracking, API failure tracking, payment error tracking, route preload/error tracking, and optional route-change tracking.
+- Added frontend `X-Request-Id` propagation through the shared Axios client and normalized API errors now carry backend/client request ids.
+- Added backend `MonitoringLogger` and `RequestMonitoringFilter` for structured key-value logs, request correlation, and `X-Request-Id` response headers.
+- Added structured backend events for auth login/logout/unauthorized/JWT failures, order creation/admin updates/system payment transitions, payment link creation, VNPay/MoMo callbacks, payment returns/IPNs, and handled/unhandled exceptions.
+- Improved backend error responses with `path` and `requestId` fields while preserving existing status/message/details behavior.
+- Verified `npm run lint`, `npm run build`, `git diff --check`, `mvn -q -DskipTests compile`, and `mvn test` after the logging and monitoring foundation.
 - Optimized the frontend architecture for production readiness without changing the homepage UX.
 - Added `frontend/src/api/apiCache.js` for in-memory GET request deduplication, opt-in TTL caching, cache invalidation after successful mutations, and basic cache stats.
 - Added `frontend/src/routes/routeLoaders.js` plus lazy route preloading hooks for high-traffic storefront/admin routes.
@@ -238,7 +245,7 @@ Ready for Phase 7 — Advanced Features & Production Systems
 - Added role-based redirect after login: user-shaped sessions go to `/`, admin/staff sessions go to `/admin/dashboard`.
 - Applied route guards to protect `/admin/*` and guest-only auth routes.
 - Updated backend auth exception handling for invalid credentials and disabled/locked staff accounts.
-- Verified `npm run lint`, `npm run build`, and `mvn clean compile -DskipTests`; `mvn test` is blocked by existing backend context issues.
+- Verified `npm run lint`, `npm run build`, and `mvn clean compile -DskipTests`; later backend validation now passes `mvn test`, with local schema warnings still tracked separately.
 - Hardened the frontend Axios API client with centralized error normalization, response error handling, bearer-token injection, safe-method retry foundation, env timeout config, and reusable `api.*` helpers.
 - Verified `npm run lint` and `npm run build` after hardening the Axios API client.
 - Completed the protected routing system with `ProtectedRoute`, `AdminRoute`, `StaffRoute`, `GuestRoute`, redirect memory, session restore, loading fallback, and graceful unauthorized UI.
@@ -283,7 +290,7 @@ Ready for Phase 7 — Advanced Features & Production Systems
 5. Keep the completed admin CRUD system stable while advanced storefront workflows are added.
 6. Use centralized feedback components for loading, error, empty, permission, and refresh states in new workflows.
 7. Move customer auth and account ownership checks to a dedicated public customer auth contract when ready.
-8. Resolve existing backend test blockers before relying on `mvn test` as a clean validation gate.
+8. Keep `mvn test` as a backend validation gate and continue reducing local schema warnings.
 9. Add controlled PostgreSQL migration/backfill scripts for legacy non-auth tables before relying on a clean backend startup log.
 10. Keep AI context docs current.
 
@@ -314,6 +321,7 @@ Ready for Phase 7 — Advanced Features & Production Systems
 - Use `src/components/common/DeferredSectionBoundary.jsx` for below-fold lazy storefront sections.
 - Keep storefront SEO metadata centralized in `src/seo/metadata.js` and render page head tags through `src/components/seo/SEOHead.jsx`.
 - Keep responsive/fallback image behavior centralized in `src/components/common/OptimizedImage.jsx`, `src/hooks/useImageLoading.js`, and `src/utils/imageFallbacks.js`.
+- Keep frontend monitoring helpers centralized in `src/monitoring`; do not add direct SaaS monitoring calls in components or API services.
 
 ### Design System Maintenance
 
@@ -353,6 +361,7 @@ Ready for Phase 7 — Advanced Features & Production Systems
 - Harden payment state handling with production return URLs, customer ownership checks, critical-flow tests, deployment-safe credentials, and provider reconciliation checks.
 - Replace remaining homepage, search, wishlist, recently viewed, and recommendation mock/local data with public APIs as those APIs mature.
 - Add critical-flow tests, database migration/backfill scripts, production config review, deployment docs, and monitoring/observability planning.
+- Keep backend structured logs on stable event names through `MonitoringLogger` and preserve `X-Request-Id` correlation in new controllers/services.
 
 ### Admin Dashboard Maintenance
 
@@ -381,7 +390,6 @@ Ready for Phase 7 — Advanced Features & Production Systems
 - Admin CRUD modules are API-backed; upgraded `/admin/dashboard` and `/admin/reports/revenue` analytics still use isolated mock reporting data until reporting APIs exist.
 - Category API currently has no `description` field in request/response DTOs, so category description is UI-session only until backend contract is extended.
 - Backend admin auth currently exposes login/logout; refresh-token endpoint support is not implemented yet.
-- Backend `mvn test` currently fails because `AddressMapper` is not registered as a bean for `AdminAddressServiceImpl`.
 - Backend startup also reports a database DDL warning for existing null `media.display_order` values.
 - Backend local startup on default port may fail when another process already binds `8080`.
 - Local PostgreSQL still contains legacy drift in non-auth modules, including non-null columns and warehouse transaction foreign keys, and should be migrated with controlled SQL scripts instead of relying on `ddl-auto` alone.

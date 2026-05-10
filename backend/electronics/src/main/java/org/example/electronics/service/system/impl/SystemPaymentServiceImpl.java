@@ -17,6 +17,7 @@ import org.example.electronics.entity.enums.PaymentStatus;
 import org.example.electronics.entity.enums.PaymentTransactionStatus;
 import org.example.electronics.entity.enums.PaymentTransactionType;
 import org.example.electronics.entity.order.OrderEntity;
+import org.example.electronics.monitoring.MonitoringLogger;
 import org.example.electronics.repository.OrderRepository;
 import org.example.electronics.repository.PaymentTransactionRepository;
 import org.example.electronics.service.system.SystemOrderService;
@@ -90,9 +91,23 @@ public class SystemPaymentServiceImpl implements SystemPaymentService {
         transaction.setAmount(order.getTotal());
         transaction.setNote(requestDTO.provider() + " sandbox payment link created for order " + order.getCode());
         transaction = paymentTransactionRepository.save(transaction);
+        MonitoringLogger.info(log, "payment.link.requested", MonitoringLogger.fields(
+                "amount", order.getTotal(),
+                "orderCode", order.getCode(),
+                "orderId", order.getId(),
+                "provider", requestDTO.provider(),
+                "transactionId", transaction.getId()
+        ));
 
         PaymentLinkResponseDTO response = paymentGateway.createPaymentLink(order, transaction, request);
         paymentTransactionRepository.save(transaction);
+        MonitoringLogger.info(log, "payment.link.created", MonitoringLogger.fields(
+                "orderId", order.getId(),
+                "provider", response.provider(),
+                "responseCode", response.responseCode(),
+                "status", response.status(),
+                "transactionId", transaction.getId()
+        ));
 
         return response;
     }
@@ -153,6 +168,7 @@ public class SystemPaymentServiceImpl implements SystemPaymentService {
         String responseCode = signedFields.get("vnp_ResponseCode");
 
         if (secureHash == null || !vnPayUtils.validateSignature(signedFields, secureHash)) {
+            logPaymentCallbackRejected(PaymentProvider.VNPAY, "invalid_signature", orderId, responseCode);
             return new VNPayCallbackResult(
                     "97",
                     buildPaymentResponse(null, null, responseCode, "Chữ ký VNPay không hợp lệ", false, orderId)
@@ -160,6 +176,7 @@ public class SystemPaymentServiceImpl implements SystemPaymentService {
         }
 
         if (!Objects.equals(signedFields.get("vnp_TmnCode"), vnPayConfig.getVnp_TmnCode())) {
+            logPaymentCallbackRejected(PaymentProvider.VNPAY, "invalid_merchant", orderId, responseCode);
             return new VNPayCallbackResult(
                     "97",
                     buildPaymentResponse(null, null, responseCode, "Mã merchant VNPay không hợp lệ", false, orderId)
@@ -167,6 +184,7 @@ public class SystemPaymentServiceImpl implements SystemPaymentService {
         }
 
         if (orderId == null) {
+            logPaymentCallbackRejected(PaymentProvider.VNPAY, "invalid_order_id", null, responseCode);
             return new VNPayCallbackResult(
                     "01",
                     buildPaymentResponse(null, null, responseCode, "Mã đơn hàng VNPay không hợp lệ", false, null)
@@ -175,6 +193,7 @@ public class SystemPaymentServiceImpl implements SystemPaymentService {
 
         OrderEntity order = orderRepository.findById(orderId).orElse(null);
         if (order == null) {
+            logPaymentCallbackRejected(PaymentProvider.VNPAY, "order_not_found", orderId, responseCode);
             return new VNPayCallbackResult(
                     "01",
                     buildPaymentResponse(null, null, responseCode, "Không tìm thấy đơn hàng", false, orderId)
@@ -183,6 +202,7 @@ public class SystemPaymentServiceImpl implements SystemPaymentService {
 
         PaymentTransactionEntity transaction = findVNPayPaymentTransaction(order.getId());
         if (transaction == null) {
+            logPaymentCallbackRejected(PaymentProvider.VNPAY, "transaction_not_found", order.getId(), responseCode);
             return new VNPayCallbackResult(
                     "01",
                     buildPaymentResponse(order, null, responseCode, "Không tìm thấy giao dịch thanh toán", false, orderId)
@@ -191,6 +211,7 @@ public class SystemPaymentServiceImpl implements SystemPaymentService {
 
         BigDecimal callbackAmount = parseVNPayAmount(signedFields.get("vnp_Amount"));
         if (callbackAmount == null || !sameVndAmount(transaction.getAmount(), callbackAmount)) {
+            logPaymentCallbackRejected(PaymentProvider.VNPAY, "amount_mismatch", order.getId(), responseCode);
             return new VNPayCallbackResult(
                     "04",
                     buildPaymentResponse(order, transaction, responseCode, "Số tiền thanh toán không khớp", false, orderId)
@@ -198,6 +219,7 @@ public class SystemPaymentServiceImpl implements SystemPaymentService {
         }
 
         if (transaction.getStatus() == PaymentTransactionStatus.SUCCESS) {
+            logPaymentCallbackProcessed(PaymentProvider.VNPAY, order, transaction, responseCode, "duplicate_success");
             return new VNPayCallbackResult(
                     "02",
                     buildPaymentResponse(order, transaction, responseCode, "Giao dịch đã được ghi nhận trước đó", true, orderId)
@@ -206,6 +228,7 @@ public class SystemPaymentServiceImpl implements SystemPaymentService {
 
         if (transaction.getStatus() == PaymentTransactionStatus.FAILED ||
                 transaction.getStatus() == PaymentTransactionStatus.CANCELLED) {
+            logPaymentCallbackProcessed(PaymentProvider.VNPAY, order, transaction, responseCode, "already_final");
             return new VNPayCallbackResult(
                     "00",
                     buildPaymentResponse(order, transaction, responseCode, "Giao dịch đã ở trạng thái cuối", true, orderId)
@@ -219,15 +242,15 @@ public class SystemPaymentServiceImpl implements SystemPaymentService {
             transaction.setStatus(PaymentTransactionStatus.SUCCESS);
             transaction.setProviderPaymentId(signedFields.get("vnp_TransactionNo"));
             systemOrderService.confirmSuccessfulPayment(order.getId());
-            log.info("VNPay callback: Xử lý thành công đơn hàng {}", order.getId());
+            logPaymentCallbackProcessed(PaymentProvider.VNPAY, order, transaction, responseCode, "success");
         } else if (VNPAY_CANCEL_CODE.equals(responseCode)) {
             transaction.setStatus(PaymentTransactionStatus.CANCELLED);
             systemOrderService.closeUnpaidOrder(order.getId(), PaymentStatus.CANCELLED, "Khách hàng đã hủy thanh toán VNPay.");
-            log.info("VNPay callback: Khách hàng hủy thanh toán đơn hàng {}", order.getId());
+            logPaymentCallbackProcessed(PaymentProvider.VNPAY, order, transaction, responseCode, "cancelled");
         } else {
             transaction.setStatus(PaymentTransactionStatus.FAILED);
             systemOrderService.closeUnpaidOrder(order.getId(), PaymentStatus.FAILED, "Thanh toán VNPay thất bại. Mã phản hồi: " + responseCode);
-            log.info("VNPay callback: Thanh toán thất bại cho đơn hàng {}. ResponseCode: {}", order.getId(), responseCode);
+            logPaymentCallbackProcessed(PaymentProvider.VNPAY, order, transaction, responseCode, "failed");
         }
 
         paymentTransactionRepository.save(transaction);
@@ -244,18 +267,21 @@ public class SystemPaymentServiceImpl implements SystemPaymentService {
         Integer orderId = parseMomoOrderId(valueOf(fields.get("orderId")));
 
         if (!momoUtils.validateSignature(fields)) {
+            logPaymentCallbackRejected(PaymentProvider.MOMO, "invalid_signature", orderId, resultCode);
             return new MomoCallbackResult(
                     buildPaymentResponse(null, null, resultCode, "Chữ ký MoMo không hợp lệ", false, orderId, PaymentProvider.MOMO)
             );
         }
 
         if (!Objects.equals(valueOf(fields.get("partnerCode")), momoConfig.getPartnerCode())) {
+            logPaymentCallbackRejected(PaymentProvider.MOMO, "invalid_merchant", orderId, resultCode);
             return new MomoCallbackResult(
                     buildPaymentResponse(null, null, resultCode, "Mã merchant MoMo không hợp lệ", false, orderId, PaymentProvider.MOMO)
             );
         }
 
         if (orderId == null) {
+            logPaymentCallbackRejected(PaymentProvider.MOMO, "invalid_order_id", null, resultCode);
             return new MomoCallbackResult(
                     buildPaymentResponse(null, null, resultCode, "Mã đơn hàng MoMo không hợp lệ", false, null, PaymentProvider.MOMO)
             );
@@ -263,6 +289,7 @@ public class SystemPaymentServiceImpl implements SystemPaymentService {
 
         OrderEntity order = orderRepository.findById(orderId).orElse(null);
         if (order == null) {
+            logPaymentCallbackRejected(PaymentProvider.MOMO, "order_not_found", orderId, resultCode);
             return new MomoCallbackResult(
                     buildPaymentResponse(null, null, resultCode, "Không tìm thấy đơn hàng", false, orderId, PaymentProvider.MOMO)
             );
@@ -270,6 +297,7 @@ public class SystemPaymentServiceImpl implements SystemPaymentService {
 
         PaymentTransactionEntity transaction = findProviderPaymentTransaction(order.getId(), PaymentProvider.MOMO);
         if (transaction == null) {
+            logPaymentCallbackRejected(PaymentProvider.MOMO, "transaction_not_found", order.getId(), resultCode);
             return new MomoCallbackResult(
                     buildPaymentResponse(order, null, resultCode, "Không tìm thấy giao dịch MoMo", false, orderId, PaymentProvider.MOMO)
             );
@@ -277,12 +305,14 @@ public class SystemPaymentServiceImpl implements SystemPaymentService {
 
         BigDecimal callbackAmount = parseAmount(valueOf(fields.get("amount")));
         if (callbackAmount == null || !sameVndAmount(transaction.getAmount(), callbackAmount)) {
+            logPaymentCallbackRejected(PaymentProvider.MOMO, "amount_mismatch", order.getId(), resultCode);
             return new MomoCallbackResult(
                     buildPaymentResponse(order, transaction, resultCode, "Số tiền thanh toán MoMo không khớp", false, orderId, PaymentProvider.MOMO)
             );
         }
 
         if (transaction.getStatus() == PaymentTransactionStatus.SUCCESS) {
+            logPaymentCallbackProcessed(PaymentProvider.MOMO, order, transaction, resultCode, "duplicate_success");
             return new MomoCallbackResult(
                     buildPaymentResponse(order, transaction, resultCode, "Giao dịch đã được ghi nhận trước đó", true, orderId, PaymentProvider.MOMO)
             );
@@ -290,6 +320,7 @@ public class SystemPaymentServiceImpl implements SystemPaymentService {
 
         if (transaction.getStatus() == PaymentTransactionStatus.FAILED ||
                 transaction.getStatus() == PaymentTransactionStatus.CANCELLED) {
+            logPaymentCallbackProcessed(PaymentProvider.MOMO, order, transaction, resultCode, "already_final");
             return new MomoCallbackResult(
                     buildPaymentResponse(order, transaction, resultCode, "Giao dịch đã ở trạng thái cuối", true, orderId, PaymentProvider.MOMO)
             );
@@ -302,15 +333,15 @@ public class SystemPaymentServiceImpl implements SystemPaymentService {
             transaction.setStatus(PaymentTransactionStatus.SUCCESS);
             transaction.setProviderPaymentId(valueOf(fields.get("transId")));
             systemOrderService.confirmSuccessfulPayment(order.getId());
-            log.info("MoMo callback: Xử lý thành công đơn hàng {}", order.getId());
+            logPaymentCallbackProcessed(PaymentProvider.MOMO, order, transaction, resultCode, "success");
         } else if (isCancelledMomoPayment(resultCode)) {
             transaction.setStatus(PaymentTransactionStatus.CANCELLED);
             systemOrderService.closeUnpaidOrder(order.getId(), PaymentStatus.CANCELLED, "Khách hàng đã hủy thanh toán MoMo.");
-            log.info("MoMo callback: Khách hàng hủy thanh toán đơn hàng {}", order.getId());
+            logPaymentCallbackProcessed(PaymentProvider.MOMO, order, transaction, resultCode, "cancelled");
         } else {
             transaction.setStatus(PaymentTransactionStatus.FAILED);
             systemOrderService.closeUnpaidOrder(order.getId(), PaymentStatus.FAILED, "Thanh toán MoMo thất bại. Mã phản hồi: " + resultCode);
-            log.info("MoMo callback: Thanh toán thất bại cho đơn hàng {}. ResultCode: {}", order.getId(), resultCode);
+            logPaymentCallbackProcessed(PaymentProvider.MOMO, order, transaction, resultCode, "failed");
         }
 
         paymentTransactionRepository.save(transaction);
@@ -318,6 +349,33 @@ public class SystemPaymentServiceImpl implements SystemPaymentService {
         return new MomoCallbackResult(
                 buildPaymentResponse(order, transaction, resultCode, "Đã xác minh phản hồi MoMo", true, orderId, PaymentProvider.MOMO)
         );
+    }
+
+    private void logPaymentCallbackRejected(PaymentProvider provider, String reason, Integer orderId, String responseCode) {
+        MonitoringLogger.warn(log, "payment.callback.rejected", MonitoringLogger.fields(
+                "orderId", orderId,
+                "provider", provider,
+                "reason", reason,
+                "responseCode", responseCode
+        ));
+    }
+
+    private void logPaymentCallbackProcessed(
+            PaymentProvider provider,
+            OrderEntity order,
+            PaymentTransactionEntity transaction,
+            String responseCode,
+            String outcome
+    ) {
+        MonitoringLogger.info(log, "payment.callback.processed", MonitoringLogger.fields(
+                "orderCode", order == null ? null : order.getCode(),
+                "orderId", order == null ? null : order.getId(),
+                "outcome", outcome,
+                "provider", provider,
+                "responseCode", responseCode,
+                "transactionId", transaction == null ? null : transaction.getId(),
+                "transactionStatus", transaction == null ? null : transaction.getStatus()
+        ));
     }
 
     private PaymentGatewayService resolvePaymentGateway(PaymentProvider provider) {

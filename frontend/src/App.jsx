@@ -1,7 +1,13 @@
 import AppRoutes from "./routes/AppRoutes";
+import { RouteChangeTracker } from "./monitoring";
 
 function App() {
-  return <AppRoutes />;
+  return (
+    <>
+      <RouteChangeTracker />
+      <AppRoutes />
+    </>
+  );
 }
 
 export default App;

@@ -4,6 +4,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.electronics.entity.enums.PaymentProvider;
+import org.example.electronics.monitoring.MonitoringLogger;
 import org.example.electronics.service.system.SystemPaymentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -44,7 +46,11 @@ public class SystemPaymentTransactionController {
             ));
 
         } catch (Exception e) {
-            log.error("Lỗi IPN: ", e);
+            MonitoringLogger.error(log, "payment.ipn.failed", MonitoringLogger.fields(
+                    "exception", e.getClass().getSimpleName(),
+                    "message", e.getMessage(),
+                    "provider", PaymentProvider.VNPAY
+            ), e);
             return ResponseEntity.ok(Map.of("RspCode", "99", "Message", "Unknown error"));
         }
     }
@@ -58,7 +64,11 @@ public class SystemPaymentTransactionController {
             systemPaymentService.processMomoIPN(requestBody);
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
-            log.error("Lỗi Momo IPN: ", e);
+            MonitoringLogger.error(log, "payment.ipn.failed", MonitoringLogger.fields(
+                    "exception", e.getClass().getSimpleName(),
+                    "message", e.getMessage(),
+                    "provider", PaymentProvider.MOMO
+            ), e);
             // Kể cả lỗi cũng nên trả về 204/200 để Momo không gọi lại spam server,
             // lỗi thì mình tự ghi log xử lý sau.
             return ResponseEntity.noContent().build();

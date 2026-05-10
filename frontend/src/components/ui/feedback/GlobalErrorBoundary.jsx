@@ -1,5 +1,6 @@
 import { Component } from "react";
 import { AlertTriangle, Home, RefreshCcw } from "lucide-react";
+import { trackGlobalError } from "../../../monitoring";
 
 function DefaultErrorFallback({ error, onReset }) {
   return (
@@ -60,6 +61,7 @@ class GlobalErrorBoundary extends Component {
 
   componentDidCatch(error, errorInfo) {
     this.setState({ errorInfo });
+    trackGlobalError(error, { errorInfo, source: "react.error_boundary" });
     this.props.onError?.(error, errorInfo);
   }
 

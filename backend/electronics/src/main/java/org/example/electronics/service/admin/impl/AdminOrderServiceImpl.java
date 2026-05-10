@@ -9,6 +9,7 @@ import org.example.electronics.dto.response.admin.order.AdminOrderResponseDTO;
 import org.example.electronics.entity.enums.*;
 import org.example.electronics.entity.order.OrderEntity;
 import org.example.electronics.mapper.OrderMapper;
+import org.example.electronics.monitoring.MonitoringLogger;
 import org.example.electronics.repository.OrderRepository;
 import org.example.electronics.service.admin.AdminOrderService;
 import org.example.electronics.service.admin.AdminWarehouseTransactionService;
@@ -72,6 +73,9 @@ public class AdminOrderServiceImpl implements AdminOrderService {
                 ));
 
         validateAllTransition(existingOrderEntity, adminUpdateOrderRequestDTO);
+        OrderStatus oldOrderStatus = existingOrderEntity.getStatus();
+        PaymentStatus oldPaymentStatus = existingOrderEntity.getPaymentStatus();
+        ShippingStatus oldShippingStatus = existingOrderEntity.getShippingStatus();
 
         boolean isShipping = adminUpdateOrderRequestDTO.shippingStatus() == ShippingStatus.SHIPPING ||
                               adminUpdateOrderRequestDTO.shippingStatus() == ShippingStatus.DELIVERED;
@@ -94,6 +98,18 @@ public class AdminOrderServiceImpl implements AdminOrderService {
         if (adminUpdateOrderRequestDTO.paymentStatus() == PaymentStatus.PAID && existingOrderEntity.getPaidAt() == null) {
             existingOrderEntity.setPaidAt(LocalDateTime.now());
         }
+
+        MonitoringLogger.info(log, "order.admin_updated", MonitoringLogger.fields(
+                "newOrderStatus", existingOrderEntity.getStatus(),
+                "newPaymentStatus", existingOrderEntity.getPaymentStatus(),
+                "newShippingStatus", existingOrderEntity.getShippingStatus(),
+                "oldOrderStatus", oldOrderStatus,
+                "oldPaymentStatus", oldPaymentStatus,
+                "oldShippingStatus", oldShippingStatus,
+                "orderCode", existingOrderEntity.getCode(),
+                "orderId", existingOrderEntity.getId(),
+                "staffId", staffId
+        ));
 
         return orderMapper.toAdminResponseDTO(existingOrderEntity);
     }
@@ -220,7 +236,10 @@ public class AdminOrderServiceImpl implements AdminOrderService {
                 );
 
         if (order.getStatus() != OrderStatus.PENDING) {
-            log.warn("Đơn hàng {} không còn PENDING, bỏ qua việc hủy tự động.", orderId);
+            MonitoringLogger.warn(log, "order.expired_cancel.skipped", MonitoringLogger.fields(
+                    "orderId", orderId,
+                    "status", order.getStatus()
+            ));
             return;
         }
 
@@ -232,6 +251,11 @@ public class AdminOrderServiceImpl implements AdminOrderService {
 
         orderRepository.save(order);
 
-        log.info("Đã tự động hủy đơn hàng ID: {} do quá hạn và hoàn lại tồn kho.", order.getId());
+        MonitoringLogger.info(log, "order.expired_cancel.completed", MonitoringLogger.fields(
+                "orderCode", order.getCode(),
+                "orderId", order.getId(),
+                "paymentStatus", order.getPaymentStatus(),
+                "status", order.getStatus()
+        ));
     }
 }

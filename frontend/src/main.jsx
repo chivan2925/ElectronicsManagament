@@ -6,8 +6,11 @@ import App from "./App";
 import { CartProvider } from "./cart";
 import { GlobalErrorBoundary } from "./components/ui/feedback";
 import { ToastProvider } from "./components/ui/toast";
+import { installGlobalErrorTracking } from "./monitoring";
 import { WishlistProvider } from "./wishlist";
 import "./styles/index.css";
+
+installGlobalErrorTracking();
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>

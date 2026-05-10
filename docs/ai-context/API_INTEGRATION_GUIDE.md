@@ -79,6 +79,7 @@ Current behavior:
 - Defaults request timeout to `15000` ms.
 - Reads `accessToken` through `frontend/src/auth/authStorage.js`.
 - Adds `Authorization: Bearer <token>` automatically when a token is available.
+- Adds `X-Request-Id` automatically so frontend API failures can be correlated with backend structured logs.
 - Supports `skipAuth` for requests that must not send a bearer token.
 - Uses a shared response interceptor for normalized errors, retry handling, refresh handling, and `401` auth cleanup.
 - Attempts a single shared refresh-token request on eligible `401` responses only when a stored refresh token exists, then retries the original request once.
@@ -92,6 +93,7 @@ Current behavior:
 - Exposes reusable data-returning API helpers through `api.get`, `api.post`, `api.put`, `api.patch`, `api.delete`, and `api.request`.
 - Attaches normalized error details to Axios errors as `error.apiError` and `error.normalizedError`.
 - Dispatches global API error events for shared toast and alert feedback unless `skipGlobalErrorHandler` is set.
+- Logs final API failures through `frontend/src/monitoring/errorTracking.js` without integrating a real SaaS monitoring service.
 
 Environment example:
 
@@ -457,6 +459,7 @@ Normalized API errors include:
 - `path`
 - `method`
 - `url`
+- `requestId`
 - `isNetworkError`
 - `isTimeout`
 - `isUnauthorized`
@@ -473,3 +476,5 @@ Default frontend messages:
 
 Login-specific feedback remains in `errorUtils.js` and uses `normalizeApiError()` internally.
 Global UI feedback should use `apiErrorFeedback.js`, `apiErrorEvents.js`, `ApiErrorAlert`, and `ToastProvider` instead of duplicating status-specific messages in pages.
+
+Frontend monitoring helpers live in `frontend/src/monitoring`. Use `trackApiFailure`, `trackPaymentError`, `trackGlobalError`, and `trackRouteError` for reusable structured monitoring events, and keep any future SaaS transport behind the monitoring abstraction.

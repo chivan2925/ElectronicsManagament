@@ -11,6 +11,7 @@ import org.example.electronics.dto.request.user.payment.CreatePaymentLinkRequest
 import org.example.electronics.dto.response.user.payment.PaymentLinkResponseDTO;
 import org.example.electronics.dto.response.user.payment.PaymentStatusResponseDTO;
 import org.example.electronics.entity.enums.PaymentProvider;
+import org.example.electronics.monitoring.MonitoringLogger;
 import org.example.electronics.service.system.SystemPaymentService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -85,7 +86,11 @@ public class UserPaymentController {
                     .header(HttpHeaders.LOCATION, responseDTO.redirectUrl())
                     .build();
         } catch (Exception exception) {
-            log.error("VNPay return handling failed", exception);
+            MonitoringLogger.error(log, "payment.return.failed", MonitoringLogger.fields(
+                    "exception", exception.getClass().getSimpleName(),
+                    "message", exception.getMessage(),
+                    "provider", PaymentProvider.VNPAY
+            ), exception);
             return ResponseEntity.status(HttpStatus.FOUND)
                     .location(URI.create(buildFailedRedirect(PaymentProvider.VNPAY)))
                     .build();
@@ -105,7 +110,11 @@ public class UserPaymentController {
                     .header(HttpHeaders.LOCATION, responseDTO.redirectUrl())
                     .build();
         } catch (Exception exception) {
-            log.error("MoMo return handling failed", exception);
+            MonitoringLogger.error(log, "payment.return.failed", MonitoringLogger.fields(
+                    "exception", exception.getClass().getSimpleName(),
+                    "message", exception.getMessage(),
+                    "provider", PaymentProvider.MOMO
+            ), exception);
             return ResponseEntity.status(HttpStatus.FOUND)
                     .location(URI.create(buildFailedRedirect(PaymentProvider.MOMO)))
                     .build();

@@ -11,6 +11,8 @@ public record ErrorResponseDTO(
         int statusCode,
         String error,
         String message,
-        Object details
+        Object details,
+        String path,
+        String requestId
 ) {
 }

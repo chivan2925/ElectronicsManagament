@@ -1,6 +1,7 @@
 package org.example.electronics.security;
 
 import lombok.RequiredArgsConstructor;
+import org.example.electronics.monitoring.MonitoringLogger;
 import org.example.electronics.security.auth.admin.StaffDetailsService;
 import org.example.electronics.security.jwt.JwtAuthEntryPoint;
 import org.example.electronics.security.jwt.JwtAuthenticationFilter;
@@ -87,7 +88,7 @@ public class SecurityConfig {
         ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
-        config.setExposedHeaders(List.of("Authorization"));
+        config.setExposedHeaders(List.of("Authorization", MonitoringLogger.REQUEST_ID_HEADER));
         config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

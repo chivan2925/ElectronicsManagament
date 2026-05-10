@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.electronics.monitoring.MonitoringLogger;
 import org.example.electronics.repository.InvalidatedTokenRepository;
 import org.example.electronics.security.auth.admin.StaffDetailsService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -52,12 +53,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(authenticationToken);
                 }
                 else {
-                    log.warn("Cảnh báo: Phát hiện Token đã bị đăng xuất cố tình truy cập. TokenId: {}", tokenId);
+                    MonitoringLogger.warn(log, "auth.invalidated_token_used", MonitoringLogger.fields(
+                            "method", httpServletRequest.getMethod(),
+                            "path", httpServletRequest.getRequestURI(),
+                            "tokenId", tokenId
+                    ));
                 }
             }
         }
         catch (Exception e) {
-            log.error("Không thể thiết lập xác thực người dùng: {}", e.getMessage());
+            MonitoringLogger.warn(log, "auth.jwt_filter_failed", MonitoringLogger.fields(
+                    "exception", e.getClass().getSimpleName(),
+                    "message", e.getMessage(),
+                    "method", httpServletRequest.getMethod(),
+                    "path", httpServletRequest.getRequestURI()
+            ));
         }
 
         filterChain.doFilter(httpServletRequest, httpServletResponse);

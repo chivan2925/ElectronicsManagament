@@ -88,6 +88,8 @@ The customer ecommerce experience now has a reusable trust-signal foundation, st
 
 The frontend now has production-oriented route loading with route-level lazy loading, route preloading hooks, shared route/deferred-section loading boundaries, deferred header search/cart overlays, below-fold storefront section splitting, an optimized image component foundation, and targeted memoization for repeated ecommerce rows/carousels. The shared API client now has in-flight GET request deduplication plus opt-in TTL caching, and catalog product listing/detail flows avoid N+1 detail fetches. The production build emits route/vendor chunks instead of one large JavaScript bundle.
 
+The frontend and backend now have a no-SaaS logging and monitoring foundation. Frontend monitoring lives under `frontend/src/monitoring` with structured client logs, a local monitoring buffer, global error tracking, API failure tracking, payment error tracking, route preload/error tracking, route-change hooks, and `X-Request-Id` propagation from the shared API client. Backend monitoring lives under `backend/electronics/src/main/java/org/example/electronics/monitoring` with structured key-value logging helpers and request correlation through `X-Request-Id`/MDC. Auth, order, payment, webhook, unauthorized, and exception flows now emit reusable structured events.
+
 The Phase 6 completion review tightened customer ecommerce UX consistency across search, reviews, wishlist, recommendations, cart, checkout, order tracking, notifications, responsive behavior, animations, and performance without a large redesign. Internal storefront header and notification navigation now stays within React Router, search and wishlist states reuse cleaner shared patterns, product identity matching is centralized, PLP search normalization handles punctuation and Vietnamese/no-accent queries more consistently, and cart recommendations use the optimized image foundation.
 
 Phase 2 cleanup normalized shared/admin visual patterns for cards, borders, shadows, hover states, focus states, icon buttons, typography usage, and responsive behavior without a large rewrite.
@@ -502,7 +504,7 @@ Latest validation:
 - `npm run lint` and `npm run build` passed in `frontend/` after adding the reusable admin CRUD foundation. Build still reports the existing Vite chunk-size warning.
 - Local Vite route smoke checks returned `200` for `/cart` and `/checkout` after connecting checkout/order creation.
 - `mvn clean compile -DskipTests` passed in `backend/electronics/` after adding auth error handlers.
-- `mvn test` failed due existing backend context issues: missing `AddressMapper` bean for `AdminAddressServiceImpl` and a database DDL migration warning for `media.display_order` containing null values.
+- Earlier backend test runs exposed ApplicationContext/schema issues; the latest `mvn test` validation now passes, while the local PostgreSQL `media.display_order` DDL warning remains.
 - Backend payment startup placeholders were aligned so `VNPayUtils` and `MomoUtils` read `payment.*` keys (with fallback to legacy `electronics.app.*` keys), removing the previous missing-placeholder startup crash.
 - `mvn clean spring-boot:run` now reaches web-server startup, but local run still fails on machines where port `8080` is already used by another process.
 - `mvn spring-boot:run --server.port=8081` was verified to start successfully; `http://localhost:8081/swagger-ui/index.html` returned `200`.
@@ -555,6 +557,7 @@ Latest validation:
 - `npm run lint`, `npm run build`, and `git diff --check` passed after adding the storefront SEO foundation. `git diff --check` reported only CRLF normalization warnings for edited frontend files.
 - `npm run lint`, `npm run build`, `git diff --check`, and local route smoke checks passed after upgrading the ecommerce image system. Smoke checks returned `200` for `/`, `/products`, `/products/:slug`, `/cart`, `/checkout`, `/admin/media`, and `/admin/products`; `git diff --check` reported only CRLF normalization warnings for edited frontend files.
 - `npm run lint`, `npm run build`, `git diff --check`, targeted dependency duplication checks with `npm ls react react-dom framer-motion lucide-react recharts axios`, and local route smoke checks passed after the production frontend architecture optimization. The main app chunk is about 105 kB, React/router/motion/http are cacheable vendor chunks, Product Detail route chunk is about 34 kB, and PLP/PDP catalog flows no longer issue per-product detail requests for listing cards.
+- `npm run lint`, `npm run build`, `git diff --check`, `mvn -q -DskipTests compile`, and `mvn test` passed after adding the frontend/backend logging and monitoring foundation. `mvn test` still printed the existing local PostgreSQL `media.display_order` DDL warning.
 
 ## Known Issues
 
@@ -569,7 +572,6 @@ Latest validation:
 - Client checkout/profile routes are customer-session only in the frontend; backend account ownership enforcement should still be tightened when public customer auth is implemented.
 - The frontend refresh-token flow is ready, but the current backend admin auth controller only exposes login/logout; real refresh requires backend `refreshToken` response support and `POST /admin/auth/refresh`.
 - `/checkout` is frontend-auth protected and creates backend orders with VNPay Sandbox and MoMo Sandbox handoff; production payment credentials, deployed return URLs, and customer-auth ownership enforcement are not production-ready.
-- Backend `mvn test` is blocked by existing ApplicationContext issues unrelated to the login UI integration.
 - Backend local startup may fail if port `8080` is occupied by another local service; run on another port or free `8080`.
 - Existing local PostgreSQL schema is partially legacy and still needs controlled migration/backfill for non-auth tables instead of relying on Hibernate `ddl-auto:update`.
 - Backend Category API currently does not expose `description` in request/response DTOs; category description in admin UI is session-level until backend contract is extended.
@@ -619,6 +621,7 @@ Backend also includes:
 - VNPay and Momo webhooks.
 - VNPay Sandbox and MoMo Sandbox checkout handoff APIs.
 - Cloudinary upload support.
+- Structured logging helpers and request correlation through `X-Request-Id`/MDC for production observability groundwork.
 
 Backend gaps:
 

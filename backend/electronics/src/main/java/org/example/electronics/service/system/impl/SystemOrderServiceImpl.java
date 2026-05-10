@@ -7,6 +7,7 @@ import org.example.electronics.entity.enums.OrderStatus;
 import org.example.electronics.entity.enums.PaymentStatus;
 import org.example.electronics.entity.enums.ShippingStatus;
 import org.example.electronics.entity.order.OrderEntity;
+import org.example.electronics.monitoring.MonitoringLogger;
 import org.example.electronics.repository.OrderRepository;
 import org.example.electronics.service.admin.AdminWarehouseTransactionService;
 import org.example.electronics.service.system.SystemOrderService;
@@ -32,7 +33,10 @@ public class SystemOrderServiceImpl implements SystemOrderService {
         OrderStatus oldStatus = order.getStatus();
 
         if (oldStatus != OrderStatus.PENDING) {
-            log.warn("Đơn hàng {} không ở trạng thái PENDING. Bỏ qua trigger tự động.", orderId);
+            MonitoringLogger.warn(log, "order.payment_confirm.skipped", MonitoringLogger.fields(
+                    "orderId", orderId,
+                    "status", oldStatus
+            ));
             return;
         }
 
@@ -44,7 +48,12 @@ public class SystemOrderServiceImpl implements SystemOrderService {
 
         orderRepository.save(order);
 
-        log.info("Đã ghi nhận thanh toán thành công và tự động xuất kho cho đơn hàng ID: {}", orderId);
+        MonitoringLogger.info(log, "order.payment_confirm.completed", MonitoringLogger.fields(
+                "orderCode", order.getCode(),
+                "orderId", orderId,
+                "paymentStatus", order.getPaymentStatus(),
+                "status", order.getStatus()
+        ));
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -57,7 +66,11 @@ public class SystemOrderServiceImpl implements SystemOrderService {
                 .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy đơn hàng ID: " + orderId));
 
         if (order.getPaymentStatus() == PaymentStatus.PAID || order.getStatus() != OrderStatus.PENDING) {
-            log.warn("Đơn hàng {} không còn ở trạng thái chờ thanh toán. Bỏ qua đóng đơn chưa thanh toán.", orderId);
+            MonitoringLogger.warn(log, "order.unpaid_close.skipped", MonitoringLogger.fields(
+                    "orderId", orderId,
+                    "paymentStatus", order.getPaymentStatus(),
+                    "status", order.getStatus()
+            ));
             return;
         }
 
@@ -69,6 +82,11 @@ public class SystemOrderServiceImpl implements SystemOrderService {
         adminWarehouseTransactionService.autoCreateUnreservedTransactionForOrder(order, null);
         orderRepository.save(order);
 
-        log.info("Đã đóng đơn hàng chưa thanh toán ID: {} với trạng thái {}", orderId, paymentStatus);
+        MonitoringLogger.info(log, "order.unpaid_close.completed", MonitoringLogger.fields(
+                "orderCode", order.getCode(),
+                "orderId", orderId,
+                "paymentStatus", order.getPaymentStatus(),
+                "status", order.getStatus()
+        ));
     }
 }

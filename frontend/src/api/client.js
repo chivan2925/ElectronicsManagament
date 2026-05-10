@@ -17,6 +17,7 @@ export { ACCESS_TOKEN_KEY };
 export { clearApiCache, getApiCacheStats } from "./apiCache";
 
 const RETRYABLE_METHODS = new Set(["get", "head", "options"]);
+const REQUEST_ID_HEADER = "X-Request-Id";
 
 export { API_CONFIG };
 
@@ -27,6 +28,14 @@ function setRequestHeader(headers, key, value) {
   }
 
   headers[key] = value;
+}
+
+function createClientRequestId() {
+  if (globalThis.crypto?.randomUUID) {
+    return globalThis.crypto.randomUUID();
+  }
+
+  return `req-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
 const client = axios.create({
@@ -45,6 +54,8 @@ client.interceptors.request.use((config) => {
   config.retry = config.retry ?? RETRYABLE_METHODS.has(method);
   config.retryCount = config.retryCount ?? 1;
   config.retryDelay = config.retryDelay ?? 500;
+  config.requestId = config.requestId ?? createClientRequestId();
+  setRequestHeader(config.headers, REQUEST_ID_HEADER, config.requestId);
 
   if (token && !config.skipAuth) {
     setRequestHeader(config.headers, "Authorization", `Bearer ${token}`);

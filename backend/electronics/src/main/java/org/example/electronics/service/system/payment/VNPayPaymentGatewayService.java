@@ -2,11 +2,13 @@ package org.example.electronics.service.system.payment;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.electronics.config.payment.VNPayConfig;
 import org.example.electronics.dto.response.user.payment.PaymentLinkResponseDTO;
 import org.example.electronics.entity.PaymentTransactionEntity;
 import org.example.electronics.entity.enums.PaymentProvider;
 import org.example.electronics.entity.order.OrderEntity;
+import org.example.electronics.monitoring.MonitoringLogger;
 import org.example.electronics.util.payment.VNPayUtils;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +17,7 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class VNPayPaymentGatewayService implements PaymentGatewayService {
 
     private final VNPayConfig vnPayConfig;
@@ -47,6 +50,13 @@ public class VNPayPaymentGatewayService implements PaymentGatewayService {
                 vnPayUtils.buildQueryString(vnpParams) +
                 "&vnp_SecureHash=" +
                 vnPayUtils.createSecureHash(vnpParams);
+
+        MonitoringLogger.info(log, "payment.gateway.link_created", MonitoringLogger.fields(
+                "amount", amount,
+                "orderId", order.getId(),
+                "provider", PaymentProvider.VNPAY,
+                "transactionId", transaction.getId()
+        ));
 
         return new PaymentLinkResponseDTO(
                 paymentUrl,

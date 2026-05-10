@@ -2,6 +2,7 @@ package org.example.electronics.service.user.impl;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.electronics.dto.request.user.order.UserCreateOrderItemRequestDTO;
 import org.example.electronics.dto.request.user.order.UserCreateOrderRequestDTO;
 import org.example.electronics.dto.response.admin.order.AdminOrderDetailResponseDTO;
@@ -19,6 +20,7 @@ import org.example.electronics.entity.enums.UserStatus;
 import org.example.electronics.entity.order.OrderDetailEntity;
 import org.example.electronics.entity.order.OrderEntity;
 import org.example.electronics.mapper.OrderMapper;
+import org.example.electronics.monitoring.MonitoringLogger;
 import org.example.electronics.repository.CouponRepository;
 import org.example.electronics.repository.OrderRepository;
 import org.example.electronics.repository.UserRepository;
@@ -39,6 +41,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserOrderServiceImpl implements UserOrderService {
 
     private final AdminWarehouseTransactionService adminWarehouseTransactionService;
@@ -55,6 +58,11 @@ public class UserOrderServiceImpl implements UserOrderService {
                 .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy người dùng với id: " + requestDTO.userId()));
 
         if (user.getStatus() != UserStatus.ACTIVE) {
+            MonitoringLogger.warn(log, "order.create.rejected", MonitoringLogger.fields(
+                    "reason", "inactive_user",
+                    "userId", requestDTO.userId(),
+                    "userStatus", user.getStatus()
+            ));
             throw new IllegalStateException("Tài khoản không đủ điều kiện đặt hàng");
         }
 
@@ -93,6 +101,17 @@ public class UserOrderServiceImpl implements UserOrderService {
 
         OrderEntity savedOrder = orderRepository.save(order);
         adminWarehouseTransactionService.autoCreateReservedWarehouseTransactionForOrder(savedOrder, null);
+
+        MonitoringLogger.info(log, "order.created", MonitoringLogger.fields(
+                "couponApplied", coupon != null,
+                "itemCount", orderDetails.size(),
+                "orderCode", savedOrder.getCode(),
+                "orderId", savedOrder.getId(),
+                "paymentMethod", savedOrder.getPaymentMethodType(),
+                "subtotal", subtotal,
+                "total", total,
+                "userId", user.getId()
+        ));
 
         return orderMapper.toAdminDetailResponseDTO(savedOrder);
     }

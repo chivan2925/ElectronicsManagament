@@ -8,6 +8,16 @@ Always update this file after meaningful work.
 
 ## 2026-05-10
 
+### Logging And Monitoring Foundation
+
+- Added `frontend/src/monitoring` with structured client logging, local buffering, global error tracking, API failure tracking, payment error tracking, route preload/error tracking, and optional route-change tracking.
+- Added frontend `X-Request-Id` propagation from the shared Axios client and normalized API errors now include request ids when available.
+- Added backend `MonitoringLogger` and `RequestMonitoringFilter` for structured key-value logs, MDC request correlation, and `X-Request-Id` response headers.
+- Added structured backend events for auth login/logout/unauthorized/JWT failures, order creation/admin updates/system payment transitions, payment link creation, VNPay/MoMo callback outcomes, payment return/IPN failures, and handled/unhandled exceptions.
+- Improved backend error responses with `path` and `requestId` fields while keeping the existing status/message/details shape.
+- Updated `CURRENT_STATE.md`, `NEXT_TASKS.md`, `FRONTEND_GUIDE.md`, and `API_INTEGRATION_GUIDE.md`.
+- Verified `npm run lint`, `npm run build`, `git diff --check`, `mvn -q -DskipTests compile`, and `mvn test`.
+
 ### Frontend Production Architecture Optimization
 
 - Added `frontend/src/api/apiCache.js` and wired the shared Axios helper for in-flight GET request deduplication, opt-in TTL caching, and cache invalidation after successful mutations.

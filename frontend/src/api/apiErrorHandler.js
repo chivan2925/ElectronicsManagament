@@ -1,4 +1,5 @@
 import { clearAuthSession, getStoredRefreshToken, notifyAuthUnauthorized } from "../auth/authStorage";
+import { trackApiFailure } from "../monitoring";
 import { notifyGlobalApiError } from "./apiErrorEvents";
 import { normalizeApiError } from "./normalizeApiError";
 import { refreshAccessToken } from "./refreshTokenService";
@@ -117,6 +118,10 @@ export function createApiErrorHandler(client) {
         return client.request(error.config);
       } catch {
         handleUnauthorizedApiError(error, apiError);
+        trackApiFailure(error, apiError, {
+          operation: "auth_refresh_retry",
+          refreshAttempted: true,
+        });
         notifyGlobalApiError(error, apiError);
         return Promise.reject(error);
       }
@@ -131,6 +136,10 @@ export function createApiErrorHandler(client) {
     }
 
     notifyGlobalApiError(error, apiError);
+    trackApiFailure(error, apiError, {
+      operation: "api_request",
+      refreshAttempted: Boolean(error?.config?.__isRetryAfterRefresh),
+    });
 
     return Promise.reject(error);
   };

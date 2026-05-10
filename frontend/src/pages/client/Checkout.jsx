@@ -25,6 +25,7 @@ import { useToast } from "../../components/ui/toast";
 import useCheckoutCoupon from "../../hooks/useCheckoutCoupon";
 import useCheckoutOrder from "../../hooks/useCheckoutOrder";
 import useCheckoutProfile from "../../hooks/useCheckoutProfile";
+import { trackPaymentError } from "../../monitoring";
 import { fadeUp, staggerContainer } from "../../styles/animations";
 import { formatCurrency } from "../../utils/formatters";
 
@@ -324,6 +325,8 @@ function Checkout() {
       return;
     }
 
+    let paymentOrderId = null;
+
     try {
       const order = await createOrder({
         appliedCoupon,
@@ -332,6 +335,7 @@ function Checkout() {
         shippingMethod: selectedShippingMethod,
         values,
       });
+      paymentOrderId = order.id;
 
       if (selectedPaymentMethod.apiValue === "DIGITAL") {
         setPaymentHandoff({ error: null, isRedirecting: true });
@@ -359,6 +363,14 @@ function Checkout() {
         title: "Đặt hàng thành công",
       });
     } catch (error) {
+      if (selectedPaymentMethod.apiValue === "DIGITAL") {
+        trackPaymentError(error, {
+          operation: "checkout_payment_handoff",
+          orderId: paymentOrderId,
+          provider: selectedPaymentMethod.provider,
+        });
+      }
+
       setOrderPlaced(false);
       setPaymentHandoff({
         error: selectedPaymentMethod.apiValue === "DIGITAL" ? error : null,

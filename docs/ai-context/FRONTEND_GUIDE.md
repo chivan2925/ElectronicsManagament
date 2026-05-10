@@ -190,6 +190,11 @@ frontend/src/
 │  ├─ useRecentSearches.js
 │  ├─ useSearch.js
 │  └─ useWishlist.js
+├─ monitoring/
+│  ├─ RouteChangeTracker.jsx
+│  ├─ errorTracking.js
+│  ├─ index.js
+│  └─ logger.js
 ├─ layouts/
 │  └─ AdminLayout.jsx
 ├─ pages/
@@ -307,6 +312,15 @@ Use `useAdminTable`, `useAdminFilters`, `useAdminPagination`, and `useAdminModal
 - Shared request deduplication and opt-in short TTL caching live in `src/api/apiCache.js` and are wired through `src/api/client.js`.
 - Use cache TTLs only for read-only data where brief staleness is acceptable. Admin mutations should rely on the client cache clear after successful non-read requests.
 - Memoize only where it avoids repeated derived data work or stabilizes heavy product-card/carousel handlers.
+
+## Monitoring Foundation
+
+- Frontend monitoring helpers live in `src/monitoring`.
+- `logger.js` owns structured client log events, a local monitoring buffer, sanitization, and an optional transport hook for future integrations.
+- `errorTracking.js` owns global error, unhandled rejection, API failure, payment error, route preload/error, and optional route-change tracking helpers.
+- `RouteChangeTracker.jsx` is mounted once from `App.jsx` and only records route changes when `VITE_MONITOR_ROUTE_CHANGES=true`.
+- The shared API client adds `X-Request-Id` to requests so frontend API failures can be correlated with backend logs.
+- Do not call a real monitoring SaaS directly from components; add a transport through the monitoring abstraction when production tooling is selected.
 
 ## Routing Rules
 

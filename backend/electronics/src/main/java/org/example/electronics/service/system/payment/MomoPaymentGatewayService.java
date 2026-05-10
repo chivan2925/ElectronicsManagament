@@ -8,6 +8,7 @@ import org.example.electronics.dto.response.user.payment.PaymentLinkResponseDTO;
 import org.example.electronics.entity.PaymentTransactionEntity;
 import org.example.electronics.entity.enums.PaymentProvider;
 import org.example.electronics.entity.order.OrderEntity;
+import org.example.electronics.monitoring.MonitoringLogger;
 import org.example.electronics.util.payment.MomoUtils;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -104,10 +105,23 @@ public class MomoPaymentGatewayService implements PaymentGatewayService {
         String paymentUrl = valueOf(response.get("payUrl"));
 
         if (!"0".equals(resultCode) || paymentUrl.isBlank()) {
+            MonitoringLogger.warn(log, "payment.gateway.link_rejected", MonitoringLogger.fields(
+                    "message", valueOf(response.get("message")),
+                    "orderId", order.getId(),
+                    "provider", PaymentProvider.MOMO,
+                    "responseCode", resultCode,
+                    "transactionId", transaction.getId()
+            ));
             throw new IllegalStateException("MoMo sandbox tạo thanh toán thất bại: " + valueOf(response.get("message")));
         }
 
-        log.info("MoMo sandbox payment URL created for order {}", order.getId());
+        MonitoringLogger.info(log, "payment.gateway.link_created", MonitoringLogger.fields(
+                "amount", amount,
+                "orderId", order.getId(),
+                "provider", PaymentProvider.MOMO,
+                "responseCode", resultCode,
+                "transactionId", transaction.getId()
+        ));
 
         return new PaymentLinkResponseDTO(
                 paymentUrl,

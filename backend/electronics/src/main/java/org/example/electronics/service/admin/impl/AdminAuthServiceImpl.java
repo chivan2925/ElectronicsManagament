@@ -6,6 +6,7 @@ import org.example.electronics.dto.request.admin.AdminLoginRequestDTO;
 import org.example.electronics.dto.response.admin.AdminLoginResponseDTO;
 import org.example.electronics.entity.InvalidatedTokenEntity;
 import org.example.electronics.entity.StaffEntity;
+import org.example.electronics.monitoring.MonitoringLogger;
 import org.example.electronics.repository.InvalidatedTokenRepository;
 import org.example.electronics.security.auth.admin.StaffDetails;
 import org.example.electronics.security.jwt.JwtUtils;
@@ -31,12 +32,26 @@ public class AdminAuthServiceImpl implements AdminAuthService {
 
     @Override
     public AdminLoginResponseDTO login(AdminLoginRequestDTO adminLoginRequestDTO) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        adminLoginRequestDTO.email(),
-                        adminLoginRequestDTO.password()
-                )
-        );
+        String maskedEmail = MonitoringLogger.maskEmail(adminLoginRequestDTO.email());
+        MonitoringLogger.info(log, "auth.login.attempt", MonitoringLogger.fields("email", maskedEmail));
+
+        Authentication authentication;
+
+        try {
+            authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            adminLoginRequestDTO.email(),
+                            adminLoginRequestDTO.password()
+                    )
+            );
+        } catch (RuntimeException exception) {
+            MonitoringLogger.warn(log, "auth.login.failure", MonitoringLogger.fields(
+                    "email", maskedEmail,
+                    "exception", exception.getClass().getSimpleName(),
+                    "message", exception.getMessage()
+            ));
+            throw exception;
+        }
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
@@ -47,6 +62,12 @@ public class AdminAuthServiceImpl implements AdminAuthService {
         Objects.requireNonNull(staffDetails, "Lỗi hệ thống: StaffDetails không được null sau khi đã xác thực thành công");
 
         StaffEntity staffEntity = staffDetails.staffEntity();
+
+        MonitoringLogger.info(log, "auth.login.success", MonitoringLogger.fields(
+                "email", MonitoringLogger.maskEmail(staffEntity.getEmail()),
+                "role", staffEntity.getRole() == null ? null : staffEntity.getRole().getName(),
+                "staffId", staffEntity.getId()
+        ));
 
         return new AdminLoginResponseDTO(
                 jwt,
@@ -60,6 +81,9 @@ public class AdminAuthServiceImpl implements AdminAuthService {
     @Override
     public void logout(String authHeader) {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            MonitoringLogger.warn(log, "auth.logout.invalid_request", MonitoringLogger.fields(
+                    "reason", "missing_bearer_token"
+            ));
             return;
         }
 
@@ -77,9 +101,16 @@ public class AdminAuthServiceImpl implements AdminAuthService {
                     .build();
 
             invalidatedTokenRepository.save(invalidatedToken);
+            MonitoringLogger.info(log, "auth.logout.success", MonitoringLogger.fields(
+                    "expiresAt", expiryTime,
+                    "tokenId", tokenId
+            ));
         }
         catch (Exception e) {
-            log.warn("Lỗi khi xử lý logout token: {}", e.getMessage());
+            MonitoringLogger.warn(log, "auth.logout.failure", MonitoringLogger.fields(
+                    "exception", e.getClass().getSimpleName(),
+                    "message", e.getMessage()
+            ), e);
         }
     }
 }

@@ -30,6 +30,20 @@ function getStatus(error, data) {
   return data?.statusCode ?? data?.status ?? error?.response?.status ?? 0;
 }
 
+function getResponseHeader(error, key) {
+  const headers = error?.response?.headers;
+
+  if (!headers) {
+    return null;
+  }
+
+  if (typeof headers.get === "function") {
+    return headers.get(key);
+  }
+
+  return headers[key] ?? headers[key.toLowerCase()] ?? null;
+}
+
 function isTimeoutError(error) {
   const message = String(error?.message ?? "").toLowerCase();
 
@@ -109,6 +123,7 @@ export function normalizeApiError(error) {
     message: getErrorMessage(type, data, error),
     method: error?.config?.method?.toUpperCase() ?? null,
     path: data?.path ?? error?.config?.url ?? null,
+    requestId: data?.requestId ?? getResponseHeader(error, "x-request-id") ?? error?.config?.requestId ?? null,
     status,
     type,
     url: error?.config?.url ?? null,
