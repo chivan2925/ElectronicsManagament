@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import cartService from "../api/cartService";
+import productService from "../api/productService";
 import useAuth from "../auth/useAuth";
 import CartContext from "./CartContext";
 import {
@@ -65,6 +66,46 @@ function mergeCartItems(...groups) {
   });
 
   return Array.from(mergedItems.values());
+}
+
+function hasCartVariantIdentity(product = {}, options = {}) {
+  if (options.variant?.id || options.variant?.variantId || product.variantId) {
+    return true;
+  }
+
+  return Array.isArray(product.variants) && product.variants.some((variant) => variant?.id || variant?.variantId);
+}
+
+async function resolveProductForCartItem(product = {}, options = {}) {
+  if (hasCartVariantIdentity(product, options)) {
+    return product;
+  }
+
+  const productId = product.apiId ?? product.productId ?? product.id;
+
+  try {
+    if (productId && /^\d+$/.test(String(productId))) {
+      const detail = await productService.getCatalogProductById(productId, {
+        cacheTtl: 15_000,
+        skipGlobalErrorHandler: true,
+      });
+
+      return detail?.product ?? product;
+    }
+
+    if (product.slug) {
+      const detail = await productService.getCatalogProductBySlug(product.slug, {
+        cacheTtl: 15_000,
+        skipGlobalErrorHandler: true,
+      });
+
+      return detail?.product ?? product;
+    }
+  } catch {
+    return product;
+  }
+
+  return product;
 }
 
 function CartProvider({ children }) {
@@ -254,60 +295,176 @@ function CartProvider({ children }) {
     }
   }, [canSyncCart, items]);
 
-  const addItem = useCallback((product, options = {}) => {
-    const item = createCartItem(product, options);
+  const addItem = useCallback(
+    async (product, options = {}) => {
+      const resolvedProduct = await resolveProductForCartItem(product, options);
+      const item = createCartItem(resolvedProduct, options);
 
-    if (item.maxQuantity <= 0) {
-      return {
-        item,
-        ok: false,
-        reason: "out_of_stock",
-      };
-    }
-
-    setItems((currentItems) => {
-      const existingItem = currentItems.find((currentItem) => currentItem.id === item.id);
-
-      if (!existingItem) {
-        return [...currentItems, item];
+      if (!hasCartVariantIdentity(resolvedProduct, options) && canSyncCart) {
+        return {
+          item,
+          ok: false,
+          reason: "missing_variant",
+        };
       }
 
-      return currentItems.map((currentItem) =>
-        currentItem.id === item.id
-          ? {
-              ...currentItem,
-              quantity: clampCartQuantity(currentItem.quantity + item.quantity, currentItem.maxQuantity),
-            }
-          : currentItem,
+      if (item.maxQuantity <= 0) {
+        return {
+          item,
+          ok: false,
+          reason: "out_of_stock",
+        };
+      }
+
+      if (canSyncCart) {
+        setIsSyncing(true);
+        setSyncError(null);
+        try {
+          const remoteCart = await cartService.addCartItem(item);
+
+          isApplyingRemoteRef.current = true;
+          isRemoteReadyRef.current = true;
+          lastSyncedSignatureRef.current = getCartSyncSignature(remoteCart.items);
+          setItems(remoteCart.items);
+          setSyncMode("remote");
+
+          return { item, ok: true };
+        } catch (error) {
+          setSyncError(error);
+          setSyncMode("offline");
+          return { item, ok: false, error };
+        } finally {
+          setIsSyncing(false);
+          window.setTimeout(() => {
+            isApplyingRemoteRef.current = false;
+          }, 0);
+        }
+      }
+
+      setItems((currentItems) => {
+        const existingItem = currentItems.find((currentItem) => currentItem.id === item.id);
+
+        if (!existingItem) {
+          return [...currentItems, item];
+        }
+
+        return currentItems.map((currentItem) =>
+          currentItem.id === item.id
+            ? {
+                ...currentItem,
+                quantity: clampCartQuantity(currentItem.quantity + item.quantity, currentItem.maxQuantity),
+              }
+            : currentItem,
+        );
+      });
+
+      return {
+        item,
+        ok: true,
+      };
+    },
+    [canSyncCart],
+  );
+
+  const updateQuantity = useCallback(
+    async (itemId, nextQuantity) => {
+      const itemToUpdate = itemsRef.current.find((item) => item.id === itemId);
+      if (!itemToUpdate) return;
+
+      const quantity = clampCartQuantity(nextQuantity, itemToUpdate.maxQuantity);
+
+      if (canSyncCart && itemToUpdate.variantId) {
+        setIsSyncing(true);
+        setSyncError(null);
+        try {
+          const remoteCart = await cartService.updateCartItem(itemToUpdate.variantId, quantity);
+
+          isApplyingRemoteRef.current = true;
+          lastSyncedSignatureRef.current = getCartSyncSignature(remoteCart.items);
+          setItems(remoteCart.items);
+          setSyncMode("remote");
+          return;
+        } catch (error) {
+          setSyncError(error);
+          setSyncMode("offline");
+        } finally {
+          setIsSyncing(false);
+          window.setTimeout(() => {
+            isApplyingRemoteRef.current = false;
+          }, 0);
+        }
+      }
+
+      setItems((currentItems) =>
+        currentItems.map((item) =>
+          item.id === itemId
+            ? {
+                ...item,
+                quantity,
+              }
+            : item,
+        ),
       );
-    });
+    },
+    [canSyncCart],
+  );
 
-    return {
-      item,
-      ok: true,
-    };
-  }, []);
+  const removeItem = useCallback(
+    async (itemId) => {
+      const itemToRemove = itemsRef.current.find((item) => item.id === itemId);
 
-  const updateQuantity = useCallback((itemId, nextQuantity) => {
-    setItems((currentItems) =>
-      currentItems.map((item) =>
-        item.id === itemId
-          ? {
-              ...item,
-              quantity: clampCartQuantity(nextQuantity, item.maxQuantity),
-            }
-          : item,
-      ),
-    );
-  }, []);
+      if (canSyncCart && itemToRemove && itemToRemove.variantId) {
+        setIsSyncing(true);
+        setSyncError(null);
+        try {
+          const remoteCart = await cartService.removeCartItem(itemToRemove.variantId);
 
-  const removeItem = useCallback((itemId) => {
-    setItems((currentItems) => currentItems.filter((item) => item.id !== itemId));
-  }, []);
+          isApplyingRemoteRef.current = true;
+          lastSyncedSignatureRef.current = getCartSyncSignature(remoteCart.items);
+          setItems(remoteCart.items);
+          setSyncMode("remote");
+          return;
+        } catch (error) {
+          setSyncError(error);
+          setSyncMode("offline");
+        } finally {
+          setIsSyncing(false);
+          window.setTimeout(() => {
+            isApplyingRemoteRef.current = false;
+          }, 0);
+        }
+      }
 
-  const clearCart = useCallback(() => {
+      setItems((currentItems) => currentItems.filter((item) => item.id !== itemId));
+    },
+    [canSyncCart],
+  );
+
+  const clearCart = useCallback(async () => {
+    if (canSyncCart) {
+      setIsSyncing(true);
+      setSyncError(null);
+      try {
+        const remoteCart = await cartService.clearCart();
+
+        isApplyingRemoteRef.current = true;
+        lastSyncedSignatureRef.current = getCartSyncSignature(remoteCart.items);
+        setItems(remoteCart.items);
+        setSyncMode("remote");
+        return;
+      } catch (error) {
+        setSyncError(error);
+        setSyncMode("offline");
+      } finally {
+        setIsSyncing(false);
+        window.setTimeout(() => {
+          isApplyingRemoteRef.current = false;
+        }, 0);
+      }
+    }
+
     setItems([]);
-  }, []);
+  }, [canSyncCart]);
 
   const value = useMemo(() => {
     const itemCount = items.reduce((total, item) => total + item.quantity, 0);

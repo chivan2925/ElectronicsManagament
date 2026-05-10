@@ -8,6 +8,27 @@ Always update this file after meaningful work.
 
 ## 2026-05-11
 
+### Customer Cart PostgreSQL Fix
+
+- Fixed authenticated add-to-cart 500s caused by `CartRepository.findByUserIdWithItems` using `SELECT DISTINCT` across fetched `json` columns in PostgreSQL.
+- Changed the cart fetch query to avoid database-level distinct comparison and let `UserCartServiceImpl` select the loaded cart entity from the fetch result.
+- Smoke-tested authenticated `POST /api/cart/items`, `PATCH /api/cart/items/{variantId}`, and `DELETE /api/cart/items/{variantId}` against a local backend on port `8082`.
+- Verified `mvn -q -DskipTests compile` and `mvn test`; `mvn test` passed while logging the existing local order-cleanup scheduler warning for older seed data.
+
+### Customer Cart Database Seed
+
+- Updated `database/test.sql` so seeded carts are created from active users instead of assuming user ids `1..10` are always eligible.
+- Updated seeded cart items to reference only active variants with positive `total_stock`, and clamped seeded quantities to available variant stock.
+- Confirmed the cart flow persists authenticated customer add/update/remove quantity actions through `/api/cart` using the buyer id from the JWT customer principal.
+- Verified `mvn -q -DskipTests compile`, `npm run lint`, `npm run build`, and `git diff --check`; local `psql` is not installed, so the seed file was statically reviewed but not executed through PostgreSQL CLI.
+
+### Storefront Cart Variant Resolution
+
+- Added `defaultVariantId` to product catalog responses so storefront quick-add actions can send a real variant id to `/api/cart/items`.
+- Updated `CartProvider` to resolve missing variant identities from Product API detail before creating cart items, preventing product ids from being used as variant ids.
+- Fixed guest quick-add so missing variant identity is only blocking for authenticated customer cart sync, and ProductCard now distinguishes out-of-stock, variant, and API errors.
+- Verified `mvn -q -DskipTests compile`, `npm run lint`, `npm run build`, and `git diff --check`; `git diff --check` reported only LF-to-CRLF normalization warnings.
+
 ### Recently Viewed Hardcoded Cleanup
 
 - Removed the remaining hardcoded/mock catalog fallback from `useRecentlyViewed.js`.

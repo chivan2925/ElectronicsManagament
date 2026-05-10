@@ -251,6 +251,7 @@ export function normalizeProduct(raw = {}) {
     stock: getProductStock(data, variants),
     tags: [],
     updatedAt: toDateValue(firstDefined(data.updatedAt, data.updated_at, data.createdAt, data.created_at)),
+    variantId: firstDefined(data.defaultVariantId, data.variantId, null),
     variants,
     warrantyMonths: toNumber(firstDefined(data.warrantyMonths, data.warranty, 0), 0),
   };
