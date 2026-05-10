@@ -14,6 +14,10 @@ Phase 8 — Production + Deploy (Phase 7 completed)
 
 ## Recently Completed
 
+- Completed a senior maintainability cleanup across frontend API mappers/services and selected admin CRUD table flows.
+- Added shared `frontend/src/api/mapperUtils.js` for API payload unwrapping, array/page metadata normalization, status normalization, number handling, and service query cleanup.
+- Added `useAdminServerTableState` and applied it to Brands, Categories, Media, Orders, and Users to reduce repeated pagination/reload/table state logic without a large rewrite.
+- Verified `npm run lint` and `npm run build` after the cleanup pass.
 - Completed an ecommerce QA flow audit across register, login, search, product browsing, cart, checkout, payment result, order tracking routes, admin CRUD, media upload, and permissions.
 - Fixed login redirects so admin/staff sessions do not bounce through customer-only checkout/account routes.
 - Fixed category page filter behavior so route categories override stale `category` query params and category controls navigate consistently from `/categories/:categorySlug`.

@@ -1,15 +1,10 @@
 import { api } from "./client";
 import { buildBrandPayload, normalizeBrand, normalizeBrandDetail, normalizeBrandPage } from "./brandMapper";
+import { cleanParams } from "./mapperUtils";
 import { createResourceService } from "./resourceService";
 
 const RESOURCE_PATH = "/admin/brands";
 const baseBrandService = createResourceService(RESOURCE_PATH);
-
-function cleanParams(params = {}) {
-  return Object.fromEntries(
-    Object.entries(params).filter(([, value]) => value !== null && value !== undefined && value !== ""),
-  );
-}
 
 export async function getAll(params = {}, config = {}) {
   const data = await baseBrandService.getAll(cleanParams(params), config);

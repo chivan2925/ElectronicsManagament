@@ -1,4 +1,15 @@
 import { getImageFallbackSrc } from "../utils/imageFallbacks";
+import {
+  firstDefined,
+  getPageItems,
+  getPageMeta,
+  isPlainObject,
+  toArray,
+  toNumber,
+  unwrapApiPayload,
+} from "./mapperUtils";
+
+export { unwrapApiPayload } from "./mapperUtils";
 
 const DEFAULT_PRODUCT_STATUS = "ACTIVE";
 const PRODUCT_PLACEHOLDER_IMAGE = getImageFallbackSrc("product");
@@ -16,44 +27,6 @@ const CATEGORY_DESCRIPTIONS = {
   "tai nghe": "Âm trường rõ, micro sạch và kết nối ổn định để chơi game, họp online và nghe nhạc lâu dài.",
   "điện thoại": "Thiết kế cao cấp, hiệu năng ổn định và camera sắc nét cho nhu cầu làm việc, giải trí, quay chụp hằng ngày.",
 };
-
-export function unwrapApiPayload(data) {
-  if (data && typeof data === "object" && !Array.isArray(data)) {
-    return data.data ?? data.result ?? data.payload ?? data.body ?? data;
-  }
-
-  return data;
-}
-
-function isPlainObject(value) {
-  return Boolean(value && typeof value === "object" && !Array.isArray(value));
-}
-
-function toArray(value) {
-  if (!value) {
-    return [];
-  }
-
-  if (Array.isArray(value)) {
-    return value;
-  }
-
-  if (value instanceof Set) {
-    return Array.from(value);
-  }
-
-  return [];
-}
-
-function firstDefined(...values) {
-  return values.find((value) => value !== null && value !== undefined && value !== "");
-}
-
-function toNumber(value, fallback = 0) {
-  const number = Number(value);
-
-  return Number.isFinite(number) ? number : fallback;
-}
 
 function maybeNumber(value) {
   const number = Number(value);
@@ -80,46 +53,6 @@ export function createProductPlaceholderImage(product, width = 460, height = 360
   const label = product?.name ?? "ElectronicsManagement";
 
   return getImageFallbackSrc("product", label, { height, width });
-}
-
-function getPageItems(payload) {
-  const data = unwrapApiPayload(payload);
-
-  if (Array.isArray(data)) {
-    return data;
-  }
-
-  if (!isPlainObject(data)) {
-    return [];
-  }
-
-  return toArray(
-    data.content ??
-      data.items ??
-      data.products ??
-      data.records ??
-      data.results ??
-      data.list ??
-      data.rows ??
-      data.data,
-  );
-}
-
-function getPageMeta(payload, items) {
-  const data = unwrapApiPayload(payload);
-  const source = isPlainObject(data) ? data : {};
-  const page = source.page ?? source.pagination ?? {};
-  const pageNumber = firstDefined(source.number, source.pageNumber, source.currentPage, page.number, page.page, page.currentPage, 0);
-  const pageSize = firstDefined(source.size, source.pageSize, page.size, page.pageSize, items.length);
-  const totalItems = firstDefined(source.totalElements, source.totalItems, source.total, page.totalElements, page.totalItems, page.total, items.length);
-  const totalPages = firstDefined(source.totalPages, page.totalPages, Math.max(1, Math.ceil(toNumber(totalItems, items.length) / Math.max(toNumber(pageSize, items.length), 1))));
-
-  return {
-    page: toNumber(pageNumber, 0),
-    size: toNumber(pageSize, items.length),
-    totalItems: toNumber(totalItems, items.length),
-    totalPages: Math.max(1, toNumber(totalPages, 1)),
-  };
 }
 
 function getMediaList(raw) {

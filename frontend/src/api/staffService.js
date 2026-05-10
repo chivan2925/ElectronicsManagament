@@ -5,16 +5,11 @@ import {
   normalizeAdminStaff,
   normalizeAdminStaffPage,
 } from "./adminPeopleMapper";
+import { cleanParams } from "./mapperUtils";
 import { createResourceService } from "./resourceService";
 
 const RESOURCE_PATH = "/admin/staffs";
 const baseStaffService = createResourceService(RESOURCE_PATH);
-
-function cleanParams(params = {}) {
-  return Object.fromEntries(
-    Object.entries(params).filter(([, value]) => value !== null && value !== undefined && value !== ""),
-  );
-}
 
 export async function getAll(params = {}, config = {}) {
   const data = await baseStaffService.getAll(cleanParams(params), config);

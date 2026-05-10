@@ -1,17 +1,12 @@
 import { api } from "./client";
 import { buildUpdateProfilePayload, normalizeAccountProfile } from "./accountMapper";
 import { normalizeAdminUser, normalizeAdminUserPage } from "./adminPeopleMapper";
+import { cleanParams } from "./mapperUtils";
 import { createResourceService } from "./resourceService";
 
 const RESOURCE_PATH = import.meta.env.VITE_USER_API_PATH || "/admin/users";
 const ACCOUNT_RESOURCE_PATH = import.meta.env.VITE_USER_PROFILE_API_PATH || "/users";
 const adminUserService = createResourceService(RESOURCE_PATH);
-
-function cleanParams(params = {}) {
-  return Object.fromEntries(
-    Object.entries(params).filter(([, value]) => value !== null && value !== undefined && value !== ""),
-  );
-}
 
 export const { create, update } = adminUserService;
 

@@ -5,16 +5,11 @@ import {
   normalizeCategoryDetail,
   normalizeCategoryPage,
 } from "./categoryMapper";
+import { cleanParams } from "./mapperUtils";
 import { createResourceService } from "./resourceService";
 
 const RESOURCE_PATH = "/admin/categories";
 const baseCategoryService = createResourceService(RESOURCE_PATH);
-
-function cleanParams(params = {}) {
-  return Object.fromEntries(
-    Object.entries(params).filter(([, value]) => value !== null && value !== undefined && value !== ""),
-  );
-}
 
 export async function getAll(params = {}, config = {}) {
   const data = await baseCategoryService.getAll(cleanParams(params), config);

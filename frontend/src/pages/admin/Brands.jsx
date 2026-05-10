@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Eye, EyeOff, ImagePlus, Loader2, Pencil, Plus, Star, Trash2, UploadCloud } from "lucide-react";
 import brandService from "../../api/brandService";
 import { AdminDrawer, AdminFilters, AdminForm, AdminSearch, AdminTable, ConfirmDialog, StatusBadge } from "../../admin/components";
-import { ADMIN_MODAL_TYPES, useAdminModal, useDebouncedValue } from "../../admin/hooks";
+import { ADMIN_MODAL_TYPES, useAdminModal, useAdminServerTableState, useDebouncedValue } from "../../admin/hooks";
 import { ADMIN_RESOURCES } from "../../auth/roleHelpers";
 import usePermissions from "../../auth/usePermissions";
 import OptimizedImage from "../../components/common/OptimizedImage";
@@ -147,13 +147,7 @@ function Brands() {
   const [featuredFilter, setFeaturedFilter] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [page, setPage] = useState(0);
-  const [pageSize, setPageSize] = useState(10);
-  const [pageMeta, setPageMeta] = useState({
-    totalItems: 0,
-    totalPages: 1,
-  });
-  const [reloadKey, setReloadKey] = useState(0);
+  const { page, pageSize, pagination, refresh, reloadKey, resetPage, setPage, setPageMeta } = useAdminServerTableState();
   const [formValues, setFormValues] = useState(initialFormValues);
   const [formErrors, setFormErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
@@ -198,7 +192,7 @@ function Brands() {
     } finally {
       setLoading(false);
     }
-  }, [debouncedQuery, featuredFilter, page, pageSize, statusFilter]);
+  }, [debouncedQuery, featuredFilter, page, pageSize, setPageMeta, statusFilter]);
 
   useEffect(() => {
     loadBrands();
@@ -288,7 +282,7 @@ function Brands() {
       });
 
       if (!isEditMode) {
-        setReloadKey((value) => value + 1);
+        refresh();
       }
 
       toast.showSuccess(isEditMode ? "Đã cập nhật thương hiệu." : "Đã tạo thương hiệu mới.");
@@ -320,7 +314,7 @@ function Brands() {
       if (brands.length === 1 && page > 0) {
         setPage((value) => Math.max(0, value - 1));
       } else {
-        setReloadKey((value) => value + 1);
+        refresh();
       }
     } catch (requestError) {
       toast.showApiError(requestError, { title: "Xóa thương hiệu thất bại" });
@@ -612,7 +606,7 @@ function Brands() {
           disabled={loading}
           onChange={(nextValue) => {
             setQuery(nextValue);
-            setPage(0);
+            resetPage();
           }}
           placeholder="Tìm theo tên, slug hoặc mô tả thương hiệu..."
           value={query}
@@ -645,12 +639,12 @@ function Brands() {
               setFeaturedFilter(value);
             }
 
-            setPage(0);
+            resetPage();
           }}
           onReset={() => {
             setStatusFilter("");
             setFeaturedFilter("");
-            setPage(0);
+            resetPage();
           }}
           summary="Lọc theo trạng thái và nổi bật"
           title="Bộ lọc"
@@ -662,7 +656,7 @@ function Brands() {
         <ApiErrorAlert
           actionLabel="Tải lại"
           error={error}
-          onAction={() => setReloadKey((value) => value + 1)}
+          onAction={refresh}
           onDismiss={() => setError(null)}
           surface="admin"
         />
@@ -676,17 +670,7 @@ function Brands() {
         enablePagination
         loading={loading}
         manualPagination
-        pagination={{
-          onPageChange: (nextPage) => setPage(nextPage),
-          onPageSizeChange: (nextPageSize) => {
-            setPageSize(nextPageSize);
-            setPage(0);
-          },
-          page,
-          pageSize,
-          totalItems: pageMeta.totalItems,
-          totalPages: pageMeta.totalPages,
-        }}
+        pagination={pagination}
         rowActions={rowActions}
       />
 

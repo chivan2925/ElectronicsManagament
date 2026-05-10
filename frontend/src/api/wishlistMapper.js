@@ -1,40 +1,5 @@
-import { normalizeProduct, unwrapApiPayload } from "./productMapper";
-
-function isPlainObject(value) {
-  return Boolean(value && typeof value === "object" && !Array.isArray(value));
-}
-
-function toArray(value) {
-  return Array.isArray(value) ? value : [];
-}
-
-function firstDefined(...values) {
-  return values.find((value) => value !== null && value !== undefined && value !== "");
-}
-
-function getPageItems(payload) {
-  const data = unwrapApiPayload(payload);
-
-  if (Array.isArray(data)) {
-    return data;
-  }
-
-  if (!isPlainObject(data)) {
-    return [];
-  }
-
-  return toArray(
-    data.content ??
-      data.items ??
-      data.wishlistItems ??
-      data.products ??
-      data.records ??
-      data.results ??
-      data.list ??
-      data.rows ??
-      data.data,
-  );
-}
+import { normalizeProduct } from "./productMapper";
+import { firstDefined, getPageItems, isPlainObject, unwrapApiPayload } from "./mapperUtils";
 
 function normalizeWishlistId(value) {
   const id = firstDefined(value);

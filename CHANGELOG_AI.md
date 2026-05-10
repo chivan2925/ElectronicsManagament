@@ -8,6 +8,16 @@ Always update this file after meaningful work.
 
 ## 2026-05-10
 
+### Codebase Maintainability Cleanup
+
+- Audited frontend/backend code organization for duplicated API mapper helpers, repeated service query cleanup, oversized admin CRUD pages, and repeated server table state.
+- Added `frontend/src/api/mapperUtils.js` and moved common unwrap, page-item/page-meta, array, number, status, and `cleanParams` helpers out of individual mappers/services.
+- Updated product, category, brand, variant, media, coupon, order, account, wishlist, payment, warehouse, and admin people mappers/services to reuse the shared API utilities.
+- Added `useAdminServerTableState` for admin server pagination, page-size resets, page metadata, and reload handling.
+- Applied the shared table state hook to Brands, Categories, Media, Orders, and Users while preserving existing flows and UI layout.
+- Updated `CURRENT_STATE.md` and `NEXT_TASKS.md`.
+- Verified `npm run lint` and `npm run build`.
+
 ### Ecommerce QA Flow Audit
 
 - Audited customer ecommerce and admin flows across register, login, search, product browsing, cart, checkout, payment result, order tracking routes, admin CRUD, media upload, and permissions.

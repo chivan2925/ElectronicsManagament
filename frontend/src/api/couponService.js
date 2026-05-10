@@ -5,17 +5,12 @@ import {
   createApiClientError,
   validateCouponForCart,
 } from "./checkoutMapper";
+import { cleanParams } from "./mapperUtils";
 import { createResourceService } from "./resourceService";
 
 const RESOURCE_PATH = import.meta.env.VITE_COUPON_API_PATH || "/admin/coupons";
 
 const baseCouponService = createResourceService(RESOURCE_PATH);
-
-function cleanParams(params = {}) {
-  return Object.fromEntries(
-    Object.entries(params).filter(([, value]) => value !== null && value !== undefined && value !== ""),
-  );
-}
 
 export async function getAll(params = {}, config = {}) {
   const data = await baseCouponService.getAll(cleanParams(params), config);

@@ -7,6 +7,7 @@ import {
   normalizeWarehouseTransaction,
   normalizeWarehouseTransactionPage,
 } from "./warehouseMapper";
+import { cleanParams } from "./mapperUtils";
 import { createResourceService } from "./resourceService";
 
 const RESOURCE_PATH = "/admin/warehouses";
@@ -14,12 +15,6 @@ const TRANSACTION_PATH = "/admin/warehouse-transactions";
 
 const baseWarehouseService = createResourceService(RESOURCE_PATH);
 const baseTransactionService = createResourceService(TRANSACTION_PATH);
-
-function cleanParams(params = {}) {
-  return Object.fromEntries(
-    Object.entries(params).filter(([, value]) => value !== null && value !== undefined && value !== ""),
-  );
-}
 
 export async function getAll(params = {}, config = {}) {
   const data = await baseWarehouseService.getAll(cleanParams(params), config);

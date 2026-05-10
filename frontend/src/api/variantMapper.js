@@ -1,80 +1,16 @@
-import { createProductPlaceholderImage, normalizeSlug, unwrapApiPayload } from "./productMapper";
+import { createProductPlaceholderImage, normalizeSlug } from "./productMapper";
+import {
+  firstDefined,
+  getPageItems,
+  getPageMeta,
+  isPlainObject,
+  toArray,
+  toNumber,
+  unwrapApiPayload,
+} from "./mapperUtils";
 
 const DEFAULT_VARIANT_STATUS = "ACTIVE";
 const VARIANT_PLACEHOLDER_IMAGE = "https://placehold.co/320x240/F1F5F9/64748B?text=Variant";
-
-function isPlainObject(value) {
-  return Boolean(value && typeof value === "object" && !Array.isArray(value));
-}
-
-function toArray(value) {
-  if (!value) {
-    return [];
-  }
-
-  if (Array.isArray(value)) {
-    return value;
-  }
-
-  if (value instanceof Set) {
-    return Array.from(value);
-  }
-
-  return [];
-}
-
-function firstDefined(...values) {
-  return values.find((value) => value !== null && value !== undefined && value !== "");
-}
-
-function toNumber(value, fallback = 0) {
-  const number = Number(value);
-  return Number.isFinite(number) ? number : fallback;
-}
-
-function getPageItems(response) {
-  const payload = unwrapApiPayload(response);
-
-  if (Array.isArray(payload)) {
-    return payload;
-  }
-
-  if (!isPlainObject(payload)) {
-    return [];
-  }
-
-  return toArray(
-    payload.content ??
-      payload.items ??
-      payload.variants ??
-      payload.records ??
-      payload.results ??
-      payload.list ??
-      payload.rows ??
-      payload.data,
-  );
-}
-
-function getPageMeta(response, items) {
-  const payload = unwrapApiPayload(response);
-  const source = isPlainObject(payload) ? payload : {};
-  const page = source.page ?? source.pagination ?? {};
-  const pageNumber = firstDefined(source.number, source.pageNumber, source.currentPage, page.number, page.page, page.currentPage, 0);
-  const pageSize = firstDefined(source.size, source.pageSize, page.size, page.pageSize, items.length);
-  const totalItems = firstDefined(source.totalElements, source.totalItems, source.total, page.totalElements, page.totalItems, page.total, items.length);
-  const totalPages = firstDefined(
-    source.totalPages,
-    page.totalPages,
-    Math.max(1, Math.ceil(toNumber(totalItems, items.length) / Math.max(toNumber(pageSize, items.length || 1), 1))),
-  );
-
-  return {
-    page: toNumber(pageNumber, 0),
-    size: toNumber(pageSize, items.length),
-    totalItems: toNumber(totalItems, items.length),
-    totalPages: Math.max(1, toNumber(totalPages, 1)),
-  };
-}
 
 function getMediaUrl(media) {
   return firstDefined(media?.imageUrl, media?.url, media?.secureUrl, media?.src, media?.path);

@@ -8,6 +8,7 @@ import {
   normalizeReviewPage,
   normalizeSlug,
 } from "./productMapper";
+import { cleanParams } from "./mapperUtils";
 import { createResourceService } from "./resourceService";
 
 const DEFAULT_RESOURCE_PATH = "/admin/products";
@@ -22,12 +23,6 @@ const SORT_PARAM_MAP = {
   featured: "updatedAt,desc",
   newest: "createdAt,desc",
 };
-
-function cleanParams(params = {}) {
-  return Object.fromEntries(
-    Object.entries(params).filter(([, value]) => value !== null && value !== undefined && value !== ""),
-  );
-}
 
 function getCatalogParams(params = {}) {
   const {

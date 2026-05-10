@@ -1,18 +1,4 @@
-import { unwrapApiPayload } from "./productMapper";
-
-function firstDefined(...values) {
-  return values.find((value) => value !== null && value !== undefined && value !== "");
-}
-
-function toNumber(value, fallback = 0) {
-  const number = Number(value);
-
-  return Number.isFinite(number) ? number : fallback;
-}
-
-function normalizeStatus(value) {
-  return String(value ?? "pending").trim().toLowerCase();
-}
+import { firstDefined, normalizeStatus, toNumber, unwrapApiPayload } from "./mapperUtils";
 
 export function normalizePaymentLinkResponse(response = {}) {
   const source = unwrapApiPayload(response) ?? {};

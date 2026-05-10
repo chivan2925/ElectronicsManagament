@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Eye, Loader2, Lock, Trash2, Unlock } from "lucide-react";
 import userService from "../../api/userService";
 import { AdminDrawer, AdminFilters, AdminSearch, AdminTable, ConfirmDialog, StatusBadge } from "../../admin/components";
-import { ADMIN_MODAL_TYPES, useAdminModal, useDebouncedValue } from "../../admin/hooks";
+import { ADMIN_MODAL_TYPES, useAdminModal, useAdminServerTableState, useDebouncedValue } from "../../admin/hooks";
 import { ADMIN_RESOURCES } from "../../auth/roleHelpers";
 import usePermissions from "../../auth/usePermissions";
 import OptimizedImage from "../../components/common/OptimizedImage";
@@ -95,13 +95,7 @@ function Users() {
   const [statusFilter, setStatusFilter] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [page, setPage] = useState(0);
-  const [pageSize, setPageSize] = useState(10);
-  const [pageMeta, setPageMeta] = useState({
-    totalItems: 0,
-    totalPages: 1,
-  });
-  const [reloadKey, setReloadKey] = useState(0);
+  const { page, pageSize, pagination, refresh, reloadKey, resetPage, setPage, setPageMeta } = useAdminServerTableState();
   const [detailUser, setDetailUser] = useState(null);
   const [detailLoading, setDetailLoading] = useState(false);
   const [statusUpdatingId, setStatusUpdatingId] = useState(null);
@@ -139,7 +133,7 @@ function Users() {
     } finally {
       setLoading(false);
     }
-  }, [debouncedQuery, page, pageSize, statusFilter]);
+  }, [debouncedQuery, page, pageSize, setPageMeta, statusFilter]);
 
   useEffect(() => {
     loadUsers();
@@ -216,7 +210,7 @@ function Users() {
       if (users.length === 1 && page > 0) {
         setPage((value) => Math.max(0, value - 1));
       } else {
-        setReloadKey((value) => value + 1);
+        refresh();
       }
     } catch (requestError) {
       toast.showApiError(requestError, { title: "Xóa người dùng thất bại" });
@@ -331,7 +325,7 @@ function Users() {
           disabled={loading}
           onChange={(nextValue) => {
             setQuery(nextValue);
-            setPage(0);
+            resetPage();
           }}
           placeholder="Tìm theo tên, username, email hoặc số điện thoại..."
           value={query}
@@ -351,12 +345,12 @@ function Users() {
           onChange={(key, value) => {
             if (key === "status") {
               setStatusFilter(value);
-              setPage(0);
+              resetPage();
             }
           }}
           onReset={() => {
             setStatusFilter("");
-            setPage(0);
+            resetPage();
           }}
           summary="Lọc nhanh tài khoản"
           title="Bộ lọc"
@@ -368,7 +362,7 @@ function Users() {
         <ApiErrorAlert
           actionLabel="Tải lại"
           error={error}
-          onAction={() => setReloadKey((value) => value + 1)}
+          onAction={refresh}
           onDismiss={() => setError(null)}
           surface="admin"
         />
@@ -382,17 +376,7 @@ function Users() {
         enablePagination
         loading={loading}
         manualPagination
-        pagination={{
-          onPageChange: (nextPage) => setPage(nextPage),
-          onPageSizeChange: (nextPageSize) => {
-            setPageSize(nextPageSize);
-            setPage(0);
-          },
-          page,
-          pageSize,
-          totalItems: pageMeta.totalItems,
-          totalPages: pageMeta.totalPages,
-        }}
+        pagination={pagination}
         rowActions={rowActions}
       />
 

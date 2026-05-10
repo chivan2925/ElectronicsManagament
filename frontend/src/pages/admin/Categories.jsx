@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Eye, EyeOff, Loader2, Pencil, Plus, Trash2 } from "lucide-react";
 import categoryService from "../../api/categoryService";
 import { AdminDrawer, AdminFilters, AdminForm, AdminSearch, AdminTable, ConfirmDialog, StatusBadge } from "../../admin/components";
-import { ADMIN_MODAL_TYPES, useAdminModal, useDebouncedValue } from "../../admin/hooks";
+import { ADMIN_MODAL_TYPES, useAdminModal, useAdminServerTableState, useDebouncedValue } from "../../admin/hooks";
 import { ADMIN_RESOURCES } from "../../auth/roleHelpers";
 import usePermissions from "../../auth/usePermissions";
 import OptimizedImage from "../../components/common/OptimizedImage";
@@ -89,13 +89,7 @@ function Categories() {
   const [statusFilter, setStatusFilter] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [page, setPage] = useState(0);
-  const [pageSize, setPageSize] = useState(10);
-  const [pageMeta, setPageMeta] = useState({
-    totalItems: 0,
-    totalPages: 1,
-  });
-  const [reloadKey, setReloadKey] = useState(0);
+  const { page, pageSize, pagination, refresh, reloadKey, resetPage, setPage, setPageMeta } = useAdminServerTableState();
   const [formValues, setFormValues] = useState(initialFormValues);
   const [formErrors, setFormErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
@@ -138,7 +132,7 @@ function Categories() {
     } finally {
       setLoading(false);
     }
-  }, [debouncedQuery, page, pageSize, statusFilter]);
+  }, [debouncedQuery, page, pageSize, setPageMeta, statusFilter]);
 
   useEffect(() => {
     loadCategories();
@@ -236,7 +230,7 @@ function Categories() {
       });
 
       if (!isEditMode) {
-        setReloadKey((value) => value + 1);
+        refresh();
       }
 
       toast.showSuccess(isEditMode ? "Đã cập nhật danh mục." : "Đã tạo danh mục mới.");
@@ -268,7 +262,7 @@ function Categories() {
       if (categories.length === 1 && page > 0) {
         setPage((value) => Math.max(0, value - 1));
       } else {
-        setReloadKey((value) => value + 1);
+        refresh();
       }
     } catch (requestError) {
       toast.showApiError(requestError, { title: "Xóa danh mục thất bại" });
@@ -495,7 +489,7 @@ function Categories() {
           disabled={loading}
           onChange={(nextValue) => {
             setQuery(nextValue);
-            setPage(0);
+            resetPage();
           }}
           placeholder="Tìm theo tên hoặc slug danh mục..."
           value={query}
@@ -515,12 +509,12 @@ function Categories() {
           onChange={(key, value) => {
             if (key === "status") {
               setStatusFilter(value);
-              setPage(0);
+              resetPage();
             }
           }}
           onReset={() => {
             setStatusFilter("");
-            setPage(0);
+            resetPage();
           }}
           summary="Lọc nhanh danh mục"
           title="Bộ lọc"
@@ -532,7 +526,7 @@ function Categories() {
         <ApiErrorAlert
           actionLabel="Tải lại"
           error={error}
-          onAction={() => setReloadKey((value) => value + 1)}
+          onAction={refresh}
           onDismiss={() => setError(null)}
           surface="admin"
         />
@@ -546,17 +540,7 @@ function Categories() {
         enablePagination
         loading={loading}
         manualPagination
-        pagination={{
-          onPageChange: (nextPage) => setPage(nextPage),
-          onPageSizeChange: (nextPageSize) => {
-            setPageSize(nextPageSize);
-            setPage(0);
-          },
-          page,
-          pageSize,
-          totalItems: pageMeta.totalItems,
-          totalPages: pageMeta.totalPages,
-        }}
+        pagination={pagination}
         rowActions={rowActions}
       />
 

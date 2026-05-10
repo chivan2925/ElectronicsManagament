@@ -3,7 +3,7 @@ import { CreditCard, Loader2, PackageCheck, ReceiptText, Truck } from "lucide-re
 import orderService from "../../api/orderService";
 import { getOrderStageFilterParams, mapStageToBackend } from "../../api/orderMapper";
 import { AdminDrawer, AdminFilters, AdminSearch } from "../../admin/components";
-import { useDebouncedValue } from "../../admin/hooks";
+import { useAdminServerTableState, useDebouncedValue } from "../../admin/hooks";
 import { ADMIN_RESOURCES } from "../../auth/roleHelpers";
 import usePermissions from "../../auth/usePermissions";
 import ApiErrorAlert from "../../components/ui/feedback/ApiErrorAlert";
@@ -67,10 +67,7 @@ function Orders() {
   const [error, setError] = useState(null);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [formValues, setFormValues] = useState(toFormValues());
-  const [page, setPage] = useState(0);
-  const [pageSize, setPageSize] = useState(10);
-  const [pageMeta, setPageMeta] = useState({ totalItems: 0, totalPages: 1 });
-  const [reloadKey, setReloadKey] = useState(0);
+  const { page, pageMeta, pageSize, pagination, refresh, reloadKey, resetPage, setPageMeta } = useAdminServerTableState();
 
   const canUpdate = permission.canAccessResourceAction(ADMIN_RESOURCES.orders, "update");
 
@@ -105,7 +102,7 @@ function Orders() {
     } finally {
       setLoading(false);
     }
-  }, [debouncedQuery, page, pageSize, paymentFilter, shippingFilter, stageFilter]);
+  }, [debouncedQuery, page, pageSize, paymentFilter, setPageMeta, shippingFilter, stageFilter]);
 
   useEffect(() => {
     loadOrders();
@@ -143,7 +140,7 @@ function Orders() {
       setShippingFilter(value);
     }
 
-    setPage(0);
+    resetPage();
   };
 
   const handleResetFilters = () => {
@@ -151,7 +148,7 @@ function Orders() {
     setStageFilter("");
     setPaymentFilter("");
     setShippingFilter("");
-    setPage(0);
+    resetPage();
   };
 
   const openOrderDetail = useCallback(
@@ -239,7 +236,7 @@ function Orders() {
         },
         { queue: true },
       );
-      setReloadKey((value) => value + 1);
+      refresh();
     } catch (requestError) {
       toast.showApiError(requestError, { title: "Cập nhật đơn hàng thất bại" });
       setError(requestError);
@@ -276,7 +273,7 @@ function Orders() {
           disabled={loading}
           onChange={(nextValue) => {
             setQuery(nextValue);
-            setPage(0);
+            resetPage();
           }}
           placeholder="Search by order code, customer name, or phone..."
           value={query}
@@ -319,7 +316,7 @@ function Orders() {
         <ApiErrorAlert
           actionLabel="Tải lại"
           error={error}
-          onAction={() => setReloadKey((value) => value + 1)}
+          onAction={refresh}
           onDismiss={() => setError(null)}
           surface="admin"
         />
@@ -330,17 +327,7 @@ function Orders() {
         data={orders}
         loading={loading}
         onView={openOrderDetail}
-        pagination={{
-          onPageChange: (nextPage) => setPage(nextPage),
-          onPageSizeChange: (nextPageSize) => {
-            setPageSize(nextPageSize);
-            setPage(0);
-          },
-          page,
-          pageSize,
-          totalItems: pageMeta.totalItems,
-          totalPages: pageMeta.totalPages,
-        }}
+        pagination={pagination}
       />
 
       <AdminDrawer

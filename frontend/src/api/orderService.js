@@ -7,18 +7,13 @@ import {
   normalizeAdminOrderPage,
   normalizeAdminOrderSummary,
 } from "./orderMapper";
+import { cleanParams } from "./mapperUtils";
 import { createResourceService } from "./resourceService";
 
 const ADMIN_RESOURCE_PATH = "/admin/orders";
 const CHECKOUT_RESOURCE_PATH = import.meta.env.VITE_ORDER_API_PATH || "/orders";
 const USER_ORDERS_RESOURCE_PATH = import.meta.env.VITE_USER_ORDER_API_PATH || CHECKOUT_RESOURCE_PATH;
 const adminOrderService = createResourceService(ADMIN_RESOURCE_PATH, { updateMethod: "patch" });
-
-function cleanParams(params = {}) {
-  return Object.fromEntries(
-    Object.entries(params).filter(([, value]) => value !== null && value !== undefined && value !== ""),
-  );
-}
 
 export async function getAll(params = {}, config = {}) {
   const data = await adminOrderService.getAll(cleanParams(params), config);

@@ -1,4 +1,6 @@
-import { unwrapApiPayload } from "./productMapper";
+import { firstDefined, getPageItems, toArray, toNumber, unwrapApiPayload } from "./mapperUtils";
+
+export { toNumber } from "./mapperUtils";
 
 export function createApiClientError(message, options = {}) {
   const status = options.status ?? 400;
@@ -24,59 +26,6 @@ export function createApiClientError(message, options = {}) {
   error.normalizedError = error.apiError;
 
   return error;
-}
-
-function isPlainObject(value) {
-  return Boolean(value && typeof value === "object" && !Array.isArray(value));
-}
-
-function toArray(value) {
-  if (!value) {
-    return [];
-  }
-
-  if (Array.isArray(value)) {
-    return value;
-  }
-
-  if (value instanceof Set) {
-    return Array.from(value);
-  }
-
-  return [];
-}
-
-function firstDefined(...values) {
-  return values.find((value) => value !== null && value !== undefined && value !== "");
-}
-
-export function toNumber(value, fallback = 0) {
-  const number = Number(value);
-
-  return Number.isFinite(number) ? number : fallback;
-}
-
-function getPageItems(response) {
-  const payload = unwrapApiPayload(response);
-
-  if (Array.isArray(payload)) {
-    return payload;
-  }
-
-  if (!isPlainObject(payload)) {
-    return [];
-  }
-
-  return toArray(
-    payload.content ??
-      payload.items ??
-      payload.coupons ??
-      payload.records ??
-      payload.results ??
-      payload.list ??
-      payload.rows ??
-      payload.data,
-  );
 }
 
 export function normalizeCoupon(raw = {}) {

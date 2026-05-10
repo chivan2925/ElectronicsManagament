@@ -1,15 +1,10 @@
 import { api } from "./client";
 import { buildRolePayload, normalizeAdminRole, normalizeAdminRolePage } from "./adminPeopleMapper";
+import { cleanParams } from "./mapperUtils";
 import { createResourceService } from "./resourceService";
 
 const RESOURCE_PATH = "/admin/roles";
 const baseRoleService = createResourceService(RESOURCE_PATH);
-
-function cleanParams(params = {}) {
-  return Object.fromEntries(
-    Object.entries(params).filter(([, value]) => value !== null && value !== undefined && value !== ""),
-  );
-}
 
 export async function getAll(params = {}, config = {}) {
   const data = await baseRoleService.getAll(cleanParams(params), config);

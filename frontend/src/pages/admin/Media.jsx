@@ -3,7 +3,7 @@ import { Filter, Image, RefreshCcw, Search, ShieldAlert, Star, Upload } from "lu
 import mediaService from "../../api/mediaService";
 import productService from "../../api/productService";
 import { ConfirmDialog } from "../../admin/components";
-import { ADMIN_MODAL_TYPES, useAdminModal, useDebouncedValue } from "../../admin/hooks";
+import { ADMIN_MODAL_TYPES, useAdminModal, useAdminServerTableState, useDebouncedValue } from "../../admin/hooks";
 import { ADMIN_RESOURCES } from "../../auth/roleHelpers";
 import usePermissions from "../../auth/usePermissions";
 import ApiErrorAlert from "../../components/ui/feedback/ApiErrorAlert";
@@ -73,10 +73,9 @@ function Media() {
   const [productLoading, setProductLoading] = useState(false);
   const [error, setError] = useState(null);
   const [productError, setProductError] = useState(null);
-  const [page, setPage] = useState(0);
-  const [pageSize, setPageSize] = useState(12);
-  const [pageMeta, setPageMeta] = useState({ totalItems: 0, totalPages: 1 });
-  const [reloadKey, setReloadKey] = useState(0);
+  const { page, pageMeta, pageSize, pagination, refresh, reloadKey, resetPage, setPage, setPageMeta } = useAdminServerTableState({
+    initialPageSize: 12,
+  });
   const [previewMedia, setPreviewMedia] = useState(null);
   const [deleting, setDeleting] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
@@ -140,7 +139,7 @@ function Media() {
     } finally {
       setLoading(false);
     }
-  }, [debouncedQuery, page, pageSize, primaryFilter, productFilter]);
+  }, [debouncedQuery, page, pageSize, primaryFilter, productFilter, setPageMeta]);
 
   useEffect(() => {
     loadProducts();
@@ -171,7 +170,7 @@ function Media() {
 
   const handleProductFilterChange = (value) => {
     setProductFilter(value);
-    setPage(0);
+    resetPage();
 
     if (value) {
       setUploadProductId(value);
@@ -182,7 +181,7 @@ function Media() {
     setQuery("");
     setProductFilter("");
     setPrimaryFilter("");
-    setPage(0);
+    resetPage();
   };
 
   const handleUploadFile = useCallback(
@@ -224,7 +223,7 @@ function Media() {
 
   const handleUploadComplete = (uploadedItems = []) => {
     toast.showSuccess(`Đã upload ${uploadedItems.length} ảnh vào thư viện.`);
-    setReloadKey((value) => value + 1);
+    refresh();
   };
 
   const handleSetPrimary = useCallback(
@@ -279,7 +278,7 @@ function Media() {
       if (mediaItems.length === 1 && page > 0) {
         setPage((value) => Math.max(0, value - 1));
       } else {
-        setReloadKey((value) => value + 1);
+        refresh();
       }
     } catch (requestError) {
       toast.showApiError(requestError, { title: "Xóa media thất bại" });
@@ -354,7 +353,7 @@ function Media() {
               disabled={loading}
               onChange={(event) => {
                 setQuery(event.target.value);
-                setPage(0);
+                resetPage();
               }}
               placeholder="Tìm theo publicId, URL, sản phẩm..."
               type="search"
@@ -381,7 +380,7 @@ function Media() {
             disabled={loading}
             onChange={(event) => {
               setPrimaryFilter(event.target.value);
-              setPage(0);
+              resetPage();
             }}
             value={primaryFilter}
           >
@@ -408,7 +407,7 @@ function Media() {
         <ApiErrorAlert
           actionLabel="Tải lại"
           error={error}
-          onAction={() => setReloadKey((value) => value + 1)}
+          onAction={refresh}
           onDismiss={() => setError(null)}
           surface="admin"
         />
@@ -423,17 +422,7 @@ function Media() {
         onDelete={openDelete}
         onPreview={setPreviewMedia}
         onSetPrimary={handleSetPrimary}
-        pagination={{
-          onPageChange: (nextPage) => setPage(nextPage),
-          onPageSizeChange: (nextPageSize) => {
-            setPageSize(nextPageSize);
-            setPage(0);
-          },
-          page,
-          pageSize,
-          totalItems: pageMeta.totalItems,
-          totalPages: pageMeta.totalPages,
-        }}
+        pagination={pagination}
         primaryUpdatingId={primaryUpdatingId}
       />
 
