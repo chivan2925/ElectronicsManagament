@@ -11,13 +11,14 @@ import {
 import { cleanParams } from "./mapperUtils";
 import { createResourceService } from "./resourceService";
 
-const DEFAULT_RESOURCE_PATH = "/admin/products";
-const RESOURCE_PATH = import.meta.env.VITE_PRODUCT_API_PATH || DEFAULT_RESOURCE_PATH;
+const ADMIN_RESOURCE_PATH = "/admin/products";
+const DEFAULT_CATALOG_RESOURCE_PATH = "/products";
+const CATALOG_RESOURCE_PATH = import.meta.env.VITE_PRODUCT_API_PATH || DEFAULT_CATALOG_RESOURCE_PATH;
 const CATALOG_CACHE_TTL = 60_000;
 const REVIEW_CACHE_TTL = 30_000;
 const DEFAULT_CATALOG_SIZE = 48;
 const ACTIVE_STATUS = "ACTIVE";
-const adminProductService = createResourceService(RESOURCE_PATH);
+const adminProductService = createResourceService(ADMIN_RESOURCE_PATH);
 
 const SORT_PARAM_MAP = {
   featured: "updatedAt,desc",
@@ -81,20 +82,20 @@ export async function remove(id, config = {}) {
 
 export async function updateStatus(id, status, config = {}) {
   const nextStatus = typeof status === "string" ? status : status?.status;
-  const data = await api.patch(`${RESOURCE_PATH}/${id}/status`, { status: nextStatus }, config);
+  const data = await api.patch(`${ADMIN_RESOURCE_PATH}/${id}/status`, { status: nextStatus }, config);
 
   return normalizeProduct(data);
 }
 
 export async function updateFeatured(id, featured, config = {}) {
   const nextFeatured = typeof featured === "boolean" ? featured : Boolean(featured?.featured);
-  const data = await api.patch(`${RESOURCE_PATH}/${id}/featured`, { featured: nextFeatured }, config);
+  const data = await api.patch(`${ADMIN_RESOURCE_PATH}/${id}/featured`, { featured: nextFeatured }, config);
 
   return normalizeProduct(data);
 }
 
 export async function getCatalogProducts(params = {}, config = {}) {
-  const data = await api.get(RESOURCE_PATH, {
+  const data = await api.get(CATALOG_RESOURCE_PATH, {
     ...withCatalogRequestConfig(config),
     params: {
       ...getCatalogParams(params),
@@ -107,7 +108,7 @@ export async function getCatalogProducts(params = {}, config = {}) {
 
 export async function getCatalogProductById(id, config = {}) {
   const { includeReviews = false, reviewParams = {}, ...requestConfig } = config;
-  const data = await api.get(`${RESOURCE_PATH}/${id}`, {
+  const data = await api.get(`${CATALOG_RESOURCE_PATH}/${id}`, {
     ...withCatalogRequestConfig(requestConfig),
   });
 
@@ -124,7 +125,7 @@ export async function getCatalogProductById(id, config = {}) {
 }
 
 export async function getCatalogProductReviews(id, params = {}, config = {}) {
-  const data = await api.get(`${RESOURCE_PATH}/${id}/reviews`, {
+  const data = await api.get(`${CATALOG_RESOURCE_PATH}/${id}/reviews`, {
     ...withCatalogRequestConfig(config, REVIEW_CACHE_TTL),
     params: cleanParams({
       page: 0,

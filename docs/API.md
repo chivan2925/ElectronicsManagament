@@ -143,6 +143,9 @@ Current frontend auth supports separate customer and admin/staff login surfaces.
 | `POST /api/admin/auth/login` | Admin/staff login. |
 | `POST /api/auth/login` | Customer login. |
 | `POST /api/auth/register` | Customer account registration. |
+| `GET /api/products` | Public ACTIVE product catalog for storefront browsing and homepage product sections. |
+| `GET /api/products/{productId}` | Public ACTIVE product detail. |
+| `GET /api/products/{productId}/reviews` | Public reviews for ACTIVE products. |
 | `GET /api/payments/vnpay-return` | VNPay browser return. |
 | `GET /api/payments/momo-return` | MoMo browser return. |
 | `GET /api/system/payment/vnpay-ipn` | VNPay IPN. |
@@ -157,9 +160,11 @@ All other endpoints require authentication unless the backend policy changes.
 | --- | --- |
 | Admin auth | `/admin/auth/*` |
 | Customer auth | `/auth/login`, `/auth/register`, `/auth/logout` |
-| Catalog | `/admin/categories`, `/admin/brands`, `/admin/products`, `/admin/variants`, `/admin/media` |
+| Storefront catalog | `/products`, `/products/{productId}`, `/products/{productId}/reviews` |
+| Admin catalog | `/admin/categories`, `/admin/brands`, `/admin/products`, `/admin/variants`, `/admin/media` |
 | People and access | `/admin/users`, `/admin/staffs`, `/admin/roles`, `/admin/permissions` |
 | Sales | `/admin/orders`, `/admin/payments`, `/admin/return-requests`, `/admin/coupons` |
+| Reports | `/admin/reports/dashboard`, `/admin/reports/revenue`, `/admin/reports/order-status`, `/admin/reports/top-products` |
 | Warehouse | `/admin/warehouses`, `/admin/warehouse-transactions` |
 | Storefront account/order | `/users/{userId}/profile`, `/orders` |
 | Payments | `/payments/*`, `/system/payment/*` |

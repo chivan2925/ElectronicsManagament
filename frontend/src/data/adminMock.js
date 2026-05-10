@@ -122,7 +122,7 @@ export const dashboardSalesOverview = {
 
 export const dashboardTopProducts = [
   {
-    category: "chuột",
+    category: "Chuột",
     id: "TP001",
     image: "https://images.unsplash.com/photo-1527814050087-3793815479db?auto=format&fit=crop&w=120&q=80",
     name: "Chuột Logitech G Pro X Superlight",
@@ -130,7 +130,7 @@ export const dashboardTopProducts = [
     sold: 186,
   },
   {
-    category: "laptop",
+    category: "Laptop",
     id: "TP002",
     image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=120&q=80",
     name: "Laptop ASUS ROG Strix G16",
@@ -138,7 +138,7 @@ export const dashboardTopProducts = [
     sold: 72,
   },
   {
-    category: "tai nghe",
+    category: "Tai nghe",
     id: "TP003",
     image: "https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?auto=format&fit=crop&w=120&q=80",
     name: "Tai nghe Razer BlackShark V2",
@@ -146,7 +146,7 @@ export const dashboardTopProducts = [
     sold: 154,
   },
   {
-    category: "bàn phím",
+    category: "Bàn phím",
     id: "TP004",
     image: "https://images.unsplash.com/photo-1618384887929-16ec33fab9ef?auto=format&fit=crop&w=120&q=80",
     name: "Bàn phím Corsair K70 RGB",
@@ -189,26 +189,26 @@ export const orderStatusData = [
 ];
 
 export const categories = [
-  { id: 1, name: "điện thoại", slug: "dien-thoai", products: 84, status: "ACTIVE" },
-  { id: 2, name: "laptop", slug: "laptop", products: 126, status: "ACTIVE" },
-  { id: 3, name: "tai nghe", slug: "tai-nghe", products: 58, status: "ACTIVE" },
-  { id: 4, name: "chuột", slug: "chuot", products: 74, status: "ACTIVE" },
-  { id: 5, name: "bàn phím", slug: "ban-phim", products: 63, status: "ACTIVE" },
-  { id: 6, name: "lót chuột", slug: "lot-chuot", products: 31, status: "ACTIVE" },
+  { id: 1, name: "Điện thoại", slug: "dien-thoai", products: 84, status: "ACTIVE" },
+  { id: 2, name: "Laptop", slug: "laptop", products: 126, status: "ACTIVE" },
+  { id: 3, name: "Tai nghe", slug: "tai-nghe", products: 58, status: "ACTIVE" },
+  { id: 4, name: "Chuột", slug: "chuot", products: 74, status: "ACTIVE" },
+  { id: 5, name: "Bàn phím", slug: "ban-phim", products: 63, status: "ACTIVE" },
+  { id: 6, name: "Lót chuột", slug: "lot-chuot", products: 31, status: "ACTIVE" },
   { id: 7, name: "PC Gaming", slug: "pc-gaming", products: 22, status: "ACTIVE" },
-  { id: 8, name: "máy bộ", slug: "may-bo", products: 18, status: "ACTIVE" },
-  { id: 9, name: "linh kiện PC", slug: "linh-kien-pc", products: 206, status: "ACTIVE" },
-  { id: 10, name: "ghế gaming", slug: "ghe-gaming", products: 27, status: "ACTIVE" },
-  { id: 11, name: "phụ kiện gaming", slug: "phu-kien-gaming", products: 98, status: "ACTIVE" },
+  { id: 8, name: "Máy bộ", slug: "may-bo", products: 18, status: "ACTIVE" },
+  { id: 9, name: "Linh kiện PC", slug: "linh-kien-pc", products: 206, status: "ACTIVE" },
+  { id: 10, name: "Ghế gaming", slug: "ghe-gaming", products: 27, status: "ACTIVE" },
+  { id: 11, name: "Phụ kiện gaming", slug: "phu-kien-gaming", products: 98, status: "ACTIVE" },
 ];
 
 export const brands = [
-  { id: 1, name: "Apple", category: "điện thoại", products: 36, status: "ACTIVE" },
-  { id: 2, name: "ASUS ROG", category: "laptop", products: 48, status: "ACTIVE" },
-  { id: 3, name: "Logitech G", category: "phụ kiện gaming", products: 62, status: "ACTIVE" },
-  { id: 4, name: "Razer", category: "chuột", products: 44, status: "ACTIVE" },
-  { id: 5, name: "Corsair", category: "linh kiện PC", products: 57, status: "ACTIVE" },
-  { id: 6, name: "Secretlab", category: "ghế gaming", products: 12, status: "HIDDEN" },
+  { id: 1, name: "Apple", category: "Điện thoại", products: 36, status: "ACTIVE" },
+  { id: 2, name: "ASUS ROG", category: "Laptop", products: 48, status: "ACTIVE" },
+  { id: 3, name: "Logitech G", category: "Phụ kiện gaming", products: 62, status: "ACTIVE" },
+  { id: 4, name: "Razer", category: "Chuột", products: 44, status: "ACTIVE" },
+  { id: 5, name: "Corsair", category: "Linh kiện PC", products: 57, status: "ACTIVE" },
+  { id: 6, name: "Secretlab", category: "Ghế gaming", products: 12, status: "HIDDEN" },
 ];
 
 export const products = [
@@ -216,7 +216,7 @@ export const products = [
     id: "SP001",
     image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=120&q=80",
     name: "Laptop ASUS ROG Strix G16",
-    category: "laptop",
+    category: "Laptop",
     brand: "ASUS ROG",
     price: 38990000,
     stock: 24,
@@ -226,7 +226,7 @@ export const products = [
     id: "SP002",
     image: "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=120&q=80",
     name: "iPhone 15 Pro Max 256GB",
-    category: "điện thoại",
+    category: "Điện thoại",
     brand: "Apple",
     price: 29990000,
     stock: 42,
@@ -236,7 +236,7 @@ export const products = [
     id: "SP003",
     image: "https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?auto=format&fit=crop&w=120&q=80",
     name: "Tai nghe Razer BlackShark V2",
-    category: "tai nghe",
+    category: "Tai nghe",
     brand: "Razer",
     price: 2490000,
     stock: 88,
@@ -246,7 +246,7 @@ export const products = [
     id: "SP004",
     image: "https://images.unsplash.com/photo-1527814050087-3793815479db?auto=format&fit=crop&w=120&q=80",
     name: "Chuột Logitech G Pro X Superlight",
-    category: "chuột",
+    category: "Chuột",
     brand: "Logitech G",
     price: 3290000,
     stock: 64,
@@ -256,7 +256,7 @@ export const products = [
     id: "SP005",
     image: "https://images.unsplash.com/photo-1618384887929-16ec33fab9ef?auto=format&fit=crop&w=120&q=80",
     name: "Bàn phím Corsair K70 RGB",
-    category: "bàn phím",
+    category: "Bàn phím",
     brand: "Corsair",
     price: 3690000,
     stock: 16,

@@ -4,7 +4,7 @@
 
 This file documents the backend endpoints that currently exist in `backend/electronics/src/main/java/org/example/electronics/controller`.
 
-The current backend surface includes admin/staff operations, public customer registration/login, authenticated storefront checkout/account flows, VNPay/MoMo sandbox payment handoff, payment callbacks, media upload, and health probes. Persisted cart and final customer ownership contracts are not complete yet.
+The current backend surface includes admin/staff operations, admin reporting, public storefront product catalog reads, public customer registration/login, authenticated storefront checkout/account/cart flows, VNPay/MoMo sandbox payment handoff, payment callbacks, media upload, and health probes. Final customer ownership contracts are not complete yet.
 
 ## Base URL
 
@@ -37,6 +37,9 @@ Public endpoints:
 - `POST /admin/auth/login`
 - `POST /auth/login`
 - `POST /auth/register`
+- `GET /products`
+- `GET /products/{productId}`
+- `GET /products/{productId}/reviews`
 - `GET /payments/vnpay-return`
 - `GET /payments/momo-return`
 - `GET /system/payment/vnpay-ipn`
@@ -88,6 +91,14 @@ Common filters used by many admin list endpoints:
 | `POST` | `/auth/login` | `CustomerLoginRequestDTO` | `CustomerLoginResponseDTO` | Public. Authenticates an `ACTIVE` customer from `users` and returns a customer-scoped JWT session. |
 | `POST` | `/auth/register` | `CustomerRegisterRequestDTO` | `CustomerRegisterResponseDTO` | Public. Creates an `ACTIVE` customer account with derived `USER` role metadata. Does not return password/hash or create ADMIN/STAFF roles. |
 | `POST` | `/auth/logout` | None | string | Requires customer token. Invalidates the current token id until expiry. |
+
+## Storefront Catalog
+
+| Method | Path | Body | Response | Notes |
+| --- | --- | --- | --- | --- |
+| `GET` | `/products` | Query params | `Page<AdminProductResponseDTO>` | Public. Lists ACTIVE products only. Supports `keyword`, `categoryId`, `brandId`, `featured`, and pageable params. |
+| `GET` | `/products/{productId}` | None | `AdminDetailProductResponseDTO` | Public. Returns detail only when the product is ACTIVE. |
+| `GET` | `/products/{productId}/reviews` | Query params | `Page<AdminReviewResponseDTO>` | Public. Returns reviews only for an ACTIVE product. Supports `keyword` and pageable params. |
 
 ## Admin Catalog
 
@@ -219,6 +230,15 @@ Common filters used by many admin list endpoints:
 | `PATCH` | `/admin/orders/{orderId}` | `AdminUpdateOrderRequestDTO` | `AdminOrderResponseDTO` | Update order, payment, and shipping statuses. Uses authenticated staff context. |
 | `GET` | `/admin/orders` | Query params | `Page<AdminOrderResponseDTO>` | Supports `keyword`, `status`, `type`, `paymentStatus`, `provider`, `shippingStatus`, `dateType`, `fromDate`, `toDate`, pageable params. |
 | `GET` | `/admin/orders/{orderId}` | None | `AdminOrderDetailResponseDTO` | Order detail. |
+
+## Admin Reports
+
+| Method | Path | Body | Response | Notes |
+| --- | --- | --- | --- | --- |
+| `GET` | `/admin/reports/dashboard` | Query params | `AdminReportDashboardResponseDTO` | Dashboard totals, revenue series, order status breakdown, and top products. Supports `fromDate` and `toDate`. |
+| `GET` | `/admin/reports/revenue` | Query params | `List<AdminRevenueBucketResponseDTO>` | Revenue buckets for charts. Supports `fromDate`, `toDate`, and `groupBy=DAY|MONTH|YEAR`. |
+| `GET` | `/admin/reports/order-status` | Query params | `List<AdminStatusBreakdownResponseDTO>` | Order counts, amount, and percentage by status. Supports `fromDate` and `toDate`. |
+| `GET` | `/admin/reports/top-products` | Query params | `List<AdminTopProductResponseDTO>` | Top products by revenue and quantity sold. Supports `fromDate`, `toDate`, and `limit` from 1 to 50. |
 
 ### Payments
 

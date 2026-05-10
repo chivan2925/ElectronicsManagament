@@ -60,10 +60,12 @@ public class SecurityConfig {
     private static final String[] CATEGORY_ENDPOINTS = {"/api/admin/categories", "/api/admin/categories/**"};
     private static final String[] BRAND_ENDPOINTS = {"/api/admin/brands", "/api/admin/brands/**"};
     private static final String[] PRODUCT_ENDPOINTS = {"/api/admin/products", "/api/admin/products/**"};
+    private static final String[] PUBLIC_PRODUCT_ENDPOINTS = {"/api/products", "/api/products/**"};
     private static final String[] VARIANT_ENDPOINTS = {"/api/admin/variants", "/api/admin/variants/**"};
     private static final String[] MEDIA_ENDPOINTS = {"/api/admin/media", "/api/admin/media/**"};
     private static final String[] ORDER_ENDPOINTS = {"/api/admin/orders", "/api/admin/orders/**"};
     private static final String[] PAYMENT_ENDPOINTS = {"/api/admin/payments", "/api/admin/payments/**"};
+    private static final String[] REPORT_ENDPOINTS = {"/api/admin/reports", "/api/admin/reports/**"};
     private static final String[] RETURN_ENDPOINTS = {"/api/admin/return-requests", "/api/admin/return-requests/**"};
     private static final String[] COUPON_ENDPOINTS = {"/api/admin/coupons", "/api/admin/coupons/**"};
     private static final String[] WAREHOUSE_ENDPOINTS = {
@@ -108,10 +110,12 @@ public class SecurityConfig {
                         .requestMatchers("/api/admin/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
+                        .requestMatchers(HttpMethod.GET, PUBLIC_PRODUCT_ENDPOINTS).permitAll()
                         .requestMatchers("/api/system/payment/vnpay-ipn", "/api/system/payment/momo-ipn").permitAll()
                         .requestMatchers("/api/payments/vnpay-return", "/api/payments/momo-return").permitAll()
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .requestMatchers("/api/auth/logout").hasAnyAuthority("ROLE_USER", "ROLE_CUSTOMER")
+                        .requestMatchers("/api/cart", "/api/cart/**").hasAnyAuthority("ROLE_USER", "ROLE_CUSTOMER")
                         .requestMatchers("/api/admin/auth/logout").hasAnyAuthority(ROLE_ADMIN, ROLE_STAFF)
                         .requestMatchers(ADMIN_ONLY_ENDPOINTS).hasAuthority(ROLE_ADMIN)
                         .requestMatchers(HttpMethod.GET, CATEGORY_ENDPOINTS).hasAnyAuthority(adminOrPermission("category:view"))
@@ -141,6 +145,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, ORDER_ENDPOINTS).hasAnyAuthority(adminOrPermission("order:view"))
                         .requestMatchers(HttpMethod.PATCH, ORDER_ENDPOINTS).hasAnyAuthority(adminOrPermission("order:update"))
                         .requestMatchers(HttpMethod.GET, PAYMENT_ENDPOINTS).hasAnyAuthority(adminOrPermission("payment:view", "order:view"))
+                        .requestMatchers(HttpMethod.GET, REPORT_ENDPOINTS)
+                        .hasAnyAuthority(adminOrPermission("dashboard:view", "revenue-report:view", "best-seller-report:view", "order:view"))
                         .requestMatchers(HttpMethod.GET, RETURN_ENDPOINTS).hasAnyAuthority(adminOrPermission("return-request:view", "order:view"))
                         .requestMatchers(HttpMethod.PATCH, RETURN_ENDPOINTS).hasAnyAuthority(adminOrPermission("return-request:update", "order:update"))
                         .requestMatchers(HttpMethod.GET, COUPON_ENDPOINTS).hasAnyAuthority(adminOrPermission("coupon:view"))

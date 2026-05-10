@@ -45,10 +45,12 @@ function FlashSaleCard({ product }) {
           <p className="text-muted mt-1 text-sm">Kết thúc sau</p>
         </div>
         <div className="flex items-center gap-2">
-          <Badge className="gap-1 border border-red-200/40 bg-gradient-to-r from-red-500 to-rose-500 shadow-[0_0_24px_rgba(239,68,68,0.42)]" size="md" variant="danger">
-            <Zap size={13} />
-            {product.discount}
-          </Badge>
+          {product.discount && (
+            <Badge className="gap-1 border border-red-200/40 bg-gradient-to-r from-red-500 to-rose-500 shadow-[0_0_24px_rgba(239,68,68,0.42)]" size="md" variant="danger">
+              <Zap size={13} />
+              {product.discount}
+            </Badge>
+          )}
           <IconButton
             aria-label="Thêm flash sale vào yêu thích"
             className="border-white/15 bg-slate-950/45 text-slate-200 hover:border-blue-200/70 hover:bg-blue-500/20 hover:text-white"

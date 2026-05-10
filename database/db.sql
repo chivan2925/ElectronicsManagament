@@ -1,3 +1,8 @@
+-- LEGACY MYSQL DRAFT ONLY.
+-- Current backend uses PostgreSQL + Hibernate entities as the source of truth.
+-- For a clean local reset: recreate the PostgreSQL database, start the backend once
+-- with ddl-auto=update so Hibernate creates the current schema, then run database/test.sql.
+
 CREATE DATABASE `db`;
 USE `db`;
 CREATE TABLE `Product` (

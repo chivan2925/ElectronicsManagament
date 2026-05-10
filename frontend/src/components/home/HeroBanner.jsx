@@ -64,7 +64,7 @@ function HeroBanner({ promotion }) {
               </Button>
             </MotionDiv>
             <MotionDiv whileHover={hoverLift} whileTap={tapSoft}>
-              <Button as={Link} className="border-blue-200/30 bg-white/[0.045]" size="lg" to="/products?sort=best-selling" variant="outline">
+              <Button as={Link} className="border-blue-200/30 bg-white/[0.045]" size="lg" to="/products?sort=best-seller" variant="outline">
                 Xem chi tiết
                 <ArrowRight size={18} />
               </Button>

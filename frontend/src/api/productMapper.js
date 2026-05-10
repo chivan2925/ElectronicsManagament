@@ -16,6 +16,16 @@ const PRODUCT_PLACEHOLDER_IMAGE = getImageFallbackSrc("product");
 
 const CATEGORY_DESCRIPTIONS = {
   "PC Gaming": "Cấu hình gaming cân bằng, linh kiện đồng bộ và sẵn sàng nâng cấp cho các tựa game mới.",
+  "Bàn phím": "Layout gọn, switch mượt, kết nối linh hoạt và đèn RGB giúp góc setup nổi bật hơn.",
+  "Chuột": "Form cầm tối ưu, cảm biến chính xác và độ trễ thấp cho các trận đấu cần phản xạ nhanh.",
+  "Ghế gaming": "Form ngồi chắc, đệm êm và hỗ trợ tư thế tốt cho phiên chơi game hoặc làm việc dài.",
+  "Laptop": "Màn hình đẹp, cấu hình mạnh và hệ thống tản nhiệt tối ưu cho học tập, sáng tạo nội dung và chơi game.",
+  "Linh kiện PC": "Linh kiện chính hãng, hiệu năng cao và tương thích tốt cho các cấu hình PC hiện đại.",
+  "Lót chuột": "Bề mặt kiểm soát tốt, mép may chắc và kích thước rộng cho thao tác chuột thoải mái.",
+  "Máy bộ": "Máy tính đồng bộ gọn gàng, vận hành ổn định và phù hợp cho văn phòng, học tập, giải trí.",
+  "Phụ kiện gaming": "Phụ kiện hoàn thiện setup, tăng trải nghiệm chơi game và làm việc với thao tác tiện hơn.",
+  "Tai nghe": "Âm trường rõ, micro sạch và kết nối ổn định để chơi game, họp online và nghe nhạc lâu dài.",
+  "Điện thoại": "Thiết kế cao cấp, hiệu năng ổn định và camera sắc nét cho nhu cầu làm việc, giải trí, quay chụp hằng ngày.",
   laptop: "Màn hình đẹp, cấu hình mạnh và hệ thống tản nhiệt tối ưu cho học tập, sáng tạo nội dung và chơi game.",
   "bàn phím": "Layout gọn, switch mượt, kết nối linh hoạt và đèn RGB giúp góc setup nổi bật hơn.",
   "chuột": "Form cầm tối ưu, cảm biến chính xác và độ trễ thấp cho các trận đấu cần phản xạ nhanh.",

@@ -3,7 +3,6 @@ import { normalizeApiError } from "../api/normalizeApiError";
 import { normalizeProduct } from "../api/productMapper";
 import wishlistService from "../api/wishlistService";
 import useAuth from "../auth/useAuth";
-import { products as catalogProducts } from "../data";
 import WishlistContext from "./WishlistContext";
 
 const LEGACY_WISHLIST_STORAGE_KEY = "electronicsManagement:wishlist";
@@ -12,7 +11,7 @@ const WISHLIST_CHANGE_EVENT = "electronicsManagement:wishlist-change";
 const UNAVAILABLE_WISHLIST_STATUSES = new Set([401, 403, 404, 405, 501]);
 const GUEST_WISHLIST_STORAGE_KEY = `${WISHLIST_STORAGE_PREFIX}:guest`;
 
-const catalogProductMap = new Map(catalogProducts.map((product) => [String(product.id), product]));
+const catalogProductMap = new Map();
 
 function getStorage() {
   if (typeof window === "undefined") {

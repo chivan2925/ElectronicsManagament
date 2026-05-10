@@ -27,20 +27,21 @@ Backend Spring Boot admin APIs exist for:
 - Warehouse
 - Coupon
 - Media
+- Reports / Analytics
 
 Catalog integration must preserve the storefront category labels:
 
-- điện thoại
-- laptop
-- tai nghe
-- chuột
-- bàn phím
-- lót chuột
+- Điện thoại
+- Laptop
+- Tai nghe
+- Chuột
+- Bàn phím
+- Lót chuột
 - PC Gaming
-- máy bộ
-- linh kiện PC
-- ghế gaming
-- phụ kiện gaming
+- Máy bộ
+- Linh kiện PC
+- Ghế gaming
+- Phụ kiện gaming
 
 Other backend areas:
 
@@ -49,6 +50,7 @@ Other backend areas:
 - Return requests.
 - VNPay and Momo webhooks.
 - Cloudinary media upload.
+- Admin reporting endpoints under `/admin/reports/*`.
 
 ## Frontend API Client
 
@@ -70,7 +72,7 @@ Current behavior:
 - Uses `VITE_API_TIMEOUT`.
 - Uses `VITE_AUTH_TOKEN_STORAGE` to choose `sessionStorage` or `localStorage` for browser auth persistence.
 - Uses `VITE_AUTH_REFRESH_ENDPOINT`.
-- Product catalog services use `VITE_PRODUCT_API_PATH`.
+- Product catalog services use `VITE_PRODUCT_API_PATH`, defaulting to the public `/products` storefront endpoint.
 - Checkout services use `VITE_COUPON_API_PATH`, `VITE_ORDER_API_PATH`, and `VITE_USER_API_PATH`.
 - Payment services use `VITE_PAYMENT_API_PATH`.
 - Realtime notification bridge uses `VITE_REALTIME_WS_URL` when a compatible WebSocket endpoint exists.
@@ -107,7 +109,7 @@ VITE_API_BASE_URL=http://localhost:8080/api
 VITE_API_TIMEOUT=15000
 VITE_AUTH_TOKEN_STORAGE=session
 VITE_AUTH_REFRESH_ENDPOINT=/admin/auth/refresh
-VITE_PRODUCT_API_PATH=/admin/products
+VITE_PRODUCT_API_PATH=/products
 VITE_COUPON_API_PATH=/admin/coupons
 VITE_ORDER_API_PATH=/orders
 VITE_PAYMENT_API_PATH=/payments
@@ -115,6 +117,7 @@ VITE_REALTIME_WS_URL=
 VITE_USER_API_PATH=/admin/users
 VITE_USER_PROFILE_API_PATH=/users
 VITE_USER_ORDER_API_PATH=/orders
+VITE_CART_API_PATH=/cart
 VITE_WISHLIST_API_PATH=
 ```
 
@@ -158,6 +161,8 @@ frontend/src/api/
 ├─ warehouseService.js
 ├─ couponService.js
 ├─ wishlistService.js
+├─ cartService.js
+├─ reportService.js
 └─ mediaService.js
 ```
 
@@ -176,10 +181,11 @@ Admin dashboard API orchestration lives under `frontend/src/admin/services`:
 - `adminModuleRegistry.js` maps admin modules to labels, routes, permission resources, and API services.
 - `adminCrudService.js` provides generic list/detail/create/update/remove wrappers so pages do not duplicate CRUD calls.
 - Registered admin modules are categories, brands, products, variants, media, users, staff, roles, permissions, orders, warehouses, and coupons.
+- Admin reporting can now be wired from the upgraded mock analytics widgets to `/admin/reports/dashboard`, `/admin/reports/revenue`, `/admin/reports/order-status`, and `/admin/reports/top-products`.
 
 `authService.js` owns login/logout/register and token helpers. It calls `POST /auth/login` for storefront customer login, `POST /admin/auth/login` for admin/staff login, and `POST /auth/register` for public customer registration outside demo mode.
 
-The homepage product sections, storefront search overlay, and recently viewed must continue using mock/local data until their API contracts are ready. Wishlist is local-first with optional backend sync through `wishlistService.js`; cart is shared local frontend state; checkout creates backend orders through the configured Order API.
+Homepage product sections, storefront search overlay product suggestions, storefront recommendation sections, PLP, and PDP catalog reads use Product API data from the configured catalog endpoint. Wishlist and recently viewed remain local snapshot systems for customer convenience, while demo mode can still serve seeded mock catalog data when `VITE_DEMO_MODE=true`. Cart syncs to `/cart` for authenticated customer sessions and remains local for guests/demo/admin sessions; checkout creates backend orders through the configured Order API.
 
 ## Product Catalog Integration
 
@@ -204,9 +210,9 @@ Current behavior:
 - `useProducts.js` owns listing fetch state, loading/error/empty states, category filtering, brand filtering, search, sorting, and pagination foundation.
 - `useProductDetail.js` owns detail fetch state, review/detail normalization, related products, loading, error, and not-found states.
 - Category and brand filters are derived from Product API data instead of duplicated constants in the listing page.
-- `VITE_PRODUCT_API_PATH` controls the catalog endpoint and currently defaults to `/admin/products`.
+- `VITE_PRODUCT_API_PATH` controls the storefront catalog endpoint and currently defaults to `/products`.
 
-Do not hardcode a single backend response shape in pages or presentational components. If the backend later exposes a dedicated public storefront product endpoint, point `VITE_PRODUCT_API_PATH` to that endpoint and keep response adaptation inside `productMapper.js`.
+Do not hardcode a single backend response shape in pages or presentational components. The backend exposes a public read-only storefront product endpoint at `/api/products`; keep response adaptation inside `productMapper.js` if this contract evolves.
 
 ## Checkout And Payment Integration
 

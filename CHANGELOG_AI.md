@@ -6,7 +6,47 @@ This changelog records AI-assisted project context, documentation, and implement
 
 Always update this file after meaningful work.
 
+## 2026-05-11
+
+### Recently Viewed Hardcoded Cleanup
+
+- Removed the remaining hardcoded/mock catalog fallback from `useRecentlyViewed.js`.
+- Added filtering and storage cleanup for legacy `P001`-style localStorage product snapshots so the homepage "Tiếp tục xem sản phẩm" section only keeps API-backed product identities.
+- Verified `npm run lint`, `npm run build`, and `git diff --check`; `git diff --check` reported only LF-to-CRLF normalization warnings.
+
 ## 2026-05-10
+
+### Storefront Product Catalog API
+
+- Added public read-only storefront product catalog endpoints at `GET /api/products`, `GET /api/products/{productId}`, and `GET /api/products/{productId}/reviews`, restricted to ACTIVE products.
+- Split storefront catalog reads from admin Product Management so frontend catalog defaults to `/products` while admin CRUD stays on `/admin/products`.
+- Replaced hardcoded storefront product usage on the homepage hero/product grid/flash sale/trending/best-seller sections, search product suggestions, PDP bundle fallback, and cart recommendations with Product API data.
+- Kept `frontend/src/data/products.js` only for demo-mode seeding when `VITE_DEMO_MODE=true`.
+- Verified `mvn -q -DskipTests compile`, `mvn test`, `npm run lint`, `npm run build`, and `git diff --check`; `git diff --check` reported only existing LF-to-CRLF normalization warnings.
+
+### Database Seed Expansion
+
+- Expanded `database/test.sql` into a fuller PostgreSQL reset seed for the current Hibernate schema, including customer carts, cart items, richer permissions, staff role permission mappings, 25 users, 24 brands, 138 products, 138 variants, media rows, warehouse stock, 55 orders, generated reviews, return requests, and payment transactions.
+- Updated storefront/admin/demo category display labels to title-case Vietnamese labels while preserving slugs and homepage layout.
+- Added title-case category aliases to product mapping fallbacks and refreshed AI context category label references.
+- Verified `npm run lint`, `npm run build`, and `git diff --check`; local `psql` is not installed, so the seed file was reviewed statically but not executed through PostgreSQL CLI in this environment.
+
+### Admin Report API
+
+- Added backend Admin Report APIs at `/api/admin/reports/dashboard`, `/api/admin/reports/revenue`, `/api/admin/reports/order-status`, and `/api/admin/reports/top-products`.
+- Added `AdminReportController`, `AdminReportService`, report response DTOs, `ReportGroupBy`, and a report-focused `OrderRepository` query with order detail/product/category/brand fetches.
+- Added dashboard totals, day/month/year revenue buckets, order-status breakdowns, and top-product aggregates based on completed or paid revenue-eligible orders.
+- Updated Spring Security so report endpoints are available to ADMIN and staff with dashboard, revenue report, best-seller report, or order view permissions.
+- Updated API/context docs to reflect that backend reporting APIs now exist while the current frontend analytics widgets still need wiring.
+- Verified `mvn -q -DskipTests compile`, `mvn test`, `git diff --check`, and no-token `GET /api/admin/reports/dashboard` returning `401`.
+
+### Customer Cart Persistence API
+
+- Added persisted customer cart backend support with `carts` and `cart_items` entities, `CartRepository`, request/response DTOs, `UserCartService`, and `/api/cart` endpoints for get, replace, add, update, remove, and clear.
+- Protected `/api/cart` with customer JWT authorities while preserving existing admin/staff security rules.
+- Added `frontend/src/api/cartMapper.js` and `cartService.js`, plus `VITE_CART_API_PATH=/cart` env defaults.
+- Updated `CartProvider` so guest/demo/admin carts stay local while authenticated customer carts merge local and remote items and sync to the backend.
+- Verified `mvn -q -DskipTests compile`, `mvn test`, `npm run lint`, `npm run build`, `git diff --check`, and local dev servers on `8081`/`5185` after implementation.
 
 ### Customer Login API
 

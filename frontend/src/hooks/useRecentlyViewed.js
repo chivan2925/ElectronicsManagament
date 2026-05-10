@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { normalizeProduct } from "../api/productMapper";
-import { products as catalogProducts } from "../data";
 import { firstDefined, hasSameProduct } from "../utils/productIdentity";
 
 const RECENTLY_VIEWED_STORAGE_KEY = "electronicsManagement:recentlyViewed";
 const RECENTLY_VIEWED_CHANGE_EVENT = "electronicsManagement:recently-viewed-change";
 const MAX_RECENTLY_VIEWED_ITEMS = 12;
 
-const catalogProductMap = new Map(catalogProducts.map((product) => [String(product.id), product]));
+const LEGACY_MOCK_PRODUCT_ID_PATTERN = /^P\d+$/i;
+const API_PRODUCT_ID_PATTERN = /^[1-9]\d*$/;
 
 function getStorage() {
   if (typeof window === "undefined") {
@@ -25,18 +25,32 @@ function isPlainObject(value) {
   return Boolean(value && typeof value === "object" && !Array.isArray(value));
 }
 
+function isApiProductId(value) {
+  return API_PRODUCT_ID_PATTERN.test(String(value ?? "").trim());
+}
+
+function isLegacyMockProductId(value) {
+  return LEGACY_MOCK_PRODUCT_ID_PATTERN.test(String(value ?? "").trim());
+}
+
+function getProductIdentity(product) {
+  return firstDefined(product?.apiId, product?.productId, product?.id);
+}
+
+function hasProductDisplayData(product) {
+  return Boolean(firstDefined(product?.name, product?.productName, product?.title));
+}
+
 function getEntryProductSource(entry) {
   if (typeof entry === "string" || typeof entry === "number") {
-    return catalogProductMap.get(String(entry)) ?? { id: String(entry) };
+    return null;
   }
 
   if (!isPlainObject(entry)) {
     return null;
   }
 
-  const productId = firstDefined(entry.productId, entry.id, entry.apiId);
-
-  return entry.product ?? catalogProductMap.get(String(productId)) ?? entry;
+  return entry.product ?? entry;
 }
 
 function createProductSnapshot(productSource) {
@@ -44,7 +58,16 @@ function createProductSnapshot(productSource) {
     return null;
   }
 
+  if (!hasProductDisplayData(productSource) || isLegacyMockProductId(getProductIdentity(productSource))) {
+    return null;
+  }
+
   const product = normalizeProduct(productSource);
+  const productId = getProductIdentity(product);
+
+  if (!isApiProductId(productId) || isLegacyMockProductId(productId)) {
+    return null;
+  }
 
   return {
     apiId: product.apiId,
@@ -126,8 +149,13 @@ function readRecentlyViewedEntries() {
   try {
     const parsedValue = JSON.parse(rawValue);
     const entries = Array.isArray(parsedValue) ? parsedValue : parsedValue.items;
+    const normalizedEntries = sortRecentlyViewed(normalizeRecentlyViewedEntries(entries)).slice(0, MAX_RECENTLY_VIEWED_ITEMS);
 
-    return sortRecentlyViewed(normalizeRecentlyViewedEntries(entries)).slice(0, MAX_RECENTLY_VIEWED_ITEMS);
+    if (Array.isArray(entries) && normalizedEntries.length !== entries.length) {
+      saveRecentlyViewedEntries(normalizedEntries, { notify: false });
+    }
+
+    return normalizedEntries;
   } catch {
     return [];
   }
@@ -142,24 +170,35 @@ function serializeRecentlyViewedEntry(entry) {
   };
 }
 
-function writeRecentlyViewedEntries(entries) {
+function saveRecentlyViewedEntries(entries, { notify = true } = {}) {
   const storage = getStorage();
 
   if (!storage) {
     return;
   }
 
+  if (!entries.length) {
+    storage.removeItem(RECENTLY_VIEWED_STORAGE_KEY);
+  } else {
+    storage.setItem(
+      RECENTLY_VIEWED_STORAGE_KEY,
+      JSON.stringify({
+        items: entries.map(serializeRecentlyViewedEntry),
+        updatedAt: new Date().toISOString(),
+        version: 2,
+      }),
+    );
+  }
+
+  if (notify && typeof window !== "undefined") {
+    window.dispatchEvent(new CustomEvent(RECENTLY_VIEWED_CHANGE_EVENT));
+  }
+}
+
+function writeRecentlyViewedEntries(entries) {
   const normalizedEntries = sortRecentlyViewed(normalizeRecentlyViewedEntries(entries)).slice(0, MAX_RECENTLY_VIEWED_ITEMS);
 
-  storage.setItem(
-    RECENTLY_VIEWED_STORAGE_KEY,
-    JSON.stringify({
-      items: normalizedEntries.map(serializeRecentlyViewedEntry),
-      updatedAt: new Date().toISOString(),
-      version: 2,
-    }),
-  );
-  window.dispatchEvent(new CustomEvent(RECENTLY_VIEWED_CHANGE_EVENT));
+  saveRecentlyViewedEntries(normalizedEntries);
 }
 
 function useRecentlyViewed() {
@@ -172,8 +211,10 @@ function useRecentlyViewed() {
 
     window.addEventListener(RECENTLY_VIEWED_CHANGE_EVENT, syncRecentlyViewed);
     window.addEventListener("storage", syncRecentlyViewed);
+    const syncFrame = window.requestAnimationFrame(syncRecentlyViewed);
 
     return () => {
+      window.cancelAnimationFrame(syncFrame);
       window.removeEventListener(RECENTLY_VIEWED_CHANGE_EVENT, syncRecentlyViewed);
       window.removeEventListener("storage", syncRecentlyViewed);
     };

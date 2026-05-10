@@ -16,7 +16,6 @@ import ApiErrorAlert from "../../components/ui/feedback/ApiErrorAlert";
 import EmptyState from "../../components/ui/feedback/EmptyState";
 import LoadingState from "../../components/ui/feedback/LoadingState";
 import SkeletonBlock from "../../components/skeletons/SkeletonBlock";
-import { products as catalogProducts } from "../../data";
 import useRecentlyViewed from "../../hooks/useRecentlyViewed";
 import useProductDetail from "../../hooks/useProductDetail";
 import { buildNoIndexMetadata, buildProductDetailMetadata, slugify } from "../../seo/metadata";
@@ -61,7 +60,7 @@ function getFrequentlyBoughtTogetherProducts(product, relatedProducts, limit = 6
   const excludedAliases = new Set(getProductAliases(product));
   const preferredCategories = frequentlyBoughtCategories[product.category] || [];
   const productTags = new Set(product.tags || []);
-  const candidates = getUniqueProducts([...relatedProducts, ...catalogProducts]).filter(
+  const candidates = getUniqueProducts(relatedProducts).filter(
     (candidate) => !getProductAliases(candidate).some((alias) => excludedAliases.has(alias)),
   );
 

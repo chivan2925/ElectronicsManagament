@@ -161,17 +161,17 @@ Storefront skeleton states should use dark shimmer placeholders that match the f
 
 Use these labels for storefront/product taxonomy:
 
-- điện thoại
-- laptop
-- tai nghe
-- chuột
-- bàn phím
-- lót chuột
+- Điện thoại
+- Laptop
+- Tai nghe
+- Chuột
+- Bàn phím
+- Lót chuột
 - PC Gaming
-- máy bộ
-- linh kiện PC
-- ghế gaming
-- phụ kiện gaming
+- Máy bộ
+- Linh kiện PC
+- Ghế gaming
+- Phụ kiện gaming
 
 ## Interaction Rules
 

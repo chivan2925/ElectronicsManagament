@@ -14,6 +14,23 @@ Phase 8 — Production + Deploy (Completed showcase)
 
 ## Recently Completed
 
+- Removed the remaining recently viewed hardcoded/mock product fallback from `useRecentlyViewed.js`.
+- Added cleanup so legacy `P001`-style localStorage snapshots are purged and only API-backed product identities are kept for the "Tiếp tục xem sản phẩm" section.
+- Verified `npm run lint`, `npm run build`, and `git diff --check` after the recently viewed cleanup. `git diff --check` reported only LF-to-CRLF normalization warnings.
+- Added a public read-only storefront product catalog at `GET /api/products`, `GET /api/products/{productId}`, and `GET /api/products/{productId}/reviews`, backed by the existing Product/Review services and restricted to ACTIVE products.
+- Changed frontend catalog defaults so storefront Product API reads use `/products` while admin Product Management keeps `/admin/products`.
+- Replaced hardcoded homepage product cards, flash sale selection, hero product content, trending/best-seller sections, search product suggestions, PDP bundle fallback, and cart recommendations with Product API data.
+- Kept `frontend/src/data/products.js` only for demo-mode seeding through `VITE_DEMO_MODE=true`; active storefront product surfaces no longer import its product list.
+- Verified `mvn -q -DskipTests compile`, `mvn test`, `npm run lint`, `npm run build`, and `git diff --check` after the storefront catalog integration. `git diff --check` reported only LF-to-CRLF normalization warnings.
+- Expanded `database/test.sql` for a clean PostgreSQL reseed with current schema tables, richer admin permissions, customer carts, expanded catalog/brand data, generated media, warehouse stock, orders, payments, reviews, and return requests.
+- Updated storefront/admin/demo category display labels to title-case Vietnamese labels while preserving category slugs and the homepage layout.
+- Verified `npm run lint`, `npm run build`, and `git diff --check`; local `psql` is not installed, so the SQL seed was statically reviewed but not executed through PostgreSQL CLI.
+- Added backend Admin Report APIs at `/api/admin/reports/dashboard`, `/api/admin/reports/revenue`, `/api/admin/reports/order-status`, and `/api/admin/reports/top-products` with date range filters, day/month/year revenue buckets, order status breakdowns, and top product aggregates.
+- Added `AdminReportController`, `AdminReportService`, report response DTOs, `ReportGroupBy`, a report query on `OrderRepository`, and report security rules for admin/staff report permissions.
+- Verified `mvn -q -DskipTests compile`, `mvn test`, `git diff --check`, and no-token `GET /api/admin/reports/dashboard` returning `401`.
+- Added customer cart persistence with backend `/api/cart` endpoints for get/replace/add/update/remove/clear, `carts` and `cart_items` JPA entities, customer JWT security rules, and frontend cart sync through `frontend/src/api/cartService.js`.
+- Updated `CartProvider` so guest carts remain local while authenticated customer sessions merge local and remote items, persist to backend, and stay opt-in safe for demo/admin sessions.
+- Verified `mvn -q -DskipTests compile`, `mvn test`, `npm run lint`, `npm run build`, `git diff --check`, and local smoke checks on backend `8081` plus frontend `5185`.
 - Added public backend customer registration at `POST /api/auth/register` with DTO validation, BCrypt hashing, generated customer usernames, optional unique phone handling, safe `USER` response metadata, and a public security rule that preserves existing admin/staff auth.
 - Added separate public customer login at `POST /api/auth/login` plus customer logout at `POST /api/auth/logout`, backed by `CustomerDetailsService`, customer-only authorities, and a JWT `accountType` claim so admin/staff auth remains separate.
 - Connected the storefront `/register` form to the new customer registration API outside demo mode while keeping demo mode local-first for presentations.
@@ -21,7 +38,7 @@ Phase 8 — Production + Deploy (Completed showcase)
 - Added focused service tests for customer login success/invalid password, successful registration, optional phone handling, password confirmation mismatch, and duplicate email rejection; `mvn test` passes with the known local PostgreSQL `media.display_order` DDL warning.
 - Verified `mvn test`, `npm run lint`, `npm run build`, and `git diff --check` after the customer auth split; `git diff --check` reported only CRLF normalization warnings.
 - Completed a backend API gap audit for Customer Register, Customer Cart, User Password Reset, and Analytics/Report APIs.
-- Confirmed during the audit that those four areas did not have dedicated backend endpoints/modules yet; Customer Register and Customer Login have now been implemented, while Customer Cart, User Password Reset, and Analytics/Report remain open.
+- Confirmed during the audit that those four areas did not have dedicated backend endpoints/modules yet; Customer Register, Customer Login, Customer Cart, and Admin Reports have now been implemented, while User Password Reset remains open.
 - Completed the final graduation showcase polish pass across homepage wow-factor, PDP presentation, checkout trust UX, admin analytics, dashboard panels, subtle motion, hover states, and shared visual utilities.
 - Marked Phase 8 completed, the ecommerce platform finalized, and the production-ready showcase completed while preserving the homepage layout and frontend/admin architecture.
 - Verified `npm run lint`, `npm run build`, and `git diff --check` after the showcase polish pass; `git diff --check` reported only CRLF normalization warnings for edited files.
@@ -425,9 +442,9 @@ Phase 8 — Production + Deploy (Completed showcase)
 - Keep the `/login` API-backed customer auth flow stable outside demo mode and keep `/admin/login` on the admin/staff auth endpoint.
 - Keep `/profile`, `/profile/orders`, and `/profile/settings` behind `ProtectedRoute`.
 - Keep account profile/order API calls centralized in `userService.js`, `orderService.js`, and `accountMapper.js`.
-- Keep the shared cart provider as the single cart state source for header drawer, cart page, product cards, product detail, and checkout.
+- Keep the shared cart provider as the single cart state source for header drawer, cart page, product cards, product detail, checkout, and customer cart backend sync.
 - Connect the production-ready wishlist sync layer to a real public wishlist API when the backend contract is ready; keep recently viewed local until product history APIs exist.
-- Replace homepage product sections, wishlist/recently viewed lookup, and search overlay mock data with real storefront APIs when those contracts are ready.
+- Keep homepage product sections, search overlay product suggestions, and recommendation sections on Product API data; replace only demo-mode seed data when demo scenarios need different catalog examples.
 - Keep VNPay and MoMo Sandbox checkout handoff stable; move to production credentials only through environment-specific config.
 - Keep `/categories/:categorySlug` category browsing aligned with product listing filters and canonical metadata.
 - Replace the homepage mock loading timer with real loading state when storefront data integration begins.
@@ -437,7 +454,7 @@ Phase 8 — Production + Deploy (Completed showcase)
 - Keep the finalized ecommerce showcase stable; do not make broad redesigns after completion.
 - Keep real deployment blocked until hosting, TLS, external secrets, backups, and migration automation are finalized outside committed code.
 - Add controlled PostgreSQL migration/backfill scripts for legacy schema drift before using the production `ddl-auto=validate` posture against real data.
-- Finalize customer account ownership, cart persistence, wishlist persistence, and public order tracking contracts.
+- Finalize customer account ownership, wishlist persistence, public order tracking contracts, and controlled migration scripts for customer cart tables.
 - Move VNPay/MoMo from sandbox to production only through environment-specific credentials, HTTPS return URLs, provider reconciliation checks, and critical-flow tests.
 - Connect real notification, loyalty, recommendation, search, and customer-facing returns/refunds APIs when backend contracts are available.
 - Connect a backend WebSocket/SSE notification endpoint to `VITE_REALTIME_WS_URL` when the API contract is ready.
@@ -452,7 +469,7 @@ Phase 8 — Production + Deploy (Completed showcase)
 - Reuse admin module registry metadata for resource labels, routes, permissions, and service selection.
 - Reuse shared route/sidebar/action permission policies for every admin resource page.
 - Keep ADMIN full access and require staff resource view permissions for staff module access.
-- Keep upgraded admin analytics mock data isolated until reporting APIs exist.
+- Keep upgraded admin analytics mock data isolated until the frontend is wired to `/api/admin/reports/*`.
 
 ### Phase 4 Auth + Backend Integration Maintenance
 
@@ -464,12 +481,12 @@ Phase 8 — Production + Deploy (Completed showcase)
 
 ## Blocked Or Not Ready
 
-- Public customer APIs are not complete beyond customer auth, checkout/order creation, account profile/order reads, and payment handoff.
+- Public customer APIs are not complete beyond public product browsing, customer auth, checkout/order creation, account profile/order reads, cart persistence, and payment handoff.
 - Public customer auth now supports registration/login/logout; account APIs remain authenticated and user-id scoped until customer ownership checks are tightened.
 - Client checkout/account routes are customer-session-only in the frontend, but backend ownership enforcement still needs endpoint-level tightening using the customer-auth principal.
-- A dedicated backend cart persistence API is not implemented; cart state is shared local frontend state.
+- Customer cart persistence exists at `/api/cart`, but production `ddl-auto=validate` deployments need controlled migration/backfill for `carts` and `cart_items`.
 - A dedicated backend wishlist persistence API is not implemented; wishlist state is local-first with optional frontend sync support through `VITE_WISHLIST_API_PATH`.
-- Admin CRUD modules are API-backed; upgraded `/admin/dashboard` and `/admin/reports/revenue` analytics still use isolated mock reporting data until reporting APIs exist.
+- Admin CRUD modules are API-backed; upgraded `/admin/dashboard` and `/admin/reports/revenue` frontend screens still use isolated mock reporting data until connected to `/api/admin/reports/*`.
 - Category API currently has no `description` field in request/response DTOs, so category description is UI-session only until backend contract is extended.
 - Backend customer/admin auth currently exposes login/logout; refresh-token endpoint support is not implemented yet.
 - Backend startup also reports a database DDL warning for existing null `media.display_order` values.

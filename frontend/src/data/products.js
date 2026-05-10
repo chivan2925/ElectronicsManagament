@@ -459,9 +459,3 @@ export const products = [
     tags: ["15 keys", "Creator", "USB-C"],
   },
 ];
-
-export const featuredProducts = products.slice(0, 6);
-
-export const flashSaleProduct = products.find(
-  (product) => product.slug === "hyperx-cloud-iii-wireless",
-);

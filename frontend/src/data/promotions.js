@@ -1,13 +1,13 @@
 export const heroPromotion = {
-  badge: "MỚI RA MẮT",
-  title: "iPhone 15 Pro Max",
-  subtitle: "Titan. Mạnh mẽ. Đột phá.",
-  image: "https://placehold.co/420x560/0B1730/FFFFFF?text=iPhone%2015%20Pro%20Max",
-  imageAlt: "iPhone 15 Pro Max",
+  badge: "CATALOG LIVE",
+  title: "ElectronicsManagement",
+  subtitle: "Sản phẩm thật, tồn kho thật, sẵn sàng cho storefront.",
+  image: "https://placehold.co/420x560/0B1730/FFFFFF?text=ElectronicsManagement",
+  imageAlt: "ElectronicsManagement catalog",
   features: [
-    "Chip A17 Pro mạnh mẽ nhất",
-    "Camera 48MP. Zoom 5x quang học",
-    "Thiết kế Titan. Nhẹ hơn, bền hơn",
+    "Sản phẩm đồng bộ trực tiếp từ database",
+    "Giá và tồn kho lấy từ API thật",
+    "Danh mục ACTIVE hiển thị trên storefront",
   ],
 };
 

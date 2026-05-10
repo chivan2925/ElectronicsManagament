@@ -216,6 +216,6 @@ Client product UI should support:
 
 ## Known Gaps
 
-- Storefront product listing/detail currently use the Product API path through frontend service/mappers, while a dedicated public storefront catalog endpoint remains future work.
+- Storefront product listing/detail/home/search reads use the public `/api/products` catalog endpoint through frontend service/mappers.
 - Admin product and variant forms are connected to backend APIs.
 - Specs JSON needs a consistent UI schema per category later.

@@ -1,6 +1,5 @@
 import { useMemo } from "react";
 import { Flame } from "lucide-react";
-import { products as catalogProducts } from "../../data";
 import RecommendationSection from "./RecommendationSection";
 
 function getRecentRankMap(products) {
@@ -36,7 +35,7 @@ function getTrendingProducts(products = [], limit = 10) {
     .slice(0, limit);
 }
 
-function TrendingProducts({ className, limit = 10, products = catalogProducts, surface = "home" }) {
+function TrendingProducts({ className, limit = 10, products = [], surface = "home" }) {
   const trendingProducts = useMemo(() => getTrendingProducts(products, limit), [limit, products]);
 
   return (

@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 public interface OrderRepository extends JpaRepository<OrderEntity, Integer> {
@@ -72,4 +73,18 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Integer> {
 
     @Query("SELECT o FROM OrderEntity o WHERE o.status = 'PENDING' AND o.createdAt <= :thresholdTime")
     Page<OrderEntity> findExpiredPendingOrders(@Param("thresholdTime") LocalDateTime thresholdTime, Pageable pageable);
+
+    @EntityGraph(attributePaths = {
+            "orderDetails",
+            "orderDetails.variant",
+            "orderDetails.variant.product",
+            "orderDetails.variant.product.category",
+            "orderDetails.variant.product.brand"
+    })
+    @Query("SELECT DISTINCT o FROM OrderEntity o " +
+            "WHERE o.createdAt >= :fromDate AND o.createdAt <= :toDate")
+    List<OrderEntity> findOrdersForReport(
+            @Param("fromDate") LocalDateTime fromDate,
+            @Param("toDate") LocalDateTime toDate
+    );
 }

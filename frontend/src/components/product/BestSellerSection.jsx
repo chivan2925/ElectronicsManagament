@@ -1,6 +1,5 @@
 import { useMemo } from "react";
 import { Trophy } from "lucide-react";
-import { products as catalogProducts } from "../../data";
 import RecommendationSection from "./RecommendationSection";
 
 function getBestSellerProducts(products = [], limit = 10) {
@@ -14,7 +13,7 @@ function getBestSellerProducts(products = [], limit = 10) {
     .slice(0, limit);
 }
 
-function BestSellerSection({ className, limit = 10, products = catalogProducts, surface = "home" }) {
+function BestSellerSection({ className, limit = 10, products = [], surface = "home" }) {
   const bestSellerProducts = useMemo(() => getBestSellerProducts(products, limit), [limit, products]);
 
   return (

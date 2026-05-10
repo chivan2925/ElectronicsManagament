@@ -1,4 +1,4 @@
-import { lazy, useEffect, useState } from "react";
+import { lazy, useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import DeferredSectionBoundary from "../../components/common/DeferredSectionBoundary";
 import AnnouncementBar from "../../components/layout/AnnouncementBar";
@@ -19,15 +19,15 @@ import {
   SkeletonBlock,
 } from "../../components/skeletons";
 import Container from "../../components/ui/Container";
+import ApiErrorAlert from "../../components/ui/feedback/ApiErrorAlert";
+import EmptyState from "../../components/ui/feedback/EmptyState";
 import SectionTitle from "../../components/ui/SectionTitle";
 import {
   categories,
-  featuredProducts,
-  flashSaleProduct,
-  heroPromotion,
   promoCards,
   services,
 } from "../../data";
+import useHomepageProducts, { HOMEPAGE_FEATURED_LIMIT } from "../../hooks/useHomepageProducts";
 import { buildHomeMetadata } from "../../seo/metadata";
 import { motionViewport, staggerContainer } from "../../styles/animations";
 
@@ -36,8 +36,52 @@ const RecentlyViewedSection = lazy(() => import("../../components/product/Recent
 const TrendingProducts = lazy(() => import("../../components/product/TrendingProducts"));
 const BestSellerSection = lazy(() => import("../../components/product/BestSellerSection"));
 
+const defaultHeroPromotion = {
+  badge: "CATALOG LIVE",
+  features: [
+    "Sản phẩm đang đồng bộ trực tiếp từ database",
+    "Giá, tồn kho và danh mục lấy từ API thật",
+    "Chọn sản phẩm ACTIVE để hiển thị trên storefront",
+  ],
+  image: "",
+  imageAlt: "ElectronicsManagement catalog",
+  subtitle: "Sản phẩm thật, tồn kho thật, sẵn sàng cho storefront.",
+  title: "ElectronicsManagement",
+};
+
+function getHeroPromotionFromProduct(product) {
+  if (!product) {
+    return defaultHeroPromotion;
+  }
+
+  return {
+    badge: product.featured ? "NỔI BẬT TỪ DB" : "CATALOG LIVE",
+    features: [
+      product.brand ? `Thương hiệu ${product.brand}` : null,
+      product.category ? `Danh mục ${product.category}` : null,
+      product.stock > 0 ? `Tồn kho khả dụng: ${product.stock}` : "Đang chờ cập nhật tồn kho",
+    ].filter(Boolean),
+    image: product.image,
+    imageAlt: product.name,
+    subtitle: [product.brand, product.category].filter(Boolean).join(" · ") || "Sản phẩm từ database",
+    title: product.name,
+  };
+}
+
 function Home() {
   const [isLoadingDemo, setIsLoadingDemo] = useState(true);
+  const {
+    error: productsError,
+    featuredProducts,
+    flashSaleProduct,
+    isLoading: isLoadingProducts,
+    products: homepageProducts,
+    refresh: refreshHomepageProducts,
+  } = useHomepageProducts();
+  const heroPromotion = useMemo(
+    () => getHeroPromotionFromProduct(flashSaleProduct ?? featuredProducts[0]),
+    [featuredProducts, flashSaleProduct],
+  );
 
   useEffect(() => {
     const loadingTimer = window.setTimeout(() => {
@@ -100,7 +144,7 @@ function Home() {
                 </div>
 
                 <div className="grid-products">
-                  {Array.from({ length: featuredProducts.length }).map((_, index) => (
+                  {Array.from({ length: HOMEPAGE_FEATURED_LIMIT }).map((_, index) => (
                     <ProductCardSkeleton key={index} />
                   ))}
                 </div>
@@ -113,7 +157,7 @@ function Home() {
           <>
             <section className="grid gap-5 xl:grid-cols-[280px_1fr_320px]">
               <CategorySidebar categories={categories} />
-              <HeroBanner promotion={heroPromotion} />
+              {isLoadingProducts ? <BannerSkeleton /> : <HeroBanner promotion={heroPromotion} />}
               <MotionDiv
                 className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-1 [&>*:last-child]:sm:col-span-2 [&>*:last-child]:lg:col-span-1"
                 initial="hidden"
@@ -146,13 +190,39 @@ function Home() {
                   viewport={motionViewport}
                   whileInView="visible"
                 >
-                  {featuredProducts.map((product) => (
-                    <ProductCard key={product.id} product={product} />
-                  ))}
+                  {isLoadingProducts ? (
+                    Array.from({ length: HOMEPAGE_FEATURED_LIMIT }).map((_, index) => (
+                      <ProductCardSkeleton key={`featured-product-loading-${index}`} />
+                    ))
+                  ) : productsError ? (
+                    <div className="md:col-span-2 xl:col-span-3">
+                      <ApiErrorAlert
+                        actionLabel="Tải lại sản phẩm"
+                        error={productsError}
+                        onAction={refreshHomepageProducts}
+                        surface="store"
+                        title="Không tải được sản phẩm từ DB"
+                      />
+                    </div>
+                  ) : featuredProducts.length ? (
+                    featuredProducts.map((product) => (
+                      <ProductCard key={product.id} product={product} />
+                    ))
+                  ) : (
+                    <div className="md:col-span-2 xl:col-span-3">
+                      <EmptyState
+                        actionLabel="Xem catalog"
+                        actionTo="/products"
+                        message="Chưa có sản phẩm ACTIVE trong database để hiển thị ở trang chủ."
+                        size="compact"
+                        title="Chưa có sản phẩm từ DB"
+                      />
+                    </div>
+                  )}
                 </MotionDiv>
               </div>
 
-              <FlashSaleCard product={flashSaleProduct} />
+              {isLoadingProducts ? <ProductCardSkeleton variant="feature" /> : <FlashSaleCard product={flashSaleProduct} />}
             </section>
 
             <DeferredSectionBoundary fallbackProps={{ cardCount: 4, surface: "home" }}>
@@ -165,11 +235,11 @@ function Home() {
             </DeferredSectionBoundary>
 
             <DeferredSectionBoundary fallbackProps={{ cardCount: 4, surface: "home" }}>
-              <TrendingProducts />
+              <TrendingProducts products={homepageProducts} />
             </DeferredSectionBoundary>
 
             <DeferredSectionBoundary fallbackProps={{ cardCount: 4, surface: "home" }}>
-              <BestSellerSection />
+              <BestSellerSection products={homepageProducts} />
             </DeferredSectionBoundary>
           </>
         )}

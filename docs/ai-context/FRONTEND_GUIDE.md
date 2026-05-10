@@ -464,7 +464,7 @@ Recommendation UI components live in `frontend/src/components/product/`:
 - `TrendingProducts.jsx`
 - `BestSellerSection.jsx`
 
-The recommendation foundation is local/mock-backed for now. It powers homepage trending and best-seller sections, PDP related and frequently bought together sections, and the profile recommended-for-you placeholder until a real storefront recommendation API exists.
+The recommendation foundation uses Product API catalog data for homepage trending/best-seller sections, PDP related/frequently-bought sections, and cart recommendations. Profile recommended-for-you remains a local placeholder until a dedicated recommendation API exists.
 
 Reusable product detail API state logic lives in `frontend/src/hooks/useProductDetail.js`.
 
@@ -594,7 +594,7 @@ Reusable search state logic lives in:
 - `frontend/src/hooks/useSearch.js`
 - `frontend/src/hooks/useRecentSearches.js`
 
-The storefront header opens the search overlay on desktop and mobile. The overlay uses mock products, categories, and brands with debounced local suggestions, recent searches, trending searches, category-aware and brand-aware scoring, result previews, search highlighting, loading/empty states, and keyboard navigation behavior until a real storefront search API is ready.
+The storefront header opens the search overlay on desktop and mobile. The overlay fetches Product API catalog products for product suggestions, combines them with storefront category/brand scoring, and keeps debounced local search behavior, recent searches, trending searches, result previews, search highlighting, loading/empty states, and keyboard navigation.
 
 ## Skeleton Loading
 

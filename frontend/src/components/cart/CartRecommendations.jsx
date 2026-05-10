@@ -1,9 +1,9 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Plus, Sparkles, Star } from "lucide-react";
+import productService from "../../api/productService";
 import { useCart } from "../../cart";
-import { products as catalogProducts } from "../../data";
 import { fadeUp, motionViewport, staggerContainer } from "../../styles/animations";
 import { cn } from "../../utils/classNames";
 import { formatCurrency } from "../../utils/formatters";
@@ -28,7 +28,7 @@ const complementaryCategories = {
   "phụ kiện gaming": ["tai nghe", "chuột", "bàn phím"],
 };
 
-function getCartRecommendationProducts(items = [], limit = 8) {
+function getCartRecommendationProducts(items = [], catalogProducts = [], limit = 8) {
   const cartAliases = new Set(items.flatMap((item) => getProductAliases(item.product)));
   const cartCategories = new Set(items.map((item) => item.product?.category).filter(Boolean));
   const preferredCategories = Array.from(cartCategories).flatMap((category) => complementaryCategories[category] || []);
@@ -94,7 +94,38 @@ function RecommendationMiniCard({ onAdd, product }) {
 function CartRecommendations({ className, compact = false, items = [], limit = 8 }) {
   const { addItem } = useCart();
   const toast = useToast();
-  const recommendations = useMemo(() => getCartRecommendationProducts(items, limit), [items, limit]);
+  const [catalogProducts, setCatalogProducts] = useState([]);
+
+  useEffect(() => {
+    let isActive = true;
+
+    productService
+      .getCatalogProducts({
+        page: 0,
+        size: 24,
+        sort: "featured",
+        status: "ACTIVE",
+      })
+      .then((page) => {
+        if (isActive) {
+          setCatalogProducts(page.items);
+        }
+      })
+      .catch(() => {
+        if (isActive) {
+          setCatalogProducts([]);
+        }
+      });
+
+    return () => {
+      isActive = false;
+    };
+  }, []);
+
+  const recommendations = useMemo(
+    () => getCartRecommendationProducts(items, catalogProducts, limit),
+    [catalogProducts, items, limit],
+  );
 
   const handleAddRecommendation = (product) => {
     const result = addItem(product);

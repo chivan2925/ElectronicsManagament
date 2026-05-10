@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { categories as catalogCategories, products as catalogProducts } from "../data";
+import productService from "../api/productService";
+import { categories as catalogCategories } from "../data";
 import useRecentSearches from "./useRecentSearches";
 
 const DEFAULT_DEBOUNCE_MS = 220;
@@ -227,19 +228,65 @@ function useSearch({
   debounceMs = DEFAULT_DEBOUNCE_MS,
   limits = DEFAULT_LIMITS,
   minQueryLength = 1,
-  products = catalogProducts,
+  products: providedProducts,
   recentSearchesOptions,
   trendingSearches = DEFAULT_TRENDING_SEARCHES,
 } = {}) {
   const [query, setQueryValue] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const [activeIndex, setActiveIndex] = useState(0);
+  const [apiProducts, setApiProducts] = useState([]);
+  const [isCatalogLoading, setIsCatalogLoading] = useState(!Array.isArray(providedProducts));
   const {
     addRecentSearch,
     clearRecentSearches,
     recentSearches,
     removeRecentSearch,
   } = useRecentSearches(recentSearchesOptions);
+  const shouldFetchProducts = !Array.isArray(providedProducts);
+
+  useEffect(() => {
+    if (!shouldFetchProducts) {
+      return undefined;
+    }
+
+    let isActive = true;
+
+    Promise.resolve()
+      .then(() => {
+        if (!isActive) {
+          return null;
+        }
+
+        setIsCatalogLoading(true);
+
+        return productService.getCatalogProducts({
+          page: 0,
+          size: 48,
+          sort: "featured",
+          status: "ACTIVE",
+        });
+      })
+      .then((page) => {
+        if (isActive && page) {
+          setApiProducts(page.items);
+        }
+      })
+      .catch(() => {
+        if (isActive) {
+          setApiProducts([]);
+        }
+      })
+      .finally(() => {
+        if (isActive) {
+          setIsCatalogLoading(false);
+        }
+      });
+
+    return () => {
+      isActive = false;
+    };
+  }, [shouldFetchProducts]);
 
   useEffect(() => {
     const debounceTimer = window.setTimeout(() => {
@@ -258,6 +305,11 @@ function useSearch({
     setActiveIndex(0);
   }, []);
 
+  const products = useMemo(
+    () => (Array.isArray(providedProducts) ? providedProducts : apiProducts),
+    [apiProducts, providedProducts],
+  );
+
   const searchableCategories = useMemo(
     () =>
       categories
@@ -273,7 +325,8 @@ function useSearch({
   const rawNormalizedQuery = normalizeSearchValue(query);
   const hasQuery = normalizedQuery.length >= minQueryLength;
   const isDebouncing = rawNormalizedQuery !== normalizedQuery;
-  const isLoading = rawNormalizedQuery.length >= minQueryLength && isDebouncing;
+  const isLoading =
+    rawNormalizedQuery.length >= minQueryLength && (isDebouncing || (shouldFetchProducts && isCatalogLoading));
 
   const detectedCategories = useMemo(
     () => getDetectedEntities(searchableCategories, normalizedQuery),

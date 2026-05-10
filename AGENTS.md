@@ -20,17 +20,17 @@ Main surfaces:
 
 Product category display labels:
 
-- điện thoại
-- laptop
-- tai nghe
-- chuột
-- bàn phím
-- lót chuột
+- Điện thoại
+- Laptop
+- Tai nghe
+- Chuột
+- Bàn phím
+- Lót chuột
 - PC Gaming
-- máy bộ
-- linh kiện PC
-- ghế gaming
-- phụ kiện gaming
+- Máy bộ
+- Linh kiện PC
+- Ghế gaming
+- Phụ kiện gaming
 
 ## Current Phase
 

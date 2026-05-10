@@ -88,7 +88,7 @@ Vite exposes only variables prefixed with `VITE_`.
 | `VITE_AUTH_TOKEN_STORAGE` | `session` | `session` is preferred; `local` is available for long-lived dev sessions. |
 | `VITE_AUTH_REFRESH_ENDPOINT` | `/admin/auth/refresh` | Frontend-ready; backend refresh endpoint is not finalized. |
 | `VITE_DEMO_MODE` | `false` | Set to `true` only for local demo/presentation mode with seeded mock API responses and demo accounts. |
-| `VITE_PRODUCT_API_PATH` | `/admin/products` | Product catalog path used by frontend service layer. |
+| `VITE_PRODUCT_API_PATH` | `/products` | Public storefront product catalog path used by frontend catalog service calls. |
 | `VITE_COUPON_API_PATH` | `/admin/coupons` | Coupon API path. |
 | `VITE_ORDER_API_PATH` | `/orders` | Storefront order API path. |
 | `VITE_PAYMENT_API_PATH` | `/payments` | Payment API path. |
