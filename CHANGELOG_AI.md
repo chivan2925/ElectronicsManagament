@@ -8,6 +8,16 @@ Always update this file after meaningful work.
 
 ## 2026-05-10
 
+### Admin Analytics System
+
+- Added reusable admin analytics widgets: `AnalyticsFilters`, `RevenueAnalytics`, `CustomerAnalytics`, and `InventoryAnalytics`.
+- Upgraded `/admin/dashboard` and `/admin/reports/revenue` with revenue analytics, top-selling products, customer analytics, conversion metrics placeholder, inventory analytics, order trends, and sales report breakdowns.
+- Added responsive Recharts area, line, pie, and bar chart compositions for dense SaaS analytics layouts.
+- Added date range filters, channel/segment filters, and export placeholders for future reporting APIs.
+- Added `frontend/src/data/adminAnalyticsMock.js` for admin-only analytics mock data so the storefront main bundle stays below the Vite chunk-size warning threshold.
+- Updated `CURRENT_STATE.md` and `NEXT_TASKS.md`.
+- Verified `npm run lint`, `npm run build`, and `git diff --check`. `git diff --check` reported only CRLF normalization warnings for edited files.
+
 ### Realtime Notification Foundation
 
 - Added a frontend realtime foundation with `useRealtime.js`, `useRealtimeNotifications.js`, normalized realtime event types, and notification event handlers.

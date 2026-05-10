@@ -1,7 +1,9 @@
 export const ADMIN_ANALYTICS_SCOPES = Object.freeze({
   activity: "activity",
   bestSellers: "best-sellers",
+  customers: "customers",
   dashboard: "dashboard",
+  inventory: "inventory",
   revenue: "revenue",
 });
 

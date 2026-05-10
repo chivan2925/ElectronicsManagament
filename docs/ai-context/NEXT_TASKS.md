@@ -14,6 +14,12 @@ Ready for Phase 7 — Advanced Features & Production Systems
 
 ## Recently Completed
 
+- Upgraded the Admin Analytics System with reusable `AnalyticsFilters`, `RevenueAnalytics`, `CustomerAnalytics`, and `InventoryAnalytics` widgets.
+- Added admin analytics date range filters, channel/segment filters, and export placeholders.
+- Added revenue analytics, top-selling products, customer analytics, conversion metrics placeholder, inventory analytics, order trends, and sales report breakdowns using responsive Recharts area, line, pie, and bar charts.
+- Upgraded `/admin/dashboard` and `/admin/reports/revenue` to reuse the analytics widgets while keeping reporting data mock-backed until APIs exist.
+- Added `adminAnalyticsMock.js` for admin-only analytics data so the main storefront bundle stays below the Vite chunk-size warning threshold.
+- Verified `npm run lint`, `npm run build`, and `git diff --check` after the Admin Analytics System upgrade.
 - Built the realtime notification foundation for storefront and admin.
 - Added reusable realtime files: `useRealtime.js`, `useRealtimeNotifications.js`, `realtimeEvents.js`, and `notificationEventHandlers.js`.
 - Added WebSocket-first connection handling through `VITE_REALTIME_WS_URL` with graceful polling/local-event fallback.
@@ -331,7 +337,7 @@ Ready for Phase 7 — Advanced Features & Production Systems
 - Reuse admin module registry metadata for resource labels, routes, permissions, and service selection.
 - Reuse shared route/sidebar/action permission policies for every admin resource page.
 - Keep ADMIN full access and require staff resource view permissions for staff module access.
-- Keep admin dashboard and report mock data isolated until reporting APIs exist.
+- Keep upgraded admin analytics mock data isolated until reporting APIs exist.
 
 ### Phase 4 Auth + Backend Integration Maintenance
 
@@ -348,7 +354,7 @@ Ready for Phase 7 — Advanced Features & Production Systems
 - Client checkout/account routes are customer-session-only in the frontend, but backend ownership enforcement still needs the future customer-auth principal contract.
 - A dedicated backend cart persistence API is not implemented; cart state is shared local frontend state.
 - A dedicated backend wishlist persistence API is not implemented; wishlist state is local-first with optional frontend sync support through `VITE_WISHLIST_API_PATH`.
-- Admin CRUD modules are API-backed; `/admin/dashboard` and `/admin/reports/*` still use mock analytics/report data until reporting APIs exist.
+- Admin CRUD modules are API-backed; upgraded `/admin/dashboard` and `/admin/reports/revenue` analytics still use isolated mock reporting data until reporting APIs exist.
 - Category API currently has no `description` field in request/response DTOs, so category description is UI-session only until backend contract is extended.
 - Backend admin auth currently exposes login/logout; refresh-token endpoint support is not implemented yet.
 - Backend `mvn test` currently fails because `AddressMapper` is not registered as a bean for `AdminAddressServiceImpl`.
