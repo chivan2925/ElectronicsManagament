@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { fadeUp, hoverGlow, imageZoom } from "../../styles/animations";
+import OptimizedImage from "../common/OptimizedImage";
 
 const MotionArticle = motion.article;
 const MotionImg = motion.img;
@@ -24,7 +25,14 @@ function PromoCard({ promo }) {
         </div>
         <div className="relative shrink-0 overflow-hidden rounded-xl border border-white/10 bg-slate-950/35 p-1.5 shadow-[0_0_28px_rgba(0,91,255,0.12)]">
           <div className="pointer-events-none absolute inset-x-3 bottom-2 h-8 rounded-full bg-blue-500/20 blur-xl" />
-          <MotionImg alt={promo.title} className="premium-transition relative z-10 h-20 w-24 rounded-lg object-cover ring-1 ring-white/10 group-hover:ring-blue-300/40 sm:h-24 sm:w-28" src={promo.image} variants={{ hover: imageZoom }} />
+          <OptimizedImage
+            as={MotionImg}
+            alt={promo.title}
+            className="premium-transition relative z-10 h-20 w-24 rounded-lg object-cover ring-1 ring-white/10 group-hover:ring-blue-300/40 sm:h-24 sm:w-28"
+            sizes="112px"
+            src={promo.image}
+            variants={{ hover: imageZoom }}
+          />
         </div>
       </div>
     </MotionArticle>

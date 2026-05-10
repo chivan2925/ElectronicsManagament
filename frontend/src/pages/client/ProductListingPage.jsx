@@ -10,6 +10,7 @@ import {
   Truck,
   X,
 } from "lucide-react";
+import OptimizedImage from "../../components/common/OptimizedImage";
 import TrustSignalBar from "../../components/common/TrustSignalBar";
 import AnnouncementBar from "../../components/layout/AnnouncementBar";
 import Header from "../../components/layout/Header";
@@ -187,7 +188,13 @@ function ProductListingPage() {
                   key={product.id}
                 >
                   <div className="flex aspect-[4/3] items-center justify-center rounded-2xl bg-[radial-gradient(circle_at_50%_18%,rgba(0,91,255,0.28),rgba(15,23,42,0.8)_48%,rgba(2,6,23,0.96)_100%)] p-3">
-                    <img alt={product.name} className="h-full w-full object-contain drop-shadow-[0_18px_34px_rgba(0,0,0,0.44)]" src={product.image} />
+                    <OptimizedImage
+                      alt={product.name}
+                      className="h-full w-full object-contain drop-shadow-[0_18px_34px_rgba(0,0,0,0.44)]"
+                      priority={index === 0}
+                      sizes="210px"
+                      src={product.image}
+                    />
                   </div>
                 </div>
               ))}

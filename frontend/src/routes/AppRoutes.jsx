@@ -1,8 +1,8 @@
 import { Navigate, Route, Routes } from "react-router-dom";
-import { AdminLayout } from "../admin/layouts";
 import {
   ActivityLog,
   AdminLogin,
+  AdminLayout,
   AdminProducts,
   BestSellers,
   Brands,
@@ -17,40 +17,43 @@ import {
   Users,
   Variants,
   Warehouse,
-} from "../admin/pages";
+  Cart,
+  Checkout,
+  Home,
+  Login,
+  ProductDetail,
+  ProductListingPage,
+  ProfileLayout,
+  ProfileOrderDetail,
+  ProfileOrders,
+  ProfileOverview,
+  ProfileSettings,
+  Register,
+  WishlistPage,
+} from "./lazyRoutes";
 import { ADMIN_ROUTE_POLICIES, CLIENT_ROUTE_POLICIES } from "../auth/roleHelpers";
 import AdminRoute from "../guards/AdminRoute";
 import GuestRoute from "../guards/GuestRoute";
 import ProtectedRoute from "../guards/ProtectedRoute";
 import StaffRoute from "../guards/StaffRoute";
-import ProfileLayout from "../components/account/ProfileLayout";
-import Home from "../pages/client/Home";
-import Cart from "../pages/client/Cart";
-import Checkout from "../pages/client/Checkout";
-import Login from "../pages/client/Login";
-import ProfileOrderDetail from "../pages/client/ProfileOrderDetail";
-import ProfileOrders from "../pages/client/ProfileOrders";
-import ProfileOverview from "../pages/client/ProfileOverview";
-import ProfileSettings from "../pages/client/ProfileSettings";
-import ProductDetail from "../pages/client/ProductDetail";
-import ProductListingPage from "../pages/client/ProductListingPage";
-import Register from "../pages/client/Register";
-import WishlistPage from "../pages/client/WishlistPage";
+import RouteLoadingBoundary from "./RouteLoadingBoundary";
 
-const withStaffRoute = (element, policy) => <StaffRoute policy={policy}>{element}</StaffRoute>;
-const withAdminRoute = (element, policy) => <AdminRoute policy={policy}>{element}</AdminRoute>;
+const storeRoute = (element) => <RouteLoadingBoundary surface="store">{element}</RouteLoadingBoundary>;
+const adminRoute = (element) => <RouteLoadingBoundary surface="admin">{element}</RouteLoadingBoundary>;
+const withStaffRoute = (element, policy) => <StaffRoute policy={policy}>{adminRoute(element)}</StaffRoute>;
+const withAdminRoute = (element, policy) => <AdminRoute policy={policy}>{adminRoute(element)}</AdminRoute>;
 
 function AppRoutes() {
   return (
     <Routes>
-      <Route element={<Home />} path="/" />
-      <Route element={<ProductListingPage />} path="/products" />
-      <Route element={<ProductDetail />} path="/products/:slug" />
-      <Route element={<Cart />} path="/cart" />
+      <Route element={storeRoute(<Home />)} path="/" />
+      <Route element={storeRoute(<ProductListingPage />)} path="/products" />
+      <Route element={storeRoute(<ProductDetail />)} path="/products/:slug" />
+      <Route element={storeRoute(<Cart />)} path="/cart" />
       <Route
         element={
           <ProtectedRoute deniedTo="/admin/dashboard" policy={CLIENT_ROUTE_POLICIES.checkout}>
-            <Checkout />
+            {storeRoute(<Checkout />)}
           </ProtectedRoute>
         }
         path="/checkout"
@@ -58,7 +61,7 @@ function AppRoutes() {
       <Route
         element={
           <GuestRoute>
-            <Login />
+            {storeRoute(<Login />)}
           </GuestRoute>
         }
         path="/login"
@@ -66,30 +69,30 @@ function AppRoutes() {
       <Route
         element={
           <GuestRoute>
-            <Register />
+            {storeRoute(<Register />)}
           </GuestRoute>
         }
         path="/register"
       />
-      <Route element={<WishlistPage />} path="/wishlist" />
+      <Route element={storeRoute(<WishlistPage />)} path="/wishlist" />
       <Route
         element={
           <ProtectedRoute deniedTo="/admin/dashboard" policy={CLIENT_ROUTE_POLICIES.account}>
-            <ProfileLayout />
+            {storeRoute(<ProfileLayout />)}
           </ProtectedRoute>
         }
         path="/profile"
       >
-        <Route index element={<ProfileOverview />} />
-        <Route element={<ProfileOrders />} path="orders" />
-        <Route element={<ProfileOrderDetail />} path="orders/:id" />
-        <Route element={<ProfileSettings />} path="settings" />
+        <Route index element={storeRoute(<ProfileOverview />)} />
+        <Route element={storeRoute(<ProfileOrders />)} path="orders" />
+        <Route element={storeRoute(<ProfileOrderDetail />)} path="orders/:id" />
+        <Route element={storeRoute(<ProfileSettings />)} path="settings" />
       </Route>
 
       <Route
         element={
           <GuestRoute>
-            <AdminLogin />
+            {adminRoute(<AdminLogin />)}
           </GuestRoute>
         }
         path="/admin/login"
@@ -97,7 +100,7 @@ function AppRoutes() {
       <Route
         element={
           <StaffRoute policy={ADMIN_ROUTE_POLICIES.root}>
-            <AdminLayout />
+            {adminRoute(<AdminLayout />)}
           </StaffRoute>
         }
         path="/admin"

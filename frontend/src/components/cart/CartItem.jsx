@@ -3,6 +3,7 @@ import { AlertTriangle, CheckCircle2, Minus, PackageCheck, Plus, Trash2 } from "
 import { Link } from "react-router-dom";
 import { cn } from "../../utils/classNames";
 import { formatCurrency } from "../../utils/formatters";
+import OptimizedImage from "../common/OptimizedImage";
 import IconButton from "../ui/IconButton";
 import { useToast } from "../ui/toast";
 
@@ -112,9 +113,10 @@ function CartItem({ item, layout = "drawer", onQuantityChange, onRemove }) {
               to={`/products/${product.slug}`}
             >
               <div className="pointer-events-none absolute inset-x-4 bottom-3 h-8 rounded-full bg-blue-500/20 blur-xl" />
-              <img
+              <OptimizedImage
                 alt={product.name}
                 className="premium-transition relative z-10 h-full w-full object-contain drop-shadow-[0_14px_28px_rgba(0,0,0,0.42)] group-hover:scale-105"
+                sizes="104px"
                 src={product.image}
               />
             </Link>
@@ -218,9 +220,10 @@ function CartItem({ item, layout = "drawer", onQuantityChange, onRemove }) {
           to={`/products/${product.slug}`}
         >
           <div className="pointer-events-none absolute inset-x-4 bottom-3 h-8 rounded-full bg-blue-500/20 blur-xl" />
-          <img
+          <OptimizedImage
             alt={product.name}
             className="premium-transition relative z-10 h-full w-full object-contain drop-shadow-[0_14px_28px_rgba(0,0,0,0.42)] group-hover:scale-105"
+            sizes="88px"
             src={product.image}
           />
         </Link>

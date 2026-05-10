@@ -8,6 +8,16 @@ Always update this file after meaningful work.
 
 ## 2026-05-10
 
+### Frontend Performance Optimization
+
+- Added lazy route splitting through `lazyRoutes.jsx` and `RouteLoadingBoundary.jsx` for client and admin route pages.
+- Deferred heavy header overlays by lazy-loading search overlay and cart drawer only when opened.
+- Added `OptimizedImage.jsx` with lazy/eager loading controls, async decoding, fetch priority, sizing, and Cloudinary srcset support.
+- Applied optimized images to hero, promo, product card, product gallery, cart, checkout, wishlist, PLP hero cards, and search result imagery.
+- Added targeted render optimizations for repeated product/search result rows and rAF-throttled header scroll state updates.
+- Verified `npm run lint`, `npm run build`, `git diff --check`, dependency duplication with `npm ls`, and local route smoke checks for `/`, `/products`, `/products/:slug`, `/cart`, `/checkout`, `/wishlist`, `/profile`, and `/admin/login`.
+- Production build now emits route chunks; the main JS chunk is about 496 kB instead of the previous single about 1.53 MB bundle, and the previous Vite chunk-size warning is gone.
+
 ### Customer Ecommerce Experience Polish
 
 - Added reusable `TrustSignalBar.jsx` for consistent trust indicators across PLP, PDP, cart, checkout, and profile surfaces.

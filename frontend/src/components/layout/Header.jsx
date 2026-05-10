@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import {
   ChevronDown,
@@ -17,12 +17,12 @@ import { useCart } from "../../cart";
 import { categories } from "../../data";
 import useWishlist from "../../hooks/useWishlist";
 import { cn } from "../../utils/classNames";
-import CartDrawer from "../cart/CartDrawer";
 import NotificationDropdown from "../notification/NotificationDropdown";
-import SearchOverlay from "../search/SearchOverlay";
 import IconButton from "../ui/IconButton";
 
 const MotionSpan = motion.span;
+const CartDrawer = lazy(() => import("../cart/CartDrawer"));
+const SearchOverlay = lazy(() => import("../search/SearchOverlay"));
 
 const headerLinkClass =
   "premium-transition inline-flex items-center gap-2 rounded-xl px-3 py-2 font-semibold text-slate-300 hover:-translate-y-0.5 hover:bg-white/[0.06] hover:text-white hover:shadow-[0_0_24px_rgba(0,91,255,0.14)]";
@@ -36,17 +36,35 @@ function Header() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(() => (typeof window === "undefined" ? false : window.scrollY > 8));
+  const [shouldRenderCartDrawer, setShouldRenderCartDrawer] = useState(false);
+  const cartUnmountTimerRef = useRef(null);
 
   useEffect(() => {
+    let animationFrameId = null;
+
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 8);
+      if (animationFrameId) {
+        return;
+      }
+
+      animationFrameId = window.requestAnimationFrame(() => {
+        animationFrameId = null;
+        const nextIsScrolled = window.scrollY > 8;
+
+        setIsScrolled((currentIsScrolled) => (currentIsScrolled === nextIsScrolled ? currentIsScrolled : nextIsScrolled));
+      });
     };
 
-    handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
 
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => {
+      if (animationFrameId) {
+        window.cancelAnimationFrame(animationFrameId);
+      }
+
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, []);
 
   useEffect(() => {
@@ -63,9 +81,30 @@ function Header() {
     return () => window.removeEventListener("keydown", handleSearchShortcut);
   }, []);
 
+  useEffect(
+    () => () => {
+      if (cartUnmountTimerRef.current) {
+        window.clearTimeout(cartUnmountTimerRef.current);
+      }
+    },
+    [],
+  );
+
   const openCartDrawer = () => {
+    if (cartUnmountTimerRef.current) {
+      window.clearTimeout(cartUnmountTimerRef.current);
+    }
+
     setIsMobileMenuOpen(false);
+    setShouldRenderCartDrawer(true);
     setIsCartOpen(true);
+  };
+
+  const closeCartDrawer = () => {
+    setIsCartOpen(false);
+    cartUnmountTimerRef.current = window.setTimeout(() => {
+      setShouldRenderCartDrawer(false);
+    }, 360);
   };
 
   const openSearchOverlay = () => {
@@ -264,16 +303,24 @@ function Header() {
         </div>
       </div>
     </header>
-    <CartDrawer
-      isOpen={isCartOpen}
-      itemCount={cartItemCount}
-      items={cartItems}
-      onClose={() => setIsCartOpen(false)}
-      onQuantityChange={updateQuantity}
-      onRemove={removeItem}
-      subtotal={cartSubtotal}
-    />
-    <SearchOverlay isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
+    {shouldRenderCartDrawer && (
+      <Suspense fallback={null}>
+        <CartDrawer
+          isOpen={isCartOpen}
+          itemCount={cartItemCount}
+          items={cartItems}
+          onClose={closeCartDrawer}
+          onQuantityChange={updateQuantity}
+          onRemove={removeItem}
+          subtotal={cartSubtotal}
+        />
+      </Suspense>
+    )}
+    {isSearchOpen && (
+      <Suspense fallback={null}>
+        <SearchOverlay isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
+      </Suspense>
+    )}
     </>
   );
 }

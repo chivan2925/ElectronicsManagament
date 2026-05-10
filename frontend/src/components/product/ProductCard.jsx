@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { motion } from "framer-motion";
 import { Heart, Loader2, PackageCheck, ShoppingCart, Zap } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -7,6 +8,7 @@ import useRecentlyViewed from "../../hooks/useRecentlyViewed";
 import useWishlist from "../../hooks/useWishlist";
 import { fadeUp, hoverGlow, hoverLift, imageZoom, tapSoft } from "../../styles/animations";
 import { cn } from "../../utils/classNames";
+import OptimizedImage from "../common/OptimizedImage";
 import Badge from "../ui/Badge";
 import Card from "../ui/Card";
 import IconButton from "../ui/IconButton";
@@ -121,9 +123,11 @@ function ProductCard({ product }) {
         </IconButton>
 
         <Link className="relative z-10 flex h-full w-full items-center justify-center" onClick={handleProductOpen} to={`/products/${product.slug}`}>
-          <MotionImg
+          <OptimizedImage
+            as={MotionImg}
             alt={product.name}
             className="premium-transition h-full w-full object-contain drop-shadow-[0_18px_36px_rgba(0,0,0,0.42)] group-hover:drop-shadow-[0_26px_52px_rgba(0,91,255,0.28)]"
+            sizes="(max-width: 640px) 46vw, (max-width: 1280px) 30vw, 280px"
             src={product.image}
             variants={{ hover: imageZoom }}
           />
@@ -181,4 +185,4 @@ function ProductCard({ product }) {
   );
 }
 
-export default ProductCard;
+export default memo(ProductCard);

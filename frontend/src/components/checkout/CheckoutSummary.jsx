@@ -16,6 +16,7 @@ import { getCartStockInsights } from "../../cart/cartInsights";
 import { formatCurrency } from "../../utils/formatters";
 import FreeShippingProgress from "../cart/FreeShippingProgress";
 import StockValidationPanel from "../cart/StockValidationPanel";
+import OptimizedImage from "../common/OptimizedImage";
 import Button from "../ui/Button";
 import ApiErrorAlert from "../ui/feedback/ApiErrorAlert";
 
@@ -65,7 +66,7 @@ function CheckoutSummary({
               className="relative flex aspect-square items-center justify-center overflow-hidden rounded-xl bg-[radial-gradient(circle_at_50%_18%,rgba(0,91,255,0.22),rgba(15,23,42,0.78)_52%,rgba(2,6,23,0.96)_100%)] p-1.5"
               to={`/products/${item.product.slug}`}
             >
-              <img alt={item.product.name} className="h-full w-full object-contain" src={item.product.image} />
+              <OptimizedImage alt={item.product.name} className="h-full w-full object-contain" sizes="64px" src={item.product.image} />
             </Link>
             <div className="min-w-0">
               <Link className="line-clamp-2 text-sm font-black text-white hover:text-blue-100" to={`/products/${item.product.slug}`}>

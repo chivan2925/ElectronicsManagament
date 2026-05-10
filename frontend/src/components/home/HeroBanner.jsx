@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowLeft, ArrowRight, CheckCircle2, ShoppingBag } from "lucide-react";
 import { fadeIn, fadeUp, hoverLift, imageZoom, staggerContainer, tapSoft } from "../../styles/animations";
+import OptimizedImage from "../common/OptimizedImage";
 import Badge from "../ui/Badge";
 import Button from "../ui/Button";
 import IconButton from "../ui/IconButton";
@@ -68,9 +69,12 @@ function HeroBanner({ promotion }) {
         <MotionDiv className="flex-center relative min-h-[220px] sm:min-h-[260px] md:min-h-[300px] lg:min-h-[320px] lg:justify-end" variants={fadeUp}>
           <div className="absolute right-1/2 h-56 w-56 translate-x-1/2 rounded-full border border-blue-100/10 bg-[radial-gradient(circle_at_50%_42%,rgba(96,165,250,0.2),rgba(0,91,255,0.14)_42%,transparent_70%)] shadow-[inset_0_0_60px_rgba(255,255,255,0.04),0_0_80px_rgba(0,91,255,0.22)] sm:h-72 sm:w-72 lg:right-0 lg:h-[340px] lg:w-[340px] lg:translate-x-0" />
           <div className="absolute bottom-8 right-1/2 h-12 w-48 translate-x-1/2 rounded-full bg-blue-500/24 blur-2xl sm:h-16 sm:w-72 lg:right-4 lg:translate-x-0" />
-          <MotionImg
+          <OptimizedImage
+            as={MotionImg}
             alt={promotion.imageAlt}
             className="premium-transition relative z-10 max-h-[250px] w-full max-w-[300px] object-contain drop-shadow-[0_34px_72px_rgba(0,91,255,0.36)] hover:scale-[1.03] sm:max-h-[300px] sm:max-w-[340px] lg:max-h-[390px] lg:max-w-[390px] lg:translate-x-2"
+            priority
+            sizes="(max-width: 768px) 300px, 390px"
             src={promotion.image}
             whileHover={imageZoom}
           />

@@ -14,6 +14,10 @@ Ready for Phase 6 — Ecommerce Core Features
 
 ## Recently Completed
 
+- Optimized frontend performance for the ecommerce app with route-level lazy loading, loading boundaries, deferred header overlays, optimized image foundation, and focused memoization.
+- Added `lazyRoutes.jsx`, `RouteLoadingBoundary.jsx`, and `OptimizedImage.jsx`.
+- Verified `npm run lint`, `npm run build`, `git diff --check`, dependency duplication with `npm ls`, and local route smoke checks for `/`, `/products`, `/products/:slug`, `/cart`, `/checkout`, `/wishlist`, `/profile`, and `/admin/login`.
+- Production build now emits route chunks; the main JS chunk is about 496 kB instead of the previous single about 1.53 MB bundle, and the previous Vite chunk-size warning is gone.
 - Polished the customer ecommerce experience across homepage, PLP, PDP, cart, checkout, and profile without a large redesign.
 - Added reusable `TrustSignalBar.jsx`, shared store empty-state trust hints, better PLP/PDP skeletons, real hero CTA routing, and consistent hover/focus micro interactions.
 - Verified `npm run lint`, `npm run build`, `git diff --check`, and local route smoke checks for `/`, `/products`, `/products/:slug`, `/cart`, `/checkout`, and `/profile` after customer experience polish. Build still reports the existing Vite chunk-size warning, and `git diff --check` reported CRLF normalization warnings for edited frontend files.

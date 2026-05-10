@@ -74,6 +74,8 @@ The profile overview now includes a loyalty/reward UI foundation with `LoyaltyCa
 
 The customer ecommerce experience now has a reusable trust-signal foundation, stronger CTA/hover/focus interactions, shared store empty-state trust hints, improved PLP/PDP skeletons, and consistent trust indicators across homepage, PLP, PDP, cart, checkout, and profile without a homepage redesign.
 
+The frontend now has route-level lazy loading, route loading boundaries, deferred header search/cart overlays, an optimized image component foundation, and targeted memoization for repeated ecommerce rows. The production build emits route chunks instead of one large JavaScript bundle.
+
 Phase 2 cleanup normalized shared/admin visual patterns for cards, borders, shadows, hover states, focus states, icon buttons, typography usage, and responsive behavior without a large rewrite.
 
 Frontend routing now includes client ecommerce routes and admin routes with placeholders for pages that are not implemented yet.
@@ -517,6 +519,7 @@ Latest validation:
 - `npm run lint`, `npm run build`, and `git diff --check` passed after building the Notification System foundation. Build still reports the existing Vite chunk-size warning, and `git diff --check` reported CRLF normalization warnings for edited files.
 - `npm run lint` and `npm run build` passed after building the customer loyalty/reward UI foundation. Build still reports the existing Vite chunk-size warning.
 - `npm run lint`, `npm run build`, `git diff --check`, and local route smoke checks passed for `/`, `/products`, `/products/:slug`, `/cart`, `/checkout`, and `/profile` after customer ecommerce experience polish. Build still reports the existing Vite chunk-size warning, and `git diff --check` reported CRLF normalization warnings for edited frontend files.
+- `npm run lint`, `npm run build`, `git diff --check`, dependency duplication checks with `npm ls`, and local route smoke checks passed after frontend performance optimization. The main production JS chunk is about 496 kB, route chunks are emitted, and the previous Vite chunk-size warning is gone.
 
 ## Known Issues
 
@@ -535,7 +538,7 @@ Latest validation:
 - Backend local startup may fail if port `8080` is occupied by another local service; run on another port or free `8080`.
 - Existing local PostgreSQL schema is partially legacy and still needs controlled migration/backfill for non-auth tables instead of relying on Hibernate `ddl-auto:update`.
 - Backend Category API currently does not expose `description` in request/response DTOs; category description in admin UI is session-level until backend contract is extended.
-- Build output is valid, but Vite reports a large bundle warning that should be handled later with code splitting.
+- Build output is valid after route splitting; Recharts remains isolated in a lazy chart chunk for admin analytics/report routes.
 
 ## Next Phase
 

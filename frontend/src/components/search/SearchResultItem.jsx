@@ -1,9 +1,11 @@
+import { memo } from "react";
 import { ArrowUpRight, Cpu, Grid3X3, PackageSearch, Store, Tags } from "lucide-react";
 import Badge from "../ui/Badge";
 import Price from "../ui/Price";
 import Rating from "../ui/Rating";
 import { normalizeSearchValue } from "../../hooks/useSearch";
 import { cn } from "../../utils/classNames";
+import OptimizedImage from "../common/OptimizedImage";
 
 const resultIconMap = {
   brand: Store,
@@ -102,10 +104,10 @@ function ProductResult({ active, onPick, result }) {
     <ResultShell active={active} onPick={onPick} result={result}>
       <span className="grid grid-cols-[58px_1fr] items-center gap-3 sm:grid-cols-[70px_1fr_auto]">
         <span className="relative flex aspect-square items-center justify-center overflow-hidden rounded-xl border border-white/10 bg-[radial-gradient(circle_at_50%_18%,rgba(0,91,255,0.28),rgba(15,23,42,0.82)_52%,rgba(2,6,23,0.98)_100%)] p-1.5 shadow-inner shadow-white/[0.04]">
-          <img
+          <OptimizedImage
             alt={result.name}
             className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-105"
-            loading="lazy"
+            sizes="70px"
             src={result.image}
           />
           {Number(result.stock) <= 0 && (
@@ -187,4 +189,4 @@ function SearchResultItem({ active = false, onPick, result }) {
   return <EntityResult active={active} onPick={onPick} result={result} />;
 }
 
-export default SearchResultItem;
+export default memo(SearchResultItem);

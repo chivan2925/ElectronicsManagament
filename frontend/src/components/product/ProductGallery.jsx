@@ -8,6 +8,7 @@ import {
   X,
 } from "lucide-react";
 import { cn } from "../../utils/classNames";
+import OptimizedImage from "../common/OptimizedImage";
 import SkeletonBlock from "../skeletons/SkeletonBlock";
 import Badge from "../ui/Badge";
 import IconButton from "../ui/IconButton";
@@ -146,7 +147,8 @@ function ProductGallery({ images = [], productName }) {
           {!isMainLoaded && <SkeletonBlock className="absolute inset-5 z-10 rounded-3xl" />}
 
           <AnimatePresence mode="wait">
-            <MotionImg
+            <OptimizedImage
+              as={MotionImg}
               key={activeImage.id}
               alt={`${productName} - ${activeImage.label}`}
               animate={{ opacity: isMainLoaded ? 1 : 0, scale: 1, x: 0 }}
@@ -155,6 +157,8 @@ function ProductGallery({ images = [], productName }) {
               initial={{ opacity: 0, scale: 0.96, x: 18 }}
               onClick={() => openPreview(activeIndex)}
               onLoad={() => setIsMainLoaded(true)}
+              priority
+              sizes="(max-width: 1024px) 92vw, 620px"
               src={activeImage.image}
               style={{ transformOrigin: imageOrigin }}
               transition={{ duration: 0.34, ease: [0.22, 1, 0.36, 1] }}
@@ -218,9 +222,10 @@ function ProductGallery({ images = [], productName }) {
                 >
                   <ImageIcon size={12} />
                 </MotionDiv>
-                <img
+                <OptimizedImage
                   alt={image.label}
                   className="premium-transition h-full w-full object-contain drop-shadow-[0_10px_24px_rgba(0,0,0,0.34)] group-hover:scale-105"
+                  sizes="120px"
                   src={image.image}
                 />
               </MotionButton>
@@ -274,7 +279,8 @@ function ProductGallery({ images = [], productName }) {
                 {!isPreviewLoaded && <SkeletonBlock className="absolute inset-6 rounded-3xl" />}
 
                 <AnimatePresence mode="wait">
-                  <MotionImg
+                  <OptimizedImage
+                    as={MotionImg}
                     key={previewImage.id}
                     alt={`${productName} - ${previewImage.label}`}
                     animate={{ opacity: isPreviewLoaded ? 1 : 0, scale: 1 }}
@@ -282,6 +288,7 @@ function ProductGallery({ images = [], productName }) {
                     exit={{ opacity: 0, scale: 0.98 }}
                     initial={{ opacity: 0, scale: 0.96 }}
                     onLoad={() => setIsPreviewLoaded(true)}
+                    sizes="(max-width: 1024px) 92vw, 960px"
                     src={previewImage.image}
                     transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
                   />
@@ -324,7 +331,7 @@ function ProductGallery({ images = [], productName }) {
                     onClick={() => showPreviewImage(index)}
                     type="button"
                   >
-                    <img alt={image.label} className="h-full w-full object-contain" src={image.image} />
+                    <OptimizedImage alt={image.label} className="h-full w-full object-contain" sizes="80px" src={image.image} />
                   </button>
                 ))}
               </div>

@@ -17,6 +17,7 @@ import {
   WifiOff,
 } from "lucide-react";
 import { useCart } from "../../cart";
+import OptimizedImage from "../../components/common/OptimizedImage";
 import AnnouncementBar from "../../components/layout/AnnouncementBar";
 import Header from "../../components/layout/Header";
 import RecentlyViewedSection from "../../components/product/RecentlyViewedSection";
@@ -137,9 +138,10 @@ function WishlistItemCard({ isPending, item, onMoveToCart, onRemove }) {
           to={`/products/${product.slug}`}
         >
           <div className="pointer-events-none absolute inset-x-6 bottom-4 h-10 rounded-full bg-blue-500/20 blur-2xl" />
-          <img
+          <OptimizedImage
             alt={product.name}
             className="premium-transition relative z-10 h-full w-full object-contain drop-shadow-[0_16px_30px_rgba(0,0,0,0.44)] group-hover:scale-105"
+            sizes="148px"
             src={product.image}
           />
         </Link>
