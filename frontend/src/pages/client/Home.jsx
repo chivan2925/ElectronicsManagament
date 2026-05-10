@@ -1,4 +1,4 @@
-import { lazy, useEffect, useMemo, useState } from "react";
+import { lazy, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import DeferredSectionBoundary from "../../components/common/DeferredSectionBoundary";
 import AnnouncementBar from "../../components/layout/AnnouncementBar";
@@ -6,7 +6,7 @@ import Header from "../../components/layout/Header";
 import CategorySidebar from "../../components/home/CategorySidebar";
 import FeaturedCategories from "../../components/home/FeaturedCategories";
 import FlashSaleCard from "../../components/home/FlashSaleCard";
-import HeroBanner from "../../components/home/HeroBanner";
+import HeroSlideshow from "../../components/home/HeroSlideshow";
 import PromoCard from "../../components/home/PromoCard";
 import ServiceBar from "../../components/home/ServiceBar";
 import ProductCard from "../../components/product/ProductCard";
@@ -49,25 +49,6 @@ const defaultHeroPromotion = {
   title: "ElectronicsManagement",
 };
 
-function getHeroPromotionFromProduct(product) {
-  if (!product) {
-    return defaultHeroPromotion;
-  }
-
-  return {
-    badge: product.featured ? "NỔI BẬT TỪ DB" : "CATALOG LIVE",
-    features: [
-      product.brand ? `Thương hiệu ${product.brand}` : null,
-      product.category ? `Danh mục ${product.category}` : null,
-      product.stock > 0 ? `Tồn kho khả dụng: ${product.stock}` : "Đang chờ cập nhật tồn kho",
-    ].filter(Boolean),
-    image: product.image,
-    imageAlt: product.name,
-    subtitle: [product.brand, product.category].filter(Boolean).join(" · ") || "Sản phẩm từ database",
-    title: product.name,
-  };
-}
-
 function Home() {
   const [isLoadingDemo, setIsLoadingDemo] = useState(true);
   const {
@@ -78,10 +59,6 @@ function Home() {
     products: homepageProducts,
     refresh: refreshHomepageProducts,
   } = useHomepageProducts();
-  const heroPromotion = useMemo(
-    () => getHeroPromotionFromProduct(flashSaleProduct ?? featuredProducts[0]),
-    [featuredProducts, flashSaleProduct],
-  );
 
   useEffect(() => {
     const loadingTimer = window.setTimeout(() => {
@@ -157,7 +134,7 @@ function Home() {
           <>
             <section className="grid gap-5 xl:grid-cols-[280px_1fr_320px]">
               <CategorySidebar categories={categories} />
-              {isLoadingProducts ? <BannerSkeleton /> : <HeroBanner promotion={heroPromotion} />}
+              <HeroSlideshow defaultPromotion={defaultHeroPromotion} />
               <MotionDiv
                 className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-1 [&>*:last-child]:sm:col-span-2 [&>*:last-child]:lg:col-span-1"
                 initial="hidden"
