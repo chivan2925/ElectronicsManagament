@@ -23,6 +23,9 @@ public interface MediaMapper {
     MediaEntity nestedDTO_toNewEntity(AdminNestedMediaRequestDTO adminNestedMediaRequestDTO);
 
     @Mapping(source = "product.id", target = "productId")
+    @Mapping(source = "product.name", target = "productName")
     @Mapping(source = "variant.id", target = "variantId")
+    @Mapping(source = "variant.name", target = "variantName")
+    @Mapping(source = "variant.sku", target = "variantSku")
     AdminMediaResponseDTO toAdminResponseDTO(MediaEntity mediaEntity);
 }

@@ -16,7 +16,7 @@ Phase 5 — Admin Dashboard System foundation
 
 ElectronicsManagement has completed Phase 4 — Auth + Backend Integration and has started Phase 5 — Admin Dashboard System foundation.
 
-The client storefront now includes the homepage, Product API-backed product listing and product detail, shared-cart cart and checkout, customer authentication, wishlist, recently viewed, search overlay, and authenticated account experiences. Checkout now creates real backend orders and validates coupons through backend APIs. Wishlist, recently viewed, search, and homepage product sections still use mock/local state. The admin dashboard exists as a mock modern dashboard. Backend admin APIs exist. Frontend admin/staff authentication is connected to the backend JWT API, and the admin architecture foundation now exists under `frontend/src/admin`. The `/admin/categories`, `/admin/brands`, `/admin/products`, `/admin/variants`, `/admin/users`, and `/admin/staff` modules are now connected to real backend APIs with table, search, filters, status controls, detail views, protected actions, and pagination.
+The client storefront now includes the homepage, Product API-backed product listing and product detail, shared-cart cart and checkout, customer authentication, wishlist, recently viewed, search overlay, and authenticated account experiences. Checkout now creates real backend orders and validates coupons through backend APIs. Wishlist, recently viewed, search, and homepage product sections still use mock/local state. The admin dashboard exists as a mock modern dashboard. Backend admin APIs exist. Frontend admin/staff authentication is connected to the backend JWT API, and the admin architecture foundation now exists under `frontend/src/admin`. The `/admin/categories`, `/admin/brands`, `/admin/products`, `/admin/variants`, `/admin/media`, `/admin/orders`, `/admin/warehouse`, `/admin/users`, and `/admin/staff` modules are now connected to real backend APIs with table/grid, search, filters, status controls, detail views, protected actions, and pagination.
 
 The frontend folder structure has been normalized without changing the current visual UI.
 
@@ -199,6 +199,17 @@ Phase 5 — Admin Dashboard System
 - Connected `/admin/variants` to real backend Variant and Product APIs with an inventory-style table, create/update drawer, SKU management, stock/price editing, product filter, status filter, status toggle, delete confirmation, and API error/loading states.
 - Added reusable Variant Management components: `VariantForm.jsx` and `VariantTable.jsx`.
 - Extended the backend Variant API contract with `sku` and product filtering.
+- Connected `/admin/media` to real backend Media and Product APIs with a dark asset-manager UI, drag-and-drop Cloudinary upload, upload progress, media grid, image preview modal, product attach flow, primary image action, delete confirmation, pagination, filters, and API error/loading states.
+- Added reusable Media Management components: `MediaUploader.jsx`, `MediaGrid.jsx`, and `MediaPreviewModal.jsx`.
+- Added `frontend/src/api/mediaMapper.js` and upgraded `mediaService.js` for normalized Media API pages, upload responses, create payloads, primary updates, order updates, and deletes.
+- Extended the backend Media API with paginated list/search/filter support, `publicId` support on media create/response DTOs, primary reset handling, and Cloudinary deletion during media delete.
+- Connected `/admin/orders` to real backend Order APIs with an ecommerce operations table, order detail drawer, customer/shipping/payment detail sections, status update controls, payment and shipping status controls, and timeline UI.
+- Added reusable Order Management components: `OrderTable.jsx`, `OrderDetail.jsx`, and `OrderTimeline.jsx`.
+- Added `frontend/src/api/orderMapper.js` and upgraded `orderService.js` for normalized admin Order pages/details and update payloads.
+- Connected `/admin/warehouse` to real backend Warehouse and Warehouse Transaction APIs with stock overview, inventory adjustments, low-stock alerts, and stock history placeholder UI.
+- Added reusable Warehouse Management components: `WarehouseTable.jsx`, `StockAdjustModal.jsx`, and `LowStockCard.jsx`.
+- Added `frontend/src/api/warehouseMapper.js` and upgraded `warehouseService.js` for normalized Warehouse pages, stock rows, transaction pages, and adjustment payloads.
+- Fixed backend Warehouse Transaction completion so manual `IMPORT`, `RETURN`, and `UNRESERVED` transactions increase stock while outbound transaction types decrease stock.
 - Connected `/admin/users` to real backend User APIs with reusable admin components, server-side search/status filtering, role display, account status toggles, detail drawer, protected delete action, and pagination.
 - Connected `/admin/staff` to real backend Staff and Role APIs with reusable admin components, server-side search/status filtering, role display, create/update/delete, account status toggles, detail drawer, self-account action protection, and pagination.
 - Added `frontend/src/api/adminPeopleMapper.js` to normalize User, Staff, and Role API page/detail responses for admin people-management pages.
@@ -256,7 +267,7 @@ Current frontend data:
 - `frontend/src/data/products.js` still supports mock/local storefront sections, but `/products` now uses Product API data.
 - `frontend/src/data/productDetails.js` remains available for legacy mock detail helpers, but `/products/:slug` now uses Product API data.
 - `frontend/src/data/cart.js` remains as legacy mock cart setup, but active cart drawer, `/cart`, and `/checkout` now use `frontend/src/cart`.
-- Most admin pages use `frontend/src/data/adminMock.js`; `/admin/categories`, `/admin/brands`, `/admin/products`, `/admin/variants`, `/admin/users`, and `/admin/staff` now use real backend data.
+- Most admin pages use `frontend/src/data/adminMock.js`; `/admin/categories`, `/admin/brands`, `/admin/products`, `/admin/variants`, `/admin/media`, `/admin/orders`, `/admin/warehouse`, `/admin/users`, and `/admin/staff` now use real backend data.
 - Shared data exports live in `frontend/src/data/index.js`.
 - API client exists at `frontend/src/api/client.js`.
 - API config exists at `frontend/src/api/apiConfig.js`.
@@ -264,6 +275,9 @@ Current frontend data:
 - Checkout/order/coupon mapping exists at `frontend/src/api/checkoutMapper.js`.
 - Account profile/order mapping exists at `frontend/src/api/accountMapper.js`.
 - Product API response mapping exists at `frontend/src/api/productMapper.js`.
+- Media API response mapping exists at `frontend/src/api/mediaMapper.js`.
+- Admin Order API response mapping exists at `frontend/src/api/orderMapper.js`.
+- Warehouse API response mapping exists at `frontend/src/api/warehouseMapper.js`.
 - API refresh-token handling exists at `frontend/src/api/refreshTokenService.js`.
 - API service modules now exist in `frontend/src/api` for auth, categories, brands, products, variants, users, staff, roles, permissions, orders, warehouses, coupons, and media.
 - API service modules use reusable `api.*` helpers and `resourceService.js` for shared CRUD request logic.
@@ -276,7 +290,7 @@ Current frontend data:
 - Auth session metadata is centralized through `frontend/src/auth` and currently stores safe user, roles, and permissions metadata only.
 - `frontend/.env.example` documents `VITE_API_BASE_URL`, `VITE_API_TIMEOUT`, `VITE_AUTH_REFRESH_ENDPOINT`, `VITE_PRODUCT_API_PATH`, `VITE_COUPON_API_PATH`, `VITE_ORDER_API_PATH`, `VITE_USER_API_PATH`, `VITE_USER_PROFILE_API_PATH`, and `VITE_USER_ORDER_API_PATH`.
 - Admin/staff login is connected to the backend JWT API.
-- `/admin/categories`, `/admin/brands`, `/admin/products`, `/admin/variants`, `/admin/users`, and `/admin/staff` are connected to real backend data; remaining admin modules still use mock data.
+- `/admin/categories`, `/admin/brands`, `/admin/products`, `/admin/variants`, `/admin/media`, `/admin/orders`, `/admin/warehouse`, `/admin/users`, and `/admin/staff` are connected to real backend data; remaining admin modules still use mock data.
 
 Current frontend structure:
 
@@ -440,11 +454,17 @@ Latest validation:
 - Local Vite route smoke check returned `200` for `/admin/products` after Product Management integration.
 - `npm run lint`, `npm run build`, `git diff --check`, and `mvn -q -DskipTests compile` passed after integrating real Variant Management on `/admin/variants`. Build still reports the existing Vite chunk-size warning.
 - Local Vite route smoke check returned `200` for `/admin/variants` after Variant Management integration.
+- `npm run lint`, `npm run build`, `git diff --check`, and `mvn -q -DskipTests compile` passed after integrating real Media Management on `/admin/media`. Build still reports the existing Vite chunk-size warning.
+- Local Vite route smoke check returned `200` for `/admin/media` after Media Management integration.
+- `npm run lint`, `npm run build`, `git diff --check`, and `mvn -q -DskipTests compile` passed after integrating real Order Management on `/admin/orders`. Build still reports the existing Vite chunk-size warning.
+- Local Vite route smoke check returned `200` for `/admin/orders` after Order Management integration.
+- `npm run lint`, `npm run build`, `git diff --check`, and `mvn -q -DskipTests compile` passed after integrating real Warehouse Management on `/admin/warehouse`. Build still reports the existing Vite chunk-size warning.
+- Local Vite route smoke check returned `200` for `/admin/warehouse` after Warehouse Management integration.
 - Build still reports a Vite chunk-size warning for a JavaScript bundle over 500 kB.
 
 ## Known Issues
 
-- Some admin CRUD pages still use mock data; `/admin/categories`, `/admin/brands`, `/admin/products`, `/admin/variants`, `/admin/users`, and `/admin/staff` are connected to backend APIs.
+- Some admin CRUD pages still use mock data; `/admin/categories`, `/admin/brands`, `/admin/products`, `/admin/variants`, `/admin/media`, `/admin/orders`, `/admin/warehouse`, `/admin/users`, and `/admin/staff` are connected to backend APIs.
 - Remaining future client ecommerce routes beyond the implemented homepage, product listing, product detail, cart, checkout, login, register, and wishlist pages are styled placeholders.
 - A dedicated public storefront product browsing endpoint is still not separate from the configured Product API path.
 - A dedicated backend cart persistence API is not implemented; the active cart is shared local frontend state and checkout creates backend orders.
@@ -468,7 +488,7 @@ Phase 5 — Admin Dashboard System
 Next focus:
 
 - Convert mock admin dashboard pages into authenticated API-backed workflows.
-- Continue with admin media using the same reusable admin API-backed pattern.
+- Continue remaining admin modules using the same reusable admin API-backed pattern.
 - Keep public storefront customer registration, payment, wishlist, homepage products, and search on mock/local state until public storefront API contracts are ready.
 
 ## Backend State

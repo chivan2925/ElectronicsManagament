@@ -8,7 +8,11 @@ import org.example.electronics.dto.request.admin.media.AdminAddMediaRequestDTO;
 import org.example.electronics.dto.request.admin.media.AdminUpdateMediaOrderRequestDTO;
 import org.example.electronics.dto.response.admin.AdminMediaResponseDTO;
 import org.example.electronics.service.admin.AdminMediaService;
-import org.example.electronics.service.system.impl.SystemCloudinaryServiceImpl;
+import org.example.electronics.service.system.SystemCloudinaryService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +31,7 @@ public class AdminMediaController {
 
     private final AdminMediaService adminMediaService;
 
-    private final SystemCloudinaryServiceImpl cloudinaryService;
+    private final SystemCloudinaryService cloudinaryService;
 
     @PostMapping
     @Operation(
@@ -40,6 +44,23 @@ public class AdminMediaController {
         AdminMediaResponseDTO adminMediaResponseDTO = adminMediaService.addMedia(adminAddMediaRequestDTO);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(adminMediaResponseDTO);
+    }
+
+    @GetMapping
+    @Operation(
+            summary = "Lấy danh sách Media (Có phân trang & Lọc)",
+            description = "Truy xuất thư viện ảnh đã gắn với sản phẩm hoặc biến thể. Hỗ trợ tìm kiếm theo URL, publicId, sản phẩm, biến thể và lọc ảnh chính."
+    )
+    public ResponseEntity<Page<AdminMediaResponseDTO>> getAllMedia(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) Integer productId,
+            @RequestParam(required = false) Integer variantId,
+            @RequestParam(required = false) Boolean primary,
+            @PageableDefault(sort = "updatedAt", direction = Sort.Direction.DESC) Pageable pageable
+    ) {
+        Page<AdminMediaResponseDTO> adminMediaResponseDTOPage = adminMediaService.getAllMedia(keyword, productId, variantId, primary, pageable);
+
+        return ResponseEntity.ok(adminMediaResponseDTOPage);
     }
 
     @DeleteMapping("/{mediaId}")

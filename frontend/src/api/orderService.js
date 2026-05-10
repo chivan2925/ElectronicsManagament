@@ -1,6 +1,12 @@
 import { api } from "./client";
 import { normalizeOrderDetail, normalizeOrderPage } from "./accountMapper";
 import { normalizeOrder } from "./checkoutMapper";
+import {
+  buildAdminOrderUpdatePayload,
+  normalizeAdminOrderDetail,
+  normalizeAdminOrderPage,
+  normalizeAdminOrderSummary,
+} from "./orderMapper";
 import { createResourceService } from "./resourceService";
 
 const ADMIN_RESOURCE_PATH = "/admin/orders";
@@ -8,7 +14,28 @@ const CHECKOUT_RESOURCE_PATH = import.meta.env.VITE_ORDER_API_PATH || "/orders";
 const USER_ORDERS_RESOURCE_PATH = import.meta.env.VITE_USER_ORDER_API_PATH || CHECKOUT_RESOURCE_PATH;
 const adminOrderService = createResourceService(ADMIN_RESOURCE_PATH, { updateMethod: "patch" });
 
-export const { getAll, getById, remove, update } = adminOrderService;
+function cleanParams(params = {}) {
+  return Object.fromEntries(
+    Object.entries(params).filter(([, value]) => value !== null && value !== undefined && value !== ""),
+  );
+}
+
+export async function getAll(params = {}, config = {}) {
+  const data = await adminOrderService.getAll(cleanParams(params), config);
+  return normalizeAdminOrderPage(data);
+}
+
+export async function getById(id, config = {}) {
+  const data = await adminOrderService.getById(id, config);
+  return normalizeAdminOrderDetail(data);
+}
+
+export async function update(id, payload, config = {}) {
+  const data = await adminOrderService.update(id, buildAdminOrderUpdatePayload(payload), config);
+  return normalizeAdminOrderSummary(data);
+}
+
+export const { remove } = adminOrderService;
 
 export async function create(payload) {
   return createOrder(payload);

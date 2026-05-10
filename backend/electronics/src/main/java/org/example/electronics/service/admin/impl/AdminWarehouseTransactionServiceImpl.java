@@ -169,7 +169,10 @@ public class AdminWarehouseTransactionServiceImpl implements AdminWarehouseTrans
                                                 (adminUpdateWarehouseTransactionTypeStatusRequestDTO.status() == WarehouseTransactionStatus.COMPLETED);
 
         if(isCompletingWarehouseTransaction) {
-            processWarehouseUpdate(existingWarehouseTransactionEntity, false);
+            processWarehouseUpdate(
+                    existingWarehouseTransactionEntity,
+                    isInwardWarehouseTransaction(adminUpdateWarehouseTransactionTypeStatusRequestDTO.type())
+            );
         }
 
         existingWarehouseTransactionEntity.setStaff(staffRepository.getReferenceById(staffId));
@@ -246,6 +249,12 @@ public class AdminWarehouseTransactionServiceImpl implements AdminWarehouseTrans
                     String.format("Chuyển đổi trạng thái phiếu kho không hợp lệ, không thể chuyển từ '%s' sang '%s'", currentStatus, newStatus)
             );
         }
+    }
+
+    private boolean isInwardWarehouseTransaction(WarehouseTransactionType type) {
+        return type == WarehouseTransactionType.IMPORT ||
+                type == WarehouseTransactionType.RETURN ||
+                type == WarehouseTransactionType.UNRESERVED;
     }
 
     private void setWarehouseTransactionRelationships(WarehouseTransactionEntity entity, AdminWarehouseTransactionRequestDTO requestDTO, Integer staffId) {

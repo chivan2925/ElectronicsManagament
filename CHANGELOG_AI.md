@@ -8,6 +8,34 @@ Always update this file after meaningful work.
 
 ## 2026-05-10
 
+### Admin Warehouse Management API Integration
+
+- Rebuilt `frontend/src/pages/admin/Warehouse.jsx` into a real API-backed inventory operations module at `/admin/warehouse`.
+- Added reusable Warehouse Management components: `WarehouseTable.jsx`, `StockAdjustModal.jsx`, and `LowStockCard.jsx`.
+- Added stock overview, clean inventory table, status/stock filters, low-stock alerts, loading states, API error handling, and stock history placeholder UI.
+- Added inventory adjustment flow that creates and completes Warehouse Transaction API records for stock in, stock out, and returns.
+- Added `frontend/src/api/warehouseMapper.js` and upgraded `warehouseService.js` for normalized Warehouse pages, stock rows, transaction pages, and adjustment payloads.
+- Fixed backend Warehouse Transaction completion so manual inbound transactions increase stock and outbound transactions decrease stock.
+- Verified `npm run lint`, `npm run build`, `git diff --check`, `mvn -q -DskipTests compile`, and a local `/admin/warehouse` route smoke check. Build still reports the existing Vite chunk-size warning.
+
+### Admin Order Management API Integration
+
+- Rebuilt `frontend/src/pages/admin/Orders.jsx` into a real API-backed operations module at `/admin/orders`.
+- Added reusable Order Management components: `OrderTable.jsx`, `OrderDetail.jsx`, and `OrderTimeline.jsx`.
+- Added order table, order detail drawer, customer info, shipping address, order items, payment summary, status update controls, payment status controls, shipping status controls, and timeline UI.
+- Added `frontend/src/api/orderMapper.js` and upgraded `orderService.js` for normalized admin Order list/detail responses and update payloads.
+- Mapped UI order stages `pending`, `confirmed`, `shipping`, `delivered`, and `cancelled` to the backend Order and Shipping status enums.
+- Verified `npm run lint`, `npm run build`, `git diff --check`, `mvn -q -DskipTests compile`, and a local `/admin/orders` route smoke check. Build still reports the existing Vite chunk-size warning.
+
+### Admin Media Management API Integration
+
+- Rebuilt `frontend/src/pages/admin/Media.jsx` into a real API-backed asset manager at `/admin/media`.
+- Added reusable Media Management components: `MediaUploader.jsx`, `MediaGrid.jsx`, and `MediaPreviewModal.jsx`.
+- Added drag-and-drop Cloudinary upload, per-file upload progress, product attach flow, dark media grid, image preview modal, primary image action, and media delete confirmation.
+- Added `frontend/src/api/mediaMapper.js` and upgraded `mediaService.js` for normalized Media API list, upload, create, primary, order, and delete flows.
+- Extended backend Media API support for paginated list/search/filter, `publicId` on create/response DTOs, primary reset handling, and Cloudinary deletion during media delete.
+- Verified `npm run lint`, `npm run build`, `git diff --check`, `mvn -q -DskipTests compile`, and a local `/admin/media` route smoke check. Build still reports the existing Vite chunk-size warning.
+
 ### Admin Variant Management API Integration
 
 - Rebuilt `frontend/src/pages/admin/Variants.jsx` into a real API-backed inventory module at `/admin/variants`.

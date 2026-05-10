@@ -14,6 +14,23 @@ Ready for Phase 5 — Admin Dashboard System
 
 ## Recently Completed
 
+- Connected `/admin/warehouse` to real backend Warehouse and Warehouse Transaction APIs with an inventory operations module.
+- Added `frontend/src/pages/admin/warehouse/WarehouseTable.jsx`, `StockAdjustModal.jsx`, and `LowStockCard.jsx`.
+- Added stock overview, inventory adjustment modal, low-stock alerts, status/stock filters, loading states, API error handling, and stock history placeholder UI.
+- Added `frontend/src/api/warehouseMapper.js` and upgraded `warehouseService.js` for normalized Warehouse list/detail responses, transaction list responses, and create/complete adjustment flows.
+- Fixed backend Warehouse Transaction completion so inbound manual transactions increase stock and outbound transactions decrease stock.
+- Verified `npm run lint`, `npm run build`, `git diff --check`, `mvn -q -DskipTests compile`, and a local `/admin/warehouse` route smoke check. Build still reports the existing Vite chunk-size warning.
+- Connected `/admin/orders` to real backend Order APIs with an ecommerce operations dashboard module.
+- Added `frontend/src/pages/admin/orders/OrderTable.jsx`, `OrderDetail.jsx`, and `OrderTimeline.jsx`.
+- Added order table, order detail drawer, customer info, shipping address, order items, payment summary, status update controls, payment status controls, shipping status controls, and timeline UI.
+- Added `frontend/src/api/orderMapper.js` and upgraded `orderService.js` for normalized admin Order list/detail responses and update payloads.
+- Verified `npm run lint`, `npm run build`, `git diff --check`, `mvn -q -DskipTests compile`, and a local `/admin/orders` route smoke check. Build still reports the existing Vite chunk-size warning.
+- Connected `/admin/media` to real backend Media and Product APIs with a dark asset-manager module.
+- Added `frontend/src/pages/admin/media/MediaUploader.jsx`, `MediaGrid.jsx`, and `MediaPreviewModal.jsx`.
+- Added drag-and-drop Cloudinary upload, upload progress UI, product attach flow, media grid, preview modal, primary image action, delete confirmation, filters, pagination, loading states, and API error handling.
+- Added `frontend/src/api/mediaMapper.js` and upgraded `mediaService.js` for normalized Media API list/upload/create/delete flows.
+- Extended backend Media API support for paginated list/search/filter, `publicId` on create/response DTOs, primary reset handling, and Cloudinary deletion on media delete.
+- Verified `npm run lint`, `npm run build`, `git diff --check`, `mvn -q -DskipTests compile`, and a local `/admin/media` route smoke check. Build still reports the existing Vite chunk-size warning.
 - Connected `/admin/variants` to real backend Variant and Product APIs with reusable variant-specific components.
 - Added `frontend/src/pages/admin/variants/VariantForm.jsx` and `VariantTable.jsx`.
 - Added real variant management flows: list with server pagination, search, product filter, status filter, create, update, soft delete, status toggle, SKU management, stock management, price override, and dynamic attribute fields.
@@ -153,7 +170,7 @@ Ready for Phase 5 — Admin Dashboard System
 
 1. Preserve the existing homepage layout.
 2. Keep the normalized frontend folder structure stable.
-3. Continue Phase 5 API-backed admin pages by connecting media through the existing admin API service pattern.
+3. Continue Phase 5 API-backed admin pages by connecting coupons, roles/permissions, and reports through the existing admin API service pattern.
 4. Use centralized feedback components for loading, error, empty, permission, and refresh states before replacing mock admin data.
 5. Connect admin CRUD pages to backend APIs one resource at a time.
 6. Keep public storefront customer registration, payment gateway, wishlist, homepage products, and search on mock/local state until public API contracts are ready.
@@ -214,7 +231,7 @@ Ready for Phase 5 — Admin Dashboard System
 
 ### Phase 5 Admin Dashboard System
 
-- Continue with admin media next using the same reusable Category/Brand/Product/Variant/User/Staff module pattern.
+- Continue remaining admin modules using the same reusable Category/Brand/Product/Variant/Media/User/Staff module pattern.
 - Reuse `useAdminTable`, `useAdminFilters`, `useAdminPagination`, and `useAdminModal` instead of adding local duplicated table state.
 - Reuse admin module registry metadata for resource labels, routes, permissions, and service selection.
 - Add API-backed list loading, error, empty, and refresh states before replacing mock admin data.
@@ -237,7 +254,7 @@ Ready for Phase 5 — Admin Dashboard System
 - Public customer auth is not complete; account APIs are authenticated and user-id scoped until a customer-auth principal contract is available.
 - Client checkout/account routes are customer-session-only in the frontend, but backend ownership enforcement still needs the future customer-auth principal contract.
 - A dedicated backend cart persistence API is not implemented; cart state is shared local frontend state.
-- Admin frontend API service modules exist; `/admin/categories`, `/admin/brands`, `/admin/products`, `/admin/variants`, `/admin/users`, and `/admin/staff` are connected, remaining pages are still mock-backed.
+- Admin frontend API service modules exist; `/admin/categories`, `/admin/brands`, `/admin/products`, `/admin/variants`, `/admin/media`, `/admin/orders`, `/admin/warehouse`, `/admin/users`, and `/admin/staff` are connected, remaining pages are still mock-backed.
 - Category API currently has no `description` field in request/response DTOs, so category description is UI-session only until backend contract is extended.
 - Backend admin auth currently exposes login/logout; refresh-token endpoint support is not implemented yet.
 - Backend `mvn test` currently fails because `AddressMapper` is not registered as a bean for `AdminAddressServiceImpl`.

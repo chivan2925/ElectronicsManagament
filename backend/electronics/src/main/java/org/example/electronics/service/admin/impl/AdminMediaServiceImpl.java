@@ -13,8 +13,12 @@ import org.example.electronics.repository.MediaRepository;
 import org.example.electronics.repository.ProductRepository;
 import org.example.electronics.repository.VariantRepository;
 import org.example.electronics.service.admin.AdminMediaService;
+import org.example.electronics.service.system.SystemCloudinaryService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +28,7 @@ public class AdminMediaServiceImpl implements AdminMediaService {
     private final MediaRepository mediaRepository;
     private final ProductRepository productRepository;
     private final VariantRepository variantRepository;
+    private final SystemCloudinaryService cloudinaryService;
 
     @Transactional
     @Override
@@ -47,6 +52,10 @@ public class AdminMediaServiceImpl implements AdminMediaService {
                             "Không tìm thấy sản phẩm với id: " + productId
                     ));
 
+            if (Boolean.TRUE.equals(newMediaEntity.getIsPrimary())) {
+                mediaRepository.updateIsPrimaryToFalseByProductId(productId);
+            }
+
             newMediaEntity.setProduct(existingProductEntity);
         }
         else {
@@ -54,6 +63,10 @@ public class AdminMediaServiceImpl implements AdminMediaService {
                     .orElseThrow(() -> new EntityNotFoundException(
                             "Không tìm thấy biến thể với id: " + variantId
                     ));
+
+            if (Boolean.TRUE.equals(newMediaEntity.getIsPrimary())) {
+                mediaRepository.updateIsPrimaryToFalseByVariantId(variantId);
+            }
 
             newMediaEntity.setVariant(existingVariantEntity);
         }
@@ -70,6 +83,10 @@ public class AdminMediaServiceImpl implements AdminMediaService {
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Không tìm thấy media với id: " + mediaId
                 ));
+
+        if (StringUtils.hasText(existingMediaEntity.getPublicId())) {
+            cloudinaryService.deleteImage(existingMediaEntity.getPublicId());
+        }
 
         mediaRepository.delete(existingMediaEntity);
     }
@@ -106,5 +123,14 @@ public class AdminMediaServiceImpl implements AdminMediaService {
         existingMediaEntity.setDisplayOrder(adminUpdateMediaOrderRequestDTO.displayOrder());
 
         return mediaMapper.toAdminResponseDTO(existingMediaEntity);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Page<AdminMediaResponseDTO> getAllMedia(String keyword, Integer productId, Integer variantId, Boolean primary, Pageable pageable) {
+        String finalKeyword = StringUtils.hasText(keyword) ? keyword.trim() : null;
+
+        return mediaRepository.findMediaWithFilter(finalKeyword, productId, variantId, primary, pageable)
+                .map(mediaMapper::toAdminResponseDTO);
     }
 }

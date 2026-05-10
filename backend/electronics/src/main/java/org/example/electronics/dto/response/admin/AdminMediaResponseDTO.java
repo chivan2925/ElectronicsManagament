@@ -9,7 +9,15 @@ public record AdminMediaResponseDTO(
 
         Integer variantId,
 
+        String productName,
+
+        String variantName,
+
+        String variantSku,
+
         String imageUrl,
+
+        String publicId,
 
         Boolean isPrimary,
 
