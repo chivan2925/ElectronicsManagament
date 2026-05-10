@@ -12,6 +12,8 @@ import { createResourceService } from "./resourceService";
 
 const DEFAULT_RESOURCE_PATH = "/admin/products";
 const RESOURCE_PATH = import.meta.env.VITE_PRODUCT_API_PATH || DEFAULT_RESOURCE_PATH;
+const CATALOG_CACHE_TTL = 60_000;
+const REVIEW_CACHE_TTL = 30_000;
 const DEFAULT_CATALOG_SIZE = 48;
 const ACTIVE_STATUS = "ACTIVE";
 const adminProductService = createResourceService(RESOURCE_PATH);
@@ -47,6 +49,15 @@ function getCatalogParams(params = {}) {
     sort: sortParam,
     status,
   });
+}
+
+function withCatalogRequestConfig(config = {}, cacheTtl = CATALOG_CACHE_TTL) {
+  return {
+    skipGlobalErrorHandler: true,
+    ...config,
+    cacheTtl: config.cacheTtl ?? cacheTtl,
+    dedupe: config.dedupe ?? true,
+  };
 }
 
 export async function getAll(params = {}, config = {}) {
@@ -89,9 +100,11 @@ export async function updateFeatured(id, featured, config = {}) {
 
 export async function getCatalogProducts(params = {}, config = {}) {
   const data = await api.get(RESOURCE_PATH, {
-    skipGlobalErrorHandler: true,
-    ...config,
-    params: getCatalogParams(params),
+    ...withCatalogRequestConfig(config),
+    params: {
+      ...getCatalogParams(params),
+      ...config.params,
+    },
   });
 
   return normalizeProductPage(data);
@@ -100,8 +113,7 @@ export async function getCatalogProducts(params = {}, config = {}) {
 export async function getCatalogProductById(id, config = {}) {
   const { includeReviews = false, reviewParams = {}, ...requestConfig } = config;
   const data = await api.get(`${RESOURCE_PATH}/${id}`, {
-    skipGlobalErrorHandler: true,
-    ...requestConfig,
+    ...withCatalogRequestConfig(requestConfig),
   });
 
   if (!includeReviews) {
@@ -118,12 +130,12 @@ export async function getCatalogProductById(id, config = {}) {
 
 export async function getCatalogProductReviews(id, params = {}, config = {}) {
   const data = await api.get(`${RESOURCE_PATH}/${id}/reviews`, {
-    skipGlobalErrorHandler: true,
-    ...config,
+    ...withCatalogRequestConfig(config, REVIEW_CACHE_TTL),
     params: cleanParams({
       page: 0,
       size: 5,
       ...params,
+      ...config.params,
     }),
   });
 

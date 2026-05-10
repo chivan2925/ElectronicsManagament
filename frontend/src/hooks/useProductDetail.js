@@ -61,7 +61,7 @@ function useProductDetail(slug) {
         setDetail(productDetail);
 
         const relatedPage = await productService
-          .getCatalogProductsWithDetails({
+          .getCatalogProducts({
             page: 0,
             size: 24,
             status: "ACTIVE",

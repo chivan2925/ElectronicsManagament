@@ -1,17 +1,14 @@
-import { useEffect, useState } from "react";
+import { lazy, useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ChevronRight, PackageSearch, ShoppingBag } from "lucide-react";
+import DeferredSectionBoundary from "../../components/common/DeferredSectionBoundary";
 import TrustSignalBar from "../../components/common/TrustSignalBar";
 import AnnouncementBar from "../../components/layout/AnnouncementBar";
 import Header from "../../components/layout/Header";
 import ProductGallery from "../../components/product/ProductGallery";
 import ProductInfo from "../../components/product/ProductInfo";
-import ProductReviews from "../../components/product/ProductReviews";
 import ProductSpecs from "../../components/product/ProductSpecs";
-import RecentlyViewedSection from "../../components/product/RecentlyViewedSection";
-import RecommendationSection from "../../components/product/RecommendationSection";
-import RelatedProducts from "../../components/product/RelatedProducts";
 import SEOHead from "../../components/seo/SEOHead";
 import Button from "../../components/ui/Button";
 import Container from "../../components/ui/Container";
@@ -26,6 +23,10 @@ import { fadeUp, staggerContainer } from "../../styles/animations";
 import { getProductAliases } from "../../utils/productIdentity";
 
 const MotionDiv = motion.div;
+const ProductReviews = lazy(() => import("../../components/product/ProductReviews"));
+const RecentlyViewedSection = lazy(() => import("../../components/product/RecentlyViewedSection"));
+const RecommendationSection = lazy(() => import("../../components/product/RecommendationSection"));
+const RelatedProducts = lazy(() => import("../../components/product/RelatedProducts"));
 
 const frequentlyBoughtCategories = {
   "điện thoại": ["tai nghe", "phụ kiện gaming"],
@@ -222,6 +223,23 @@ function ProductDetailError({ error, onRetry, slug }) {
   );
 }
 
+function DetailPanelFallback() {
+  return (
+    <section className="store-glass-soft rounded-3xl p-5 sm:p-6">
+      <SkeletonBlock className="h-6 w-36 rounded-full" />
+      <SkeletonBlock className="mt-4 h-8 w-64 max-w-full rounded-full" />
+      <div className="mt-5 grid gap-4 lg:grid-cols-[320px_1fr]">
+        <SkeletonBlock className="h-64 rounded-3xl" />
+        <div className="grid gap-3">
+          {Array.from({ length: 4 }, (_, index) => (
+            <SkeletonBlock className="h-24 rounded-2xl" key={`detail-panel-${index}`} />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function ProductDetailContent({ detail, relatedProducts }) {
   const { addRecentlyViewed } = useRecentlyViewed();
   const initialOptions = getInitialOptions(detail.variantGroups);
@@ -230,12 +248,24 @@ function ProductDetailContent({ detail, relatedProducts }) {
   const [selectedOptions, setSelectedOptions] = useState(initialOptions);
   const [quantity, setQuantity] = useState(initialMaxQuantity > 0 ? 1 : 0);
 
-  const selectedVariantOptions = getSelectedVariantOptions(detail.variantGroups, selectedOptions);
-  const maxQuantity = getMaxQuantity(detail.product, selectedVariantOptions);
-  const selectedPriceDelta = selectedVariantOptions.reduce((sum, option) => sum + option.priceDelta, 0);
+  const selectedVariantOptions = useMemo(
+    () => getSelectedVariantOptions(detail.variantGroups, selectedOptions),
+    [detail.variantGroups, selectedOptions],
+  );
+  const maxQuantity = useMemo(
+    () => getMaxQuantity(detail.product, selectedVariantOptions),
+    [detail.product, selectedVariantOptions],
+  );
+  const selectedPriceDelta = useMemo(
+    () => selectedVariantOptions.reduce((sum, option) => sum + option.priceDelta, 0),
+    [selectedVariantOptions],
+  );
   const finalPrice = detail.product.price + selectedPriceDelta;
   const finalOldPrice = detail.product.oldPrice ? detail.product.oldPrice + selectedPriceDelta : null;
-  const frequentlyBoughtProducts = getFrequentlyBoughtTogetherProducts(detail.product, relatedProducts);
+  const frequentlyBoughtProducts = useMemo(
+    () => getFrequentlyBoughtTogetherProducts(detail.product, relatedProducts),
+    [detail.product, relatedProducts],
+  );
   const categoryPath = `/categories/${slugify(detail.product.category) || "tat-ca"}`;
 
   useEffect(() => {
@@ -327,28 +357,36 @@ function ProductDetailContent({ detail, relatedProducts }) {
 
         <div className="mt-6 grid gap-6">
           <ProductSpecs description={detail.description} specs={detail.specs} />
-          <ProductReviews
-            breakdown={detail.ratingBreakdown}
-            product={detail.product}
-            reviewMeta={detail.reviewMeta}
-            reviews={detail.reviews}
-          />
-          <RelatedProducts products={relatedProducts} />
-          <RecommendationSection
-            actionLabel="Xem thêm combo"
-            actionTo="/products"
-            badgeLabel="Bundle gợi ý"
-            icon={ShoppingBag}
-            products={frequentlyBoughtProducts}
-            subtitle="Phụ kiện và sản phẩm bổ trợ để hoàn thiện setup quanh lựa chọn hiện tại."
-            title="Thường mua cùng"
-          />
-          <RecentlyViewedSection
-            excludeProductIds={[detail.product.id, detail.product.apiId, detail.product.slug]}
-            limit={8}
-            subtitle="Các sản phẩm vừa xem được giữ trên trình duyệt để bạn so sánh trước khi chốt đơn."
-            title="Bạn vừa xem"
-          />
+          <DeferredSectionBoundary fallback={<DetailPanelFallback />}>
+            <ProductReviews
+              breakdown={detail.ratingBreakdown}
+              product={detail.product}
+              reviewMeta={detail.reviewMeta}
+              reviews={detail.reviews}
+            />
+          </DeferredSectionBoundary>
+          <DeferredSectionBoundary fallbackProps={{ cardCount: 4 }}>
+            <RelatedProducts products={relatedProducts} />
+          </DeferredSectionBoundary>
+          <DeferredSectionBoundary fallbackProps={{ cardCount: 4 }}>
+            <RecommendationSection
+              actionLabel="Xem thêm combo"
+              actionTo="/products"
+              badgeLabel="Bundle gợi ý"
+              icon={ShoppingBag}
+              products={frequentlyBoughtProducts}
+              subtitle="Phụ kiện và sản phẩm bổ trợ để hoàn thiện setup quanh lựa chọn hiện tại."
+              title="Thường mua cùng"
+            />
+          </DeferredSectionBoundary>
+          <DeferredSectionBoundary fallbackProps={{ cardCount: 4 }}>
+            <RecentlyViewedSection
+              excludeProductIds={[detail.product.id, detail.product.apiId, detail.product.slug]}
+              limit={8}
+              subtitle="Các sản phẩm vừa xem được giữ trên trình duyệt để bạn so sánh trước khi chốt đơn."
+              title="Bạn vừa xem"
+            />
+          </DeferredSectionBoundary>
         </div>
       </Container>
     </div>

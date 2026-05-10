@@ -67,6 +67,7 @@ Admin:
 frontend/src/
 ├─ api/
 │  ├─ apiConfig.js
+│  ├─ apiCache.js
 │  ├─ apiErrorEvents.js
 │  ├─ apiErrorFeedback.js
 │  ├─ apiErrorHandler.js
@@ -136,6 +137,8 @@ frontend/src/
 │  ├─ cart/
 │  ├─ checkout/
 │  ├─ common/
+│  │  ├─ DeferredSectionBoundary.jsx
+│  │  └─ OptimizedImage.jsx
 │  ├─ home/
 │  ├─ layout/
 │  │  └─ admin/
@@ -209,7 +212,10 @@ frontend/src/
 │     ├─ Register.jsx
 │     └─ WishlistPage.jsx
 ├─ routes/
-│  └─ AppRoutes.jsx
+│  ├─ AppRoutes.jsx
+│  ├─ RouteLoadingBoundary.jsx
+│  ├─ lazyRoutes.jsx
+│  └─ routeLoaders.js
 ├─ seo/
 │  └─ metadata.js
 ├─ services/
@@ -293,9 +299,19 @@ Use `useAdminTable`, `useAdminFilters`, `useAdminPagination`, and `useAdminModal
 - Keep API calls centralized through service modules under `src/api`.
 - Prefer shared primitives in `src/components/ui` before duplicating button, card, badge, input, price, rating, or section-title markup.
 
+## Performance Architecture
+
+- Route-level lazy loading lives in `src/routes/lazyRoutes.jsx`, with route import factories and hover/focus preloading centralized in `src/routes/routeLoaders.js`.
+- Route fallback UI lives in `src/routes/RouteLoadingBoundary.jsx`; below-the-fold storefront section fallback UI lives in `src/components/common/DeferredSectionBoundary.jsx`.
+- Keep homepage and PDP above-the-fold content eager enough to preserve perceived UX, then defer heavier product review, recommendation, recently viewed, and admin-only chart surfaces.
+- Shared request deduplication and opt-in short TTL caching live in `src/api/apiCache.js` and are wired through `src/api/client.js`.
+- Use cache TTLs only for read-only data where brief staleness is acceptable. Admin mutations should rely on the client cache clear after successful non-read requests.
+- Memoize only where it avoids repeated derived data work or stabilizes heavy product-card/carousel handlers.
+
 ## Routing Rules
 
 - Keep route definitions centralized in `src/routes/AppRoutes.jsx`.
+- Keep dynamic imports centralized through `src/routes/routeLoaders.js` and route component exports in `src/routes/lazyRoutes.jsx`.
 - `/` must continue to render the existing homepage.
 - `/admin` should redirect to `/admin/dashboard`.
 - `/admin/login` stays outside `AdminLayout`.

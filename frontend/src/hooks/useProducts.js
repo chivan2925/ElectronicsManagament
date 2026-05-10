@@ -148,7 +148,7 @@ function useProducts({ routeCategorySlug = null } = {}) {
         setIsLoading(true);
         setError(null);
 
-        return productService.getCatalogProductsWithDetails({
+        return productService.getCatalogProducts({
           keyword: filters.search || undefined,
           page: 0,
           size: CATALOG_FETCH_SIZE,
@@ -213,10 +213,18 @@ function useProducts({ routeCategorySlug = null } = {}) {
   }, [products]);
 
   const categoryCounts = useMemo(() => {
-    const counts = { all: products.length };
+    const counts = products.reduce(
+      (currentCounts, product) => {
+        const categorySlug = normalizeSlug(product.category);
+
+        currentCounts[categorySlug] = (currentCounts[categorySlug] || 0) + 1;
+        return currentCounts;
+      },
+      { all: products.length },
+    );
 
     categoryOptions.forEach((category) => {
-      counts[category.slug] = products.filter((product) => normalizeSlug(product.category) === category.slug).length;
+      counts[category.slug] = counts[category.slug] || 0;
     });
 
     return counts;

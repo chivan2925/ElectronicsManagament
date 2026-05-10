@@ -1,9 +1,20 @@
 import axios from "axios";
 import { ACCESS_TOKEN_KEY, getStoredAccessToken } from "../auth/authStorage";
+import {
+  clearApiCache,
+  createApiCacheKey,
+  getCachedApiResponse,
+  getInFlightApiRequest,
+  getResolvedCacheTtl,
+  isCacheableMethod,
+  setCachedApiResponse,
+  setInFlightApiRequest,
+} from "./apiCache";
 import { API_CONFIG } from "./apiConfig";
 import { createApiErrorHandler } from "./apiErrorHandler";
 
 export { ACCESS_TOKEN_KEY };
+export { clearApiCache, getApiCacheStats } from "./apiCache";
 
 const RETRYABLE_METHODS = new Set(["get", "head", "options"]);
 
@@ -44,9 +55,55 @@ client.interceptors.request.use((config) => {
 
 client.interceptors.response.use((response) => response, createApiErrorHandler(client));
 
+function getAuthCachePartition(config = {}) {
+  if (config.skipAuth) {
+    return "public";
+  }
+
+  const token = getStoredAccessToken();
+
+  return token ? `auth:${token.slice(-18)}` : "anonymous";
+}
+
 export async function apiRequest(config) {
-  const response = await client.request(config);
-  return response.data;
+  const method = String(config.method ?? "get").toLowerCase();
+  const isReadRequest = isCacheableMethod(method);
+  const shouldDedupe = isReadRequest && config.dedupe !== false;
+  const cacheTtl = getResolvedCacheTtl(config);
+  const cacheKey =
+    shouldDedupe || cacheTtl > 0 ? createApiCacheKey(config, getAuthCachePartition(config)) : null;
+
+  if (cacheKey && cacheTtl > 0) {
+    const cachedResponse = getCachedApiResponse(cacheKey);
+
+    if (cachedResponse.hit) {
+      return cachedResponse.value;
+    }
+  }
+
+  if (cacheKey && shouldDedupe) {
+    const inFlightRequest = getInFlightApiRequest(cacheKey);
+
+    if (inFlightRequest) {
+      return inFlightRequest;
+    }
+  }
+
+  const requestPromise = client.request(config).then((response) => {
+    const responseData = response.data;
+
+    if (cacheKey && cacheTtl > 0) {
+      setCachedApiResponse(cacheKey, responseData, cacheTtl);
+    }
+
+    if (!isReadRequest) {
+      clearApiCache();
+    }
+
+    return responseData;
+  });
+
+  return cacheKey && shouldDedupe ? setInFlightApiRequest(cacheKey, requestPromise) : requestPromise;
 }
 
 export const api = {

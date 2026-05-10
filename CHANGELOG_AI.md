@@ -8,6 +8,17 @@ Always update this file after meaningful work.
 
 ## 2026-05-10
 
+### Frontend Production Architecture Optimization
+
+- Added `frontend/src/api/apiCache.js` and wired the shared Axios helper for in-flight GET request deduplication, opt-in TTL caching, and cache invalidation after successful mutations.
+- Added route loader/preload foundations with `frontend/src/routes/routeLoaders.js` and `lazyRoutes.jsx`, and preloaded likely next routes from header/product interactions.
+- Added `DeferredSectionBoundary` and lazy-loaded below-fold homepage/PDP sections while preserving the existing homepage layout.
+- Removed PLP/PDP catalog N+1 detail fetching for listing cards; PLP now uses the product page response directly and PDP related products use listing data.
+- Added focused memoization for product carousels, recommendation/recently-viewed sections, product card handlers, product detail derived values, and category count derivation.
+- Tuned Vite manual chunking for React, React Router, Framer Motion, and Axios vendor caching while keeping Recharts out of the storefront entry path.
+- Verified `npm run lint`, `npm run build`, `git diff --check`, targeted `npm ls` dependency duplication checks, and route smoke checks for `/`, `/products`, `/products/:slug`, `/cart`, `/wishlist`, and `/admin/login`.
+- Measured production build output: main app chunk is about 105 kB, Product Detail route chunk is about 34 kB, and PLP no longer performs up to 72 extra detail requests after the catalog list request.
+
 ### Ecommerce Image System
 
 - Upgraded `OptimizedImage` with shared loading state, lazy/eager loading defaults, Cloudinary responsive `srcSet` generation, blur-up placeholders, skeleton overlays, and fallback image handling.

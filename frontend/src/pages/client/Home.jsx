@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { lazy, useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import DeferredSectionBoundary from "../../components/common/DeferredSectionBoundary";
 import AnnouncementBar from "../../components/layout/AnnouncementBar";
 import Header from "../../components/layout/Header";
 import CategorySidebar from "../../components/home/CategorySidebar";
@@ -8,10 +9,7 @@ import FlashSaleCard from "../../components/home/FlashSaleCard";
 import HeroBanner from "../../components/home/HeroBanner";
 import PromoCard from "../../components/home/PromoCard";
 import ServiceBar from "../../components/home/ServiceBar";
-import BestSellerSection from "../../components/product/BestSellerSection";
 import ProductCard from "../../components/product/ProductCard";
-import RecentlyViewedSection from "../../components/product/RecentlyViewedSection";
-import TrendingProducts from "../../components/product/TrendingProducts";
 import SEOHead from "../../components/seo/SEOHead";
 import {
   BannerSkeleton,
@@ -34,6 +32,9 @@ import { buildHomeMetadata } from "../../seo/metadata";
 import { motionViewport, staggerContainer } from "../../styles/animations";
 
 const MotionDiv = motion.div;
+const RecentlyViewedSection = lazy(() => import("../../components/product/RecentlyViewedSection"));
+const TrendingProducts = lazy(() => import("../../components/product/TrendingProducts"));
+const BestSellerSection = lazy(() => import("../../components/product/BestSellerSection"));
 
 function Home() {
   const [isLoadingDemo, setIsLoadingDemo] = useState(true);
@@ -154,15 +155,22 @@ function Home() {
               <FlashSaleCard product={flashSaleProduct} />
             </section>
 
-            <RecentlyViewedSection
-              limit={10}
-              surface="home"
-              subtitle="Sản phẩm bạn vừa xem được lưu tạm để quay lại so sánh nhanh."
-              title="Tiếp tục xem sản phẩm"
-            />
+            <DeferredSectionBoundary fallbackProps={{ cardCount: 4, surface: "home" }}>
+              <RecentlyViewedSection
+                limit={10}
+                surface="home"
+                subtitle="Sản phẩm bạn vừa xem được lưu tạm để quay lại so sánh nhanh."
+                title="Tiếp tục xem sản phẩm"
+              />
+            </DeferredSectionBoundary>
 
-            <TrendingProducts />
-            <BestSellerSection />
+            <DeferredSectionBoundary fallbackProps={{ cardCount: 4, surface: "home" }}>
+              <TrendingProducts />
+            </DeferredSectionBoundary>
+
+            <DeferredSectionBoundary fallbackProps={{ cardCount: 4, surface: "home" }}>
+              <BestSellerSection />
+            </DeferredSectionBoundary>
           </>
         )}
       </Container>

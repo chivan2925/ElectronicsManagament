@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { fadeUp, motionViewport, staggerContainer } from "../../styles/animations";
@@ -29,7 +29,7 @@ function ProductCarousel({
     canScrollBackward: false,
     canScrollForward: false,
   });
-  const productList = Array.isArray(products) ? products.filter(Boolean) : [];
+  const productList = useMemo(() => (Array.isArray(products) ? products.filter(Boolean) : []), [products]);
 
   const updateScrollState = useCallback(() => {
     const slider = sliderRef.current;
@@ -65,7 +65,7 @@ function ProductCarousel({
     };
   }, [productList.length, updateScrollState]);
 
-  const scrollCarousel = (direction) => {
+  const scrollCarousel = useCallback((direction) => {
     const slider = sliderRef.current;
 
     if (!slider) {
@@ -76,7 +76,7 @@ function ProductCarousel({
       behavior: "smooth",
       left: direction * Math.min(slider.clientWidth * 0.88, 960),
     });
-  };
+  }, []);
 
   if (!productList.length) {
     return emptyState;
@@ -153,4 +153,4 @@ function ProductCarousel({
   );
 }
 
-export default ProductCarousel;
+export default memo(ProductCarousel);

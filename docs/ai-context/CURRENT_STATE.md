@@ -86,7 +86,7 @@ The profile overview now includes a loyalty/reward UI foundation with `LoyaltyCa
 
 The customer ecommerce experience now has a reusable trust-signal foundation, stronger CTA/hover/focus interactions, shared store empty-state trust hints, improved PLP/PDP skeletons, and consistent trust indicators across homepage, PLP, PDP, cart, checkout, and profile without a homepage redesign.
 
-The frontend now has route-level lazy loading, route loading boundaries, deferred header search/cart overlays, an optimized image component foundation, and targeted memoization for repeated ecommerce rows. The production build emits route chunks instead of one large JavaScript bundle.
+The frontend now has production-oriented route loading with route-level lazy loading, route preloading hooks, shared route/deferred-section loading boundaries, deferred header search/cart overlays, below-fold storefront section splitting, an optimized image component foundation, and targeted memoization for repeated ecommerce rows/carousels. The shared API client now has in-flight GET request deduplication plus opt-in TTL caching, and catalog product listing/detail flows avoid N+1 detail fetches. The production build emits route/vendor chunks instead of one large JavaScript bundle.
 
 The Phase 6 completion review tightened customer ecommerce UX consistency across search, reviews, wishlist, recommendations, cart, checkout, order tracking, notifications, responsive behavior, animations, and performance without a large redesign. Internal storefront header and notification navigation now stays within React Router, search and wishlist states reuse cleaner shared patterns, product identity matching is centralized, PLP search normalization handles punctuation and Vietnamese/no-accent queries more consistently, and cart recommendations use the optimized image foundation.
 
@@ -554,6 +554,7 @@ Latest validation:
 - `npm run lint`, `npm run build`, and `git diff --check` passed after upgrading the Admin Analytics System. The build completed without the Vite chunk-size warning after analytics mock data was isolated in an admin lazy chunk; `git diff --check` reported only CRLF normalization warnings for edited files.
 - `npm run lint`, `npm run build`, and `git diff --check` passed after adding the storefront SEO foundation. `git diff --check` reported only CRLF normalization warnings for edited frontend files.
 - `npm run lint`, `npm run build`, `git diff --check`, and local route smoke checks passed after upgrading the ecommerce image system. Smoke checks returned `200` for `/`, `/products`, `/products/:slug`, `/cart`, `/checkout`, `/admin/media`, and `/admin/products`; `git diff --check` reported only CRLF normalization warnings for edited frontend files.
+- `npm run lint`, `npm run build`, `git diff --check`, targeted dependency duplication checks with `npm ls react react-dom framer-motion lucide-react recharts axios`, and local route smoke checks passed after the production frontend architecture optimization. The main app chunk is about 105 kB, React/router/motion/http are cacheable vendor chunks, Product Detail route chunk is about 34 kB, and PLP/PDP catalog flows no longer issue per-product detail requests for listing cards.
 
 ## Known Issues
 
@@ -572,7 +573,7 @@ Latest validation:
 - Backend local startup may fail if port `8080` is occupied by another local service; run on another port or free `8080`.
 - Existing local PostgreSQL schema is partially legacy and still needs controlled migration/backfill for non-auth tables instead of relying on Hibernate `ddl-auto:update`.
 - Backend Category API currently does not expose `description` in request/response DTOs; category description in admin UI is session-level until backend contract is extended.
-- Build output is valid after route splitting; Recharts remains isolated in a lazy chart chunk for admin analytics/report routes.
+- Build output is valid after route splitting; Recharts remains isolated in the lazy admin analytics/report chunk instead of the storefront entry path.
 - A production realtime backend endpoint is not connected yet; the frontend realtime foundation uses `VITE_REALTIME_WS_URL` when available and otherwise falls back to local queued events/polling.
 - SEO metadata is client-side only in the current SPA; SSR/prerendering is not implemented yet, and the default Open Graph image remains a placeholder until final brand assets exist.
 

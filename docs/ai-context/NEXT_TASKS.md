@@ -14,6 +14,15 @@ Ready for Phase 7 — Advanced Features & Production Systems
 
 ## Recently Completed
 
+- Optimized the frontend architecture for production readiness without changing the homepage UX.
+- Added `frontend/src/api/apiCache.js` for in-memory GET request deduplication, opt-in TTL caching, cache invalidation after successful mutations, and basic cache stats.
+- Added `frontend/src/routes/routeLoaders.js` plus lazy route preloading hooks for high-traffic storefront/admin routes.
+- Added `frontend/src/components/common/DeferredSectionBoundary.jsx` and split below-fold homepage/PDP sections such as recently viewed, recommendations, related products, and product reviews.
+- Reduced PLP/PDP catalog request load by switching listing/recommendation card data away from `getCatalogProductsWithDetails()` N+1 detail fetching.
+- Added focused memoization to product carousel, recommendation, recently viewed, product card handlers, product detail derived values, and category count derivation.
+- Tuned Vite manual chunking for React, React Router, Framer Motion, and Axios vendor cacheability while keeping Recharts off the storefront entry path.
+- Verified `npm run lint`, `npm run build`, `git diff --check`, targeted `npm ls` dependency duplication checks, and local route smoke checks for `/`, `/products`, `/products/:slug`, `/cart`, `/wishlist`, and `/admin/login`.
+- Measured production build improvements: main app chunk is about 105 kB, Product Detail route chunk is about 34 kB, and the previous PLP path no longer performs up to 72 detail requests after the list request.
 - Upgraded the ecommerce image system with shared image loading state, blur-up placeholders, responsive Cloudinary `srcSet` generation, and fallback data-URI images.
 - Added `frontend/src/hooks/useImageLoading.js` and `frontend/src/utils/imageFallbacks.js`.
 - Extended `OptimizedImage` across product cards, product gallery, cart, checkout, wishlist, search results, review photos, account avatars, admin product/variant thumbnails, admin media grid, admin media preview modal, and upload queue previews.
@@ -288,6 +297,7 @@ Ready for Phase 7 — Advanced Features & Production Systems
 - Keep `src/api/apiErrorFeedback.js` and `src/api/apiErrorEvents.js` as the global API feedback bridge.
 - Keep refresh-token coordination centralized in `src/api/refreshTokenService.js`.
 - Keep shared CRUD request logic centralized in `src/api/resourceService.js`.
+- Keep request deduplication and opt-in TTL caching centralized in `src/api/apiCache.js` and surfaced through `src/api/client.js`; only enable cache TTLs where stale data is acceptable.
 - Keep reusable admin page state in `src/admin/hooks`.
 - Keep admin module metadata and CRUD wrappers in `src/admin/services`.
 - Keep admin route/page entrypoints under `src/admin/pages` and `src/admin/layouts`.
@@ -300,6 +310,8 @@ Ready for Phase 7 — Advanced Features & Production Systems
 - Use `src/auth/usePermissions.js` and `src/auth/PermissionGate.jsx` instead of inline role checks in pages/components.
 - Keep mock data centralized in the domain modules under `src/data`.
 - Keep route definitions centralized in `src/routes/AppRoutes.jsx`.
+- Keep lazy route loaders and preload helpers centralized in `src/routes/routeLoaders.js` and `src/routes/lazyRoutes.jsx`.
+- Use `src/components/common/DeferredSectionBoundary.jsx` for below-fold lazy storefront sections.
 - Keep storefront SEO metadata centralized in `src/seo/metadata.js` and render page head tags through `src/components/seo/SEOHead.jsx`.
 - Keep responsive/fallback image behavior centralized in `src/components/common/OptimizedImage.jsx`, `src/hooks/useImageLoading.js`, and `src/utils/imageFallbacks.js`.
 

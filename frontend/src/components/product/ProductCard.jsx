@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, useCallback, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Heart, Loader2, PackageCheck, ShoppingCart, Zap } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -6,6 +6,7 @@ import { useCart } from "../../cart";
 import { useToast } from "../ui/toast";
 import useRecentlyViewed from "../../hooks/useRecentlyViewed";
 import useWishlist from "../../hooks/useWishlist";
+import { preloadRoute } from "../../routes/routeLoaders";
 import { fadeUp, hoverGlow, hoverLift, imageZoom, tapSoft } from "../../styles/animations";
 import { cn } from "../../utils/classNames";
 import OptimizedImage from "../common/OptimizedImage";
@@ -37,13 +38,17 @@ function ProductCard({ product }) {
   const { addRecentlyViewed } = useRecentlyViewed();
   const toast = useToast();
   const { isWishlistPending, isWishlisted, toggleWishlist } = useWishlist();
-  const stockBadge = getStockBadge(product.stock);
+  const stockBadge = useMemo(() => getStockBadge(product.stock), [product.stock]);
   const primaryTag = product.tags?.[0];
   const productIsWishlisted = isWishlisted(product.id);
   const productIsWishlistPending = isWishlistPending(product.id);
   const isOutOfStock = product.stock <= 0;
 
-  const handleWishlistToggle = async (event) => {
+  const preloadProductDetail = useCallback(() => {
+    void preloadRoute("productDetail");
+  }, []);
+
+  const handleWishlistToggle = useCallback(async (event) => {
     event.preventDefault();
     event.stopPropagation();
 
@@ -60,13 +65,13 @@ function ProductCard({ product }) {
       duration: 2400,
       title: "Wishlist đã cập nhật",
     });
-  };
+  }, [product, toast, toggleWishlist]);
 
-  const handleProductOpen = () => {
+  const handleProductOpen = useCallback(() => {
     addRecentlyViewed(product);
-  };
+  }, [addRecentlyViewed, product]);
 
-  const handleQuickAdd = () => {
+  const handleQuickAdd = useCallback(() => {
     const result = addItem(product);
 
     if (!result.ok) {
@@ -77,7 +82,7 @@ function ProductCard({ product }) {
     toast.showSuccess("Đã thêm sản phẩm vào giỏ hàng.", {
       title: "Giỏ hàng đã cập nhật",
     });
-  };
+  }, [addItem, product, toast]);
 
   return (
     <Card as={MotionArticle} className="isolate flex h-full flex-col" variants={{ ...fadeUp, hover: hoverGlow }} variant="product" whileHover="hover">
@@ -122,7 +127,13 @@ function ProductCard({ product }) {
           )}
         </IconButton>
 
-        <Link className="relative z-10 flex h-full w-full items-center justify-center" onClick={handleProductOpen} to={`/products/${product.slug}`}>
+        <Link
+          className="relative z-10 flex h-full w-full items-center justify-center"
+          onClick={handleProductOpen}
+          onFocus={preloadProductDetail}
+          onPointerEnter={preloadProductDetail}
+          to={`/products/${product.slug}`}
+        >
           <OptimizedImage
             as={MotionImg}
             alt={product.name}
@@ -151,7 +162,13 @@ function ProductCard({ product }) {
       <div className="relative z-10 mt-4 flex flex-1 flex-col">
         <p className="text-caption text-blue-200">{product.brand}</p>
         <h3 className="text-card-title mt-1 min-h-[48px]">
-          <Link className="transition-default hover:text-blue-100" onClick={handleProductOpen} to={`/products/${product.slug}`}>
+          <Link
+            className="transition-default hover:text-blue-100"
+            onClick={handleProductOpen}
+            onFocus={preloadProductDetail}
+            onPointerEnter={preloadProductDetail}
+            to={`/products/${product.slug}`}
+          >
             {product.name}
           </Link>
         </h3>

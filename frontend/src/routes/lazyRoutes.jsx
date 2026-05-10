@@ -1,35 +1,43 @@
 import { lazy } from "react";
+import { routeLoaders } from "./routeLoaders";
 
-export const Home = lazy(() => import("../pages/client/Home"));
-export const ProductListingPage = lazy(() => import("../pages/client/ProductListingPage"));
-export const ProductDetail = lazy(() => import("../pages/client/ProductDetail"));
-export const Cart = lazy(() => import("../pages/client/Cart"));
-export const Checkout = lazy(() => import("../pages/client/Checkout"));
-export const PaymentFailed = lazy(() => import("../pages/client/PaymentFailed"));
-export const PaymentSuccess = lazy(() => import("../pages/client/PaymentSuccess"));
-export const Login = lazy(() => import("../pages/client/Login"));
-export const Register = lazy(() => import("../pages/client/Register"));
-export const WishlistPage = lazy(() => import("../pages/client/WishlistPage"));
-export const ProfileLayout = lazy(() => import("../components/account/ProfileLayout"));
-export const ProfileOverview = lazy(() => import("../pages/client/ProfileOverview"));
-export const ProfileOrders = lazy(() => import("../pages/client/ProfileOrders"));
-export const ProfileOrderDetail = lazy(() => import("../pages/client/ProfileOrderDetail"));
-export const ProfileSettings = lazy(() => import("../pages/client/ProfileSettings"));
+function lazyWithPreload(loader) {
+  const Component = lazy(loader);
 
-export const AdminLayout = lazy(() => import("../admin/layouts/AdminLayout"));
-export const AdminLogin = lazy(() => import("../pages/admin/AdminLogin"));
-export const Dashboard = lazy(() => import("../pages/admin/Dashboard"));
-export const Categories = lazy(() => import("../pages/admin/Categories"));
-export const Brands = lazy(() => import("../pages/admin/Brands"));
-export const AdminProducts = lazy(() => import("../pages/admin/Products"));
-export const Variants = lazy(() => import("../pages/admin/Variants"));
-export const Media = lazy(() => import("../pages/admin/Media"));
-export const Users = lazy(() => import("../pages/admin/Users"));
-export const Staff = lazy(() => import("../pages/admin/Staff"));
-export const Roles = lazy(() => import("../pages/admin/Roles"));
-export const Orders = lazy(() => import("../pages/admin/Orders"));
-export const Warehouse = lazy(() => import("../pages/admin/Warehouse"));
-export const Coupons = lazy(() => import("../pages/admin/Coupons"));
-export const Revenue = lazy(() => import("../pages/admin/Revenue"));
-export const BestSellers = lazy(() => import("../pages/admin/BestSellers"));
-export const ActivityLog = lazy(() => import("../pages/admin/ActivityLog"));
+  Component.preload = loader;
+  return Component;
+}
+
+export const Home = lazyWithPreload(routeLoaders.home);
+export const ProductListingPage = lazyWithPreload(routeLoaders.products);
+export const ProductDetail = lazyWithPreload(routeLoaders.productDetail);
+export const Cart = lazyWithPreload(routeLoaders.cart);
+export const Checkout = lazyWithPreload(routeLoaders.checkout);
+export const PaymentFailed = lazyWithPreload(routeLoaders.paymentFailed);
+export const PaymentSuccess = lazyWithPreload(routeLoaders.paymentSuccess);
+export const Login = lazyWithPreload(routeLoaders.login);
+export const Register = lazyWithPreload(routeLoaders.register);
+export const WishlistPage = lazyWithPreload(routeLoaders.wishlist);
+export const ProfileLayout = lazyWithPreload(routeLoaders.profileLayout);
+export const ProfileOverview = lazyWithPreload(routeLoaders.profileOverview);
+export const ProfileOrders = lazyWithPreload(routeLoaders.profileOrders);
+export const ProfileOrderDetail = lazyWithPreload(routeLoaders.profileOrderDetail);
+export const ProfileSettings = lazyWithPreload(routeLoaders.profileSettings);
+
+export const AdminLayout = lazyWithPreload(routeLoaders.adminLayout);
+export const AdminLogin = lazyWithPreload(routeLoaders.adminLogin);
+export const Dashboard = lazyWithPreload(routeLoaders.dashboard);
+export const Categories = lazyWithPreload(routeLoaders.categories);
+export const Brands = lazyWithPreload(routeLoaders.brands);
+export const AdminProducts = lazyWithPreload(routeLoaders.adminProducts);
+export const Variants = lazyWithPreload(routeLoaders.variants);
+export const Media = lazyWithPreload(routeLoaders.media);
+export const Users = lazyWithPreload(routeLoaders.users);
+export const Staff = lazyWithPreload(routeLoaders.staff);
+export const Roles = lazyWithPreload(routeLoaders.roles);
+export const Orders = lazyWithPreload(routeLoaders.orders);
+export const Warehouse = lazyWithPreload(routeLoaders.warehouse);
+export const Coupons = lazyWithPreload(routeLoaders.coupons);
+export const Revenue = lazyWithPreload(routeLoaders.revenue);
+export const BestSellers = lazyWithPreload(routeLoaders.bestSellers);
+export const ActivityLog = lazyWithPreload(routeLoaders.activityLog);

@@ -1,3 +1,4 @@
+import { memo, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, PackageSearch, Sparkles } from "lucide-react";
 import { cn } from "../../utils/classNames";
@@ -101,7 +102,7 @@ function RecommendationSection({
   surface = "panel",
   title,
 }) {
-  const safeProducts = Array.isArray(products) ? products.filter(Boolean) : [];
+  const safeProducts = useMemo(() => (Array.isArray(products) ? products.filter(Boolean) : []), [products]);
   const BadgeIcon = icon || Sparkles;
   const sectionClassName =
     surface === "home"
@@ -153,4 +154,4 @@ function RecommendationSection({
   );
 }
 
-export default RecommendationSection;
+export default memo(RecommendationSection);

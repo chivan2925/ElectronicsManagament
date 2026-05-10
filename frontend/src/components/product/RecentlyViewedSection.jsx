@@ -1,4 +1,4 @@
-import { useMemo, useRef } from "react";
+import { memo, useCallback, useMemo, useRef } from "react";
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Clock3, Eye, PackageSearch, Trash2 } from "lucide-react";
 import useRecentlyViewed from "../../hooks/useRecentlyViewed";
@@ -57,7 +57,7 @@ function RecentlyViewedSection({
       ? "section-visual"
       : "rounded-3xl border border-white/10 bg-slate-950/36 p-4 shadow-inner shadow-white/[0.03] backdrop-blur-xl sm:p-5 lg:p-6";
 
-  const scrollSlider = (direction) => {
+  const scrollSlider = useCallback((direction) => {
     const slider = sliderRef.current;
 
     if (!slider) {
@@ -68,7 +68,7 @@ function RecentlyViewedSection({
       behavior: "smooth",
       left: direction * Math.min(slider.clientWidth * 0.86, 920),
     });
-  };
+  }, []);
 
   if (!hasProducts && surface === "minimal") {
     return null;
@@ -151,4 +151,4 @@ function RecentlyViewedSection({
   );
 }
 
-export default RecentlyViewedSection;
+export default memo(RecentlyViewedSection);
