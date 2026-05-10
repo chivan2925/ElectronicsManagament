@@ -476,6 +476,9 @@ Latest validation:
 - `npm run lint`, `npm run build`, `git diff --check`, and `mvn -q -DskipTests compile` passed after integrating real Coupon Management on `/admin/coupons`. Build still reports the existing Vite chunk-size warning.
 - `npm run lint`, `npm run build`, `git diff --check`, and `mvn -q -DskipTests compile` passed after integrating real Role and Permission Management on `/admin/roles`. Build still reports the existing Vite chunk-size warning.
 - `npm run lint`, `npm run build`, `git diff --check`, and `mvn -q -DskipTests compile` passed after the Phase 5 Admin Dashboard System polish and completion review. Build still reports the existing Vite chunk-size warning.
+- `mvn -q -DskipTests compile` passed after removing custom backend Jackson version overrides from `backend/electronics/pom.xml`.
+- `mvn spring-boot:run` reached Tomcat startup after the Jackson fix; the verification process was stopped after confirming startup.
+- Backend startup still logs local PostgreSQL `ddl-auto` warnings for legacy/non-null schema drift in `media`, `products`, `users`, `variants`, and `warehouse_*` tables.
 - Build still reports a Vite chunk-size warning for a JavaScript bundle over 500 kB.
 
 ## Known Issues
@@ -491,7 +494,7 @@ Latest validation:
 - `/checkout` is frontend-auth protected and creates backend orders, but real online payment gateway submission remains out of scope.
 - Backend `mvn test` is blocked by existing ApplicationContext issues unrelated to the login UI integration.
 - Backend local startup may fail if port `8080` is occupied by another local service; run on another port or free `8080`.
-- Existing local PostgreSQL schema is partially legacy and may still have drift in non-auth tables.
+- Existing local PostgreSQL schema is partially legacy and still needs controlled migration/backfill for non-auth tables instead of relying on Hibernate `ddl-auto:update`.
 - Backend Category API currently does not expose `description` in request/response DTOs; category description in admin UI is session-level until backend contract is extended.
 - Build output is valid, but Vite reports a large bundle warning that should be handled later with code splitting.
 

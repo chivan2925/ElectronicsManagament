@@ -14,6 +14,9 @@ Ready for Phase 6 — Ecommerce Core Features
 
 ## Recently Completed
 
+- Removed custom backend Jackson version overrides from `backend/electronics/pom.xml`, returning Jackson dependency management to Spring Boot 4.0.3 defaults.
+- Verified `mvn -q -DskipTests compile` and confirmed `mvn spring-boot:run` reaches Tomcat startup after the Jackson fix.
+- Confirmed remaining backend startup noise is local PostgreSQL schema drift from legacy populated tables, not the Jackson `JsonMapper` startup crash.
 - Completed Phase 5 — Admin Dashboard System and marked the project ready for Phase 6 — Ecommerce Core Features.
 - Reviewed and polished admin CRUD consistency, table/action states, spacing, responsive layout, permission handling, loading/error states, modal/drawer behavior, form consistency, chart consistency, and shared badges.
 - Added permission-aware admin topbar module search, shared debounced admin search handling, safer legacy page actions, normalized status badges, mobile-fit modal/form footers, and consistent row action hover tones.
@@ -191,7 +194,8 @@ Ready for Phase 6 — Ecommerce Core Features
 5. Use centralized feedback components for loading, error, empty, permission, and refresh states in new ecommerce workflows.
 6. Move customer auth and account ownership checks to a dedicated public customer auth contract when ready.
 7. Resolve existing backend test blockers before relying on `mvn test` as a clean validation gate.
-8. Keep AI context docs current.
+8. Add controlled PostgreSQL migration/backfill scripts for legacy non-auth tables before relying on a clean backend startup log.
+9. Keep AI context docs current.
 
 ## Next Recommended Tasks
 
@@ -283,7 +287,7 @@ Ready for Phase 6 — Ecommerce Core Features
 - Backend `mvn test` currently fails because `AddressMapper` is not registered as a bean for `AdminAddressServiceImpl`.
 - Backend startup also reports a database DDL warning for existing null `media.display_order` values.
 - Backend local startup on default port may fail when another process already binds `8080`.
-- Local PostgreSQL still contains legacy drift in non-auth modules and should be migrated with controlled SQL scripts instead of relying on `ddl-auto` alone.
+- Local PostgreSQL still contains legacy drift in non-auth modules, including non-null columns and warehouse transaction foreign keys, and should be migrated with controlled SQL scripts instead of relying on `ddl-auto` alone.
 - Production deployment is not ready.
 
 ## Maintenance Reminder

@@ -8,6 +8,13 @@ Always update this file after meaningful work.
 
 ## 2026-05-10
 
+### Backend Startup Jackson Fix
+
+- Removed custom Jackson BOM/core overrides from `backend/electronics/pom.xml` so Spring Boot 4.0.3 manages compatible Jackson 3 and Jackson 2 dependency sets.
+- Fixed the startup crash caused by `tools.jackson.databind.json.JsonMapper$Builder` failing to initialize with missing `JsonSerializeAs`.
+- Verified `mvn -q -DskipTests compile` and confirmed `mvn spring-boot:run` reaches Tomcat startup after the dependency fix.
+- Confirmed remaining backend startup warnings come from local PostgreSQL schema drift in populated legacy tables and need controlled SQL migration/backfill.
+
 ### Phase 5 Admin Dashboard Polish And Completion
 
 - Reviewed and polished the full Admin Dashboard System across CRUD consistency, table actions, spacing, responsive layout, permissions, loading/error states, modal/drawer behavior, forms, charts, and badges.
