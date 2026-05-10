@@ -168,6 +168,7 @@ frontend/src/
 │  ├─ useCheckoutProfile.js
 │  ├─ useAccountProfile.js
 │  ├─ useRecentlyViewed.js
+│  ├─ useRecentSearches.js
 │  ├─ useSearch.js
 │  └─ useWishlist.js
 ├─ layouts/
@@ -454,10 +455,14 @@ Reusable storefront search components live in `frontend/src/components/search/`:
 
 - `SearchOverlay.jsx`
 - `SearchSuggestions.jsx`
+- `SearchResultItem.jsx`
 
-Reusable search state logic lives in `frontend/src/hooks/useSearch.js`.
+Reusable search state logic lives in:
 
-The storefront header opens the search overlay on desktop and mobile. The overlay uses mock products, categories, and brands with debounced local suggestions, recent searches, trending searches, result previews, and keyboard navigation behavior until a real storefront search API is ready.
+- `frontend/src/hooks/useSearch.js`
+- `frontend/src/hooks/useRecentSearches.js`
+
+The storefront header opens the search overlay on desktop and mobile. The overlay uses mock products, categories, and brands with debounced local suggestions, recent searches, trending searches, category-aware and brand-aware scoring, result previews, search highlighting, loading/empty states, and keyboard navigation behavior until a real storefront search API is ready.
 
 ## Skeleton Loading
 

@@ -8,6 +8,15 @@ Always update this file after meaningful work.
 
 ## 2026-05-10
 
+### Advanced Ecommerce Search System
+
+- Upgraded the storefront search overlay into an advanced mock-backed ecommerce search experience while preserving the homepage layout.
+- Added `frontend/src/components/search/SearchResultItem.jsx` for reusable product/category/brand result rows with dark premium styling and search highlighting.
+- Added `frontend/src/hooks/useRecentSearches.js` for localStorage-backed recent searches with add, remove, clear, dedupe, and cross-tab sync behavior.
+- Reworked `frontend/src/hooks/useSearch.js` with debounced query state, category-aware and brand-aware scoring, detected context chips, trending search derivation, loading state, empty state support, and keyboard navigation state.
+- Reworked `SearchSuggestions.jsx` and `SearchOverlay.jsx` for responsive overlay UX, skeleton loading rows, empty suggestions, recent/trending searches, highlighted results, and product/category/brand grouping.
+- Verified `npm run lint`, `npm run build`, and `git diff --check`. Build still reports the existing Vite chunk-size warning, and `git diff --check` reported CRLF normalization warnings for edited frontend files.
+
 ### Backend Startup Jackson Fix
 
 - Removed custom Jackson BOM/core overrides from `backend/electronics/pom.xml` so Spring Boot 4.0.3 manages compatible Jackson 3 and Jackson 2 dependency sets.

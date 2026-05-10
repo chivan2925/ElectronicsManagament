@@ -19,10 +19,13 @@ function SearchOverlay({ isOpen, onClose }) {
     brandResults,
     categoryResults,
     clearRecentSearches,
+    createSearchHref,
     debouncedQuery,
+    detectedBrands,
+    detectedCategories,
     flattenedResults,
     hasQuery,
-    isDebouncing,
+    isLoading,
     productResults,
     query,
     recentSearches,
@@ -83,7 +86,7 @@ function SearchOverlay({ isOpen, onClose }) {
       return;
     }
 
-    handleNavigate(`/products?q=${encodeURIComponent(trimmedQuery)}`, trimmedQuery);
+    handleNavigate(createSearchHref(trimmedQuery), trimmedQuery);
   };
 
   const handlePickResult = (result) => {
@@ -149,6 +152,10 @@ function SearchOverlay({ isOpen, onClose }) {
               <Search className="ml-2 shrink-0 text-blue-200" size={22} />
               <input
                 aria-label="Tìm kiếm sản phẩm, danh mục hoặc thương hiệu"
+                aria-activedescendant={activeResult ? `search-option-${activeResult.resultId}` : undefined}
+                aria-autocomplete="list"
+                aria-controls="search-results"
+                aria-expanded={hasQuery}
                 className="h-11 min-w-0 flex-1 bg-transparent text-base font-bold text-white outline-none placeholder:text-slate-500"
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder="Tìm laptop, PC Gaming, tai nghe, ASUS ROG..."
@@ -188,14 +195,16 @@ function SearchOverlay({ isOpen, onClose }) {
             </div>
           </div>
 
-          <div className="max-h-[calc(100dvh-190px)] overflow-y-auto p-3 sm:p-4">
+          <div className="max-h-[calc(100dvh-190px)] overflow-y-auto p-3 sm:p-4" id="search-results">
             <SearchSuggestions
               activeResult={activeResult}
               brandResults={brandResults}
               categoryResults={categoryResults}
               debouncedQuery={debouncedQuery}
+              detectedBrands={detectedBrands}
+              detectedCategories={detectedCategories}
               hasQuery={hasQuery}
-              isDebouncing={isDebouncing}
+              isLoading={isLoading}
               onClearRecent={clearRecentSearches}
               onPickResult={handlePickResult}
               onRemoveRecent={removeRecentSearch}

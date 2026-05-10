@@ -14,6 +14,8 @@ Ready for Phase 6 — Ecommerce Core Features
 
 ## Recently Completed
 
+- Upgraded the storefront search overlay into an advanced mock-backed ecommerce search system with reusable `SearchResultItem.jsx`, `useRecentSearches.js`, category-aware and brand-aware scoring, search highlighting, loading/empty states, recent searches, trending searches, debounce, and keyboard navigation.
+- Verified `npm run lint`, `npm run build`, and `git diff --check` after the search upgrade. Build still reports the existing Vite chunk-size warning, and `git diff --check` reported CRLF normalization warnings for edited frontend files.
 - Removed custom backend Jackson version overrides from `backend/electronics/pom.xml`, returning Jackson dependency management to Spring Boot 4.0.3 defaults.
 - Verified `mvn -q -DskipTests compile` and confirmed `mvn spring-boot:run` reaches Tomcat startup after the Jackson fix.
 - Confirmed remaining backend startup noise is local PostgreSQL schema drift from legacy populated tables, not the Jackson `JsonMapper` startup crash.

@@ -58,7 +58,7 @@ The storefront customer authentication pages now exist at `/login` and `/registe
 
 The storefront wishlist page now exists at `/wishlist` with localStorage-backed wishlist state, product-card wishlist toggles, recently viewed tracking, and reusable wishlist/recently-viewed hooks.
 
-The storefront header now includes a reusable mock-backed search overlay with debounced live suggestions, recent searches, trending searches, product/category/brand result previews, and keyboard navigation behavior.
+The storefront header now includes an advanced mock-backed search overlay with debounced live suggestions, recent searches, trending searches, product/category/brand result previews, reusable result rows, search highlighting, category-aware and brand-aware scoring, loading/empty states, and keyboard navigation behavior.
 
 The authenticated storefront account area now exists at `/profile`, `/profile/orders`, and `/profile/settings` with real User Profile and User Order API integration, protected routing, profile update, order history/detail, logout, and avatar placeholder UI.
 
@@ -336,7 +336,7 @@ Current frontend structure:
 - Checkout coupon, order creation, and profile prefill logic lives in `frontend/src/hooks/useCheckoutCoupon.js`, `useCheckoutOrder.js`, and `useCheckoutProfile.js`.
 - Authenticated account profile state logic lives in `frontend/src/hooks/useAccountProfile.js`.
 - Wishlist and recently viewed local state logic lives in `frontend/src/hooks/useWishlist.js` and `frontend/src/hooks/useRecentlyViewed.js`.
-- Storefront search overlay logic lives in `frontend/src/hooks/useSearch.js`.
+- Storefront search overlay logic lives in `frontend/src/hooks/useSearch.js`, with recent-search persistence in `frontend/src/hooks/useRecentSearches.js`.
 - Skeleton loading components live in `frontend/src/components/skeletons/`.
 - Admin layout components live in `frontend/src/admin/layouts/`, with legacy compatibility exports preserved through `frontend/src/layouts/AdminLayout.jsx`.
 - Shared reusable UI components live in `frontend/src/components/ui/`.
@@ -374,7 +374,7 @@ Homepage state:
 - Flash sale card now shares the polished badge, stock, image glow, and CTA treatment.
 - Header now uses a sticky scroll-aware blurred background, premium search bar, desktop category dropdown, animated cart badge, and responsive mobile menu.
 - Header cart button now opens the shared-cart drawer and reflects cart count from `frontend/src/cart`.
-- Header search now opens the mock-backed search overlay on desktop and mobile.
+- Header search now opens the advanced mock-backed search overlay on desktop and mobile.
 - Homepage background, hero banner, promo cards, category cards, service bar, and section separators now have deeper production ecommerce visual polish.
 - Homepage now includes a short mock loading state demo that renders dark shimmer skeletons before showing mock data.
 - Homepage responsive audit has been completed across mobile, tablet, desktop, and ultra-wide viewports.
@@ -477,6 +477,7 @@ Latest validation:
 - `npm run lint`, `npm run build`, `git diff --check`, and `mvn -q -DskipTests compile` passed after integrating real Role and Permission Management on `/admin/roles`. Build still reports the existing Vite chunk-size warning.
 - `npm run lint`, `npm run build`, `git diff --check`, and `mvn -q -DskipTests compile` passed after the Phase 5 Admin Dashboard System polish and completion review. Build still reports the existing Vite chunk-size warning.
 - `mvn -q -DskipTests compile` passed after removing custom backend Jackson version overrides from `backend/electronics/pom.xml`.
+- `npm run lint`, `npm run build`, and `git diff --check` passed after upgrading the advanced ecommerce search system. Build still reports the existing Vite chunk-size warning, and `git diff --check` reported CRLF normalization warnings for edited frontend files.
 - `mvn spring-boot:run` reached Tomcat startup after the Jackson fix; the verification process was stopped after confirming startup.
 - Backend startup still logs local PostgreSQL `ddl-auto` warnings for legacy/non-null schema drift in `media`, `products`, `users`, `variants`, and `warehouse_*` tables.
 - Build still reports a Vite chunk-size warning for a JavaScript bundle over 500 kB.
