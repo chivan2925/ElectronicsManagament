@@ -1,5 +1,6 @@
 import {
   Building2,
+  ChevronDown,
   Mail,
   MapPin,
   MessageSquare,
@@ -21,11 +22,13 @@ function CheckoutField({
   label,
   onBlur,
   onChange,
+  options,
   placeholder,
   required = false,
   textarea = false,
   type = "text",
   value,
+  isLoading = false,
 }) {
   const hasError = Boolean(error);
   const hasHelper = Boolean(helper);
@@ -43,7 +46,7 @@ function CheckoutField({
 
       <div
         className={cn(
-          "premium-transition flex rounded-2xl border bg-slate-950/45 px-3 shadow-inner shadow-white/[0.03] backdrop-blur-xl focus-within:bg-slate-950/70",
+          "premium-transition group flex rounded-2xl border bg-slate-950/45 px-3 shadow-inner shadow-white/[0.03] backdrop-blur-xl focus-within:bg-slate-950/70",
           textarea ? "items-start py-3" : "h-12 items-center",
           disabled && "cursor-not-allowed opacity-70",
           hasError
@@ -68,6 +71,34 @@ function CheckoutField({
             required={required}
             value={value}
           />
+        ) : options ? (
+          <div className="relative flex min-w-0 flex-1 items-center">
+            <select
+              aria-describedby={describedBy}
+              aria-invalid={hasError}
+              aria-required={required}
+              autoComplete={autoComplete}
+              className="min-w-0 flex-1 appearance-none bg-transparent py-2 pr-8 text-sm font-semibold text-white outline-none disabled:cursor-not-allowed [&>option]:bg-[#07111F] [&>option]:text-white"
+              disabled={disabled || isLoading}
+              id={id}
+              name={id}
+              onBlur={() => onBlur(id)}
+              onChange={(event) => onChange(id, event.target.value)}
+              required={required}
+              value={value}
+            >
+              <option value="">{isLoading ? "Đang tải dữ liệu..." : placeholder}</option>
+              {options.map((opt) => (
+                <option key={opt.code || opt.id} value={opt.name}>
+                  {opt.name}
+                </option>
+              ))}
+            </select>
+            <ChevronDown
+              className="pointer-events-none absolute right-0 text-slate-500 transition-colors group-focus-within:text-blue-300"
+              size={16}
+            />
+          </div>
         ) : (
           <input
             aria-describedby={describedBy}
@@ -113,7 +144,17 @@ function CheckoutSection({ children, eyebrow, title }) {
   );
 }
 
-function CheckoutForm({ disabled = false, errors, onBlur, onChange, values }) {
+function CheckoutForm({
+  disabled = false,
+  errors,
+  onBlur,
+  onChange,
+  values,
+  provinces = [],
+  districts = [],
+  wards = [],
+  loading = {},
+}) {
   return (
     <div className="grid gap-4">
       <CheckoutSection eyebrow="Thông tin liên hệ" title="Thông tin khách hàng">
@@ -188,36 +229,42 @@ function CheckoutForm({ disabled = false, errors, onBlur, onChange, values }) {
             error={errors.city}
             icon={Building2}
             id="city"
+            isLoading={loading.provinces}
             label="Tỉnh / Thành phố"
             onBlur={onBlur}
             onChange={onChange}
-            placeholder="TP. Hồ Chí Minh"
+            options={provinces}
+            placeholder="Chọn Tỉnh / Thành phố"
             required
             value={values.city}
           />
           <CheckoutField
             autoComplete="address-level2"
-            disabled={disabled}
+            disabled={disabled || !values.city}
             error={errors.district}
             icon={Building2}
             id="district"
+            isLoading={loading.districts}
             label="Quận / Huyện"
             onBlur={onBlur}
             onChange={onChange}
-            placeholder="Quận 1"
+            options={districts}
+            placeholder={values.city ? "Chọn Quận / Huyện" : "Vui lòng chọn Tỉnh/TP trước"}
             required
             value={values.district}
           />
           <CheckoutField
             autoComplete="address-level3"
-            disabled={disabled}
+            disabled={disabled || !values.district}
             error={errors.ward}
             icon={MapPin}
             id="ward"
+            isLoading={loading.wards}
             label="Phường / Xã"
             onBlur={onBlur}
             onChange={onChange}
-            placeholder="Phường Bến Nghé"
+            options={wards}
+            placeholder={values.district ? "Chọn Phường / Xã" : "Vui lòng chọn Quận/Huyện trước"}
             required
             value={values.ward}
           />

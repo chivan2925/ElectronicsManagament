@@ -94,10 +94,10 @@ function AppRoutes() {
         }
         path="/profile"
       >
-        <Route index element={storeRoute(<ProfileOverview />)} />
-        <Route element={storeRoute(<ProfileOrders />)} path="orders" />
-        <Route element={storeRoute(<ProfileOrderDetail />)} path="orders/:id" />
-        <Route element={storeRoute(<ProfileSettings />)} path="settings" />
+        <Route index element={<ProfileOverview />} />
+        <Route element={<ProfileOrders />} path="orders" />
+        <Route element={<ProfileOrderDetail />} path="orders/:id" />
+        <Route element={<ProfileSettings />} path="settings" />
       </Route>
 
       <Route

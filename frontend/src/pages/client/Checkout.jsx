@@ -7,8 +7,6 @@ import CheckoutSummary from "../../components/checkout/CheckoutSummary";
 import PaymentMethodSelector from "../../components/checkout/PaymentMethodSelector";
 import ShippingMethodSelector from "../../components/checkout/ShippingMethodSelector";
 import TrustSignalBar from "../../components/common/TrustSignalBar";
-import AnnouncementBar from "../../components/layout/AnnouncementBar";
-import Header from "../../components/layout/Header";
 import PaymentTrustIndicators from "../../components/payment/PaymentTrustIndicators";
 import {
   FREE_SHIPPING_THRESHOLD,
@@ -30,6 +28,7 @@ import { fadeUp, staggerContainer } from "../../styles/animations";
 import { clearPendingPaymentOrderId, setPendingPaymentOrderId } from "../../utils/checkoutSession";
 import { formatCurrency } from "../../utils/formatters";
 import { createTouchedMap, focusFirstInvalidField, getVisibleFieldErrors } from "../../utils/formValidation";
+import { useVietnamProvinces } from "../../hooks/useVietnamProvinces";
 
 const MotionDiv = motion.div;
 
@@ -164,6 +163,14 @@ function validateCheckout(values) {
 }
 
 function Checkout() {
+  const {
+    provinces,
+    districts,
+    wards,
+    loading: locationLoading,
+    fetchDistricts,
+    fetchWards,
+  } = useVietnamProvinces();
   const [searchParams] = useSearchParams();
   const initialCouponCode = searchParams.get("coupon")?.trim() || "";
   const { clearCart, itemCount, items: cartItems, subtotal } = useCart();
@@ -314,10 +321,31 @@ function Checkout() {
   const isCheckoutLocked = isCreatingOrder || paymentHandoff.isRedirecting;
 
   const handleFieldChange = (fieldName, nextValue) => {
-    setValues((currentValues) => ({
-      ...currentValues,
-      [fieldName]: nextValue,
-    }));
+    setValues((currentValues) => {
+      const nextValues = {
+        ...currentValues,
+        [fieldName]: nextValue,
+      };
+
+      // Cascading logic for Vietnam provinces API
+      if (fieldName === "city") {
+        // Clear district and ward when city changes
+        nextValues.district = "";
+        nextValues.ward = "";
+
+        const selectedProvince = provinces.find((p) => p.name === nextValue);
+        fetchDistricts(selectedProvince?.code);
+      } else if (fieldName === "district") {
+        // Clear ward when district changes
+        nextValues.ward = "";
+
+        const selectedDistrict = districts.find((d) => d.name === nextValue);
+        fetchWards(selectedDistrict?.code);
+      }
+
+      return nextValues;
+    });
+
     setOrderPlaced(false);
     setCompletedCart(null);
     setPaymentHandoff({ error: null, isRedirecting: false });
@@ -455,10 +483,7 @@ function Checkout() {
 
   if (!cartItems.length && !completedCart) {
     return (
-      <div className="store-page-shell">
-        <AnnouncementBar />
-        <Header />
-
+      <>
         <Container as="main" className="pb-16 pt-6 sm:pt-8" id="main-content" tabIndex={-1}>
           <section className="flex min-h-[520px] items-center justify-center">
             <EmptyState
@@ -472,15 +497,12 @@ function Checkout() {
             />
           </section>
         </Container>
-      </div>
+      </>
     );
   }
 
   return (
-    <div className="store-page-shell">
-      <AnnouncementBar />
-      <Header />
-
+    <>
       <Container as="main" className="pb-16 pt-6 sm:pt-8" id="main-content" tabIndex={-1}>
         <nav aria-label="Breadcrumb" className="mb-4 flex min-w-0 flex-wrap items-center gap-2 text-sm font-bold text-slate-400">
           <Link className="premium-transition hover:text-white" to="/">
@@ -554,10 +576,14 @@ function Checkout() {
           <MotionDiv className="min-w-0 space-y-4" variants={fadeUp}>
             <CheckoutForm
               disabled={isCheckoutLocked}
+              districts={districts}
               errors={visibleErrors}
+              loading={locationLoading}
               onBlur={handleFieldBlur}
               onChange={handleFieldChange}
+              provinces={provinces}
               values={values}
+              wards={wards}
             />
             <ShippingMethodSelector
               disabled={isCheckoutLocked}
@@ -621,7 +647,7 @@ function Checkout() {
           </MotionDiv>
         </MotionDiv>
       </Container>
-    </div>
+    </>
   );
 }
 

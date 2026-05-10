@@ -5,7 +5,6 @@ import { getCartStockInsights } from "../../cart/cartInsights";
 import { cn } from "../../utils/classNames";
 import { formatCurrency } from "../../utils/formatters";
 import Button from "../ui/Button";
-import StockValidationPanel from "./StockValidationPanel";
 
 function CartSummary({
   appliedCoupon,
@@ -71,9 +70,6 @@ function CartSummary({
         </div>
       )}
 
-      <div className="grid gap-3">
-        <StockValidationPanel compact items={items} showHealthy={isPage} />
-      </div>
 
       <div className="mt-3 rounded-2xl border border-white/10 bg-slate-950/38 p-3">
         {hasCouponControls && (
@@ -156,16 +152,10 @@ function CartSummary({
       </div>
 
       <div className="mt-3 grid gap-2">
-        {hasBlockingIssues ? (
-          <Button className="h-12 rounded-2xl" disabled fullWidth>
-            Kiểm tra tồn kho trước
-          </Button>
-        ) : (
-          <Button as={Link} className="h-12 rounded-2xl" fullWidth onClick={onClose} to={checkoutTo}>
-            {checkoutLabel}
-            <ArrowRight size={18} />
-          </Button>
-        )}
+        <Button as={Link} className="h-12 rounded-2xl" fullWidth onClick={onClose} to={checkoutTo}>
+          {checkoutLabel}
+          <ArrowRight size={18} />
+        </Button>
         {continueTo ? (
           <Button as={Link} className="h-11 rounded-2xl" fullWidth onClick={onClose} to={continueTo} variant="outline">
             {continueLabel}
