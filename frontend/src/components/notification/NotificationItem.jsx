@@ -1,11 +1,25 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ArrowRight, BellRing, PackageCheck, ShieldCheck, TicketPercent } from "lucide-react";
+import {
+  ArrowRight,
+  BellRing,
+  CreditCard,
+  PackageCheck,
+  ShieldAlert,
+  ShieldCheck,
+  TicketPercent,
+  Warehouse,
+} from "lucide-react";
 import { cn } from "../../utils/classNames";
 
 const MotionDiv = motion.div;
 
 const notificationTypeConfig = {
+  admin: {
+    Icon: ShieldAlert,
+    iconClass: "bg-amber-400/12 text-amber-200 ring-amber-300/20",
+    label: "Quản trị",
+  },
   coupon: {
     Icon: TicketPercent,
     iconClass: "bg-emerald-400/12 text-emerald-200 ring-emerald-300/20",
@@ -15,6 +29,16 @@ const notificationTypeConfig = {
     Icon: PackageCheck,
     iconClass: "bg-blue-400/12 text-blue-200 ring-blue-300/25",
     label: "Đơn hàng",
+  },
+  payment: {
+    Icon: CreditCard,
+    iconClass: "bg-cyan-400/12 text-cyan-100 ring-cyan-300/20",
+    label: "Thanh toán",
+  },
+  stock: {
+    Icon: Warehouse,
+    iconClass: "bg-rose-400/12 text-rose-100 ring-rose-300/20",
+    label: "Tồn kho",
   },
   system: {
     Icon: ShieldCheck,
@@ -74,6 +98,18 @@ function getMetadataLabel(notification) {
 
   if (notification.type === "coupon" && notification.metadata?.couponCode) {
     return notification.metadata.couponCode;
+  }
+
+  if (notification.type === "payment") {
+    return notification.metadata?.provider || notification.metadata?.orderCode || null;
+  }
+
+  if (notification.type === "stock") {
+    return notification.metadata?.sku || notification.metadata?.productLabel || null;
+  }
+
+  if (notification.type === "admin" && notification.metadata?.eventType) {
+    return notification.metadata.eventType;
   }
 
   return null;

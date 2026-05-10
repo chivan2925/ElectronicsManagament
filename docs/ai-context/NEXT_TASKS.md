@@ -14,6 +14,13 @@ Ready for Phase 7 — Advanced Features & Production Systems
 
 ## Recently Completed
 
+- Built the realtime notification foundation for storefront and admin.
+- Added reusable realtime files: `useRealtime.js`, `useRealtimeNotifications.js`, `realtimeEvents.js`, and `notificationEventHandlers.js`.
+- Added WebSocket-first connection handling through `VITE_REALTIME_WS_URL` with graceful polling/local-event fallback.
+- Extended storefront notifications with payment events, live/fallback connection status, and realtime toasts.
+- Replaced the admin topbar notification placeholder with a live dropdown and added a dashboard realtime operations panel with order/payment/admin activity plus low-stock alerts.
+- Published local realtime events from checkout order creation, payment result verification, admin order updates, and warehouse stock alert flows.
+- Verified `npm run lint` and `npm run build` after the realtime notification foundation.
 - Polished the storefront payment experience for COD, VNPay, and MoMo.
 - Added reusable payment UI for payment trust indicators, processing state, transaction summary, payment timeline, retry guidance, and COD order confirmation.
 - Centralized payment result fetch/normalization in `usePaymentResult` and expanded `paymentStatus` helpers to reduce duplicated payment logic.
@@ -311,6 +318,7 @@ Ready for Phase 7 — Advanced Features & Production Systems
 - Add returns/refunds UI and connect it to backend return request flows when customer-facing contracts are ready.
 - Deepen review workflows with moderation-ready states, ownership checks, and richer media/helpfulness behavior.
 - Add real notification, loyalty, and recommendation backends when API contracts are available; keep current local foundations as fallbacks.
+- Connect a backend WebSocket/SSE notification endpoint to `VITE_REALTIME_WS_URL` when the API contract is ready.
 - Harden customer registration, customer login, account ownership, cart persistence, and public order tracking contracts.
 - Harden payment state handling with production return URLs, customer ownership checks, critical-flow tests, deployment-safe credentials, and provider reconciliation checks.
 - Replace remaining homepage, search, wishlist, recently viewed, and recommendation mock/local data with public APIs as those APIs mature.

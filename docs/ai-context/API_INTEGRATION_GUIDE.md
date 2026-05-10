@@ -72,6 +72,7 @@ Current behavior:
 - Product catalog services use `VITE_PRODUCT_API_PATH`.
 - Checkout services use `VITE_COUPON_API_PATH`, `VITE_ORDER_API_PATH`, and `VITE_USER_API_PATH`.
 - Payment services use `VITE_PAYMENT_API_PATH`.
+- Realtime notification bridge uses `VITE_REALTIME_WS_URL` when a compatible WebSocket endpoint exists.
 - Account services use `VITE_USER_PROFILE_API_PATH` and `VITE_USER_ORDER_API_PATH`.
 - Wishlist sync uses `VITE_WISHLIST_API_PATH` when a compatible backend endpoint exists.
 - Falls back to `http://localhost:8080/api`.
@@ -106,6 +107,7 @@ VITE_PRODUCT_API_PATH=/admin/products
 VITE_COUPON_API_PATH=/admin/coupons
 VITE_ORDER_API_PATH=/orders
 VITE_PAYMENT_API_PATH=/payments
+VITE_REALTIME_WS_URL=
 VITE_USER_API_PATH=/admin/users
 VITE_USER_PROFILE_API_PATH=/users
 VITE_USER_ORDER_API_PATH=/orders

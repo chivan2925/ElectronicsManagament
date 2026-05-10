@@ -4,6 +4,7 @@ import AnalyticsCard from "../../admin/components/dashboard/AnalyticsCard";
 import OrdersChart from "../../admin/components/dashboard/OrdersChart";
 import RevenueChart from "../../admin/components/dashboard/RevenueChart";
 import StatCard from "../../admin/components/dashboard/StatCard";
+import AdminRealtimeActivity from "../../admin/components/realtime/AdminRealtimeActivity";
 import StatusBadge from "../../components/ui/admin/StatusBadge";
 import {
   dashboardKpis,
@@ -186,6 +187,8 @@ function Dashboard() {
           <StatCard icon={kpiIcons[item.key]} key={item.key} {...item} />
         ))}
       </div>
+
+      <AdminRealtimeActivity />
 
       <div className="grid gap-6 xl:grid-cols-[1.25fr_0.95fr]">
         <RevenueChart data={dashboardRevenueData} />

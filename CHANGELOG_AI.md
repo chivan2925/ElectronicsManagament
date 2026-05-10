@@ -8,6 +8,16 @@ Always update this file after meaningful work.
 
 ## 2026-05-10
 
+### Realtime Notification Foundation
+
+- Added a frontend realtime foundation with `useRealtime.js`, `useRealtimeNotifications.js`, normalized realtime event types, and notification event handlers.
+- Added WebSocket-first connection handling through `VITE_REALTIME_WS_URL` with polling/local-event fallback for sandbox and development use.
+- Extended the storefront notification dropdown with payment notifications, live/fallback connection status, and realtime toast handling.
+- Replaced the admin topbar notification placeholder with a live notification dropdown and added a dashboard realtime operations panel for order, payment, admin, and stock alerts.
+- Published local realtime events from checkout order creation, payment result verification, admin order updates, and warehouse low-stock/replenishment flows.
+- Updated `CURRENT_STATE.md` and `NEXT_TASKS.md`.
+- Verified `npm run lint` and `npm run build`.
+
 ### Payment Experience Polish
 
 - Polished checkout payment selection for COD, VNPay, and MoMo with richer trust copy, selected-method guidance, and provider-specific trust indicators.

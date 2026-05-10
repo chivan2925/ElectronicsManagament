@@ -70,7 +70,9 @@ The storefront recommendation foundation now uses `ProductCarousel.jsx`, `Recomm
 
 The storefront header now includes an advanced mock-backed search overlay with debounced live suggestions, recent searches, trending searches, product/category/brand result previews, reusable result rows, search highlighting, category-aware and brand-aware scoring, loading/empty states, and keyboard navigation behavior.
 
-The storefront notification foundation now includes a responsive dark header dropdown, animated unread badge, reusable notification rows, localStorage-backed `useNotifications.js`, order notifications, coupon notifications, a system notification placeholder, filters, and mark-as-read actions.
+The storefront notification foundation now includes a responsive dark header dropdown, animated unread badge, reusable notification rows, localStorage-backed `useNotifications.js`, order notifications, payment notifications, coupon notifications, a system notification placeholder, filters, and mark-as-read actions.
+
+The frontend realtime notification foundation now includes `useRealtime.js`, `useRealtimeNotifications.js`, normalized realtime event abstractions, notification event handlers, WebSocket-first connection support through `VITE_REALTIME_WS_URL`, polling/local-event fallback, realtime toast handling, an admin notification dropdown, an admin realtime operations panel, and local event publishing from checkout, payment result, order update, and warehouse stock flows.
 
 The authenticated storefront account area now exists at `/profile`, `/profile/orders`, `/profile/orders/:id`, and `/profile/settings` with real User Profile and User Order API integration, protected routing, profile update, order history/detail, order tracking timeline, shipment progress, estimated delivery, activity history, logout, and avatar placeholder UI.
 
@@ -542,6 +544,7 @@ Latest validation:
 - `npm run lint`, `npm run build`, and `mvn -q -DskipTests compile` passed after integrating the VNPay Sandbox payment flow.
 - `npm run lint`, `npm run build`, `mvn -q -DskipTests compile`, and `git diff --check` passed after integrating the MoMo Sandbox payment flow.
 - `npm run lint` and `npm run build` passed after polishing the storefront payment experience.
+- `npm run lint` and `npm run build` passed after building the realtime notification foundation.
 
 ## Known Issues
 
@@ -561,6 +564,7 @@ Latest validation:
 - Existing local PostgreSQL schema is partially legacy and still needs controlled migration/backfill for non-auth tables instead of relying on Hibernate `ddl-auto:update`.
 - Backend Category API currently does not expose `description` in request/response DTOs; category description in admin UI is session-level until backend contract is extended.
 - Build output is valid after route splitting; Recharts remains isolated in a lazy chart chunk for admin analytics/report routes.
+- A production realtime backend endpoint is not connected yet; the frontend realtime foundation uses `VITE_REALTIME_WS_URL` when available and otherwise falls back to local queued events/polling.
 
 ## Next Phase
 

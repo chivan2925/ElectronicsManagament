@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Bell, BellRing, CheckCheck, PackageSearch, TicketPercent } from "lucide-react";
-import useNotifications from "../../hooks/useNotifications";
+import { Bell, BellRing, CheckCheck, CreditCard, PackageSearch, TicketPercent, Wifi, WifiOff } from "lucide-react";
+import useRealtimeNotifications from "../../hooks/useRealtimeNotifications";
 import { cn } from "../../utils/classNames";
 import NotificationItem from "./NotificationItem";
 
@@ -12,6 +12,7 @@ const MotionSpan = motion.span;
 const notificationFilters = [
   { id: "all", label: "Tất cả" },
   { id: "order", label: "Đơn hàng" },
+  { id: "payment", label: "Thanh toán" },
   { id: "coupon", label: "Ưu đãi" },
   { id: "system", label: "Hệ thống" },
 ];
@@ -31,6 +32,13 @@ function getEmptyCopy(activeType) {
     };
   }
 
+  if (activeType === "payment") {
+    return {
+      description: "VNPay, MoMo và COD sẽ có trạng thái xử lý, xác nhận hoặc cần thử lại tại đây.",
+      title: "Chưa có thông báo thanh toán",
+    };
+  }
+
   if (activeType === "system") {
     return {
       description: "Cập nhật bảo mật, bảo trì và tài khoản sẽ được gom tại đây.",
@@ -44,6 +52,38 @@ function getEmptyCopy(activeType) {
   };
 }
 
+function getRealtimeStatus(realtime) {
+  if (realtime.status === "connected") {
+    return {
+      Icon: Wifi,
+      label: "Live",
+      tone: "border-emerald-300/30 bg-emerald-400/10 text-emerald-100",
+    };
+  }
+
+  if (realtime.status === "fallback") {
+    return {
+      Icon: Wifi,
+      label: "Dự phòng",
+      tone: "border-amber-300/30 bg-amber-400/10 text-amber-100",
+    };
+  }
+
+  if (realtime.status === "connecting") {
+    return {
+      Icon: Wifi,
+      label: "Đang nối",
+      tone: "border-blue-300/30 bg-blue-400/10 text-blue-100",
+    };
+  }
+
+  return {
+    Icon: WifiOff,
+    label: "Offline",
+    tone: "border-white/10 bg-white/[0.04] text-slate-400",
+  };
+}
+
 function NotificationDropdown({ className, onOpenChange }) {
   const dropdownRef = useRef(null);
   const [activeType, setActiveType] = useState("all");
@@ -53,8 +93,9 @@ function NotificationDropdown({ className, onOpenChange }) {
     markAsRead,
     notificationCounts,
     notifications,
+    realtime,
     unreadCount,
-  } = useNotifications();
+  } = useRealtimeNotifications({ channel: "storefront", surface: "storefront" });
 
   const updateOpen = useCallback(
     (nextOpen) => {
@@ -115,6 +156,8 @@ function NotificationDropdown({ className, onOpenChange }) {
 
   const emptyCopy = getEmptyCopy(activeType);
   const displayUnreadCount = unreadCount > 99 ? "99+" : unreadCount;
+  const realtimeStatus = getRealtimeStatus(realtime);
+  const RealtimeStatusIcon = realtimeStatus.Icon;
 
   return (
     <div className={cn("relative", className)} ref={dropdownRef}>
@@ -164,8 +207,19 @@ function NotificationDropdown({ className, onOpenChange }) {
                   </span>
                   <span className="min-w-0">
                     <span className="block text-base font-black leading-tight text-white">Thông báo</span>
-                    <span className="text-caption mt-1 block text-slate-400">
-                      {unreadCount ? `${unreadCount} thông báo chưa đọc` : "Tất cả thông báo đã đọc"}
+                    <span className="mt-1 flex flex-wrap items-center gap-2">
+                      <span className="text-caption text-slate-400">
+                        {unreadCount ? `${unreadCount} thông báo chưa đọc` : "Tất cả thông báo đã đọc"}
+                      </span>
+                      <span
+                        className={cn(
+                          "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-black",
+                          realtimeStatus.tone,
+                        )}
+                      >
+                        <RealtimeStatusIcon size={12} />
+                        {realtimeStatus.label}
+                      </span>
                     </span>
                   </span>
                 </div>
@@ -237,7 +291,7 @@ function NotificationDropdown({ className, onOpenChange }) {
               </AnimatePresence>
             </div>
 
-            <div className="grid grid-cols-2 gap-2 border-t border-white/10 p-3">
+            <div className="grid grid-cols-3 gap-2 border-t border-white/10 p-3">
               <Link
                 className="premium-transition inline-flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/[0.04] px-3 py-2.5 text-xs font-black text-slate-200 hover:border-blue-300/50 hover:bg-blue-500/10 hover:text-white"
                 onClick={() => updateOpen(false)}
@@ -245,6 +299,14 @@ function NotificationDropdown({ className, onOpenChange }) {
               >
                 <PackageSearch size={15} />
                 Đơn hàng
+              </Link>
+              <Link
+                className="premium-transition inline-flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/[0.04] px-3 py-2.5 text-xs font-black text-slate-200 hover:border-blue-300/50 hover:bg-blue-500/10 hover:text-white"
+                onClick={() => updateOpen(false)}
+                to="/profile/orders"
+              >
+                <CreditCard size={15} />
+                Thanh toán
               </Link>
               <Link
                 className="premium-transition inline-flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/[0.04] px-3 py-2.5 text-xs font-black text-slate-200 hover:border-blue-300/50 hover:bg-blue-500/10 hover:text-white"

@@ -4,7 +4,8 @@ const NOTIFICATIONS_STORAGE_KEY = "electronicsManagement:notifications";
 const NOTIFICATIONS_CHANGE_EVENT = "electronicsManagement:notifications-change";
 const MAX_NOTIFICATIONS = 24;
 
-const NOTIFICATION_TYPES = new Set(["coupon", "order", "system"]);
+const NOTIFICATION_TYPES = new Set(["admin", "coupon", "order", "payment", "stock", "system"]);
+const NOTIFICATION_SURFACES = new Set(["admin", "all", "storefront"]);
 
 function getStorage() {
   if (typeof window === "undefined") {
@@ -117,6 +118,7 @@ function normalizeNotification(notification) {
   }
 
   const type = NOTIFICATION_TYPES.has(notification.type) ? notification.type : "system";
+  const surface = NOTIFICATION_SURFACES.has(notification.surface) ? notification.surface : "storefront";
   const createdAt = notification.createdAt || new Date().toISOString();
 
   return {
@@ -128,6 +130,7 @@ function normalizeNotification(notification) {
     metadata: isPlainObject(notification.metadata) ? notification.metadata : {},
     priority: notification.priority || "low",
     readAt: notification.readAt || null,
+    surface,
     title,
     type,
   };
@@ -177,6 +180,18 @@ function readStoredNotifications() {
   }
 }
 
+function notificationMatchesSurface(notification, surface) {
+  return surface === "all" || notification.surface === surface || notification.surface === "all";
+}
+
+function filterNotificationsBySurface(notifications, surface) {
+  if (surface === "all") {
+    return notifications;
+  }
+
+  return notifications.filter((notification) => notificationMatchesSurface(notification, surface));
+}
+
 function writeStoredNotifications(notifications) {
   const storage = getStorage();
 
@@ -197,12 +212,13 @@ function writeStoredNotifications(notifications) {
   window.dispatchEvent(new CustomEvent(NOTIFICATIONS_CHANGE_EVENT));
 }
 
-function useNotifications() {
-  const [notifications, setNotifications] = useState(readStoredNotifications);
+function useNotifications(options = {}) {
+  const surface = NOTIFICATION_SURFACES.has(options.surface) ? options.surface : "storefront";
+  const [storedNotifications, setStoredNotifications] = useState(readStoredNotifications);
 
   useEffect(() => {
     const syncNotifications = () => {
-      setNotifications(readStoredNotifications());
+      setStoredNotifications(readStoredNotifications());
     };
 
     window.addEventListener(NOTIFICATIONS_CHANGE_EVENT, syncNotifications);
@@ -215,7 +231,7 @@ function useNotifications() {
   }, []);
 
   const updateNotifications = useCallback((updater) => {
-    setNotifications((currentNotifications) => {
+    setStoredNotifications((currentNotifications) => {
       const storedNotifications = readStoredNotifications();
       const baseNotifications = storedNotifications.length ? storedNotifications : currentNotifications;
       const nextNotifications = normalizeNotifications(updater(baseNotifications));
@@ -269,17 +285,24 @@ function useNotifications() {
   const markAllAsRead = useCallback(() => {
     updateNotifications((currentNotifications) =>
       currentNotifications.map((notification) =>
-        notification.readAt ? notification : { ...notification, readAt: new Date().toISOString() },
+        notification.readAt || !notificationMatchesSurface(notification, surface)
+          ? notification
+          : { ...notification, readAt: new Date().toISOString() },
       ),
     );
-  }, [updateNotifications]);
+  }, [surface, updateNotifications]);
 
   const resetNotifications = useCallback(() => {
     const defaultNotifications = normalizeNotifications(createDefaultNotifications());
 
-    setNotifications(defaultNotifications);
+    setStoredNotifications(defaultNotifications);
     writeStoredNotifications(defaultNotifications);
   }, []);
+
+  const notifications = useMemo(
+    () => filterNotificationsBySurface(storedNotifications, surface),
+    [storedNotifications, surface],
+  );
 
   const unreadNotifications = useMemo(
     () => notifications.filter((notification) => !notification.readAt),

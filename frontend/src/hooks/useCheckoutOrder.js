@@ -2,6 +2,8 @@ import { useCallback, useState } from "react";
 import { buildCreateOrderPayload, createApiClientError } from "../api/checkoutMapper";
 import orderService from "../api/orderService";
 import useAuth from "../auth/useAuth";
+import { REALTIME_EVENT_TYPES } from "../realtime/realtimeEvents";
+import { publishRealtimeEvent } from "./useRealtime";
 
 function useCheckoutOrder() {
   const auth = useAuth();
@@ -31,8 +33,29 @@ function useCheckoutOrder() {
           values,
         });
         const order = await orderService.createOrder(payload);
+        const orderCode = order.code || order.id || Date.now();
 
         setCreatedOrder(order);
+        publishRealtimeEvent(
+          {
+            channel: "all",
+            id: `checkout-order-created-${order.id || orderCode}`,
+            message: `Order #${orderCode} was placed with ${paymentMethod?.name || "checkout"} payment.`,
+            payload: {
+              customerName: values.fullName,
+              orderCode,
+              orderId: order.id,
+              paymentMethod: paymentMethod?.provider || paymentMethod?.name,
+              status: order.status,
+              total: order.total,
+            },
+            priority: "high",
+            source: "checkout",
+            title: "Order created",
+            type: REALTIME_EVENT_TYPES.ORDER_CREATED,
+          },
+          { queue: true },
+        );
         return order;
       } catch (error) {
         setCreateOrderError(error);

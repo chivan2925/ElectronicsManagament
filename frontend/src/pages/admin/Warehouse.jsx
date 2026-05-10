@@ -9,6 +9,8 @@ import { ADMIN_RESOURCES } from "../../auth/roleHelpers";
 import usePermissions from "../../auth/usePermissions";
 import ApiErrorAlert from "../../components/ui/feedback/ApiErrorAlert";
 import useToast from "../../components/ui/toast/useToast";
+import { publishRealtimeEvent } from "../../hooks/useRealtime";
+import { REALTIME_EVENT_TYPES } from "../../realtime/realtimeEvents";
 import LowStockCard from "./warehouse/LowStockCard";
 import StockAdjustModal from "./warehouse/StockAdjustModal";
 import WarehouseTable from "./warehouse/WarehouseTable";
@@ -393,6 +395,45 @@ function Warehouse() {
     try {
       await warehouseService.createAndCompleteTransaction(adjustValues, { skipGlobalErrorHandler: true });
       toast.showSuccess("Đã cập nhật tồn kho.");
+      const quantity = Number(adjustValues.quantity || 0);
+      const currentQuantity = selectedStock ? Number(selectedStock.quantity || 0) : null;
+      const nextQuantity = currentQuantity === null
+        ? null
+        : adjustValues.type === "EXPORT"
+          ? currentQuantity - quantity
+          : currentQuantity + quantity;
+      const selectedVariant = variants.find((variant) => String(variant.id) === String(adjustValues.variantId));
+      const selectedWarehouse = warehouseOptions.find((warehouse) => String(warehouse.id) === String(adjustValues.warehouseId));
+      const becameLowStock = nextQuantity !== null && nextQuantity <= LOW_STOCK_THRESHOLD;
+      const replenishedStock =
+        currentQuantity !== null && currentQuantity <= LOW_STOCK_THRESHOLD && nextQuantity > LOW_STOCK_THRESHOLD;
+
+      if (becameLowStock || replenishedStock) {
+        publishRealtimeEvent(
+          {
+            channel: "admin",
+            id: `warehouse-stock-${adjustValues.variantId}-${adjustValues.warehouseId}-${Date.now()}`,
+            message: `${selectedStock?.variantName || selectedVariant?.name || "Variant"} now has ${nextQuantity} units in ${selectedStock?.warehouseName || selectedWarehouse?.name || "warehouse"}.`,
+            payload: {
+              movementQuantity: quantity,
+              movementType: adjustValues.type,
+              productName: selectedStock?.variantName || selectedVariant?.name || "",
+              quantity: nextQuantity,
+              sku: selectedStock?.sku || selectedVariant?.sku || "",
+              stock: nextQuantity,
+              threshold: LOW_STOCK_THRESHOLD,
+              variantId: adjustValues.variantId,
+              warehouseId: adjustValues.warehouseId,
+              warehouseName: selectedStock?.warehouseName || selectedWarehouse?.name || "",
+            },
+            priority: becameLowStock ? "high" : "medium",
+            source: "admin-warehouse",
+            title: becameLowStock ? "Low stock alert" : "Stock replenished",
+            type: becameLowStock ? REALTIME_EVENT_TYPES.STOCK_LOW : REALTIME_EVENT_TYPES.STOCK_RESTOCKED,
+          },
+          { queue: true },
+        );
+      }
       closeAdjustment();
       setReloadKey((value) => value + 1);
     } catch (requestError) {

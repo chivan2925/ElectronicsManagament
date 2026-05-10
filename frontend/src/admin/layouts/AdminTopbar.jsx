@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
-  Bell,
   ChevronDown,
   LogOut,
   Menu,
@@ -19,6 +18,7 @@ import usePermissions from "../../auth/usePermissions";
 import AdminIconButton from "../../components/ui/admin/AdminIconButton";
 import { useToast } from "../../components/ui/toast";
 import { cn } from "../../utils/classNames";
+import AdminNotificationDropdown from "../components/realtime/AdminNotificationDropdown";
 import Breadcrumbs from "./Breadcrumbs";
 
 const topbarSearchItems = [
@@ -144,11 +144,9 @@ function AdminTopbar({ collapsed, onOpenMobileSidebar, onToggleSidebar }) {
   const permission = usePermissions();
   const navigate = useNavigate();
   const toast = useToast();
-  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const notificationRef = useRef(null);
   const profileRef = useRef(null);
   const searchRef = useRef(null);
   const displayName = auth.user?.fullName || auth.user?.name || auth.user?.email || "Admin PCE";
@@ -177,10 +175,6 @@ function AdminTopbar({ collapsed, onOpenMobileSidebar, onToggleSidebar }) {
         setIsSearchOpen(false);
       }
 
-      if (notificationRef.current && !notificationRef.current.contains(event.target)) {
-        setIsNotificationsOpen(false);
-      }
-
       if (profileRef.current && !profileRef.current.contains(event.target)) {
         setIsProfileOpen(false);
       }
@@ -189,7 +183,6 @@ function AdminTopbar({ collapsed, onOpenMobileSidebar, onToggleSidebar }) {
     function handleKeyDown(event) {
       if (event.key === "Escape") {
         setIsSearchOpen(false);
-        setIsNotificationsOpen(false);
         setIsProfileOpen(false);
       }
     }
@@ -312,37 +305,7 @@ function AdminTopbar({ collapsed, onOpenMobileSidebar, onToggleSidebar }) {
         </form>
 
         <div className="ml-auto flex shrink-0 items-center gap-2">
-          <div className="relative" ref={notificationRef}>
-            <AdminIconButton
-              className="relative"
-              icon={Bell}
-              onClick={() => {
-                setIsNotificationsOpen((value) => !value);
-                setIsProfileOpen(false);
-              }}
-              size="md"
-              title="Notifications"
-            >
-              <span className="absolute right-2 top-2 h-2.5 w-2.5 rounded-full border-2 border-white bg-danger" />
-            </AdminIconButton>
-
-            {isNotificationsOpen ? (
-              <div className="absolute right-0 top-12 w-[min(20rem,calc(100vw-2rem))] overflow-hidden rounded-2xl border border-slate-200 bg-white/95 shadow-2xl shadow-slate-200/80 backdrop-blur-xl">
-                <div className="border-b border-slate-100 px-4 py-3">
-                  <p className="text-sm font-black text-slate-950">Notifications</p>
-                  <p className="mt-0.5 text-xs font-semibold text-slate-500">Placeholder for admin alerts.</p>
-                </div>
-                <div className="p-4">
-                  <div className="rounded-xl border border-dashed border-slate-200 bg-slate-50 px-4 py-5 text-center">
-                    <p className="text-sm font-bold text-slate-700">No live notifications yet</p>
-                    <p className="mt-1 text-xs leading-5 text-slate-500">
-                      Order, inventory, and staff alerts can be connected here later.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ) : null}
-          </div>
+          <AdminNotificationDropdown />
 
           <div className="relative" ref={profileRef}>
             <button
@@ -351,7 +314,6 @@ function AdminTopbar({ collapsed, onOpenMobileSidebar, onToggleSidebar }) {
               className="flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-1.5 pr-2 text-left shadow-sm transition hover:border-blue-200 hover:bg-blue-50/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-200 focus-visible:ring-offset-2 focus-visible:ring-offset-white"
               onClick={() => {
                 setIsProfileOpen((value) => !value);
-                setIsNotificationsOpen(false);
               }}
               type="button"
             >

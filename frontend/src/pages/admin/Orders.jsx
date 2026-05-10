@@ -8,6 +8,8 @@ import { ADMIN_RESOURCES } from "../../auth/roleHelpers";
 import usePermissions from "../../auth/usePermissions";
 import ApiErrorAlert from "../../components/ui/feedback/ApiErrorAlert";
 import useToast from "../../components/ui/toast/useToast";
+import { REALTIME_EVENT_TYPES } from "../../realtime/realtimeEvents";
+import { publishRealtimeEvent } from "../../hooks/useRealtime";
 import { formatCurrency } from "../../utils/formatters";
 import OrderDetail from "./orders/OrderDetail";
 import OrderTable from "./orders/OrderTable";
@@ -17,6 +19,12 @@ const STAGE_FILTER_OPTIONS = ORDER_STAGE_OPTIONS.map((option) => ({
   label: option.label,
   value: option.value,
 }));
+
+const paymentRealtimeEventByStatus = {
+  CANCELLED: REALTIME_EVENT_TYPES.PAYMENT_CANCELLED,
+  FAILED: REALTIME_EVENT_TYPES.PAYMENT_FAILED,
+  PAID: REALTIME_EVENT_TYPES.PAYMENT_SUCCEEDED,
+};
 
 function toFormValues(order = {}) {
   return {
@@ -207,6 +215,30 @@ function Orders() {
       setSelectedOrder(refreshedDetail);
       setFormValues(toFormValues(refreshedDetail));
       toast.showSuccess("Đã cập nhật đơn hàng.");
+      const orderCode = refreshedDetail.code || updatedOrder.code || selectedOrder.code || selectedOrder.id;
+      const paymentStatus = String(formValues.paymentStatus || "").toUpperCase();
+      const eventType = paymentRealtimeEventByStatus[paymentStatus] || REALTIME_EVENT_TYPES.ORDER_STATUS_CHANGED;
+
+      publishRealtimeEvent(
+        {
+          channel: "all",
+          id: `admin-order-updated-${selectedOrder.id}-${Date.now()}`,
+          message: `Order #${orderCode} was updated to ${formValues.stage || formValues.status}.`,
+          payload: {
+            orderCode,
+            orderId: selectedOrder.id,
+            paymentStatus: formValues.paymentStatus,
+            shippingStatus: formValues.shippingStatus,
+            status: formValues.status,
+            stage: formValues.stage,
+          },
+          priority: eventType === REALTIME_EVENT_TYPES.ORDER_STATUS_CHANGED ? "medium" : "high",
+          source: "admin-orders",
+          title: eventType === REALTIME_EVENT_TYPES.ORDER_STATUS_CHANGED ? "Order status updated" : "Payment status updated",
+          type: eventType,
+        },
+        { queue: true },
+      );
       setReloadKey((value) => value + 1);
     } catch (requestError) {
       toast.showApiError(requestError, { title: "Cập nhật đơn hàng thất bại" });
