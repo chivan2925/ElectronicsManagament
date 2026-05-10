@@ -142,11 +142,11 @@ WHERE code IN (
 
 
 INSERT INTO users (id, full_name, gender, date_of_birth, username, avatar_url, email, phone_number, hashed_password, status, created_at, updated_at) VALUES
-(1, 'Nguyễn Văn An', 'MALE', '2001-05-20', 'user01', 'https://ui-avatars.com/api/?name=Nguyen+Van+An', 'user01@gmail.com', '0911111111', '$2a$10$7EqJtq98hPqEX7fNZaFWoOHiXslrC7Yz3QpJ1yqZJxN2gZT8mD3hS', 'ACTIVE', NOW(), NOW()),
-(2, 'Trần Thị Bình', 'FEMALE', '1999-08-12', 'user02', 'https://ui-avatars.com/api/?name=Tran+Thi+Binh', 'user02@gmail.com', '0911111112', '$2a$10$7EqJtq98hPqEX7fNZaFWoOHiXslrC7Yz3QpJ1yqZJxN2gZT8mD3hS', 'ACTIVE', NOW(), NOW()),
-(3, 'Lê Minh Châu', 'FEMALE', '2000-03-15', 'user03', 'https://ui-avatars.com/api/?name=Le+Minh+Chau', 'user03@gmail.com', '0911111113', '$2a$10$7EqJtq98hPqEX7fNZaFWoOHiXslrC7Yz3QpJ1yqZJxN2gZT8mD3hS', 'ACTIVE', NOW(), NOW()),
-(4, 'Phạm Quốc Dũng', 'MALE', '1998-11-30', 'user04', 'https://ui-avatars.com/api/?name=Pham+Quoc+Dung', 'user04@gmail.com', '0911111114', '$2a$10$7EqJtq98hPqEX7fNZaFWoOHiXslrC7Yz3QpJ1yqZJxN2gZT8mD3hS', 'ACTIVE', NOW(), NOW()),
-(5, 'Hoàng Kim Em', 'FEMALE', '2002-01-10', 'user05', 'https://ui-avatars.com/api/?name=Hoang+Kim+Em', 'user05@gmail.com', '0911111115', '$2a$10$7EqJtq98hPqEX7fNZaFWoOHiXslrC7Yz3QpJ1yqZJxN2gZT8mD3hS', 'ACTIVE', NOW(), NOW());
+(1, 'Nguyễn Văn An', 'MALE', '2001-05-20', 'user01', 'https://ui-avatars.com/api/?name=Nguyen+Van+An', 'user01@gmail.com', '0911111111', '$2a$10$cA6U2LJSMmKq1wufof3SSOaRKLIgqqdASTku8P3bRIsDDjriS7sxm', 'ACTIVE', NOW(), NOW()),
+(2, 'Trần Thị Bình', 'FEMALE', '1999-08-12', 'user02', 'https://ui-avatars.com/api/?name=Tran+Thi+Binh', 'user02@gmail.com', '0911111112', '$2a$10$cA6U2LJSMmKq1wufof3SSOaRKLIgqqdASTku8P3bRIsDDjriS7sxm', 'ACTIVE', NOW(), NOW()),
+(3, 'Lê Minh Châu', 'FEMALE', '2000-03-15', 'user03', 'https://ui-avatars.com/api/?name=Le+Minh+Chau', 'user03@gmail.com', '0911111113', '$2a$10$cA6U2LJSMmKq1wufof3SSOaRKLIgqqdASTku8P3bRIsDDjriS7sxm', 'ACTIVE', NOW(), NOW()),
+(4, 'Phạm Quốc Dũng', 'MALE', '1998-11-30', 'user04', 'https://ui-avatars.com/api/?name=Pham+Quoc+Dung', 'user04@gmail.com', '0911111114', '$2a$10$cA6U2LJSMmKq1wufof3SSOaRKLIgqqdASTku8P3bRIsDDjriS7sxm', 'ACTIVE', NOW(), NOW()),
+(5, 'Hoàng Kim Em', 'FEMALE', '2002-01-10', 'user05', 'https://ui-avatars.com/api/?name=Hoang+Kim+Em', 'user05@gmail.com', '0911111115', '$2a$10$cA6U2LJSMmKq1wufof3SSOaRKLIgqqdASTku8P3bRIsDDjriS7sxm', 'ACTIVE', NOW(), NOW());
 
 INSERT INTO users (id, full_name, gender, date_of_birth, username, avatar_url, email, phone_number, hashed_password, status, created_at, updated_at)
 SELECT
@@ -158,7 +158,7 @@ SELECT
   'https://ui-avatars.com/api/?name=Demo+' || LPAD(user_no::text, 2, '0'),
   'user' || LPAD(user_no::text, 2, '0') || '@gmail.com',
   '09200000' || LPAD(user_no::text, 2, '0'),
-  '$2a$10$7EqJtq98hPqEX7fNZaFWoOHiXslrC7Yz3QpJ1yqZJxN2gZT8mD3hS',
+  '$2a$10$cA6U2LJSMmKq1wufof3SSOaRKLIgqqdASTku8P3bRIsDDjriS7sxm',
   CASE WHEN user_no IN (24, 25) THEN 'BLOCKED' ELSE 'ACTIVE' END,
   NOW() - (user_no * INTERVAL '1 day'),
   NOW()
@@ -168,11 +168,11 @@ FROM generate_series(6, 25) AS user_no;
 
 
 INSERT INTO staffs (id, full_name, gender, date_of_birth, username, avatar_url, email, phone_number, address, role_id, hashed_password, status, assigned_at, updated_at) VALUES
-(1, 'Quản trị viên', 'MALE', '2000-01-01', 'admin', 'https://ui-avatars.com/api/?name=Admin', 'admin@gmail.com', '0900000000', 'Hồ Chí Minh', 1, '$2a$10$7EqJtq98hPqEX7fNZaFWoOHiXslrC7Yz3QpJ1yqZJxN2gZT8mD3hS', 'ACTIVE', NOW(), NOW()),
-(2, 'Nguyễn Quản Lý', 'MALE', '1994-04-18', 'manager01', 'https://ui-avatars.com/api/?name=Manager', 'manager01@gmail.com', '0900000001', 'Hà Nội', 2, '$2a$10$7EqJtq98hPqEX7fNZaFWoOHiXslrC7Yz3QpJ1yqZJxN2gZT8mD3hS', 'ACTIVE', NOW(), NOW()),
-(3, 'Trần Nhân Kho', 'MALE', '1995-06-22', 'warehouse01', 'https://ui-avatars.com/api/?name=Warehouse', 'warehouse01@gmail.com', '0900000002', 'Đà Nẵng', 3, '$2a$10$7EqJtq98hPqEX7fNZaFWoOHiXslrC7Yz3QpJ1yqZJxN2gZT8mD3hS', 'ACTIVE', NOW(), NOW()),
-(4, 'Lê Nhân Sale', 'FEMALE', '1997-02-02', 'sales01', 'https://ui-avatars.com/api/?name=Sales', 'sales01@gmail.com', '0900000003', 'Cần Thơ', 4, '$2a$10$7EqJtq98hPqEX7fNZaFWoOHiXslrC7Yz3QpJ1yqZJxN2gZT8mD3hS', 'ACTIVE', NOW(), NOW()),
-(5, 'Phạm Hỗ Trợ', 'FEMALE', '1996-12-12', 'support01', 'https://ui-avatars.com/api/?name=Support', 'support01@gmail.com', '0900000004', 'Bình Dương', 5, '$2a$10$7EqJtq98hPqEX7fNZaFWoOHiXslrC7Yz3QpJ1yqZJxN2gZT8mD3hS', 'ACTIVE', NOW(), NOW());
+(1, 'Quản trị viên', 'MALE', '2000-01-01', 'admin', 'https://ui-avatars.com/api/?name=Admin', 'admin@gmail.com', '0900000000', 'Hồ Chí Minh', 1, '$2a$10$cA6U2LJSMmKq1wufof3SSOaRKLIgqqdASTku8P3bRIsDDjriS7sxm', 'ACTIVE', NOW(), NOW()),
+(2, 'Nguyễn Quản Lý', 'MALE', '1994-04-18', 'manager01', 'https://ui-avatars.com/api/?name=Manager', 'manager01@gmail.com', '0900000001', 'Hà Nội', 2, '$2a$10$cA6U2LJSMmKq1wufof3SSOaRKLIgqqdASTku8P3bRIsDDjriS7sxm', 'ACTIVE', NOW(), NOW()),
+(3, 'Trần Nhân Kho', 'MALE', '1995-06-22', 'warehouse01', 'https://ui-avatars.com/api/?name=Warehouse', 'warehouse01@gmail.com', '0900000002', 'Đà Nẵng', 3, '$2a$10$cA6U2LJSMmKq1wufof3SSOaRKLIgqqdASTku8P3bRIsDDjriS7sxm', 'ACTIVE', NOW(), NOW()),
+(4, 'Lê Nhân Sale', 'FEMALE', '1997-02-02', 'sales01', 'https://ui-avatars.com/api/?name=Sales', 'sales01@gmail.com', '0900000003', 'Cần Thơ', 4, '$2a$10$cA6U2LJSMmKq1wufof3SSOaRKLIgqqdASTku8P3bRIsDDjriS7sxm', 'ACTIVE', NOW(), NOW()),
+(5, 'Phạm Hỗ Trợ', 'FEMALE', '1996-12-12', 'support01', 'https://ui-avatars.com/api/?name=Support', 'support01@gmail.com', '0900000004', 'Bình Dương', 5, '$2a$10$cA6U2LJSMmKq1wufof3SSOaRKLIgqqdASTku8P3bRIsDDjriS7sxm', 'ACTIVE', NOW(), NOW());
 
 
 
