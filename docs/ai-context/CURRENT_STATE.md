@@ -96,6 +96,8 @@ The ecommerce loading/error/empty-state foundation now includes reusable `Loadin
 
 The ecommerce form UX foundation now includes reusable `FormFieldMessage` and form validation helpers for inline feedback, touched/submit-attempt visibility, first-invalid-field focus, `aria-describedby` associations, and consistent disabled/submitting states across auth, checkout, profile, admin CRUD, product, coupon, variant, role, brand, and warehouse adjustment forms.
 
+The ecommerce QA flow audit tightened customer/admin route behavior without a large rewrite. Admin/staff login redirects no longer land on customer-only checkout/account paths, category pages ignore stale category query params and route category filter controls navigate consistently, cart coupon context can carry into checkout, empty cart and invalid payment order ids are blocked before API calls, COD success clears the cart while preserving the confirmation snapshot, and paid VNPay/MoMo returns clear only the matching pending checkout cart.
+
 The frontend now has production-oriented route loading with route-level lazy loading, route preloading hooks, shared route/deferred-section loading boundaries, deferred header search/cart overlays, below-fold storefront section splitting, an optimized image component foundation, and targeted memoization for repeated ecommerce rows/carousels. The shared API client now has in-flight GET request deduplication plus opt-in TTL caching, and catalog product listing/detail flows avoid N+1 detail fetches. The production build emits route/vendor chunks instead of one large JavaScript bundle.
 
 The frontend and backend now have a no-SaaS logging and monitoring foundation. Frontend monitoring lives under `frontend/src/monitoring` with structured client logs, a local monitoring buffer, global error tracking, API failure tracking, payment error tracking, route preload/error tracking, route-change hooks, and `X-Request-Id` propagation from the shared API client. Backend monitoring lives under `backend/electronics/src/main/java/org/example/electronics/monitoring` with structured key-value logging helpers and request correlation through `X-Request-Id`/MDC. Auth, order, payment, webhook, unauthorized, and exception flows now emit reusable structured events.
@@ -586,6 +588,7 @@ Latest validation:
 - `npm run lint` and `npm run build` passed after the ecommerce accessibility foundation pass.
 - `npm run lint` and `npm run build` passed after the loading/error/empty-state foundation audit.
 - `npm run lint`, `npm run build`, and `git diff --check` passed after the system form UX audit. `git diff --check` reported only CRLF normalization warnings for edited frontend files.
+- `npm run lint`, `npm run build`, `git diff --check`, and Vite preview route smoke checks passed after the ecommerce QA flow audit. Smoke checks returned `200` for storefront, auth, checkout/payment, profile, and admin routes; `git diff --check` reported only CRLF normalization warnings for edited frontend files.
 
 ## Known Issues
 

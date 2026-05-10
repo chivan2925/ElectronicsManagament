@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   ChevronRight,
@@ -41,6 +41,8 @@ const MotionDiv = motion.div;
 
 function ProductListingPage() {
   const { categorySlug = null } = useParams();
+  const location = useLocation();
+  const navigate = useNavigate();
   const mobileFiltersRef = useRef(null);
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
   const {
@@ -126,16 +128,78 @@ function ProductListingPage() {
     });
   };
 
+  const buildCategoryNavigationPath = useCallback(
+    (pathname) => {
+      const nextParams = new URLSearchParams(location.search);
+
+      nextParams.delete("category");
+      nextParams.delete("page");
+
+      const queryString = nextParams.toString();
+
+      return queryString ? `${pathname}?${queryString}` : pathname;
+    },
+    [location.search],
+  );
+
+  const handleClearAllFilters = useCallback(() => {
+    if (isCategoryPage) {
+      navigate("/products");
+      closeMobileFilters();
+      return;
+    }
+
+    clearAllFilters();
+  }, [clearAllFilters, closeMobileFilters, isCategoryPage, navigate]);
+
+  const handleClearCategories = useCallback(() => {
+    if (isCategoryPage) {
+      navigate(buildCategoryNavigationPath("/products"));
+      closeMobileFilters();
+      return;
+    }
+
+    clearCategories();
+  }, [buildCategoryNavigationPath, clearCategories, closeMobileFilters, isCategoryPage, navigate]);
+
+  const handleCategoryToggle = useCallback(
+    (nextCategorySlug) => {
+      if (!isCategoryPage) {
+        toggleCategory(nextCategorySlug);
+        return;
+      }
+
+      const nextPath =
+        nextCategorySlug === categorySlug ? "/products" : `/categories/${nextCategorySlug}`;
+
+      navigate(buildCategoryNavigationPath(nextPath));
+      closeMobileFilters();
+    },
+    [buildCategoryNavigationPath, categorySlug, closeMobileFilters, isCategoryPage, navigate, toggleCategory],
+  );
+
+  const handleRemoveActiveFilter = useCallback(
+    (item) => {
+      if (item.type === "category" && isCategoryPage) {
+        handleClearCategories();
+        return;
+      }
+
+      removeActiveFilter(item);
+    },
+    [handleClearCategories, isCategoryPage, removeActiveFilter],
+  );
+
   const filterSidebarProps = {
     brandOptions,
     categoryCounts,
     categoryOptions,
-    clearCategories,
+    clearCategories: handleClearCategories,
     clearPriceRanges,
     filters,
     onBrandToggle: toggleBrand,
-    onCategoryToggle: toggleCategory,
-    onClearAll: clearAllFilters,
+    onCategoryToggle: handleCategoryToggle,
+    onClearAll: handleClearAllFilters,
     onPriceRangeToggle: togglePriceRange,
     onRatingChange: setRating,
     onStockToggle: toggleStock,
@@ -297,7 +361,7 @@ function ProductListingPage() {
               </div>
             </div>
 
-            <ActiveFilters items={activeFilters} onClearAll={clearAllFilters} onRemove={removeActiveFilter} />
+            <ActiveFilters items={activeFilters} onClearAll={handleClearAllFilters} onRemove={handleRemoveActiveFilter} />
 
             {isRefreshingProducts ? (
               <LoadingState

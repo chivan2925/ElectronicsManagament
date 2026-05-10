@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { CheckCircle2, Clock3, ReceiptText } from "lucide-react";
 import AnnouncementBar from "../../components/layout/AnnouncementBar";
@@ -10,7 +10,9 @@ import Button from "../../components/ui/Button";
 import Container from "../../components/ui/Container";
 import ApiErrorAlert from "../../components/ui/feedback/ApiErrorAlert";
 import LoadingState from "../../components/ui/feedback/LoadingState";
+import { useCart } from "../../cart";
 import usePaymentResult from "../../hooks/usePaymentResult";
+import { clearPendingPaymentOrderId, getPendingPaymentOrderId } from "../../utils/checkoutSession";
 import {
   getPaymentResultCopy,
   getPaymentTimelineSteps,
@@ -18,6 +20,7 @@ import {
 } from "../../utils/paymentStatus";
 
 function PaymentSuccess() {
+  const { clearCart } = useCart();
   const paymentResult = usePaymentResult({ defaultStatus: "pending" });
   const {
     amount,
@@ -55,6 +58,17 @@ function PaymentSuccess() {
 
     return "Cần kiểm tra";
   }, [isPaid, isVerifying, verified]);
+
+  useEffect(() => {
+    if (!isPaid || !orderId) {
+      return;
+    }
+
+    if (getPendingPaymentOrderId() === String(orderId)) {
+      clearCart();
+      clearPendingPaymentOrderId(orderId);
+    }
+  }, [clearCart, isPaid, orderId]);
 
   return (
     <div className="store-page-shell">

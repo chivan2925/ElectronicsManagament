@@ -82,6 +82,7 @@ function Cart() {
   const shippingCaption = freeShippingRemaining
     ? `Mua thêm ${formatCurrency(freeShippingRemaining)} để được miễn phí vận chuyển.`
     : "Đơn hàng đủ điều kiện miễn phí vận chuyển tiêu chuẩn.";
+  const checkoutTo = appliedCoupon?.code ? `/checkout?coupon=${encodeURIComponent(appliedCoupon.code)}` : "/checkout";
 
   const handleCouponApply = async () => {
     const normalizedCoupon = couponCode.trim();
@@ -218,6 +219,7 @@ function Cart() {
               <CartSummary
                 appliedCoupon={appliedCoupon}
                 checkoutLabel="Tiến hành thanh toán"
+                checkoutTo={checkoutTo}
                 className="lg:p-5"
                 continueTo="/products"
                 couponError={couponError}

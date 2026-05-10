@@ -65,7 +65,7 @@ function canUseLoginRedirect(session, redirectTo) {
     return canAccessAdmin(session);
   }
 
-  return true;
+  return !canAccessAdmin(session);
 }
 
 function getLoginRedirect(session, rememberedPath) {

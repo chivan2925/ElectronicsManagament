@@ -105,6 +105,23 @@ function getCategoryOptions(products) {
   return Array.from(categories.values()).sort((a, b) => a.name.localeCompare(b.name));
 }
 
+function getFallbackCategory(slug) {
+  const normalizedSlug = String(slug || "").trim();
+
+  if (!normalizedSlug) {
+    return null;
+  }
+
+  return {
+    id: normalizedSlug,
+    name: normalizedSlug
+      .split("-")
+      .filter(Boolean)
+      .join(" "),
+    slug: normalizedSlug,
+  };
+}
+
 function useProducts({ routeCategorySlug = null } = {}) {
   const [searchParams, setSearchParams] = useSearchParams();
   const [products, setProducts] = useState([]);
@@ -126,7 +143,7 @@ function useProducts({ routeCategorySlug = null } = {}) {
 
     return {
       brands: getListParam(searchParams, "brand"),
-      categories: categoryParams.length ? categoryParams : routeCategoryFilter,
+      categories: routeCategoryFilter.length ? routeCategoryFilter : categoryParams,
       page: Math.max(Number(searchParams.get("page")) || 1, 1),
       priceRanges: priceRangeIds,
       rating: RATING_OPTIONS.some((option) => option.value === rating) ? rating : null,
@@ -196,7 +213,7 @@ function useProducts({ routeCategorySlug = null } = {}) {
     [categoryOptions],
   );
   const selectedCategories = useMemo(
-    () => filters.categories.map((slug) => categoryBySlug.get(slug)).filter(Boolean),
+    () => filters.categories.map((slug) => categoryBySlug.get(slug) ?? getFallbackCategory(slug)).filter(Boolean),
     [categoryBySlug, filters.categories],
   );
 
@@ -248,7 +265,7 @@ function useProducts({ routeCategorySlug = null } = {}) {
   }, [products]);
 
   const filteredProducts = useMemo(() => {
-    const selectedCategorySlugs = new Set(selectedCategories.map((category) => category.slug));
+    const selectedCategorySlugs = new Set(filters.categories);
     const selectedPriceRanges = PRICE_RANGES.filter((range) => filters.priceRanges.includes(range.id));
     const selectedRating = Number(filters.rating);
     const normalizedQuery = normalizeSearchValue(filters.search);
@@ -289,8 +306,8 @@ function useProducts({ routeCategorySlug = null } = {}) {
     filters.rating,
     filters.search,
     filters.stockStatuses,
+    filters.categories,
     products,
-    selectedCategories,
   ]);
 
   const sortedProducts = useMemo(() => {

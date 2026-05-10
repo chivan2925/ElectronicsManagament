@@ -14,6 +14,11 @@ Phase 8 — Production + Deploy (Phase 7 completed)
 
 ## Recently Completed
 
+- Completed an ecommerce QA flow audit across register, login, search, product browsing, cart, checkout, payment result, order tracking routes, admin CRUD, media upload, and permissions.
+- Fixed login redirects so admin/staff sessions do not bounce through customer-only checkout/account routes.
+- Fixed category page filter behavior so route categories override stale `category` query params and category controls navigate consistently from `/categories/:categorySlug`.
+- Carried applied cart coupons into checkout through a safe query handoff, blocked empty cart and invalid payment order ids before API calls, and cleaned cart state after successful COD or verified matching online payment returns.
+- Verified `npm run lint`, `npm run build`, `git diff --check`, and Vite preview route smoke checks; `git diff --check` reported only CRLF normalization warnings for edited frontend files.
 - Completed a system form UX audit across login/register, checkout, admin CRUD, product, coupon, profile, role, variant, and warehouse adjustment forms.
 - Added reusable form feedback and validation helpers for inline messages, touched/submit visibility, first-invalid-field focus, and consistent `aria-describedby` wiring.
 - Improved submit loading, disabled states, focus states, modal/drawer labels, and mobile-safe form spacing while preserving existing storefront/admin architecture and visual design.

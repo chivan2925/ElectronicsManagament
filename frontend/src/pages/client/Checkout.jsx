@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ChevronRight, ClipboardCheck, CreditCard, PackageSearch, ShieldCheck, Truck } from "lucide-react";
 import CheckoutForm from "../../components/checkout/CheckoutForm";
@@ -27,6 +27,7 @@ import useCheckoutOrder from "../../hooks/useCheckoutOrder";
 import useCheckoutProfile from "../../hooks/useCheckoutProfile";
 import { trackPaymentError } from "../../monitoring";
 import { fadeUp, staggerContainer } from "../../styles/animations";
+import { clearPendingPaymentOrderId, setPendingPaymentOrderId } from "../../utils/checkoutSession";
 import { formatCurrency } from "../../utils/formatters";
 import { createTouchedMap, focusFirstInvalidField, getVisibleFieldErrors } from "../../utils/formValidation";
 
@@ -130,11 +131,14 @@ function validateCheckout(values) {
 }
 
 function Checkout() {
-  const { itemCount, items: cartItems, subtotal } = useCart();
+  const [searchParams] = useSearchParams();
+  const initialCouponCode = searchParams.get("coupon")?.trim() || "";
+  const { clearCart, itemCount, items: cartItems, subtotal } = useCart();
   const toast = useToast();
   const { profile } = useCheckoutProfile();
   const [values, setValues] = useState(initialCheckoutValues);
   const [profileApplied, setProfileApplied] = useState(false);
+  const autoCouponAppliedRef = useRef("");
   const [touchedFields, setTouchedFields] = useState({});
   const [submitAttempted, setSubmitAttempted] = useState(false);
   const [shippingMethodId, setShippingMethodId] = useState("standard");
@@ -143,8 +147,9 @@ function Checkout() {
     error: null,
     isRedirecting: false,
   });
-  const [couponCode, setCouponCode] = useState("");
+  const [couponCode, setCouponCode] = useState(initialCouponCode);
   const [orderPlaced, setOrderPlaced] = useState(false);
+  const [completedCart, setCompletedCart] = useState(null);
   const {
     appliedCoupon,
     applyCoupon,
@@ -161,6 +166,12 @@ function Checkout() {
     isCreatingOrder,
     resetOrder,
   } = useCheckoutOrder();
+
+  const displayCartItems = completedCart?.items ?? cartItems;
+  const displayItemCount = completedCart?.itemCount ?? itemCount;
+  const displaySubtotal = completedCart?.subtotal ?? subtotal;
+  const displayCouponDiscount = completedCart?.couponDiscount ?? couponDiscount;
+  const displayCouponFeedback = completedCart?.couponFeedback ?? couponFeedback;
 
   useEffect(() => {
     if (profileApplied || !profile) {
@@ -188,7 +199,33 @@ function Checkout() {
     };
   }, [profile, profileApplied]);
 
-  const isFreeShipping = subtotal >= FREE_SHIPPING_THRESHOLD;
+  useEffect(() => {
+    if (
+      !initialCouponCode ||
+      appliedCoupon ||
+      autoCouponAppliedRef.current === initialCouponCode ||
+      cartItems.length === 0
+    ) {
+      return;
+    }
+
+    autoCouponAppliedRef.current = initialCouponCode;
+    setCouponCode(initialCouponCode);
+
+    applyCoupon(initialCouponCode)
+      .then(() => {
+        toast.showSuccess("Mã giảm giá từ giỏ hàng đã được áp dụng.", {
+          title: "Coupon hợp lệ",
+        });
+      })
+      .catch((error) => {
+        toast.showApiError(error, {
+          title: "Coupon chưa hợp lệ",
+        });
+      });
+  }, [appliedCoupon, applyCoupon, cartItems.length, initialCouponCode, toast]);
+
+  const isFreeShipping = displaySubtotal >= FREE_SHIPPING_THRESHOLD;
   const shippingMethods = useMemo(
     () => [
       {
@@ -222,15 +259,15 @@ function Checkout() {
   );
   const selectedShippingMethod = shippingMethods.find((method) => method.id === shippingMethodId) || shippingMethods[0];
   const selectedPaymentMethod = paymentMethods.find((method) => method.id === paymentMethodId) || paymentMethods[0];
-  const stockInsights = useMemo(() => getCartStockInsights(cartItems), [cartItems]);
+  const stockInsights = useMemo(() => getCartStockInsights(displayCartItems), [displayCartItems]);
   const shippingEstimate = useMemo(
     () =>
       getShippingEstimate({
         city: values.city,
         shippingMethod: selectedShippingMethod,
-        subtotal,
+        subtotal: displaySubtotal,
       }),
-    [selectedShippingMethod, subtotal, values.city],
+    [displaySubtotal, selectedShippingMethod, values.city],
   );
   const validationErrors = useMemo(() => validateCheckout(values), [values]);
   const visibleErrors = useMemo(
@@ -249,6 +286,7 @@ function Checkout() {
       [fieldName]: nextValue,
     }));
     setOrderPlaced(false);
+    setCompletedCart(null);
     setPaymentHandoff({ error: null, isRedirecting: false });
     resetOrder();
   };
@@ -273,6 +311,7 @@ function Checkout() {
         title: "Coupon hợp lệ",
       });
       setOrderPlaced(false);
+      setCompletedCart(null);
       setPaymentHandoff({ error: null, isRedirecting: false });
       resetOrder();
     } catch (error) {
@@ -286,6 +325,7 @@ function Checkout() {
     clearCoupon();
     setCouponCode("");
     setOrderPlaced(false);
+    setCompletedCart(null);
     setPaymentHandoff({ error: null, isRedirecting: false });
     resetOrder();
     toast.showInfo("Đã gỡ mã giảm giá khỏi đơn hàng.", {
@@ -326,6 +366,7 @@ function Checkout() {
 
       if (selectedPaymentMethod.apiValue === "DIGITAL") {
         setPaymentHandoff({ error: null, isRedirecting: true });
+        setPendingPaymentOrderId(order.id);
 
         const paymentLink = await paymentService.createPayment({
           orderId: order.id,
@@ -345,7 +386,15 @@ function Checkout() {
       }
 
       setPaymentHandoff({ error: null, isRedirecting: false });
+      setCompletedCart({
+        couponDiscount,
+        couponFeedback,
+        itemCount,
+        items: cartItems,
+        subtotal,
+      });
       setOrderPlaced(true);
+      clearCart();
       toast.showSuccess(order?.code ? `Đơn hàng ${order.code} đã được tạo.` : "Đơn hàng đã được tạo.", {
         title: "Đặt hàng thành công",
       });
@@ -356,9 +405,11 @@ function Checkout() {
           orderId: paymentOrderId,
           provider: selectedPaymentMethod.provider,
         });
+        clearPendingPaymentOrderId(paymentOrderId);
       }
 
       setOrderPlaced(false);
+      setCompletedCart(null);
       setPaymentHandoff({
         error: selectedPaymentMethod.apiValue === "DIGITAL" ? error : null,
         isRedirecting: false,
@@ -369,7 +420,7 @@ function Checkout() {
     }
   };
 
-  if (!cartItems.length) {
+  if (!cartItems.length && !completedCart) {
     return (
       <div className="store-page-shell">
         <AnnouncementBar />
@@ -474,6 +525,7 @@ function Checkout() {
               onChange={(nextMethodId) => {
                 setShippingMethodId(nextMethodId);
                 setOrderPlaced(false);
+                setCompletedCart(null);
                 setPaymentHandoff({ error: null, isRedirecting: false });
                 resetOrder();
               }}
@@ -485,6 +537,7 @@ function Checkout() {
               onChange={(nextMethodId) => {
                 setPaymentMethodId(nextMethodId);
                 setOrderPlaced(false);
+                setCompletedCart(null);
                 setPaymentHandoff({ error: null, isRedirecting: false });
                 resetOrder();
               }}
@@ -498,12 +551,12 @@ function Checkout() {
             <CheckoutSummary
               appliedCoupon={appliedCoupon}
               couponCode={couponCode}
-              couponDiscount={couponDiscount}
+              couponDiscount={displayCouponDiscount}
               couponError={couponError}
-              couponFeedback={couponFeedback}
+              couponFeedback={displayCouponFeedback}
               createdOrder={createdOrder}
-              itemCount={itemCount}
-              items={cartItems}
+              itemCount={displayItemCount}
+              items={displayCartItems}
               isApplyingCoupon={isApplyingCoupon}
               isPaymentRedirecting={paymentHandoff.isRedirecting}
               isSubmitting={isCreatingOrder || paymentHandoff.isRedirecting}
@@ -511,6 +564,7 @@ function Checkout() {
               onCouponChange={(nextCouponCode) => {
                 setCouponCode(nextCouponCode);
                 setOrderPlaced(false);
+                setCompletedCart(null);
                 resetOrder();
               }}
               onCouponClear={handleCouponClear}
@@ -522,7 +576,7 @@ function Checkout() {
               shippingEstimate={shippingEstimate}
               shippingFee={selectedShippingMethod.price}
               shippingMethod={selectedShippingMethod}
-              subtotal={subtotal}
+              subtotal={displaySubtotal}
               validationMessage={validationMessage}
             />
           </MotionDiv>

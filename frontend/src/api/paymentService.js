@@ -1,11 +1,25 @@
 import { api } from "./client";
+import { createApiClientError } from "./checkoutMapper";
 import { normalizePaymentLinkResponse, normalizePaymentStatusResponse } from "./paymentMapper";
 import { trackPaymentError } from "../monitoring";
 
 const PAYMENT_RESOURCE_PATH = import.meta.env.VITE_PAYMENT_API_PATH || "/payments";
 
+function normalizePaymentOrderId(orderId) {
+  const normalizedOrderId = String(orderId || "").trim();
+  const numericOrderId = Number(normalizedOrderId);
+
+  return /^\d+$/.test(normalizedOrderId) &&
+    Number.isSafeInteger(numericOrderId) &&
+    numericOrderId > 0 &&
+    numericOrderId <= 2147483647
+    ? numericOrderId
+    : null;
+}
+
 export async function createPayment({ orderId, provider }, config = {}) {
   const normalizedProvider = String(provider || "").trim().toUpperCase();
+  const normalizedOrderId = normalizePaymentOrderId(orderId);
 
   if (!normalizedProvider) {
     const providerError = new Error("Thiếu nhà cung cấp thanh toán.");
@@ -17,13 +31,27 @@ export async function createPayment({ orderId, provider }, config = {}) {
     throw providerError;
   }
 
+  if (!normalizedOrderId) {
+    const orderError = createApiClientError("Thiếu mã đơn hàng hợp lệ để tạo phiên thanh toán.", {
+      code: "INVALID_PAYMENT_ORDER_ID",
+      status: 400,
+    });
+
+    trackPaymentError(orderError, {
+      operation: "create_payment",
+      orderId,
+      provider: normalizedProvider,
+    });
+    throw orderError;
+  }
+
   let data;
 
   try {
     data = await api.post(
       `${PAYMENT_RESOURCE_PATH}/${normalizedProvider.toLowerCase()}/create`,
       {
-        orderId: Number(orderId),
+        orderId: normalizedOrderId,
         provider: normalizedProvider,
       },
       {

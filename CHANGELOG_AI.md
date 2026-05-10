@@ -8,6 +8,16 @@ Always update this file after meaningful work.
 
 ## 2026-05-10
 
+### Ecommerce QA Flow Audit
+
+- Audited customer ecommerce and admin flows across register, login, search, product browsing, cart, checkout, payment result, order tracking routes, admin CRUD, media upload, and permissions.
+- Fixed login redirect handling so admin/staff sessions do not return to customer-only checkout/account routes after authentication.
+- Fixed category route browsing so `/categories/:categorySlug` wins over stale `category` query params and category filter controls navigate consistently.
+- Carried applied cart coupons into checkout, blocked empty-cart order payloads, and rejected invalid payment order ids before opening VNPay/MoMo sessions.
+- Cleared cart state after COD success while preserving the visible order confirmation snapshot, and clear carts after paid VNPay/MoMo returns only when they match the pending checkout order.
+- Updated `CURRENT_STATE.md` and `NEXT_TASKS.md`.
+- Verified `npm run lint`, `npm run build`, `git diff --check`, and Vite preview route smoke checks; `git diff --check` reported only CRLF normalization warnings for edited frontend files.
+
 ### System Form UX Audit
 
 - Audited login/register, checkout, admin CRUD, product, coupon, profile, role, variant, and warehouse adjustment forms.

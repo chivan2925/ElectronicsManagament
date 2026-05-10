@@ -232,6 +232,13 @@ export function buildCreateOrderPayload({
   user,
   values,
 }) {
+  if (!items.length) {
+    throw createApiClientError("Giỏ hàng trống. Vui lòng thêm sản phẩm trước khi đặt hàng.", {
+      code: "EMPTY_CART",
+      status: 400,
+    });
+  }
+
   const invalidItems = getInvalidOrderItems(items);
 
   if (invalidItems.length) {
