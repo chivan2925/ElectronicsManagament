@@ -8,6 +8,14 @@ Always update this file after meaningful work.
 
 ## 2026-05-10
 
+### Cart And Checkout UX Upgrade
+
+- Upgraded cart item interactions with animated quantity and line-total transitions, clearer stock state UI, max-stock feedback, and remove feedback.
+- Added reusable cart UX helpers/components: `cartInsights.js`, `FreeShippingProgress.jsx`, `StockValidationPanel.jsx`, and `CartRecommendations.jsx`.
+- Improved cart summary and checkout summary with free-shipping progress, shipping estimates, stock validation, coupon apply/clear UX, loading states, and trust-focused sticky summary content.
+- Added mini recommendations in the cart page for quick complementary product adds.
+- Verified `npm run lint`, `npm run build`, and local route smoke checks for `/cart` and `/checkout`. Build still reports the existing Vite chunk-size warning.
+
 ### Product Recommendation System Foundation
 
 - Added reusable recommendation components: `ProductCarousel.jsx`, `RecommendationSection.jsx`, `TrendingProducts.jsx`, and `BestSellerSection.jsx`.

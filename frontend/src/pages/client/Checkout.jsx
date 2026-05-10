@@ -8,6 +8,12 @@ import PaymentMethodSelector from "../../components/checkout/PaymentMethodSelect
 import ShippingMethodSelector from "../../components/checkout/ShippingMethodSelector";
 import AnnouncementBar from "../../components/layout/AnnouncementBar";
 import Header from "../../components/layout/Header";
+import {
+  FREE_SHIPPING_THRESHOLD,
+  STANDARD_SHIPPING_FEE,
+  getCartStockInsights,
+  getShippingEstimate,
+} from "../../cart/cartInsights";
 import { useCart } from "../../cart";
 import Badge from "../../components/ui/Badge";
 import Button from "../../components/ui/Button";
@@ -20,9 +26,6 @@ import { fadeUp, staggerContainer } from "../../styles/animations";
 import { formatCurrency } from "../../utils/formatters";
 
 const MotionDiv = motion.div;
-
-const FREE_SHIPPING_THRESHOLD = 5_000_000;
-const STANDARD_SHIPPING_FEE = 45_000;
 
 const initialCheckoutValues = {
   address: "",
@@ -119,6 +122,7 @@ function Checkout() {
   const {
     appliedCoupon,
     applyCoupon,
+    clearCoupon,
     couponDiscount,
     couponError,
     couponFeedback,
@@ -192,6 +196,16 @@ function Checkout() {
   );
   const selectedShippingMethod = shippingMethods.find((method) => method.id === shippingMethodId) || shippingMethods[0];
   const selectedPaymentMethod = paymentMethods.find((method) => method.id === paymentMethodId) || paymentMethods[0];
+  const stockInsights = useMemo(() => getCartStockInsights(cartItems), [cartItems]);
+  const shippingEstimate = useMemo(
+    () =>
+      getShippingEstimate({
+        city: values.city,
+        shippingMethod: selectedShippingMethod,
+        subtotal,
+      }),
+    [selectedShippingMethod, subtotal, values.city],
+  );
   const validationErrors = validateCheckout(values);
   const visibleErrors = Object.keys(validationErrors).reduce((currentErrors, fieldName) => {
     if (submitAttempted || touchedFields[fieldName]) {
@@ -245,6 +259,17 @@ function Checkout() {
     }
   };
 
+  const handleCouponClear = () => {
+    clearCoupon();
+    setCouponCode("");
+    setOrderPlaced(false);
+    resetOrder();
+    toast.showInfo("Đã gỡ mã giảm giá khỏi đơn hàng.", {
+      duration: 2400,
+      title: "Coupon đã cập nhật",
+    });
+  };
+
   const handlePlaceOrder = async () => {
     setSubmitAttempted(true);
     setTouchedFields(
@@ -261,6 +286,14 @@ function Checkout() {
       const firstErrorField = Object.keys(validationErrors)[0];
       window.requestAnimationFrame(() => {
         document.getElementById(firstErrorField)?.scrollIntoView({ behavior: "smooth", block: "center" });
+      });
+      setOrderPlaced(false);
+      return;
+    }
+
+    if (stockInsights.hasBlockingIssues) {
+      toast.showWarning("Một số sản phẩm vượt quá tồn kho khả dụng. Vui lòng kiểm tra lại giỏ hàng.", {
+        title: "Cần kiểm tra tồn kho",
       });
       setOrderPlaced(false);
       return;
@@ -337,7 +370,7 @@ function Checkout() {
             <div>
               <Badge className="mb-4 gap-2" variant="primary">
                 <ClipboardCheck size={13} />
-                Secure checkout
+                Thanh toán an toàn
               </Badge>
               <h1 className="text-heading max-w-3xl">Hoàn tất đơn hàng</h1>
               <p className="text-muted mt-3 max-w-2xl text-base md:text-lg">
@@ -416,10 +449,12 @@ function Checkout() {
                 setOrderPlaced(false);
                 resetOrder();
               }}
+              onCouponClear={handleCouponClear}
               onPlaceOrder={handlePlaceOrder}
               orderError={createOrderError}
               orderPlaced={orderPlaced}
               paymentMethod={selectedPaymentMethod}
+              shippingEstimate={shippingEstimate}
               shippingFee={selectedShippingMethod.price}
               shippingMethod={selectedShippingMethod}
               subtotal={subtotal}

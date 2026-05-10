@@ -14,9 +14,11 @@ import {
   WalletCards,
 } from "lucide-react";
 import CartItem from "../../components/cart/CartItem";
+import CartRecommendations from "../../components/cart/CartRecommendations";
 import CartSummary from "../../components/cart/CartSummary";
 import AnnouncementBar from "../../components/layout/AnnouncementBar";
 import Header from "../../components/layout/Header";
+import { getFreeShippingState, getShippingEstimate, getStandardShippingAmount } from "../../cart/cartInsights";
 import { useCart } from "../../cart";
 import Badge from "../../components/ui/Badge";
 import Button from "../../components/ui/Button";
@@ -27,9 +29,6 @@ import { fadeUp, staggerContainer } from "../../styles/animations";
 import { formatCurrency } from "../../utils/formatters";
 
 const MotionDiv = motion.div;
-
-const FREE_SHIPPING_THRESHOLD = 5_000_000;
-const STANDARD_SHIPPING_FEE = 45_000;
 
 const trustHighlights = [
   {
@@ -62,14 +61,17 @@ function Cart() {
   const toast = useToast();
   const [couponCode, setCouponCode] = useState("");
   const {
+    appliedCoupon,
     applyCoupon,
+    clearCoupon,
     couponDiscount,
     couponError,
     couponFeedback,
     isApplyingCoupon,
   } = useCheckoutCoupon({ items: cartItems, subtotal });
-  const shippingAmount = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : STANDARD_SHIPPING_FEE;
-  const freeShippingRemaining = Math.max(FREE_SHIPPING_THRESHOLD - subtotal, 0);
+  const shippingAmount = getStandardShippingAmount(subtotal);
+  const { remaining: freeShippingRemaining } = getFreeShippingState(subtotal);
+  const shippingEstimate = getShippingEstimate({ subtotal });
   const shippingCaption = freeShippingRemaining
     ? `Mua thêm ${formatCurrency(freeShippingRemaining)} để được miễn phí vận chuyển.`
     : "Đơn hàng đủ điều kiện miễn phí vận chuyển tiêu chuẩn.";
@@ -93,6 +95,15 @@ function Cart() {
     }
   };
 
+  const handleCouponClear = () => {
+    clearCoupon();
+    setCouponCode("");
+    toast.showInfo("Đã gỡ mã giảm giá khỏi đơn hàng.", {
+      duration: 2400,
+      title: "Coupon đã cập nhật",
+    });
+  };
+
   return (
     <div className="store-page-shell">
       <AnnouncementBar />
@@ -113,7 +124,7 @@ function Cart() {
             <div>
               <Badge className="mb-4 gap-2" variant="primary">
                 <ShoppingCart size={13} />
-                Cart checkout ready
+                Sẵn sàng thanh toán
               </Badge>
               <h1 className="text-heading max-w-3xl">Giỏ hàng của bạn</h1>
               <p className="text-muted mt-3 max-w-2xl text-base md:text-lg">
@@ -147,7 +158,7 @@ function Cart() {
               <div className="rounded-3xl border border-white/10 bg-slate-950/36 p-4 shadow-inner shadow-white/[0.03] backdrop-blur-xl sm:p-5">
                 <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                   <div>
-                    <p className="text-caption text-blue-200">Cart items</p>
+                    <p className="text-caption text-blue-200">Sản phẩm trong giỏ</p>
                     <h2 className="text-section mt-1 text-xl">{itemCount} sản phẩm sẵn sàng checkout</h2>
                   </div>
                   <Button as={Link} className="w-full rounded-2xl md:w-auto" to="/products" variant="outline">
@@ -187,6 +198,8 @@ function Cart() {
                 ))}
               </MotionDiv>
 
+              <CartRecommendations items={cartItems} />
+
               <div className="grid gap-3 rounded-3xl border border-blue-300/15 bg-blue-500/[0.055] p-4 shadow-inner shadow-white/[0.03] backdrop-blur-xl sm:grid-cols-3">
                 <div className="store-stat-card rounded-2xl p-3">
                   <CircleCheck className="mb-2 text-emerald-200" size={18} />
@@ -208,6 +221,7 @@ function Cart() {
 
             <aside className="lg:sticky lg:top-28">
               <CartSummary
+                appliedCoupon={appliedCoupon}
                 checkoutLabel="Tiến hành thanh toán"
                 className="lg:p-5"
                 continueTo="/products"
@@ -217,10 +231,13 @@ function Cart() {
                 discount={couponDiscount}
                 isApplyingCoupon={isApplyingCoupon}
                 itemCount={itemCount}
+                items={cartItems}
                 onCouponApply={handleCouponApply}
                 onCouponChange={setCouponCode}
+                onCouponClear={handleCouponClear}
                 shippingAmount={shippingAmount}
                 shippingCaption={shippingCaption}
+                shippingEstimate={shippingEstimate}
                 shippingLabel="Giao tiêu chuẩn"
                 subtotal={subtotal}
                 title="Tóm tắt đơn hàng"

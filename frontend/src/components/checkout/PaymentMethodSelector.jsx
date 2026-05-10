@@ -13,7 +13,7 @@ function PaymentMethodSelector({ onChange, options, value }) {
     <section className="rounded-3xl border border-white/10 bg-slate-950/36 p-4 shadow-inner shadow-white/[0.03] backdrop-blur-xl sm:p-5">
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <p className="text-caption text-blue-200">Payment method</p>
+          <p className="text-caption text-blue-200">Thanh toán đơn hàng</p>
           <h2 className="text-section mt-1 text-xl">Phương thức thanh toán</h2>
         </div>
         <Badge className="gap-1.5" variant="success">

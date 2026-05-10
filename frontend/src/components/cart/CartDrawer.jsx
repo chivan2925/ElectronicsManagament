@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { PackageSearch, ShoppingCart, X } from "lucide-react";
+import { getShippingEstimate, getStandardShippingAmount } from "../../cart/cartInsights";
 import Button from "../ui/Button";
 import IconButton from "../ui/IconButton";
 import CartItem from "./CartItem";
@@ -10,6 +11,9 @@ const MotionAside = motion.aside;
 const MotionDiv = motion.div;
 
 function CartDrawer({ isOpen, itemCount, items, onClose, onQuantityChange, onRemove, subtotal }) {
+  const shippingAmount = getStandardShippingAmount(subtotal);
+  const shippingEstimate = getShippingEstimate({ subtotal });
+
   useEffect(() => {
     if (!isOpen) {
       return undefined;
@@ -100,7 +104,15 @@ function CartDrawer({ isOpen, itemCount, items, onClose, onQuantityChange, onRem
             </div>
 
             {items.length > 0 && (
-              <CartSummary itemCount={itemCount} onClose={onClose} subtotal={subtotal} />
+              <CartSummary
+                itemCount={itemCount}
+                items={items}
+                onClose={onClose}
+                shippingAmount={shippingAmount}
+                shippingEstimate={shippingEstimate}
+                shippingLabel="Giao tiêu chuẩn"
+                subtotal={subtotal}
+              />
             )}
           </MotionAside>
         </MotionDiv>

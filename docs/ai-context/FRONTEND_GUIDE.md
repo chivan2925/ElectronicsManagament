@@ -407,10 +407,13 @@ Reusable cart components live in `frontend/src/components/cart/`:
 - `CartDrawer.jsx`
 - `CartItem.jsx`
 - `CartSummary.jsx`
+- `FreeShippingProgress.jsx`
+- `StockValidationPanel.jsx`
+- `CartRecommendations.jsx`
 
 The full cart page lives at `frontend/src/pages/client/Cart.jsx` and reuses `CartItem` and `CartSummary`.
 
-The cart drawer, cart page, product-card quick add, product-detail add-to-cart, product-detail buy-now, and checkout page all use `frontend/src/cart`. `frontend/src/data/cart.js` is legacy mock setup and should not be used by active cart/checkout flows.
+The cart drawer, cart page, product-card quick add, product-detail add-to-cart, product-detail buy-now, and checkout page all use `frontend/src/cart`. Shared cart UX helpers live in `frontend/src/cart/cartInsights.js` for free-shipping progress, shipping estimates, and stock validation. `frontend/src/data/cart.js` is legacy mock setup and should not be used by active cart/checkout flows.
 
 ## Checkout Components
 
@@ -431,7 +434,7 @@ Checkout API state logic lives in `frontend/src/hooks/`:
 
 Checkout API response and payload mapping lives in `frontend/src/api/checkoutMapper.js`.
 
-The checkout page uses shared cart state, local form validation, backend Coupon API validation, backend User API profile prefill when available, and backend Order API creation through `orderService.createOrder()`. COD creates the order only; VNPay and MoMo remain disabled placeholders until the real payment gateway task starts.
+The checkout page uses shared cart state, local form validation, backend Coupon API validation, backend User API profile prefill when available, and backend Order API creation through `orderService.createOrder()`. Checkout summary reuses free-shipping progress, stock validation, shipping estimate, coupon apply/clear, and loading/error states. COD creates the order only; VNPay and MoMo remain disabled placeholders until the real payment gateway task starts.
 
 ## Customer Auth Components
 

@@ -14,6 +14,9 @@ Ready for Phase 6 — Ecommerce Core Features
 
 ## Recently Completed
 
+- Upgraded Cart & Checkout UX with animated cart item quantity/total transitions, remove feedback, free-shipping progress, shipping estimates, stock validation UI, coupon apply/clear UX, mini recommendations in cart, and sticky trust-focused summaries.
+- Added reusable cart UX helpers/components: `cartInsights.js`, `FreeShippingProgress.jsx`, `StockValidationPanel.jsx`, and `CartRecommendations.jsx`.
+- Verified `npm run lint`, `npm run build`, and route smoke checks for `/cart` and `/checkout` after the Cart & Checkout UX upgrade. Build still reports the existing Vite chunk-size warning.
 - Built the frontend Product Recommendation System foundation with reusable `ProductCarousel.jsx`, `RecommendationSection.jsx`, `TrendingProducts.jsx`, and `BestSellerSection.jsx`.
 - Added homepage trending and best-seller recommendation carousels, PDP related/frequently-bought carousels, and a profile recommended-for-you placeholder without changing the homepage hero or core section structure.
 - Verified `npm run lint`, `npm run build`, `git diff --check`, and route smoke checks for `/`, `/products/:slug`, and `/profile` after adding recommendation sections. Build still reports the existing Vite chunk-size warning, and `git diff --check` reported CRLF normalization warnings for edited files.

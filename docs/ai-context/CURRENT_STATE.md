@@ -52,9 +52,9 @@ The product detail gallery now supports loading skeletons, smoother image switch
 
 The storefront header now includes a shared-cart drawer with slide-in animation, blurred backdrop, item quantity updates, remove actions, subtotal, checkout action, and animated cart count badge.
 
-The storefront cart page now exists at `/cart` with shared local cart items, quantity updates, remove actions, backend coupon validation, order summary, shipping estimate, continue-shopping CTA, checkout CTA, and sticky desktop summary.
+The storefront cart page now exists at `/cart` with shared local cart items, animated quantity updates, remove feedback, backend coupon validation, coupon clear/apply UX, free-shipping progress, shipping estimate, stock validation, mini recommendations, continue-shopping CTA, checkout CTA, and sticky desktop summary.
 
-The storefront checkout page now exists at `/checkout` with authenticated checkout, customer profile prefill from User API when available, shipping address, shipping method, payment method, form validation UI, backend coupon validation, backend order creation, API loading/error states, and sticky order summary.
+The storefront checkout page now exists at `/checkout` with authenticated checkout, customer profile prefill from User API when available, shipping address, shipping method, payment method, form validation UI, backend coupon validation, backend order creation, API loading/error states, stock validation, free-shipping progress, shipping estimate, and sticky trust-focused order summary.
 
 The storefront customer authentication pages now exist at `/login` and `/register` with reusable dark auth layout/forms, social login placeholders, remember-me, forgot-password placeholder, local validation UI, and responsive dark glass styling. The `/login` form now calls the backend JWT auth service; `/register` remains local until customer registration APIs are ready.
 
@@ -284,6 +284,7 @@ Current frontend data:
 - `frontend/src/data/products.js` still supports mock/local storefront sections, but `/products` now uses Product API data.
 - `frontend/src/data/productDetails.js` remains available for legacy mock detail helpers, but `/products/:slug` now uses Product API data.
 - `frontend/src/data/cart.js` remains as legacy mock cart setup, but active cart drawer, `/cart`, and `/checkout` now use `frontend/src/cart`.
+- Shared cart UX helpers now live in `frontend/src/cart/cartInsights.js` for free shipping, shipping estimates, and stock validation.
 - Most admin pages use `frontend/src/data/adminMock.js`; `/admin/categories`, `/admin/brands`, `/admin/products`, `/admin/variants`, `/admin/media`, `/admin/orders`, `/admin/warehouse`, `/admin/coupons`, `/admin/users`, `/admin/staff`, and `/admin/roles` now use real backend data.
 - Shared data exports live in `frontend/src/data/index.js`.
 - API client exists at `frontend/src/api/client.js`.
@@ -333,7 +334,7 @@ Current frontend structure:
 - Client homepage page lives in `frontend/src/pages/client/Home.jsx`.
 - Admin pages live in `frontend/src/pages/admin/`.
 - Client homepage components live in `frontend/src/components/home/`.
-- Cart drawer and cart page components live in `frontend/src/components/cart/`.
+- Cart drawer and cart page components live in `frontend/src/components/cart/`, including reusable free-shipping progress, stock validation, and cart recommendation components.
 - Checkout components live in `frontend/src/components/checkout/`.
 - Account components live in `frontend/src/components/account/`.
 - Customer auth components live in `frontend/src/components/auth/`.
@@ -395,8 +396,8 @@ Homepage state:
 - `/` still renders the existing homepage.
 - `/products` now renders the Product API-backed product listing page.
 - `/products/:slug` now renders the Product API-backed product detail page.
-- `/cart` now renders the shared-cart cart page with backend coupon validation.
-- `/checkout` now renders the authenticated customer checkout page behind `ProtectedRoute` and creates backend orders through `POST /api/orders`.
+- `/cart` now renders the shared-cart cart page with backend coupon validation, animated quantity interactions, free-shipping progress, shipping estimate, stock validation, mini recommendations, and a sticky summary.
+- `/checkout` now renders the authenticated customer checkout page behind `ProtectedRoute`, creates backend orders through `POST /api/orders`, and includes free-shipping progress, stock validation, shipping estimate, improved coupon UX, and a sticky trust-focused summary.
 - `/login` now renders the dark auth page and submits through `authService.login()`.
 - `/register` still renders the local ecommerce registration page until customer registration APIs exist and is now guest-only.
 - `/wishlist` now renders the production-style persistent wishlist and recently viewed page with optional backend sync, optimistic actions, move-to-cart, remove item, clear, sync status, loading states, and API error fallback.
@@ -500,6 +501,8 @@ Latest validation:
 - Local Vite route smoke checks returned `200` for `/`, `/products/:slug`, `/profile`, and `/wishlist` after adding the reusable recently viewed slider.
 - `npm run lint`, `npm run build`, and `git diff --check` passed after building the Product Recommendation System foundation. Build still reports the existing Vite chunk-size warning, and `git diff --check` reported CRLF normalization warnings for edited files.
 - Local Vite route smoke checks returned `200` for `/`, `/products/:slug`, and `/profile` after adding recommendation carousels and placeholders.
+- `npm run lint` and `npm run build` passed after upgrading Cart & Checkout UX. Build still reports the existing Vite chunk-size warning.
+- Local Vite route smoke checks returned `200` for `/cart` and `/checkout` after upgrading Cart & Checkout UX.
 - `mvn spring-boot:run` reached Tomcat startup after the Jackson fix; the verification process was stopped after confirming startup.
 - Backend startup still logs local PostgreSQL `ddl-auto` warnings for legacy/non-null schema drift in `media`, `products`, `users`, `variants`, and `warehouse_*` tables.
 - Build still reports a Vite chunk-size warning for a JavaScript bundle over 500 kB.

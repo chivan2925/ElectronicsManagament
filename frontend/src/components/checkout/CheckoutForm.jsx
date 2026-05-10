@@ -96,7 +96,7 @@ function CheckoutSection({ children, eyebrow, title }) {
 function CheckoutForm({ errors, onBlur, onChange, values }) {
   return (
     <div className="grid gap-4">
-      <CheckoutSection eyebrow="Customer information" title="Thông tin khách hàng">
+      <CheckoutSection eyebrow="Thông tin liên hệ" title="Thông tin khách hàng">
         <div className="grid gap-4 md:grid-cols-2">
           <CheckoutField
             autoComplete="name"
@@ -142,7 +142,7 @@ function CheckoutForm({ errors, onBlur, onChange, values }) {
         </div>
       </CheckoutSection>
 
-      <CheckoutSection eyebrow="Shipping address" title="Địa chỉ giao hàng">
+      <CheckoutSection eyebrow="Khu vực nhận hàng" title="Địa chỉ giao hàng">
         <div className="grid gap-4 md:grid-cols-2">
           <div className="md:col-span-2">
             <CheckoutField
