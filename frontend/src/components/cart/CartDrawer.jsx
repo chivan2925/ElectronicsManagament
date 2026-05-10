@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { PackageSearch, ShoppingCart, X } from "lucide-react";
-import { getShippingEstimate, getStandardShippingAmount } from "../../cart/cartInsights";
+import { getStandardShippingAmount } from "../../cart/cartInsights";
 import useFocusTrap from "../../hooks/useFocusTrap";
 import Button from "../ui/Button";
 import IconButton from "../ui/IconButton";
@@ -14,7 +14,6 @@ const MotionDiv = motion.div;
 function CartDrawer({ isOpen, itemCount, items, onClose, onQuantityChange, onRemove, subtotal }) {
   const drawerRef = useRef(null);
   const shippingAmount = getStandardShippingAmount(subtotal);
-  const shippingEstimate = getShippingEstimate({ subtotal });
 
   useFocusTrap(drawerRef, isOpen, { onEscape: onClose });
 
@@ -68,8 +67,8 @@ function CartDrawer({ isOpen, itemCount, items, onClose, onQuantityChange, onRem
                     <ShoppingCart size={21} />
                   </div>
                   <div>
-                    <h2 className="text-section text-xl" id="cart-drawer-title">Giỏ hàng</h2>
-                    <p aria-live="polite" className="text-caption mt-1 text-slate-400">{itemCount} sản phẩm trong giỏ</p>
+                    <h2 className="text-section text-lg sm:text-xl" id="cart-drawer-title">Giỏ hàng</h2>
+                    <p aria-live="polite" className="text-caption mt-0.5 text-slate-400">{itemCount} sản phẩm</p>
                   </div>
                 </div>
 
@@ -118,7 +117,6 @@ function CartDrawer({ isOpen, itemCount, items, onClose, onQuantityChange, onRem
                 items={items}
                 onClose={onClose}
                 shippingAmount={shippingAmount}
-                shippingEstimate={shippingEstimate}
                 shippingLabel="Giao tiêu chuẩn"
                 subtotal={subtotal}
               />

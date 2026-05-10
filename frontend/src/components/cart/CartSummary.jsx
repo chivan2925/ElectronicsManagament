@@ -5,7 +5,6 @@ import { getCartStockInsights } from "../../cart/cartInsights";
 import { cn } from "../../utils/classNames";
 import { formatCurrency } from "../../utils/formatters";
 import Button from "../ui/Button";
-import FreeShippingProgress from "./FreeShippingProgress";
 import StockValidationPanel from "./StockValidationPanel";
 
 function CartSummary({
@@ -53,10 +52,10 @@ function CartSummary({
   return (
     <div
       className={cn(
-        "bg-[#07111F]/96 p-4 backdrop-blur-2xl",
+        "bg-[#07111F]/96 backdrop-blur-2xl",
         isPage
-          ? "store-surface-panel-strong rounded-3xl"
-          : "border-t border-white/10 shadow-[0_-18px_60px_rgba(0,0,0,0.34)]",
+          ? "store-surface-panel-strong rounded-3xl p-4"
+          : "border-t border-white/10 p-3 shadow-[0_-18px_60px_rgba(0,0,0,0.34)]",
         className,
       )}
     >
@@ -73,7 +72,6 @@ function CartSummary({
       )}
 
       <div className="grid gap-3">
-        <FreeShippingProgress compact subtotal={subtotal} />
         <StockValidationPanel compact items={items} showHealthy={isPage} />
       </div>
 
@@ -135,7 +133,7 @@ function CartSummary({
             <span className="text-right font-black text-emerald-200">{shippingDisplay}</span>
           </div>
           {shippingCaption && <p className="text-caption text-slate-500">{shippingCaption}</p>}
-          {shippingEstimate && (
+          {isPage && shippingEstimate && (
             <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-3">
               <div className="flex items-start gap-2">
                 <MapPin className="mt-0.5 shrink-0 text-blue-200" size={16} />
@@ -179,16 +177,18 @@ function CartSummary({
         )}
       </div>
 
-      <div className="mt-3 grid grid-cols-2 gap-2">
-        <div className="store-stat-card rounded-2xl p-3">
-          <Truck className="mb-2 text-blue-200" size={18} />
-          <p className="text-caption text-slate-400">Giao nhanh toàn quốc</p>
+      {isPage && (
+        <div className="mt-3 grid grid-cols-2 gap-2">
+          <div className="store-stat-card rounded-2xl p-3">
+            <Truck className="mb-2 text-blue-200" size={18} />
+            <p className="text-caption text-slate-400">Giao nhanh toàn quốc</p>
+          </div>
+          <div className="store-stat-card rounded-2xl p-3">
+            <ShieldCheck className="mb-2 text-emerald-200" size={18} />
+            <p className="text-caption text-slate-400">Bảo hành chính hãng</p>
+          </div>
         </div>
-        <div className="store-stat-card rounded-2xl p-3">
-          <ShieldCheck className="mb-2 text-emerald-200" size={18} />
-          <p className="text-caption text-slate-400">Bảo hành chính hãng</p>
-        </div>
-      </div>
+      )}
     </div>
   );
 }
