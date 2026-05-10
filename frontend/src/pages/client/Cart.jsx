@@ -16,6 +16,7 @@ import {
 import CartItem from "../../components/cart/CartItem";
 import CartRecommendations from "../../components/cart/CartRecommendations";
 import CartSummary from "../../components/cart/CartSummary";
+import TrustSignalBar from "../../components/common/TrustSignalBar";
 import AnnouncementBar from "../../components/layout/AnnouncementBar";
 import Header from "../../components/layout/Header";
 import { getFreeShippingState, getShippingEstimate, getStandardShippingAmount } from "../../cart/cartInsights";
@@ -23,6 +24,7 @@ import { useCart } from "../../cart";
 import Badge from "../../components/ui/Badge";
 import Button from "../../components/ui/Button";
 import Container from "../../components/ui/Container";
+import EmptyState from "../../components/ui/feedback/EmptyState";
 import { useToast } from "../../components/ui/toast";
 import useCheckoutCoupon from "../../hooks/useCheckoutCoupon";
 import { fadeUp, staggerContainer } from "../../styles/animations";
@@ -45,6 +47,11 @@ const trustHighlights = [
     icon: WalletCards,
     label: "Thanh toán",
     value: "COD, thẻ, chuyển khoản khi checkout",
+  },
+  {
+    icon: "RotateCcw",
+    label: "Đổi trả",
+    value: "Hỗ trợ trong 7 ngày tại cửa hàng",
   },
 ];
 
@@ -167,19 +174,7 @@ function Cart() {
                   </Button>
                 </div>
 
-                <div className="mt-5 grid gap-3 md:grid-cols-3">
-                  {trustHighlights.map((item) => {
-                    const Icon = item.icon;
-
-                    return (
-                      <div className="store-stat-card rounded-2xl p-3" key={item.label}>
-                        <Icon className="mb-2 text-blue-200" size={18} />
-                        <p className="text-sm font-black text-white">{item.label}</p>
-                        <p className="text-caption mt-1 text-slate-400">{item.value}</p>
-                      </div>
-                    );
-                  })}
-                </div>
+                <TrustSignalBar className="mt-5" compact signals={trustHighlights} surface="transparent" />
               </div>
 
               <div className="hidden rounded-2xl border border-white/10 bg-slate-950/44 px-4 py-3 text-xs font-black uppercase text-slate-500 md:grid md:grid-cols-[minmax(0,1fr)_116px_154px_134px_44px]">
@@ -246,19 +241,16 @@ function Cart() {
             </aside>
           </div>
         ) : (
-          <section className="mt-7 flex min-h-[460px] items-center justify-center rounded-3xl border border-white/10 bg-white/[0.035] p-6 text-center shadow-inner shadow-white/[0.03] backdrop-blur-xl">
-            <div>
-              <PackageSearch className="mx-auto text-blue-200 drop-shadow-[0_0_18px_rgba(0,91,255,0.55)]" size={54} />
-              <Badge className="mx-auto mt-5" variant="primary">Giỏ hàng trống</Badge>
-              <h2 className="text-heading mt-4 text-3xl">Chưa có sản phẩm nào</h2>
-              <p className="text-muted mx-auto mt-3 max-w-md text-sm">
-                Khám phá catalog gaming và thêm laptop, tai nghe, chuột hoặc linh kiện vào giỏ để bắt đầu đơn hàng.
-              </p>
-              <Button as={Link} className="mt-6 rounded-2xl" to="/products">
-                Xem sản phẩm
-                <ChevronRight size={18} />
-              </Button>
-            </div>
+          <section className="mt-7">
+            <EmptyState
+              actionIcon={ChevronRight}
+              actionLabel="Xem sản phẩm"
+              actionTo="/products"
+              eyebrow="Giỏ hàng trống"
+              icon={PackageSearch}
+              message="Khám phá catalog gaming và thêm laptop, tai nghe, chuột hoặc linh kiện vào giỏ để bắt đầu đơn hàng."
+              title="Chưa có sản phẩm nào"
+            />
           </section>
         )}
       </Container>

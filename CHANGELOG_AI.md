@@ -8,6 +8,13 @@ Always update this file after meaningful work.
 
 ## 2026-05-10
 
+### Customer Ecommerce Experience Polish
+
+- Added reusable `TrustSignalBar.jsx` for consistent trust indicators across PLP, PDP, cart, checkout, and profile surfaces.
+- Polished customer ecommerce interactions with stronger CTA routing, hover/focus states, shared empty-state trust hints, improved PLP/PDP skeletons, and subtle service/hero micro interactions.
+- Kept the existing homepage structure intact and avoided a large redesign.
+- Verified `npm run lint`, `npm run build`, `git diff --check`, and local route smoke checks for `/`, `/products`, `/products/:slug`, `/cart`, `/checkout`, and `/profile`. Build still reports the existing Vite chunk-size warning, and `git diff --check` reported CRLF normalization warnings for edited frontend files.
+
 ### Customer Loyalty Reward UI Foundation
 
 - Added reusable account widgets: `LoyaltyCard.jsx`, `RewardsWidget.jsx`, and `CouponWallet.jsx`.

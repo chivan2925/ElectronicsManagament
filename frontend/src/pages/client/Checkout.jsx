@@ -6,6 +6,7 @@ import CheckoutForm from "../../components/checkout/CheckoutForm";
 import CheckoutSummary from "../../components/checkout/CheckoutSummary";
 import PaymentMethodSelector from "../../components/checkout/PaymentMethodSelector";
 import ShippingMethodSelector from "../../components/checkout/ShippingMethodSelector";
+import TrustSignalBar from "../../components/common/TrustSignalBar";
 import AnnouncementBar from "../../components/layout/AnnouncementBar";
 import Header from "../../components/layout/Header";
 import {
@@ -16,8 +17,8 @@ import {
 } from "../../cart/cartInsights";
 import { useCart } from "../../cart";
 import Badge from "../../components/ui/Badge";
-import Button from "../../components/ui/Button";
 import Container from "../../components/ui/Container";
+import EmptyState from "../../components/ui/feedback/EmptyState";
 import { useToast } from "../../components/ui/toast";
 import useCheckoutCoupon from "../../hooks/useCheckoutCoupon";
 import useCheckoutOrder from "../../hooks/useCheckoutOrder";
@@ -327,19 +328,16 @@ function Checkout() {
         <Header />
 
         <Container as="main" className="pb-16 pt-6 sm:pt-8">
-          <section className="flex min-h-[520px] items-center justify-center rounded-3xl border border-white/10 bg-white/[0.035] p-6 text-center shadow-inner shadow-white/[0.03] backdrop-blur-xl">
-            <div>
-              <PackageSearch className="mx-auto text-blue-200 drop-shadow-[0_0_18px_rgba(0,91,255,0.55)]" size={54} />
-              <Badge className="mx-auto mt-5" variant="primary">Không có sản phẩm</Badge>
-              <h1 className="text-heading mt-4 text-3xl">Checkout cần sản phẩm trong giỏ</h1>
-              <p className="text-muted mx-auto mt-3 max-w-md text-sm">
-                Thêm sản phẩm vào giỏ hàng trước khi tiếp tục bước thanh toán.
-              </p>
-              <Button as={Link} className="mt-6 rounded-2xl" to="/products">
-                Xem sản phẩm
-                <ChevronRight size={18} />
-              </Button>
-            </div>
+          <section className="flex min-h-[520px] items-center justify-center">
+            <EmptyState
+              actionIcon={ChevronRight}
+              actionLabel="Xem sản phẩm"
+              actionTo="/products"
+              icon={PackageSearch}
+              message="Thêm sản phẩm vào giỏ hàng trước khi tiếp tục bước thanh toán."
+              eyebrow="Không có sản phẩm"
+              title="Checkout cần sản phẩm trong giỏ"
+            />
           </section>
         </Container>
       </div>
@@ -397,6 +395,17 @@ function Checkout() {
             </div>
           </div>
         </section>
+
+        <TrustSignalBar
+          className="mt-5"
+          compact
+          signals={[
+            { icon: "ShieldCheck", label: "Bảo mật", value: "Thông tin giao hàng rõ ràng" },
+            { icon: "CreditCard", label: "Thanh toán linh hoạt", value: "COD sẵn sàng, online placeholder" },
+            { icon: "Clock3", label: "Xử lý nhanh", value: "Ước tính thời gian giao" },
+            { icon: "Headphones", label: "Hỗ trợ", value: "Theo dõi sau khi đặt đơn" },
+          ]}
+        />
 
         <MotionDiv
           animate="visible"

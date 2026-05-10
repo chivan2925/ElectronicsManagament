@@ -10,6 +10,7 @@ import {
   Truck,
   X,
 } from "lucide-react";
+import TrustSignalBar from "../../components/common/TrustSignalBar";
 import AnnouncementBar from "../../components/layout/AnnouncementBar";
 import Header from "../../components/layout/Header";
 import ActiveFilters from "../../components/product/ActiveFilters";
@@ -20,6 +21,7 @@ import ProductCard from "../../components/product/ProductCard";
 import SearchProductsInput from "../../components/product/SearchProductsInput";
 import SortDropdown from "../../components/product/SortDropdown";
 import ProductCardSkeleton from "../../components/skeletons/ProductCardSkeleton";
+import SkeletonBlock from "../../components/skeletons/SkeletonBlock";
 import Badge from "../../components/ui/Badge";
 import Button from "../../components/ui/Button";
 import Container from "../../components/ui/Container";
@@ -237,10 +239,24 @@ function ProductListingPage() {
             <ActiveFilters items={activeFilters} onClearAll={clearAllFilters} onRemove={removeActiveFilter} />
 
             {isLoading ? (
-              <div className="grid grid-cols-2 gap-4 md:gap-5 xl:grid-cols-3">
-                {Array.from({ length: 9 }, (_, index) => (
-                  <ProductCardSkeleton key={`product-skeleton-${index}`} />
-                ))}
+              <div className="space-y-4">
+                <div className="skeleton-card rounded-2xl p-4">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="space-y-2">
+                      <SkeletonBlock className="h-4 w-40 rounded-full" />
+                      <SkeletonBlock className="h-3 w-64 max-w-full rounded-full" />
+                    </div>
+                    <div className="flex gap-2">
+                      <SkeletonBlock className="h-9 w-24 rounded-xl" />
+                      <SkeletonBlock className="h-9 w-28 rounded-xl" />
+                    </div>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4 md:gap-5 xl:grid-cols-3">
+                  {Array.from({ length: 9 }, (_, index) => (
+                    <ProductCardSkeleton key={`product-skeleton-${index}`} />
+                  ))}
+                </div>
               </div>
             ) : error ? (
               <ApiErrorAlert
@@ -278,18 +294,15 @@ function ProductListingPage() {
               totalItems={sortedProducts.length}
             />
 
-            <div className="grid gap-3 rounded-2xl border border-blue-300/15 bg-blue-500/[0.055] p-4 shadow-inner shadow-white/[0.03] backdrop-blur-xl sm:grid-cols-3">
-              {[
-                { label: "Giá tốt", value: minPrice ? `Từ ${compactCurrency(minPrice)}` : "Đang cập nhật" },
-                { label: "Đổi trả", value: "7 ngày tại cửa hàng" },
-                { label: "Bảo hành", value: "Theo chính sách hãng" },
-              ].map((item) => (
-                <div className="store-stat-card rounded-xl p-3" key={item.label}>
-                  <p className="text-sm font-black text-white">{item.label}</p>
-                  <p className="text-caption mt-1 text-slate-400">{item.value}</p>
-                </div>
-              ))}
-            </div>
+            <TrustSignalBar
+              compact
+              signals={[
+                { icon: "BadgeCheck", label: "Giá tốt", value: minPrice ? `Từ ${compactCurrency(minPrice)}` : "Đang cập nhật" },
+                { icon: "RotateCcw", label: "Đổi trả", value: "7 ngày tại cửa hàng" },
+                { icon: "ShieldCheck", label: "Bảo hành", value: "Theo chính sách hãng" },
+                { icon: "Truck", label: "Giao nhanh", value: "Theo dõi đơn rõ ràng" },
+              ]}
+            />
           </section>
         </div>
       </Container>

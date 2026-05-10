@@ -1,10 +1,16 @@
 import { createElement } from "react";
 import { motion } from "framer-motion";
-import { PackageSearch } from "lucide-react";
+import { PackageSearch, RotateCcw, ShieldCheck, Truck } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "../../../utils/classNames";
 
 const MotionDiv = motion.div;
+
+const storeTrustHints = [
+  { icon: ShieldCheck, label: "Chính hãng" },
+  { icon: Truck, label: "Giao nhanh" },
+  { icon: RotateCcw, label: "Đổi trả 7 ngày" },
+];
 
 const surfaceClasses = {
   admin: {
@@ -88,6 +94,7 @@ function EmptyState({
   const palette = surfaceClasses[surface] ?? surfaceClasses.store;
   const sizing = sizeClasses[size] ?? sizeClasses.md;
   const body = message ?? description;
+  const shouldShowStoreTrust = framed && surface === "store";
 
   return (
     <MotionDiv
@@ -142,6 +149,24 @@ function EmptyState({
               {secondaryActionLabel}
             </StateAction>
           )}
+        </div>
+      )}
+
+      {shouldShowStoreTrust && (
+        <div className="relative z-10 mt-6 flex flex-wrap justify-center gap-2">
+          {storeTrustHints.map((hint) => {
+            const HintIcon = hint.icon;
+
+            return (
+              <span
+                className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.035] px-3 py-1.5 text-xs font-black text-slate-300"
+                key={hint.label}
+              >
+                <HintIcon size={13} />
+                {hint.label}
+              </span>
+            );
+          })}
         </div>
       )}
     </MotionDiv>

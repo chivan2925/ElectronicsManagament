@@ -3,10 +3,10 @@ import { cn } from "../../utils/classNames";
 
 const variantClasses = {
   primary:
-    "bg-primary text-white shadow-[0_0_24px_rgba(0,91,255,0.36)] hover:-translate-y-0.5 hover:bg-primary-hover hover:shadow-[0_0_36px_rgba(0,91,255,0.65)] active:translate-y-0",
+    "bg-primary text-white shadow-[0_0_24px_rgba(0,91,255,0.36)] hover:-translate-y-0.5 hover:bg-primary-hover hover:shadow-[0_0_36px_rgba(0,91,255,0.65)] active:translate-y-0 active:scale-[0.96]",
   outline:
-    "border border-white/10 bg-black/30 text-white backdrop-blur-xl hover:border-blue-300/70 hover:bg-blue-500/10 hover:shadow-[0_0_26px_rgba(0,91,255,0.42)]",
-  ghost: "text-slate-300 hover:bg-white/[0.06] hover:text-white",
+    "border border-white/10 bg-black/30 text-white backdrop-blur-xl hover:-translate-y-0.5 hover:border-blue-300/70 hover:bg-blue-500/10 hover:shadow-[0_0_26px_rgba(0,91,255,0.42)] active:translate-y-0 active:scale-[0.96]",
+  ghost: "text-slate-300 hover:-translate-y-0.5 hover:bg-white/[0.06] hover:text-white active:translate-y-0 active:scale-[0.96]",
 };
 
 const sizeClasses = {
@@ -30,7 +30,7 @@ function IconButton({
     Component,
     {
       className: cn(
-        "transition-default inline-flex shrink-0 items-center justify-center outline-none focus-visible:ring-2 focus-visible:ring-blue-300/60 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950",
+        "transition-default inline-flex shrink-0 items-center justify-center outline-none will-change-transform focus-visible:ring-2 focus-visible:ring-blue-300/60 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950",
         variantClasses[variant] || variantClasses.ghost,
         sizeClasses[size] || sizeClasses.md,
         className,

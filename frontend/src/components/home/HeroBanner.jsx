@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
-import { ArrowLeft, ArrowRight, CheckCircle2 } from "lucide-react";
+import { Link } from "react-router-dom";
+import { ArrowLeft, ArrowRight, CheckCircle2, ShoppingBag } from "lucide-react";
 import { fadeIn, fadeUp, hoverLift, imageZoom, staggerContainer, tapSoft } from "../../styles/animations";
 import Badge from "../ui/Badge";
 import Button from "../ui/Button";
@@ -50,10 +51,16 @@ function HeroBanner({ promotion }) {
 
           <MotionDiv className="mt-6 flex flex-wrap gap-3 sm:mt-8" variants={fadeUp}>
             <MotionDiv whileHover={hoverLift} whileTap={tapSoft}>
-              <Button className="shadow-[0_0_42px_rgba(0,91,255,0.56),0_16px_40px_rgba(0,0,0,0.28)]" size="lg">Mua ngay</Button>
+              <Button as={Link} className="shadow-[0_0_42px_rgba(0,91,255,0.56),0_16px_40px_rgba(0,0,0,0.28)]" size="lg" to="/products">
+                <ShoppingBag size={18} />
+                Mua ngay
+              </Button>
             </MotionDiv>
             <MotionDiv whileHover={hoverLift} whileTap={tapSoft}>
-              <Button className="border-blue-200/30 bg-white/[0.045]" size="lg" variant="outline">Xem chi tiết</Button>
+              <Button as={Link} className="border-blue-200/30 bg-white/[0.045]" size="lg" to="/products?sort=best-selling" variant="outline">
+                Xem chi tiết
+                <ArrowRight size={18} />
+              </Button>
             </MotionDiv>
           </MotionDiv>
         </MotionDiv>

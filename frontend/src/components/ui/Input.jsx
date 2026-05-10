@@ -1,8 +1,8 @@
 import { cn } from "../../utils/classNames";
 
 const variantClasses = {
-  dark: "border-white/10 bg-slate-950/55 text-white placeholder:text-slate-500 focus-within:border-blue-400/80 focus-within:bg-slate-950/75 focus-within:shadow-[0_0_34px_rgba(0,91,255,0.22)]",
-  light: "border-border bg-slate-50 text-slate-700 placeholder:text-slate-400 focus-within:border-primary focus-within:bg-white focus-within:ring-2 focus-within:ring-blue-100",
+  dark: "border-white/10 bg-slate-950/55 text-white placeholder:text-slate-500 hover:border-blue-300/35 hover:bg-slate-950/70 focus-within:border-blue-400/80 focus-within:bg-slate-950/75 focus-within:shadow-[0_0_34px_rgba(0,91,255,0.22)]",
+  light: "border-border bg-slate-50 text-slate-700 placeholder:text-slate-400 hover:border-blue-200 hover:bg-white focus-within:border-primary focus-within:bg-white focus-within:ring-2 focus-within:ring-blue-100",
 };
 
 const sizeClasses = {

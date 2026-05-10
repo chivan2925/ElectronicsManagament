@@ -1,6 +1,7 @@
 import { Link, Outlet } from "react-router-dom";
 import { ChevronRight, PackageCheck, ShieldCheck, UserRound, WalletCards } from "lucide-react";
 import useAccountProfile from "../../hooks/useAccountProfile";
+import TrustSignalBar from "../common/TrustSignalBar";
 import AnnouncementBar from "../layout/AnnouncementBar";
 import Header from "../layout/Header";
 import Badge from "../ui/Badge";
@@ -58,6 +59,17 @@ function ProfileLayout() {
             </div>
           </div>
         </section>
+
+        <TrustSignalBar
+          className="mt-5"
+          compact
+          signals={[
+            { icon: "ShieldCheck", label: "Tài khoản an toàn", value: profile?.status || "ACTIVE" },
+            { icon: "PackageCheck", label: "Đơn hàng", value: "Theo dõi lịch sử mua" },
+            { icon: "WalletCards", label: "Ưu đãi thành viên", value: "Coupon và điểm thưởng" },
+            { icon: "Headphones", label: "Hỗ trợ", value: "Thông tin dùng cho checkout" },
+          ]}
+        />
 
         <div className="mt-7 grid gap-6 lg:grid-cols-[280px_minmax(0,1fr)] lg:items-start xl:grid-cols-[300px_minmax(0,1fr)]">
           <AccountSidebar isLoading={isLoadingProfile} profile={profile} />

@@ -14,6 +14,8 @@ function EmptyProductsState({ hasActiveFilters, onClearAll, search }) {
           : "Bộ lọc hiện tại chưa khớp sản phẩm nào trong danh sách. Xóa bớt điều kiện để mở rộng kết quả."
       }
       onAction={onClearAll}
+      secondaryActionLabel={hasActiveFilters ? "Xem toàn bộ catalog" : null}
+      secondaryActionTo="/products"
       surface="store"
       title="Không có sản phẩm phù hợp"
     />

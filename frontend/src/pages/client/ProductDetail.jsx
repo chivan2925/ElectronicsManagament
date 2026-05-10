@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ChevronRight, PackageSearch, ShoppingBag } from "lucide-react";
+import TrustSignalBar from "../../components/common/TrustSignalBar";
 import AnnouncementBar from "../../components/layout/AnnouncementBar";
 import Header from "../../components/layout/Header";
 import ProductGallery from "../../components/product/ProductGallery";
@@ -162,6 +163,18 @@ function ProductDetailLoading() {
             <SkeletonBlock className="mt-5 h-12 rounded-2xl" />
           </section>
         </div>
+
+        <div className="skeleton-card mt-6 rounded-3xl p-3 sm:p-4">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {Array.from({ length: 4 }, (_, index) => (
+              <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-3" key={`detail-trust-${index}`}>
+                <SkeletonBlock className="h-10 w-10 rounded-2xl" />
+                <SkeletonBlock className="mt-3 h-4 w-24 rounded-full" />
+                <SkeletonBlock className="mt-2 h-3 w-32 rounded-full" />
+              </div>
+            ))}
+          </div>
+        </div>
       </Container>
     </div>
   );
@@ -274,6 +287,17 @@ function ProductDetailContent({ detail, relatedProducts }) {
             />
           </MotionDiv>
         </MotionDiv>
+
+        <TrustSignalBar
+          className="mt-6"
+          compact
+          signals={[
+            { icon: "ShieldCheck", label: "Chính hãng", value: "Bảo hành theo chính sách" },
+            { icon: "Headphones", label: "Tư vấn setup", value: "Hỗ trợ chọn đúng nhu cầu" },
+            { icon: "Truck", label: "Giao nhanh", value: "Theo dõi đơn sau checkout" },
+            { icon: "RotateCcw", label: "Đổi trả", value: "Hỗ trợ trong 7 ngày" },
+          ]}
+        />
 
         <div className="mt-6 grid gap-6">
           <ProductSpecs description={detail.description} specs={detail.specs} />

@@ -72,6 +72,8 @@ The authenticated storefront account area now exists at `/profile`, `/profile/or
 
 The profile overview now includes a loyalty/reward UI foundation with `LoyaltyCard.jsx`, `RewardsWidget.jsx`, and `CouponWallet.jsx` for reward points, loyalty level, coupon wallet, special offers, and membership card placeholders without backend loyalty logic.
 
+The customer ecommerce experience now has a reusable trust-signal foundation, stronger CTA/hover/focus interactions, shared store empty-state trust hints, improved PLP/PDP skeletons, and consistent trust indicators across homepage, PLP, PDP, cart, checkout, and profile without a homepage redesign.
+
 Phase 2 cleanup normalized shared/admin visual patterns for cards, borders, shadows, hover states, focus states, icon buttons, typography usage, and responsive behavior without a large rewrite.
 
 Frontend routing now includes client ecommerce routes and admin routes with placeholders for pages that are not implemented yet.
@@ -514,6 +516,7 @@ Latest validation:
 - Build still reports a Vite chunk-size warning for a JavaScript bundle over 500 kB.
 - `npm run lint`, `npm run build`, and `git diff --check` passed after building the Notification System foundation. Build still reports the existing Vite chunk-size warning, and `git diff --check` reported CRLF normalization warnings for edited files.
 - `npm run lint` and `npm run build` passed after building the customer loyalty/reward UI foundation. Build still reports the existing Vite chunk-size warning.
+- `npm run lint`, `npm run build`, `git diff --check`, and local route smoke checks passed for `/`, `/products`, `/products/:slug`, `/cart`, `/checkout`, and `/profile` after customer ecommerce experience polish. Build still reports the existing Vite chunk-size warning, and `git diff --check` reported CRLF normalization warnings for edited frontend files.
 
 ## Known Issues
 

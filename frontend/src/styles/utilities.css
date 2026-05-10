@@ -118,6 +118,8 @@
   }
 
   .skeleton-card {
+    position: relative;
+    overflow: hidden;
     border: 1px solid rgba(148, 163, 184, 0.14);
     background:
       linear-gradient(180deg, rgba(15, 23, 42, 0.76), rgba(7, 17, 31, 0.86)),
@@ -256,6 +258,20 @@
       0 18px 50px rgba(0, 0, 0, 0.24),
       0 0 30px rgba(0, 91, 255, 0.08);
     backdrop-filter: blur(14px);
+  }
+
+  .skeleton-card::before {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(120deg, rgba(255, 255, 255, 0.06), transparent 28%, rgba(0, 91, 255, 0.08));
+    opacity: 0.72;
+  }
+
+  .skeleton-card > * {
+    position: relative;
+    z-index: 1;
   }
 
   .store-stat-card {

@@ -24,14 +24,21 @@ function formatDate(value) {
 
 function ProfileOverviewSkeleton() {
   return (
-    <section className="rounded-3xl border border-white/10 bg-slate-950/36 p-5 shadow-inner shadow-white/[0.03] backdrop-blur-xl">
-      <SkeletonBlock className="h-6 w-52" />
-      <SkeletonBlock className="mt-5 h-20 w-full" />
-      <div className="mt-4 grid gap-3 md:grid-cols-2">
-        <SkeletonBlock className="h-24 w-full" />
-        <SkeletonBlock className="h-24 w-full" />
+    <div className="space-y-5">
+      <section className="skeleton-card rounded-3xl p-5">
+        <SkeletonBlock className="h-6 w-52" />
+        <SkeletonBlock className="mt-5 h-20 w-full" />
+        <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+          {Array.from({ length: 4 }, (_, index) => (
+            <SkeletonBlock className="h-24 w-full" key={`profile-info-${index}`} />
+          ))}
+        </div>
+      </section>
+      <div className="grid gap-5 xl:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)]">
+        <SkeletonBlock className="h-56 w-full rounded-3xl" />
+        <SkeletonBlock className="h-56 w-full rounded-3xl" />
       </div>
-    </section>
+    </div>
   );
 }
 
@@ -39,7 +46,7 @@ function InfoTile({ icon, label, value }) {
   const Icon = icon;
 
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-4 shadow-inner shadow-white/[0.03]">
+    <div className="premium-transition rounded-2xl border border-white/10 bg-white/[0.035] p-4 shadow-inner shadow-white/[0.03] hover:-translate-y-0.5 hover:border-blue-300/35 hover:bg-blue-500/[0.06]">
       <Icon className="text-blue-200 drop-shadow-[0_0_14px_rgba(0,91,255,0.46)]" size={20} />
       <p className="text-caption mt-3 text-slate-500">{label}</p>
       <p className="mt-1 break-words text-sm font-black text-white">{value || "Chưa cập nhật"}</p>

@@ -14,6 +14,9 @@ Ready for Phase 6 — Ecommerce Core Features
 
 ## Recently Completed
 
+- Polished the customer ecommerce experience across homepage, PLP, PDP, cart, checkout, and profile without a large redesign.
+- Added reusable `TrustSignalBar.jsx`, shared store empty-state trust hints, better PLP/PDP skeletons, real hero CTA routing, and consistent hover/focus micro interactions.
+- Verified `npm run lint`, `npm run build`, `git diff --check`, and local route smoke checks for `/`, `/products`, `/products/:slug`, `/cart`, `/checkout`, and `/profile` after customer experience polish. Build still reports the existing Vite chunk-size warning, and `git diff --check` reported CRLF normalization warnings for edited frontend files.
 - Built the customer loyalty/reward UI foundation on the profile overview.
 - Added reusable account widgets: `LoyaltyCard.jsx`, `RewardsWidget.jsx`, and `CouponWallet.jsx`.
 - Added premium membership card, reward points, loyalty level progress, coupon wallet, copied-code feedback, and special offers placeholders without backend loyalty logic.
