@@ -8,6 +8,7 @@ import ProductGallery from "../../components/product/ProductGallery";
 import ProductInfo from "../../components/product/ProductInfo";
 import ProductReviews from "../../components/product/ProductReviews";
 import ProductSpecs from "../../components/product/ProductSpecs";
+import RecentlyViewedSection from "../../components/product/RecentlyViewedSection";
 import RelatedProducts from "../../components/product/RelatedProducts";
 import Button from "../../components/ui/Button";
 import Container from "../../components/ui/Container";
@@ -221,6 +222,12 @@ function ProductDetailContent({ detail, relatedProducts }) {
             reviews={detail.reviews}
           />
           <RelatedProducts products={relatedProducts} />
+          <RecentlyViewedSection
+            excludeProductIds={[detail.product.id, detail.product.apiId, detail.product.slug]}
+            limit={8}
+            subtitle="Các sản phẩm vừa xem được giữ trên trình duyệt để bạn so sánh trước khi chốt đơn."
+            title="Bạn vừa xem"
+          />
         </div>
       </Container>
     </div>

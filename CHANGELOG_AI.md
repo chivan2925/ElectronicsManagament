@@ -8,6 +8,13 @@ Always update this file after meaningful work.
 
 ## 2026-05-10
 
+### Recently Viewed Products System
+
+- Rebuilt `useRecentlyViewed.js` with lightweight localStorage product snapshots, duplicate prevention across `id`/`apiId`/`slug`, remove, clear, count, and cross-tab sync behavior.
+- Added reusable `frontend/src/components/product/RecentlyViewedSection.jsx` with a responsive horizontal product slider, empty state, clear-history action, and storefront recommendation styling.
+- Displayed recently viewed products on the homepage, product detail pages, wishlist page, and account profile overview placeholder.
+- Verified `npm run lint`, `npm run build`, `git diff --check`, and route smoke checks for `/`, `/products/:slug`, `/profile`, and `/wishlist`. Build still reports the existing Vite chunk-size warning, and `git diff --check` reported CRLF normalization warnings for edited files.
+
 ### Production Wishlist System
 
 - Upgraded the storefront wishlist from ID-only local storage to a shared `WishlistProvider` with persistent product snapshots, optimistic add/remove/clear actions, item pending state, and cross-tab sync.

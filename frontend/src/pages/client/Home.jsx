@@ -9,6 +9,7 @@ import HeroBanner from "../../components/home/HeroBanner";
 import PromoCard from "../../components/home/PromoCard";
 import ServiceBar from "../../components/home/ServiceBar";
 import ProductCard from "../../components/product/ProductCard";
+import RecentlyViewedSection from "../../components/product/RecentlyViewedSection";
 import {
   BannerSkeleton,
   CategorySkeleton,
@@ -146,6 +147,13 @@ function Home() {
 
               <FlashSaleCard product={flashSaleProduct} />
             </section>
+
+            <RecentlyViewedSection
+              limit={10}
+              surface="home"
+              subtitle="Sản phẩm bạn vừa xem được lưu tạm để quay lại so sánh nhanh."
+              title="Tiếp tục xem sản phẩm"
+            />
           </>
         )}
       </Container>

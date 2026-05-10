@@ -16,7 +16,7 @@ Ready for Phase 6 — Ecommerce Core Features
 
 ElectronicsManagement has completed Phase 5 — Admin Dashboard System and is ready for Phase 6 — Ecommerce Core Features.
 
-The client storefront now includes the homepage, Product API-backed product listing and product detail, shared-cart cart and checkout, customer authentication, wishlist, recently viewed, search overlay, and authenticated account experiences. Checkout now creates real backend orders and validates coupons through backend APIs. Wishlist now uses persistent product snapshots, optimistic UI, optional backend sync, wishlist count, move-to-cart, remove, and loading/error states. Recently viewed, search, and homepage product sections still use mock/local state. Frontend admin/staff authentication is connected to the backend JWT API, the admin architecture foundation exists under `frontend/src/admin`, and the `/admin/categories`, `/admin/brands`, `/admin/products`, `/admin/variants`, `/admin/media`, `/admin/orders`, `/admin/warehouse`, `/admin/coupons`, `/admin/users`, `/admin/staff`, and `/admin/roles` modules are connected to real backend APIs with table/grid, search, filters, status controls, detail views, protected actions, and pagination. The admin dashboard and report routes still use mock analytics/report data until reporting APIs are added.
+The client storefront now includes the homepage, Product API-backed product listing and product detail, shared-cart cart and checkout, customer authentication, wishlist, recently viewed, search overlay, and authenticated account experiences. Checkout now creates real backend orders and validates coupons through backend APIs. Wishlist now uses persistent product snapshots, optimistic UI, optional backend sync, wishlist count, move-to-cart, remove, and loading/error states. Recently viewed now uses lightweight localStorage product snapshots, duplicate prevention, clear/remove support, and a reusable responsive recommendation slider on homepage, PDP, wishlist, and profile surfaces. Search and homepage product sections still use mock/local state. Frontend admin/staff authentication is connected to the backend JWT API, the admin architecture foundation exists under `frontend/src/admin`, and the `/admin/categories`, `/admin/brands`, `/admin/products`, `/admin/variants`, `/admin/media`, `/admin/orders`, `/admin/warehouse`, `/admin/coupons`, `/admin/users`, `/admin/staff`, and `/admin/roles` modules are connected to real backend APIs with table/grid, search, filters, status controls, detail views, protected actions, and pagination. The admin dashboard and report routes still use mock analytics/report data until reporting APIs are added.
 
 The frontend folder structure has been normalized without changing the current visual UI.
 
@@ -59,6 +59,8 @@ The storefront checkout page now exists at `/checkout` with authenticated checko
 The storefront customer authentication pages now exist at `/login` and `/register` with reusable dark auth layout/forms, social login placeholders, remember-me, forgot-password placeholder, local validation UI, and responsive dark glass styling. The `/login` form now calls the backend JWT auth service; `/register` remains local until customer registration APIs are ready.
 
 The storefront wishlist page now exists at `/wishlist` with persistent localStorage-backed product snapshots, optional backend wishlist sync through `VITE_WISHLIST_API_PATH`, optimistic add/remove/clear behavior, move-to-cart actions, wishlist count, loading/error states, product-card quick toggles, recently viewed tracking, and reusable wishlist/recently-viewed hooks.
+
+The storefront recently viewed system now uses `useRecentlyViewed.js` and `RecentlyViewedSection.jsx` for persistent product snapshots, duplicate prevention, clear history, responsive product sliders, and reuse on homepage, PDP, wishlist, and profile pages.
 
 The storefront header now includes an advanced mock-backed search overlay with debounced live suggestions, recent searches, trending searches, product/category/brand result previews, reusable result rows, search highlighting, category-aware and brand-aware scoring, loading/empty states, and keyboard navigation behavior.
 
@@ -341,6 +343,7 @@ Current frontend structure:
 - Checkout coupon, order creation, and profile prefill logic lives in `frontend/src/hooks/useCheckoutCoupon.js`, `useCheckoutOrder.js`, and `useCheckoutProfile.js`.
 - Authenticated account profile state logic lives in `frontend/src/hooks/useAccountProfile.js`.
 - Wishlist state access lives in `frontend/src/hooks/useWishlist.js`, backed by `frontend/src/wishlist/WishlistProvider.jsx`; recently viewed local state logic lives in `frontend/src/hooks/useRecentlyViewed.js`.
+- Reusable recently viewed UI lives in `frontend/src/components/product/RecentlyViewedSection.jsx`.
 - Storefront search overlay logic lives in `frontend/src/hooks/useSearch.js`, with recent-search persistence in `frontend/src/hooks/useRecentSearches.js`.
 - Skeleton loading components live in `frontend/src/components/skeletons/`.
 - Admin layout components live in `frontend/src/admin/layouts/`, with legacy compatibility exports preserved through `frontend/src/layouts/AdminLayout.jsx`.
@@ -394,6 +397,7 @@ Homepage state:
 - `/login` now renders the dark auth page and submits through `authService.login()`.
 - `/register` still renders the local ecommerce registration page until customer registration APIs exist and is now guest-only.
 - `/wishlist` now renders the production-style persistent wishlist and recently viewed page with optional backend sync, optimistic actions, move-to-cart, remove item, clear, sync status, loading states, and API error fallback.
+- The homepage, PDP, wishlist page, and profile overview now render the reusable recently viewed products slider when local history exists, with an empty-state placeholder when appropriate.
 - `/profile`, `/profile/orders`, and `/profile/settings` now render the protected customer account area with real profile/order APIs.
 - Client routes beyond homepage, product listing, product detail, cart, checkout, login, register, wishlist, and profile routes that are not fully implemented render dark ecommerce placeholder pages.
 - `/admin/login` now renders the dark premium admin auth page and submits through `authService.login()`.
@@ -486,6 +490,8 @@ Latest validation:
 - `npm run lint`, `npm run build`, and `git diff --check` passed after building the Product Reviews System. Build still reports the existing Vite chunk-size warning, and `git diff --check` reported CRLF normalization warnings for edited frontend files.
 - `npm run lint`, `npm run build`, and `git diff --check` passed after upgrading the Wishlist System. Build still reports the existing Vite chunk-size warning, and `git diff --check` reported CRLF normalization warnings for edited files.
 - Local Vite route smoke checks returned `200` for `/wishlist` and `/products` after upgrading the Wishlist System.
+- `npm run lint`, `npm run build`, and `git diff --check` passed after building the Recently Viewed Products system. Build still reports the existing Vite chunk-size warning, and `git diff --check` reported CRLF normalization warnings for edited files.
+- Local Vite route smoke checks returned `200` for `/`, `/products/:slug`, `/profile`, and `/wishlist` after adding the reusable recently viewed slider.
 - `mvn spring-boot:run` reached Tomcat startup after the Jackson fix; the verification process was stopped after confirming startup.
 - Backend startup still logs local PostgreSQL `ddl-auto` warnings for legacy/non-null schema drift in `media`, `products`, `users`, `variants`, and `warehouse_*` tables.
 - Build still reports a Vite chunk-size warning for a JavaScript bundle over 500 kB.

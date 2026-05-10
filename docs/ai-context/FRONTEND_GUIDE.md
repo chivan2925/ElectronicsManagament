@@ -348,6 +348,7 @@ The `/products` page lives at `frontend/src/pages/client/ProductListingPage.jsx`
 Reusable listing components live in `frontend/src/components/product/`:
 
 - `ProductCard.jsx`
+- `RecentlyViewedSection.jsx`
 - `FilterSidebar.jsx`
 - `SearchProductsInput.jsx`
 - `SortDropdown.jsx`
@@ -460,7 +461,9 @@ Reusable wishlist/recently viewed state hooks live in `frontend/src/hooks/`:
 - `useWishlist.js`
 - `useRecentlyViewed.js`
 
-Wishlist API sync lives in `frontend/src/api/wishlistService.js` and `wishlistMapper.js`. The current frontend is local-first and uses `VITE_WISHLIST_API_PATH` only when a compatible backend wishlist API exists; missing or unauthorized APIs fall back to local persistence. Recently viewed remains localStorage-backed until product history APIs are ready.
+Wishlist API sync lives in `frontend/src/api/wishlistService.js` and `wishlistMapper.js`. The current frontend is local-first and uses `VITE_WISHLIST_API_PATH` only when a compatible backend wishlist API exists; missing or unauthorized APIs fall back to local persistence.
+
+Recently viewed products use lightweight localStorage product snapshots through `useRecentlyViewed.js`, with duplicate prevention and clear/remove helpers. The reusable `RecentlyViewedSection.jsx` renders the responsive product slider used on homepage, PDP, wishlist, and profile overview surfaces until product history APIs are ready.
 
 ## Search Overlay
 

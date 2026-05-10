@@ -3,6 +3,7 @@ import { CalendarDays, ChevronRight, Mail, PackageSearch, Phone, Settings, UserR
 import ApiErrorAlert from "../../components/ui/feedback/ApiErrorAlert";
 import Badge from "../../components/ui/Badge";
 import Button from "../../components/ui/Button";
+import RecentlyViewedSection from "../../components/product/RecentlyViewedSection";
 import SkeletonBlock from "../../components/skeletons/SkeletonBlock";
 
 function formatDate(value) {
@@ -121,6 +122,14 @@ function ProfileOverview() {
           </span>
         </Link>
       </section>
+
+      <RecentlyViewedSection
+        compact
+        limit={6}
+        showClearAction={false}
+        subtitle="Những sản phẩm bạn vừa mở sẽ xuất hiện ở đây để quay lại nhanh."
+        title="Sản phẩm đã xem"
+      />
     </div>
   );
 }
