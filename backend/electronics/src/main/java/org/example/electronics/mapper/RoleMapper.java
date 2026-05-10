@@ -19,8 +19,12 @@ public interface RoleMapper {
     @Mapping(target = "permissions", ignore = true)
     RoleEntity toNewEntity(AdminRoleRequestDTO adminRoleRequestDTO);
 
+    @Mapping(target = "permissionCount", expression = "java(roleEntity.getPermissions() == null ? 0 : roleEntity.getPermissions().size())")
+    @Mapping(target = "staffCount", ignore = true)
     AdminRoleResponseDTO toAdminResponseDTO(RoleEntity roleEntity);
 
+    @Mapping(target = "permissionCount", expression = "java(roleEntity.getPermissions() == null ? 0 : roleEntity.getPermissions().size())")
+    @Mapping(target = "staffCount", ignore = true)
     AdminDetailRoleResponseDTO toAdminDetailResponseDTO(RoleEntity roleEntity);
 
     @Mapping(target = "permissions", ignore = true)

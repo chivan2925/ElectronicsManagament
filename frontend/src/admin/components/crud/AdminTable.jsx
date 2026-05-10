@@ -4,6 +4,13 @@ import { cn } from "../../../utils/classNames";
 import AdminPagination from "./AdminPagination";
 import EmptyAdminState from "./EmptyAdminState";
 
+const rowActionToneClasses = {
+  danger: "hover:bg-rose-50 hover:text-rose-600 focus-visible:ring-rose-200",
+  neutral: "hover:bg-white hover:text-primary focus-visible:ring-blue-200",
+  primary: "hover:bg-blue-50 hover:text-primary focus-visible:ring-blue-200",
+  warning: "hover:bg-amber-50 hover:text-amber-600 focus-visible:ring-amber-200",
+};
+
 function getPathValue(item, path) {
   return String(path)
     .split(".")
@@ -85,6 +92,22 @@ function renderCell(column, row, rowIndex) {
   }
 
   return getPathValue(row, column.key);
+}
+
+function resolveActionTone(action) {
+  if (action.tone) {
+    return action.tone;
+  }
+
+  if (["delete", "remove"].includes(action.key)) {
+    return "danger";
+  }
+
+  if (["edit", "update"].includes(action.key)) {
+    return "warning";
+  }
+
+  return "neutral";
 }
 
 function AdminTable({
@@ -327,19 +350,26 @@ function AdminTable({
                         <div className="inline-flex items-center gap-1 rounded-xl bg-slate-50 p-1 ring-1 ring-slate-200">
                           {rowActions
                             .filter((action) => !(typeof action.hidden === "function" ? action.hidden(row) : action.hidden))
-                            .map((action) => (
-                              <button
-                                aria-label={action.label}
-                                className="inline-flex h-8 min-w-8 items-center justify-center rounded-lg px-2 text-xs font-black text-slate-500 transition hover:bg-white hover:text-primary disabled:cursor-not-allowed disabled:text-slate-300"
-                                disabled={typeof action.disabled === "function" ? action.disabled(row) : action.disabled}
-                                key={action.key}
-                                onClick={() => action.onClick?.(row)}
-                                title={action.label}
-                                type="button"
-                              >
-                                {action.icon ? createElement(action.icon, { size: 16 }) : action.label}
-                              </button>
-                            ))}
+                            .map((action) => {
+                              const disabled = typeof action.disabled === "function" ? action.disabled(row) : action.disabled;
+
+                              return (
+                                <button
+                                  aria-label={action.label}
+                                  className={cn(
+                                    "inline-flex h-8 min-w-8 items-center justify-center rounded-lg px-2 text-xs font-black text-slate-500 transition outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-white disabled:cursor-not-allowed disabled:text-slate-300 disabled:hover:bg-transparent",
+                                    rowActionToneClasses[resolveActionTone(action)] || rowActionToneClasses.neutral,
+                                  )}
+                                  disabled={disabled}
+                                  key={action.key}
+                                  onClick={() => action.onClick?.(row)}
+                                  title={action.label}
+                                  type="button"
+                                >
+                                  {action.icon ? createElement(action.icon, { size: 16 }) : action.label}
+                                </button>
+                              );
+                            })}
                         </div>
                       </td>
                     ) : null}

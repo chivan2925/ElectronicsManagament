@@ -3,6 +3,33 @@ import { unwrapApiPayload } from "./productMapper";
 const DEFAULT_USER_STATUS = "ACTIVE";
 const CUSTOMER_ROLE_LABEL = "Customer";
 
+const RESOURCE_LABELS = {
+  "activity-log": "Activity logs",
+  "best-seller-report": "Best seller reports",
+  brand: "Brands",
+  category: "Categories",
+  coupon: "Coupons",
+  dashboard: "Dashboard",
+  media: "Media library",
+  order: "Orders",
+  product: "Products",
+  "revenue-report": "Revenue reports",
+  role: "Roles & permissions",
+  staff: "Staff",
+  user: "Customers",
+  variant: "Variants",
+  warehouse: "Warehouse",
+};
+
+const ACTION_LABELS = {
+  access: "Access",
+  create: "Create",
+  delete: "Delete",
+  manage: "Manage",
+  update: "Update",
+  view: "View",
+};
+
 function isPlainObject(value) {
   return Boolean(value && typeof value === "object" && !Array.isArray(value));
 }
@@ -30,6 +57,42 @@ function firstDefined(...values) {
 function toNumber(value, fallback = 0) {
   const number = Number(value);
   return Number.isFinite(number) ? number : fallback;
+}
+
+function toReadableLabel(value) {
+  return String(value ?? "")
+    .replace(/[:._-]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .replace(/\b\w/g, (character) => character.toUpperCase());
+}
+
+function parsePermissionCode(raw = {}) {
+  const source = isPlainObject(raw) ? raw : {};
+  const code = String(firstDefined(source.code, source.permissionCode, source.name, raw, "")).trim();
+  const normalized = code.toLowerCase().replace(/[._\s]+/g, ":").replace(/:+/g, ":").replace(/^:|:$/g, "");
+  const parts = normalized.split(":").filter(Boolean);
+  const action = firstDefined(source.action, parts.length > 1 ? parts.at(-1) : "access", "access");
+  const resource = firstDefined(
+    source.resource,
+    parts.length > 1 ? parts.slice(0, -1).join(":") : parts[0],
+    "system",
+  );
+
+  return {
+    action,
+    actionLabel: ACTION_LABELS[action] ?? toReadableLabel(action),
+    resource,
+    resourceLabel: RESOURCE_LABELS[resource] ?? toReadableLabel(resource),
+  };
+}
+
+function toIdArray(value) {
+  return toArray(value)
+    .map((item) => firstDefined(item?.id, item?.permissionId, item))
+    .filter((item) => item !== null && item !== undefined && item !== "")
+    .map((item) => Number(item))
+    .filter((item) => Number.isInteger(item));
 }
 
 function getPageItems(response) {
@@ -128,20 +191,44 @@ export function normalizeAdminStaff(raw = {}) {
   };
 }
 
+export function normalizeAdminPermission(raw = {}) {
+  const payload = unwrapApiPayload(raw);
+  const source = isPlainObject(payload) ? payload : { code: payload, name: payload };
+  const code = firstDefined(source.code, source.permissionCode, source.name, "");
+  const parsed = parsePermissionCode(source);
+
+  return {
+    action: parsed.action,
+    actionLabel: parsed.actionLabel,
+    code,
+    createdAt: firstDefined(source.createdAt, null),
+    description: firstDefined(source.description, ""),
+    groupLabel: parsed.resourceLabel,
+    id: firstDefined(source.id, source.permissionId, null),
+    name: firstDefined(source.name, toReadableLabel(code), code),
+    raw: source,
+    resource: parsed.resource,
+    updatedAt: firstDefined(source.updatedAt, null),
+  };
+}
+
 export function normalizeAdminRole(raw = {}) {
   const source = unwrapApiPayload(raw) ?? {};
+  const permissions = toArray(source.permissions).map(normalizeAdminPermission);
+  const explicitPermissionIds = toIdArray(firstDefined(source.permissionIds, source.permissionsIds, []));
+  const permissionIds = explicitPermissionIds.length
+    ? explicitPermissionIds
+    : permissions.map((permission) => permission.id).filter((id) => id !== null && id !== undefined);
 
   return {
     createdAt: firstDefined(source.createdAt, null),
     id: firstDefined(source.id, source.roleId, null),
     name: firstDefined(source.name, source.roleName, ""),
-    permissions: toArray(source.permissions).map((permission) => ({
-      code: firstDefined(permission.code, ""),
-      description: firstDefined(permission.description, ""),
-      id: firstDefined(permission.id, permission.permissionId, null),
-      name: firstDefined(permission.name, permission.code, ""),
-    })),
+    permissionCount: toNumber(firstDefined(source.permissionCount, source.permissionsCount, permissions.length), permissions.length),
+    permissionIds,
+    permissions,
     raw: source,
+    staffCount: toNumber(firstDefined(source.staffCount, source.staffsCount, source.employeeCount, 0), 0),
     status: firstDefined(source.status, DEFAULT_USER_STATUS),
     updatedAt: firstDefined(source.updatedAt, null),
   };
@@ -180,6 +267,17 @@ export function normalizeAdminRolePage(response) {
   };
 }
 
+export function normalizeAdminPermissionPage(response) {
+  const payload = unwrapApiPayload(response);
+  const items = getPageItems(payload).map(normalizeAdminPermission);
+
+  return {
+    items,
+    meta: getPageMeta(payload, items),
+    raw: payload,
+  };
+}
+
 export function buildStaffCreatePayload(values = {}) {
   return {
     address: values.address?.trim() ?? "",
@@ -200,4 +298,12 @@ export function buildStaffUpdatePayload(values = {}) {
   const payload = buildStaffCreatePayload(values);
   delete payload.password;
   return payload;
+}
+
+export function buildRolePayload(values = {}) {
+  return {
+    name: values.name?.trim() ?? "",
+    permissionIds: toIdArray(values.permissionIds),
+    status: values.status || DEFAULT_USER_STATUS,
+  };
 }

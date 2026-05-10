@@ -1,18 +1,8 @@
 import { Eye, Package, Phone, ReceiptText, Truck } from "lucide-react";
 import { useMemo } from "react";
 import { getStageTone } from "../../../api/orderMapper";
-import { AdminIconButton, AdminTable } from "../../../admin/components";
-import { cn } from "../../../utils/classNames";
+import { AdminIconButton, AdminTable, StatusBadge } from "../../../admin/components";
 import { formatCurrency } from "../../../utils/formatters";
-
-const toneClasses = {
-  amber: "bg-amber-50 text-amber-700 ring-amber-200",
-  blue: "bg-blue-50 text-blue-700 ring-blue-200",
-  emerald: "bg-emerald-50 text-emerald-700 ring-emerald-200",
-  rose: "bg-rose-50 text-rose-700 ring-rose-200",
-  slate: "bg-slate-100 text-slate-700 ring-slate-200",
-  violet: "bg-violet-50 text-violet-700 ring-violet-200",
-};
 
 const paymentLabels = {
   FAILED: "Failed",
@@ -43,14 +33,6 @@ const shippingTones = {
   RETURNED: "violet",
   SHIPPING: "blue",
 };
-
-function Badge({ label, tone = "slate" }) {
-  return (
-    <span className={cn("inline-flex items-center rounded-full px-2.5 py-1 text-xs font-black ring-1", toneClasses[tone] || toneClasses.slate)}>
-      {label}
-    </span>
-  );
-}
 
 function formatDate(value) {
   if (!value) {
@@ -104,12 +86,12 @@ function OrderTable({ canUpdate = false, data = [], loading = false, onView, pag
       {
         key: "stage",
         label: "Status",
-        render: (item) => <Badge label={item.stageLabel} tone={getStageTone(item.stage)} />,
+        render: (item) => <StatusBadge label={item.stageLabel} status={String(item.stage || "").toUpperCase()} tone={getStageTone(item.stage)} />,
       },
       {
         key: "paymentStatus",
         label: "Payment",
-        render: (item) => <Badge label={paymentLabels[item.paymentStatus] || item.paymentStatus} tone={paymentTones[item.paymentStatus]} />,
+        render: (item) => <StatusBadge label={paymentLabels[item.paymentStatus] || item.paymentStatus} status={item.paymentStatus} tone={paymentTones[item.paymentStatus]} />,
       },
       {
         key: "shippingStatus",
@@ -117,7 +99,7 @@ function OrderTable({ canUpdate = false, data = [], loading = false, onView, pag
         render: (item) => (
           <div className="flex items-center gap-2">
             <Truck className="text-slate-400" size={16} />
-            <Badge label={shippingLabels[item.shippingStatus] || item.shippingStatus} tone={shippingTones[item.shippingStatus]} />
+            <StatusBadge label={shippingLabels[item.shippingStatus] || item.shippingStatus} status={item.shippingStatus} tone={shippingTones[item.shippingStatus]} />
           </div>
         ),
       },

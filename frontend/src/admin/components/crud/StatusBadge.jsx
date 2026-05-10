@@ -13,20 +13,36 @@ const statusMeta = {
   ACTIVE: { label: "Đang hoạt động", tone: "emerald" },
   BLOCKED: { label: "Đã khóa", tone: "rose" },
   CANCELLED: { label: "Đã hủy", tone: "rose" },
+  CONFIRMED: { label: "Đã xác nhận", tone: "blue" },
   COMPLETED: { label: "Hoàn tất", tone: "emerald" },
   DELETED: { label: "Đã xóa", tone: "rose" },
+  DELIVERED: { label: "Đã giao", tone: "emerald" },
   DRAFT: { label: "Bản nháp", tone: "slate" },
   EXPIRED: { label: "Hết hạn", tone: "slate" },
+  FAILED: { label: "Thất bại", tone: "rose" },
   HIDDEN: { label: "Đang ẩn", tone: "slate" },
+  INACTIVE: { label: "Tạm ẩn", tone: "amber" },
+  IN_STOCK: { label: "Còn hàng", tone: "emerald" },
   LOW_STOCK: { label: "Sắp hết hàng", tone: "amber" },
+  OUT_OF_STOCK: { label: "Hết hàng", tone: "rose" },
   PAID: { label: "Đã thanh toán", tone: "emerald" },
   PENDING: { label: "Chờ xử lý", tone: "amber" },
   PROCESSING: { label: "Đang xử lý", tone: "blue" },
   REFUNDED: { label: "Hoàn tiền", tone: "violet" },
+  RETURNED: { label: "Đã trả hàng", tone: "violet" },
+  SCHEDULED: { label: "Sắp chạy", tone: "blue" },
+  SHIPPING: { label: "Đang giao", tone: "blue" },
+  VALID: { label: "Đang hiệu lực", tone: "emerald" },
 };
 
 function StatusBadge({ className, label, status, tone }) {
-  const meta = statusMeta[status] ?? {};
+  const normalizedStatus = status
+    ? String(status)
+        .trim()
+        .toUpperCase()
+        .replace(/[-\s]+/g, "_")
+    : "";
+  const meta = statusMeta[normalizedStatus] ?? {};
   const resolvedTone = tone ?? meta.tone ?? "slate";
   const resolvedLabel = label ?? meta.label ?? status ?? "Unknown";
 

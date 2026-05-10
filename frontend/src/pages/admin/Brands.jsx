@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Eye, EyeOff, ImagePlus, Loader2, Pencil, Plus, Star, Trash2, UploadCloud } from "lucide-react";
 import brandService from "../../api/brandService";
 import { AdminDrawer, AdminFilters, AdminForm, AdminSearch, AdminTable, ConfirmDialog, StatusBadge } from "../../admin/components";
-import { ADMIN_MODAL_TYPES, useAdminModal } from "../../admin/hooks";
+import { ADMIN_MODAL_TYPES, useAdminModal, useDebouncedValue } from "../../admin/hooks";
 import { ADMIN_RESOURCES } from "../../auth/roleHelpers";
 import usePermissions from "../../auth/usePermissions";
 import ApiErrorAlert from "../../components/ui/feedback/ApiErrorAlert";
@@ -133,7 +133,7 @@ function Brands() {
   const { closeModal, openCreate, openDelete, openEdit } = modal;
   const [brands, setBrands] = useState([]);
   const [query, setQuery] = useState("");
-  const [debouncedQuery, setDebouncedQuery] = useState("");
+  const debouncedQuery = useDebouncedValue(query.trim());
   const [statusFilter, setStatusFilter] = useState("");
   const [featuredFilter, setFeaturedFilter] = useState("");
   const [loading, setLoading] = useState(true);
@@ -159,14 +159,6 @@ function Brands() {
   const isFormOpen = modal.modalType === ADMIN_MODAL_TYPES.create || modal.modalType === ADMIN_MODAL_TYPES.edit;
   const editingBrand = modal.modalType === ADMIN_MODAL_TYPES.edit ? modal.modalPayload : null;
   const deletingBrand = modal.modalType === ADMIN_MODAL_TYPES.delete ? modal.modalPayload : null;
-
-  useEffect(() => {
-    const timer = window.setTimeout(() => {
-      setDebouncedQuery(query.trim());
-    }, 320);
-
-    return () => window.clearTimeout(timer);
-  }, [query]);
 
   const loadBrands = useCallback(async () => {
     setLoading(true);

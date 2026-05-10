@@ -1,8 +1,8 @@
 import { api } from "./client";
+import { buildCouponPayload, normalizeCoupon, normalizeCouponPage } from "./couponMapper";
 import {
   calculateCouponDiscount,
   createApiClientError,
-  normalizeCouponPage,
   validateCouponForCart,
 } from "./checkoutMapper";
 import { createResourceService } from "./resourceService";
@@ -11,7 +11,42 @@ const RESOURCE_PATH = import.meta.env.VITE_COUPON_API_PATH || "/admin/coupons";
 
 const baseCouponService = createResourceService(RESOURCE_PATH);
 
-export const { create, getAll, getById, remove, update } = baseCouponService;
+function cleanParams(params = {}) {
+  return Object.fromEntries(
+    Object.entries(params).filter(([, value]) => value !== null && value !== undefined && value !== ""),
+  );
+}
+
+export async function getAll(params = {}, config = {}) {
+  const data = await baseCouponService.getAll(cleanParams(params), config);
+  return normalizeCouponPage(data);
+}
+
+export async function getById(id, config = {}) {
+  const data = await baseCouponService.getById(id, config);
+  return normalizeCoupon(data);
+}
+
+export async function create(payload, config = {}) {
+  const data = await baseCouponService.create(buildCouponPayload(payload), config);
+  return normalizeCoupon(data);
+}
+
+export async function update(id, payload, config = {}) {
+  const data = await baseCouponService.update(id, buildCouponPayload(payload), config);
+  return normalizeCoupon(data);
+}
+
+export async function remove(id, config = {}) {
+  return baseCouponService.remove(id, config);
+}
+
+export async function updateStatus(id, status, config = {}) {
+  const nextStatus = typeof status === "string" ? status : status?.status;
+  const data = await api.patch(`${RESOURCE_PATH}/${id}/status`, { status: nextStatus }, config);
+
+  return normalizeCoupon(data);
+}
 
 export async function applyCouponCode(code, cartContext = {}, config = {}) {
   const normalizedCode = String(code ?? "").trim();
@@ -55,6 +90,7 @@ const couponService = {
   getById,
   remove,
   update,
+  updateStatus,
 };
 
 export default couponService;

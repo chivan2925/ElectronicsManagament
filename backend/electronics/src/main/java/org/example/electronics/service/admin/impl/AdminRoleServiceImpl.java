@@ -50,7 +50,7 @@ public class AdminRoleServiceImpl implements AdminRoleService {
 
         newRoleEntity = roleRepository.save(newRoleEntity);
 
-        return roleMapper.toAdminResponseDTO(newRoleEntity);
+        return toResponseWithCounts(newRoleEntity);
     }
 
     @Transactional
@@ -69,7 +69,7 @@ public class AdminRoleServiceImpl implements AdminRoleService {
         List<PermissionEntity> permissionEntityList = permissionRepository.findAllById(adminRoleRequestDTO.permissionIds());
         existingRoleEntity.setPermissions(new HashSet<>(permissionEntityList));
 
-        return roleMapper.toAdminResponseDTO(existingRoleEntity);
+        return toResponseWithCounts(existingRoleEntity);
     }
 
     @Transactional
@@ -82,7 +82,7 @@ public class AdminRoleServiceImpl implements AdminRoleService {
 
         existingRoleEntity.setStatus(adminUpdateUserStatusRequestDTO.status());
 
-        return roleMapper.toAdminResponseDTO(existingRoleEntity);
+        return toResponseWithCounts(existingRoleEntity);
     }
 
     @Transactional
@@ -112,7 +112,7 @@ public class AdminRoleServiceImpl implements AdminRoleService {
 
         Page<RoleEntity> roleEntityPage = roleRepository.findRolesWithFilter(finalKeyword, status, typeString, startDateTime, endDateTime, pageable);
 
-        return roleEntityPage.map(roleMapper::toAdminResponseDTO);
+        return roleEntityPage.map(this::toResponseWithCounts);
     }
 
     @Transactional(readOnly = true)
@@ -123,6 +123,37 @@ public class AdminRoleServiceImpl implements AdminRoleService {
                         "Không tìm thấy chức vụ với id: " + roleId
                 ));
 
-        return roleMapper.toAdminDetailResponseDTO(existingRoleEntity);
+        return toDetailResponseWithCounts(existingRoleEntity);
+    }
+
+    private AdminRoleResponseDTO toResponseWithCounts(RoleEntity roleEntity) {
+        AdminRoleResponseDTO response = roleMapper.toAdminResponseDTO(roleEntity);
+        long staffCount = roleEntity.getId() == null ? 0 : staffRepository.countByRole_Id(roleEntity.getId());
+
+        return new AdminRoleResponseDTO(
+                response.id(),
+                response.name(),
+                response.permissionCount(),
+                staffCount,
+                response.status(),
+                response.createdAt(),
+                response.updatedAt()
+        );
+    }
+
+    private AdminDetailRoleResponseDTO toDetailResponseWithCounts(RoleEntity roleEntity) {
+        AdminDetailRoleResponseDTO response = roleMapper.toAdminDetailResponseDTO(roleEntity);
+        long staffCount = roleEntity.getId() == null ? 0 : staffRepository.countByRole_Id(roleEntity.getId());
+
+        return new AdminDetailRoleResponseDTO(
+                response.id(),
+                response.name(),
+                response.permissions(),
+                response.permissionCount(),
+                staffCount,
+                response.status(),
+                response.createdAt(),
+                response.updatedAt()
+        );
     }
 }

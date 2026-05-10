@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Eye, EyeOff, Loader2, Pencil, Plus, Trash2 } from "lucide-react";
 import categoryService from "../../api/categoryService";
 import { AdminDrawer, AdminFilters, AdminForm, AdminSearch, AdminTable, ConfirmDialog, StatusBadge } from "../../admin/components";
-import { ADMIN_MODAL_TYPES, useAdminModal } from "../../admin/hooks";
+import { ADMIN_MODAL_TYPES, useAdminModal, useDebouncedValue } from "../../admin/hooks";
 import { ADMIN_RESOURCES } from "../../auth/roleHelpers";
 import usePermissions from "../../auth/usePermissions";
 import ApiErrorAlert from "../../components/ui/feedback/ApiErrorAlert";
@@ -84,7 +84,7 @@ function Categories() {
   const { closeModal, openCreate, openDelete, openEdit } = modal;
   const [categories, setCategories] = useState([]);
   const [query, setQuery] = useState("");
-  const [debouncedQuery, setDebouncedQuery] = useState("");
+  const debouncedQuery = useDebouncedValue(query.trim());
   const [statusFilter, setStatusFilter] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -108,14 +108,6 @@ function Categories() {
   const isFormOpen = modal.modalType === ADMIN_MODAL_TYPES.create || modal.modalType === ADMIN_MODAL_TYPES.edit;
   const editingCategory = modal.modalType === ADMIN_MODAL_TYPES.edit ? modal.modalPayload : null;
   const deletingCategory = modal.modalType === ADMIN_MODAL_TYPES.delete ? modal.modalPayload : null;
-
-  useEffect(() => {
-    const timer = window.setTimeout(() => {
-      setDebouncedQuery(query.trim());
-    }, 320);
-
-    return () => window.clearTimeout(timer);
-  }, [query]);
 
   const loadCategories = useCallback(async () => {
     setLoading(true);

@@ -5,7 +5,7 @@ import categoryService from "../../api/categoryService";
 import productService from "../../api/productService";
 import { parseProductSpecsText, normalizeSlug } from "../../api/productMapper";
 import { AdminDrawer, ConfirmDialog } from "../../admin/components";
-import { ADMIN_MODAL_TYPES, useAdminModal } from "../../admin/hooks";
+import { ADMIN_MODAL_TYPES, useAdminModal, useDebouncedValue } from "../../admin/hooks";
 import { ADMIN_RESOURCES } from "../../auth/roleHelpers";
 import usePermissions from "../../auth/usePermissions";
 import ApiErrorAlert from "../../components/ui/feedback/ApiErrorAlert";
@@ -119,7 +119,7 @@ function Products() {
   const [categories, setCategories] = useState([]);
   const [brands, setBrands] = useState([]);
   const [query, setQuery] = useState("");
-  const [debouncedQuery, setDebouncedQuery] = useState("");
+  const debouncedQuery = useDebouncedValue(query.trim());
   const [categoryFilter, setCategoryFilter] = useState("");
   const [brandFilter, setBrandFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
@@ -147,14 +147,6 @@ function Products() {
   const isEditMode = modal.modalType === ADMIN_MODAL_TYPES.edit;
   const editingProduct = isEditMode ? modal.modalPayload : null;
   const deletingProduct = modal.modalType === ADMIN_MODAL_TYPES.delete ? modal.modalPayload : null;
-
-  useEffect(() => {
-    const timer = window.setTimeout(() => {
-      setDebouncedQuery(query.trim());
-    }, 320);
-
-    return () => window.clearTimeout(timer);
-  }, [query]);
 
   const loadLookups = useCallback(async () => {
     setLookupLoading(true);

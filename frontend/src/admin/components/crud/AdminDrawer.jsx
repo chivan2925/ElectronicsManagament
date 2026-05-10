@@ -11,6 +11,7 @@ const sizeClasses = {
   lg: "w-full sm:max-w-2xl",
   md: "w-full sm:max-w-xl",
   sm: "w-full sm:max-w-md",
+  xl: "w-full sm:max-w-4xl",
 };
 
 function AdminDrawer({

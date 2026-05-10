@@ -3,7 +3,7 @@ import { Filter, Image, RefreshCcw, Search, ShieldAlert, Star, Upload } from "lu
 import mediaService from "../../api/mediaService";
 import productService from "../../api/productService";
 import { ConfirmDialog } from "../../admin/components";
-import { ADMIN_MODAL_TYPES, useAdminModal } from "../../admin/hooks";
+import { ADMIN_MODAL_TYPES, useAdminModal, useDebouncedValue } from "../../admin/hooks";
 import { ADMIN_RESOURCES } from "../../auth/roleHelpers";
 import usePermissions from "../../auth/usePermissions";
 import ApiErrorAlert from "../../components/ui/feedback/ApiErrorAlert";
@@ -65,7 +65,7 @@ function Media() {
   const [mediaItems, setMediaItems] = useState([]);
   const [products, setProducts] = useState([]);
   const [query, setQuery] = useState("");
-  const [debouncedQuery, setDebouncedQuery] = useState("");
+  const debouncedQuery = useDebouncedValue(query.trim());
   const [productFilter, setProductFilter] = useState("");
   const [primaryFilter, setPrimaryFilter] = useState("");
   const [uploadProductId, setUploadProductId] = useState("");
@@ -86,14 +86,6 @@ function Media() {
   const canUpdate = permission.canAccessResourceAction(ADMIN_RESOURCES.media, "update");
   const canDelete = permission.canAccessResourceAction(ADMIN_RESOURCES.media, "delete");
   const deletingMedia = modal.modalType === ADMIN_MODAL_TYPES.delete ? modal.modalPayload : null;
-
-  useEffect(() => {
-    const timer = window.setTimeout(() => {
-      setDebouncedQuery(query.trim());
-    }, 320);
-
-    return () => window.clearTimeout(timer);
-  }, [query]);
 
   const loadProducts = useCallback(async () => {
     setProductLoading(true);

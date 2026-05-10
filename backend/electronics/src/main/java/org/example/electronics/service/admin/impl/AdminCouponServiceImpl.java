@@ -15,6 +15,7 @@ import org.example.electronics.mapper.CouponMapper;
 import org.example.electronics.repository.BrandRepository;
 import org.example.electronics.repository.CategoryRepository;
 import org.example.electronics.repository.CouponRepository;
+import org.example.electronics.repository.OrderRepository;
 import org.example.electronics.service.admin.AdminCouponService;
 import org.example.electronics.util.DateTimeUtils;
 import org.springframework.data.domain.Page;
@@ -34,6 +35,7 @@ public class AdminCouponServiceImpl implements AdminCouponService {
     private final CouponRepository couponRepository;
     private final CategoryRepository categoryRepository;
     private final BrandRepository brandRepository;
+    private final OrderRepository orderRepository;
 
     @Transactional
     @Override
@@ -53,7 +55,7 @@ public class AdminCouponServiceImpl implements AdminCouponService {
 
         newCouponEntity = couponRepository.save(newCouponEntity);
 
-        return couponMapper.toAdminResponseDTO(newCouponEntity);
+        return toResponseWithUsage(newCouponEntity);
     }
 
     @Transactional
@@ -77,7 +79,7 @@ public class AdminCouponServiceImpl implements AdminCouponService {
 
         couponMapper.updateEntityFromRequest(adminCouponRequestDTO, existingCouponEntity);
 
-        return couponMapper.toAdminResponseDTO(existingCouponEntity);
+        return toResponseWithUsage(existingCouponEntity);
     }
 
     @Transactional
@@ -90,7 +92,7 @@ public class AdminCouponServiceImpl implements AdminCouponService {
 
         existingCouponEntity.setStatus(adminUpdateCouponStatusRequestDTO.status());
 
-        return couponMapper.toAdminResponseDTO(existingCouponEntity);
+        return toResponseWithUsage(existingCouponEntity);
     }
 
     @Transactional
@@ -116,7 +118,7 @@ public class AdminCouponServiceImpl implements AdminCouponService {
 
         Page<CouponEntity> couponEntityPage = couponRepository.findCouponsWithFilter(finalKeyword, timeStatus, status, typeString, startDateTime, endDateTime, pageable);
 
-        return couponEntityPage.map(couponMapper::toAdminResponseDTO);
+        return couponEntityPage.map(this::toResponseWithUsage);
     }
 
     @Transactional(readOnly = true)
@@ -127,7 +129,31 @@ public class AdminCouponServiceImpl implements AdminCouponService {
                         "Không tìm thấy coupon với id: " + couponId
                 ));
 
-        return couponMapper.toAdminResponseDTO(existingCouponEntity);
+        return toResponseWithUsage(existingCouponEntity);
+    }
+
+    private AdminCouponResponseDTO toResponseWithUsage(CouponEntity couponEntity) {
+        AdminCouponResponseDTO response = couponMapper.toAdminResponseDTO(couponEntity);
+        long usedCount = couponEntity.getId() == null ? 0 : orderRepository.countByCoupon_Id(couponEntity.getId());
+
+        return AdminCouponResponseDTO.builder()
+                .id(response.id())
+                .categoryId(response.categoryId())
+                .brandId(response.brandId())
+                .code(response.code())
+                .type(response.type())
+                .value(response.value())
+                .minOrder(response.minOrder())
+                .startDate(response.startDate())
+                .endDate(response.endDate())
+                .usageLimit(response.usageLimit())
+                .usedCount(usedCount)
+                .maxDiscount(response.maxDiscount())
+                .timeStatus(response.timeStatus())
+                .status(response.status())
+                .createdAt(response.createdAt())
+                .updatedAt(response.updatedAt())
+                .build();
     }
 
     private void assignCategoryAndBrand(CouponEntity couponEntity, Integer categoryId, Integer brandId) {

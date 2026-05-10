@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Eye, Loader2, Lock, Trash2, Unlock } from "lucide-react";
 import userService from "../../api/userService";
 import { AdminDrawer, AdminFilters, AdminSearch, AdminTable, ConfirmDialog, StatusBadge } from "../../admin/components";
-import { ADMIN_MODAL_TYPES, useAdminModal } from "../../admin/hooks";
+import { ADMIN_MODAL_TYPES, useAdminModal, useDebouncedValue } from "../../admin/hooks";
 import { ADMIN_RESOURCES } from "../../auth/roleHelpers";
 import usePermissions from "../../auth/usePermissions";
 import ApiErrorAlert from "../../components/ui/feedback/ApiErrorAlert";
@@ -90,7 +90,7 @@ function Users() {
   const { closeModal, openDelete, openView } = modal;
   const [users, setUsers] = useState([]);
   const [query, setQuery] = useState("");
-  const [debouncedQuery, setDebouncedQuery] = useState("");
+  const debouncedQuery = useDebouncedValue(query.trim());
   const [statusFilter, setStatusFilter] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -109,14 +109,6 @@ function Users() {
   const canDelete = permission.canAccessResourceAction(ADMIN_RESOURCES.users, "delete");
   const viewedUser = detailUser ?? (modal.modalType === ADMIN_MODAL_TYPES.view ? modal.modalPayload : null);
   const deletingUser = modal.modalType === ADMIN_MODAL_TYPES.delete ? modal.modalPayload : null;
-
-  useEffect(() => {
-    const timer = window.setTimeout(() => {
-      setDebouncedQuery(query.trim());
-    }, 320);
-
-    return () => window.clearTimeout(timer);
-  }, [query]);
 
   const loadUsers = useCallback(async () => {
     setLoading(true);

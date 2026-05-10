@@ -1,25 +1,27 @@
 import { Plus } from "lucide-react";
 import PermissionGate from "../../../auth/PermissionGate";
 
-function PageHeader({ title, subtitle, actionLabel = "Thêm mới", actionPolicy = null }) {
-  const actionButton = (
+function PageHeader({ actionLabel = null, actionPolicy = null, onAction, title, subtitle }) {
+  const shouldShowAction = Boolean(actionLabel && onAction);
+  const actionButton = shouldShowAction ? (
     <button
-      className="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-primary px-4 text-sm font-bold text-white shadow-admin-card transition outline-none hover:bg-primary-hover focus-visible:ring-2 focus-visible:ring-blue-200 focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+      className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-primary px-4 text-sm font-black text-white shadow-admin-card transition outline-none hover:bg-primary-hover focus-visible:ring-2 focus-visible:ring-blue-200 focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+      onClick={onAction}
       type="button"
     >
-      <Plus size={18} />
+      <Plus size={17} />
       {actionLabel}
     </button>
-  );
+  ) : null;
 
   return (
-    <div className="mb-6 flex flex-col justify-between gap-4 md:flex-row md:items-center">
+    <div className="mb-6 flex flex-col justify-between gap-4 md:flex-row md:items-end">
       <div>
-        <h1 className="text-2xl font-black tracking-normal text-ink">{title}</h1>
-        <p className="mt-1 text-sm text-muted">{subtitle}</p>
+        <h1 className="text-2xl font-black tracking-normal text-slate-950">{title}</h1>
+        {subtitle ? <p className="mt-1 text-sm font-semibold text-slate-500">{subtitle}</p> : null}
       </div>
 
-      {actionPolicy ? <PermissionGate policy={actionPolicy}>{actionButton}</PermissionGate> : actionButton}
+      {actionPolicy && actionButton ? <PermissionGate policy={actionPolicy}>{actionButton}</PermissionGate> : actionButton}
     </div>
   );
 }

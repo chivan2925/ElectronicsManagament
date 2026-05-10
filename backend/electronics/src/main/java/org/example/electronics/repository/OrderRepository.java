@@ -14,6 +14,8 @@ import java.util.Optional;
 
 public interface OrderRepository extends JpaRepository<OrderEntity, Integer> {
 
+    long countByCoupon_Id(Integer couponId);
+
     @EntityGraph(attributePaths = {"user"})
     @Query("SELECT o FROM OrderEntity o WHERE 1=1 " +
 

@@ -154,6 +154,10 @@ public class UserOrderServiceImpl implements UserOrderService {
             throw new IllegalArgumentException("Đơn hàng chưa đạt giá trị tối thiểu của mã giảm giá");
         }
 
+        if (coupon.getUsageLimit() != null && orderRepository.countByCoupon_Id(coupon.getId()) >= coupon.getUsageLimit()) {
+            throw new IllegalArgumentException("Mã giảm giá đã hết lượt sử dụng");
+        }
+
         if (getCouponEligibleSubtotal(coupon, orderDetails).compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Mã giảm giá không áp dụng cho sản phẩm trong giỏ hàng");
         }

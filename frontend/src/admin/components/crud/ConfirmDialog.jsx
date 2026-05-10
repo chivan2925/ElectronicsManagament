@@ -28,7 +28,7 @@ function ConfirmDialog({
   const footer = (
     <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
       <button
-        className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-black text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
+        className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-black text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 sm:w-auto"
         disabled={loading}
         onClick={onCancel}
         type="button"
@@ -37,7 +37,7 @@ function ConfirmDialog({
       </button>
       <button
         className={cn(
-          "inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-black transition disabled:cursor-not-allowed disabled:opacity-70",
+          "inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-black transition disabled:cursor-not-allowed disabled:opacity-70 sm:w-auto",
           buttonClasses[tone] || buttonClasses.danger,
         )}
         disabled={loading}
@@ -51,7 +51,7 @@ function ConfirmDialog({
   );
 
   return (
-    <AdminModal footer={footer} onClose={onCancel} open={open} size="sm">
+    <AdminModal footer={footer} onClose={loading ? undefined : onCancel} open={open} size="sm">
       <div className="flex gap-4">
         <div className={cn("flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl ring-1", toneClasses[tone])}>
           <AlertTriangle size={22} />

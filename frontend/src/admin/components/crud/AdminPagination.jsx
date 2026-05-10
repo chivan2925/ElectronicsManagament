@@ -43,6 +43,7 @@ function AdminPagination({
 
         <div className="inline-flex items-center rounded-lg border border-slate-200 bg-white p-1">
           <button
+            aria-label="Previous page"
             className="inline-flex h-8 w-8 items-center justify-center rounded-md text-slate-500 transition hover:bg-slate-50 hover:text-primary disabled:cursor-not-allowed disabled:text-slate-300"
             disabled={!canGoPrevious}
             onClick={() => onPageChange?.(safePage - 1)}
@@ -54,6 +55,7 @@ function AdminPagination({
             {safePage + 1}/{safeTotalPages}
           </span>
           <button
+            aria-label="Next page"
             className="inline-flex h-8 w-8 items-center justify-center rounded-md text-slate-500 transition hover:bg-slate-50 hover:text-primary disabled:cursor-not-allowed disabled:text-slate-300"
             disabled={!canGoNext}
             onClick={() => onPageChange?.(safePage + 1)}

@@ -3,6 +3,7 @@ import { CreditCard, Loader2, PackageCheck, ReceiptText, Truck } from "lucide-re
 import orderService from "../../api/orderService";
 import { getOrderStageFilterParams, mapStageToBackend } from "../../api/orderMapper";
 import { AdminDrawer, AdminFilters, AdminSearch } from "../../admin/components";
+import { useDebouncedValue } from "../../admin/hooks";
 import { ADMIN_RESOURCES } from "../../auth/roleHelpers";
 import usePermissions from "../../auth/usePermissions";
 import ApiErrorAlert from "../../components/ui/feedback/ApiErrorAlert";
@@ -48,7 +49,7 @@ function Orders() {
 
   const [orders, setOrders] = useState([]);
   const [query, setQuery] = useState("");
-  const [debouncedQuery, setDebouncedQuery] = useState("");
+  const debouncedQuery = useDebouncedValue(query.trim());
   const [stageFilter, setStageFilter] = useState("");
   const [paymentFilter, setPaymentFilter] = useState("");
   const [shippingFilter, setShippingFilter] = useState("");
@@ -64,14 +65,6 @@ function Orders() {
   const [reloadKey, setReloadKey] = useState(0);
 
   const canUpdate = permission.canAccessResourceAction(ADMIN_RESOURCES.orders, "update");
-
-  useEffect(() => {
-    const timer = window.setTimeout(() => {
-      setDebouncedQuery(query.trim());
-    }, 320);
-
-    return () => window.clearTimeout(timer);
-  }, [query]);
 
   const loadOrders = useCallback(async () => {
     setLoading(true);

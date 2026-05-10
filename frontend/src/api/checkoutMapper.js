@@ -96,6 +96,7 @@ export function normalizeCoupon(raw = {}) {
     timeStatus: source.timeStatus ? String(source.timeStatus).toUpperCase() : null,
     type: String(firstDefined(source.type, source.discountType, "FIXED")).toUpperCase(),
     usageLimit: firstDefined(source.usageLimit, source.usage_limit, null),
+    usedCount: toNumber(firstDefined(source.usedCount, source.used, source.usageCount), 0),
     value: toNumber(firstDefined(source.value, source.amount, source.discountValue), 0),
   };
 }
@@ -171,6 +172,13 @@ export function validateCouponForCart(coupon, { items = [], subtotal = 0 } = {})
   if (subtotal < coupon.minOrder) {
     throw createApiClientError("Đơn hàng chưa đạt giá trị tối thiểu của mã giảm giá.", {
       code: "COUPON_MIN_ORDER",
+      status: 400,
+    });
+  }
+
+  if (coupon.usageLimit && Number(coupon.usedCount ?? 0) >= Number(coupon.usageLimit)) {
+    throw createApiClientError("Mã giảm giá đã hết lượt sử dụng.", {
+      code: "COUPON_USAGE_LIMIT",
       status: 400,
     });
   }

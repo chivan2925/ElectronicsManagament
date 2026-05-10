@@ -7,7 +7,7 @@ This guide describes the frontend direction for ElectronicsManagement.
 Current phase:
 
 ```text
-Ready for Phase 5 — Admin Dashboard System
+Ready for Phase 6 — Ecommerce Core Features
 ```
 
 ## Stack

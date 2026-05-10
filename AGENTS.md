@@ -37,16 +37,16 @@ Product category display labels:
 Current phase:
 
 ```text
-Phase 1 — Frontend Foundation
+Ready for Phase 6 — Ecommerce Core Features
 ```
 
-Phase 1 focuses on:
+Phase 6 focuses on:
 
-- Frontend structure.
-- Homepage preservation and polish.
-- AI context documentation.
-- Shared UI direction.
-- Preparing the project for later API integration.
+- Public storefront ecommerce APIs.
+- Product browsing and category workflows.
+- Cart persistence.
+- Checkout, payment handoff, and order tracking.
+- Keeping the completed admin dashboard stable.
 
 ## Required Reading Before Work
 

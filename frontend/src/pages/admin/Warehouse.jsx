@@ -4,6 +4,7 @@ import variantService from "../../api/variantService";
 import warehouseService from "../../api/warehouseService";
 import { LOW_STOCK_THRESHOLD, flattenWarehouseStocks } from "../../api/warehouseMapper";
 import { AdminFilters, AdminSearch } from "../../admin/components";
+import { useDebouncedValue } from "../../admin/hooks";
 import { ADMIN_RESOURCES } from "../../auth/roleHelpers";
 import usePermissions from "../../auth/usePermissions";
 import ApiErrorAlert from "../../components/ui/feedback/ApiErrorAlert";
@@ -125,7 +126,7 @@ function Warehouse() {
   const [variants, setVariants] = useState([]);
   const [transactions, setTransactions] = useState([]);
   const [query, setQuery] = useState("");
-  const [debouncedQuery, setDebouncedQuery] = useState("");
+  const debouncedQuery = useDebouncedValue(query.trim());
   const [statusFilter, setStatusFilter] = useState("");
   const [stockFilter, setStockFilter] = useState("");
   const [loading, setLoading] = useState(true);
@@ -146,14 +147,6 @@ function Warehouse() {
   const canCreate = permission.canAccessResourceAction(ADMIN_RESOURCES.warehouse, "create");
   const canUpdate = permission.canAccessResourceAction(ADMIN_RESOURCES.warehouse, "update");
   const canAdjust = canCreate || canUpdate;
-
-  useEffect(() => {
-    const timer = window.setTimeout(() => {
-      setDebouncedQuery(query.trim());
-    }, 320);
-
-    return () => window.clearTimeout(timer);
-  }, [query]);
 
   const loadWarehouses = useCallback(async () => {
     setLoading(true);

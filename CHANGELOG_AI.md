@@ -8,6 +8,33 @@ Always update this file after meaningful work.
 
 ## 2026-05-10
 
+### Phase 5 Admin Dashboard Polish And Completion
+
+- Reviewed and polished the full Admin Dashboard System across CRUD consistency, table actions, spacing, responsive layout, permissions, loading/error states, modal/drawer behavior, forms, charts, and badges.
+- Added permission-aware admin topbar module search and shared debounced admin search handling.
+- Hardened reusable admin CRUD components: legacy headers no longer render dead actions, row action hover tones are consistent, `StatusBadge` normalizes common statuses, forms avoid invalid nested labels, and modal/form footers fit mobile.
+- Aligned the revenue report chart with shared dashboard analytics card, tooltip, axis, and spacing patterns.
+- Marked Phase 5 completed and the project ready for Phase 6 — Ecommerce Core Features.
+- Verified `npm run lint`, `npm run build`, `git diff --check`, and `mvn -q -DskipTests compile`. Build still reports the existing Vite chunk-size warning.
+
+### Admin Role And Permission Management API Integration
+
+- Rebuilt `frontend/src/pages/admin/Roles.jsx` into a real API-backed Role & Permission Management module at `/admin/roles`.
+- Added reusable Role and Permission Management components: `PermissionMatrix.jsx`, `RoleForm.jsx`, and `RoleTable.jsx`.
+- Added role table, grouped permission matrix, assign-permission drawer, staff role assignment panel, status controls, validation UI, loading states, API error handling, and soft-delete confirmation.
+- Upgraded `frontend/src/api/adminPeopleMapper.js`, `roleService.js`, and `permissionService.js` for normalized Role/Permission API pages/details, Role create/update payloads, status patch updates, and permission grouping data.
+- Extended backend Role responses with `permissionCount` and `staffCount` for list/detail UI.
+- Verified `npm run lint`, `npm run build`, `git diff --check`, and `mvn -q -DskipTests compile`. Build still reports the existing Vite chunk-size warning.
+
+### Admin Coupon Management API Integration
+
+- Rebuilt `frontend/src/pages/admin/Coupons.jsx` into a real API-backed Coupon Management module at `/admin/coupons`.
+- Added reusable Coupon Management components: `CouponForm.jsx` and `CouponTable.jsx`.
+- Added coupon table, create/update drawer, native date/time pickers, validation UI, discount type handling, status controls, status/time/date filters, usage progress, loading states, API error handling, and soft-delete confirmation.
+- Added `frontend/src/api/couponMapper.js` and upgraded `couponService.js` for normalized Coupon API pages/details, create/update payloads, status patch updates, and checkout coupon validation with usage counts.
+- Extended backend Coupon responses with `usedCount` from orders and enforced `usageLimit` when checkout resolves a coupon.
+- Verified `npm run lint`, `npm run build`, `git diff --check`, and `mvn -q -DskipTests compile`. Build still reports the existing Vite chunk-size warning.
+
 ### Admin Warehouse Management API Integration
 
 - Rebuilt `frontend/src/pages/admin/Warehouse.jsx` into a real API-backed inventory operations module at `/admin/warehouse`.

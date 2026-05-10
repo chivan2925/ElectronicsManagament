@@ -21,6 +21,7 @@ public record AdminCouponResponseDTO(
         LocalDateTime startDate,
         LocalDateTime endDate,
         Integer usageLimit,
+        Long usedCount,
         BigDecimal maxDiscount,
         CouponTimeStatus timeStatus,
         CouponStatus status,

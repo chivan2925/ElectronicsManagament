@@ -7,7 +7,7 @@ This roadmap defines the planned phases for ElectronicsManagement.
 The project is currently in:
 
 ```text
-Ready for Phase 5 — Admin Dashboard System
+Ready for Phase 6 — Ecommerce Core Features
 ```
 
 ## Product Scope
@@ -34,8 +34,8 @@ ElectronicsManagement is built for an electronics and gaming catalog with these 
 | 2 | Design System | Completed | Formalize reusable UI patterns for client and admin. |
 | 3 | Client Ecommerce | Completed | Build product listing, product detail, cart, checkout UI, and customer flows. |
 | 4 | Auth + API | Completed | Add admin login, protected routes, API modules, and real data integration. |
-| 5 | Admin Dashboard | Current | Convert mock admin pages into authenticated API-backed CRUD workflows. |
-| 6 | Ecommerce Core | Planned | Implement real browsing, cart, checkout, payment, and order tracking. |
+| 5 | Admin Dashboard | Completed | Convert mock admin pages into authenticated API-backed CRUD workflows. |
+| 6 | Ecommerce Core | Current | Implement real browsing, cart, checkout, payment, and order tracking. |
 | 7 | Advanced Features | Planned | Add reviews, returns, coupons, search depth, reports, and richer management tools. |
 | 8 | Production + Deploy | Planned | Harden config, secrets, migrations, testing, performance, and deployment. |
 
@@ -178,8 +178,8 @@ Key tasks:
 
 ## Current Priority
 
-1. Start Phase 5 admin dashboard system.
+1. Start Phase 6 ecommerce core features.
 2. Preserve homepage layout while improving quality.
 3. Reuse Phase 2 design-system primitives and visual patterns.
 4. Keep AI context files up to date.
-5. Connect admin CRUD pages to backend APIs one resource at a time, starting with categories.
+5. Keep the completed admin CRUD system stable while storefront APIs are expanded.

@@ -13,6 +13,10 @@ public record AdminDetailRoleResponseDTO(
 
         Set<AdminPermissionResponseDTO> permissions,
 
+        Integer permissionCount,
+
+        Long staffCount,
+
         UserStatus status,
 
         LocalDateTime createdAt,

@@ -111,7 +111,7 @@ function StockAdjustModal({
   const footer = (
     <div className="flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-end">
       <button
-        className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-black text-slate-600 transition hover:border-slate-300 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-60"
+        className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-black text-slate-600 transition hover:border-slate-300 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
         disabled={submitting}
         onClick={onClose}
         type="button"
@@ -120,7 +120,7 @@ function StockAdjustModal({
         Cancel
       </button>
       <button
-        className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-black text-white shadow-admin-card transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-70"
+        className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-black text-white shadow-admin-card transition hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-70 sm:w-auto"
         disabled={submitting || loadingOptions}
         onClick={onSubmit}
         type="button"
@@ -135,7 +135,7 @@ function StockAdjustModal({
     <AdminModal
       description={selectedStock ? `${selectedStock.variantName} · ${selectedStock.warehouseName}` : "Create a stock movement"}
       footer={footer}
-      onClose={onClose}
+      onClose={submitting ? undefined : onClose}
       open={open}
       size="lg"
       title="Inventory adjustment"

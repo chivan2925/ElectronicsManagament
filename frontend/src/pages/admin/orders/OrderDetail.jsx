@@ -1,18 +1,9 @@
 import { createElement } from "react";
 import { Loader2, Mail, MapPin, PackageCheck, Phone, Save, Truck, UserRound } from "lucide-react";
+import { StatusBadge } from "../../../admin/components";
 import OrderTimeline from "./OrderTimeline";
 import { ORDER_STAGE_OPTIONS, PAYMENT_STATUS_OPTIONS, SHIPPING_PROVIDER_OPTIONS, SHIPPING_STATUS_OPTIONS } from "./orderOptions";
-import { cn } from "../../../utils/classNames";
 import { formatCurrency } from "../../../utils/formatters";
-
-const toneClasses = {
-  amber: "bg-amber-50 text-amber-700 ring-amber-200",
-  blue: "bg-blue-50 text-blue-700 ring-blue-200",
-  emerald: "bg-emerald-50 text-emerald-700 ring-emerald-200",
-  rose: "bg-rose-50 text-rose-700 ring-rose-200",
-  slate: "bg-slate-100 text-slate-700 ring-slate-200",
-  violet: "bg-violet-50 text-violet-700 ring-violet-200",
-};
 
 const statusTone = {
   CANCELLED: "rose",
@@ -25,14 +16,6 @@ const statusTone = {
   RETURNED: "violet",
   SHIPPING: "blue",
 };
-
-function Badge({ label, tone = "slate" }) {
-  return (
-    <span className={cn("inline-flex items-center rounded-full px-2.5 py-1 text-xs font-black ring-1", toneClasses[tone] || toneClasses.slate)}>
-      {label}
-    </span>
-  );
-}
 
 function formatAddress(address = {}) {
   return [address.line, address.ward, address.district, address.province].filter(Boolean).join(", ");
@@ -114,9 +97,13 @@ function OrderDetail({
             <p className="text-xs font-black uppercase tracking-normal text-slate-500">Order</p>
             <h2 className="mt-1 text-2xl font-black text-white">{order.code || `#${order.id}`}</h2>
             <div className="mt-3 flex flex-wrap gap-2">
-              <Badge label={order.stageLabel} tone={order.stage === "cancelled" ? "rose" : order.stage === "delivered" ? "emerald" : "blue"} />
-              <Badge label={`Payment ${order.paymentStatus}`} tone={statusTone[order.paymentStatus]} />
-              <Badge label={`Shipping ${order.shippingStatus}`} tone={statusTone[order.shippingStatus]} />
+              <StatusBadge
+                label={order.stageLabel}
+                status={String(order.stage || "").toUpperCase()}
+                tone={order.stage === "cancelled" ? "rose" : order.stage === "delivered" ? "emerald" : "blue"}
+              />
+              <StatusBadge label={`Payment ${order.paymentStatus}`} status={order.paymentStatus} tone={statusTone[order.paymentStatus]} />
+              <StatusBadge label={`Shipping ${order.shippingStatus}`} status={order.shippingStatus} tone={statusTone[order.shippingStatus]} />
             </div>
           </div>
           <div className="rounded-2xl border border-slate-800 bg-slate-900 px-4 py-3 text-right">

@@ -9,11 +9,27 @@ Always update this file after meaningful work.
 ## Current Phase
 
 ```text
-Ready for Phase 5 — Admin Dashboard System
+Ready for Phase 6 — Ecommerce Core Features
 ```
 
 ## Recently Completed
 
+- Completed Phase 5 — Admin Dashboard System and marked the project ready for Phase 6 — Ecommerce Core Features.
+- Reviewed and polished admin CRUD consistency, table/action states, spacing, responsive layout, permission handling, loading/error states, modal/drawer behavior, form consistency, chart consistency, and shared badges.
+- Added permission-aware admin topbar module search, shared debounced admin search handling, safer legacy page actions, normalized status badges, mobile-fit modal/form footers, and consistent row action hover tones.
+- Verified `npm run lint`, `npm run build`, `git diff --check`, and `mvn -q -DskipTests compile`. Build still reports the existing Vite chunk-size warning.
+- Connected `/admin/roles` to real backend Role and Permission APIs with a Role & Permission Management module.
+- Added `frontend/src/pages/admin/roles/PermissionMatrix.jsx`, `RoleForm.jsx`, and `RoleTable.jsx`.
+- Added role table, reusable grouped permission matrix, assign-permission drawer, staff role assignment panel, status controls, validation UI, search/filter/pagination, loading states, API error handling, and soft-delete confirmation.
+- Upgraded `frontend/src/api/adminPeopleMapper.js`, `roleService.js`, and `permissionService.js` for normalized Role/Permission list/detail responses, Role create/update payloads, status updates, and permission grouping data.
+- Extended backend Role responses with `permissionCount` and `staffCount` for admin security dashboard UI.
+- Verified `npm run lint`, `npm run build`, `git diff --check`, and `mvn -q -DskipTests compile`. Build still reports the existing Vite chunk-size warning.
+- Connected `/admin/coupons` to real backend Coupon APIs with a Coupon Management module.
+- Added `frontend/src/pages/admin/coupons/CouponForm.jsx` and `CouponTable.jsx`.
+- Added coupon table, create/update drawer, native date/time pickers, validation UI, status controls, status/time/date filters, usage progress, loading states, API error handling, and soft-delete confirmation.
+- Added `frontend/src/api/couponMapper.js` and upgraded `couponService.js` for normalized Coupon list/detail responses, create/update payloads, status updates, and checkout coupon validation with usage counts.
+- Extended backend Coupon responses with `usedCount` from orders and enforced `usageLimit` when checkout resolves a coupon.
+- Verified `npm run lint`, `npm run build`, `git diff --check`, and `mvn -q -DskipTests compile`. Build still reports the existing Vite chunk-size warning.
 - Connected `/admin/warehouse` to real backend Warehouse and Warehouse Transaction APIs with an inventory operations module.
 - Added `frontend/src/pages/admin/warehouse/WarehouseTable.jsx`, `StockAdjustModal.jsx`, and `LowStockCard.jsx`.
 - Added stock overview, inventory adjustment modal, low-stock alerts, status/stock filters, loading states, API error handling, and stock history placeholder UI.
@@ -170,13 +186,12 @@ Ready for Phase 5 — Admin Dashboard System
 
 1. Preserve the existing homepage layout.
 2. Keep the normalized frontend folder structure stable.
-3. Continue Phase 5 API-backed admin pages by connecting coupons, roles/permissions, and reports through the existing admin API service pattern.
-4. Use centralized feedback components for loading, error, empty, permission, and refresh states before replacing mock admin data.
-5. Connect admin CRUD pages to backend APIs one resource at a time.
-6. Keep public storefront customer registration, payment gateway, wishlist, homepage products, and search on mock/local state until public API contracts are ready.
-7. Move customer auth and account ownership checks to a dedicated public customer auth contract when ready.
-8. Resolve existing backend test blockers before relying on `mvn test` as a clean validation gate.
-9. Keep AI context docs current.
+3. Start Phase 6 by defining public storefront API contracts for customer auth, browsing, cart, checkout, payment, and order tracking.
+4. Keep the completed admin CRUD system stable while storefront ecommerce APIs are expanded.
+5. Use centralized feedback components for loading, error, empty, permission, and refresh states in new ecommerce workflows.
+6. Move customer auth and account ownership checks to a dedicated public customer auth contract when ready.
+7. Resolve existing backend test blockers before relying on `mvn test` as a clean validation gate.
+8. Keep AI context docs current.
 
 ## Next Recommended Tasks
 
@@ -217,7 +232,7 @@ Ready for Phase 5 — Admin Dashboard System
 
 ### Client Ecommerce
 
-- Keep Phase 3 client ecommerce UI stable while backend integration begins.
+- Use Phase 6 to move customer-facing ecommerce workflows from mock/local state to public backend APIs.
 - Keep the register flow local until public customer auth APIs are ready.
 - Move storefront customer login to a public customer auth endpoint when the API contract is available.
 - Keep `/profile`, `/profile/orders`, and `/profile/settings` behind `ProtectedRoute`.
@@ -225,20 +240,28 @@ Ready for Phase 5 — Admin Dashboard System
 - Keep the shared cart provider as the single cart state source for header drawer, cart page, product cards, product detail, and checkout.
 - Replace wishlist and recently viewed localStorage placeholders only when customer account/product history APIs are ready.
 - Replace homepage product sections, wishlist/recently viewed lookup, and search overlay mock data with real storefront APIs when those contracts are ready.
-- Add real online payment gateway handoff only when the payment task starts.
+- Add real online payment gateway handoff when the payment task starts.
 - Add category route/page when the category browsing plan is ready.
 - Replace the homepage mock loading timer with real loading state when storefront data integration begins.
 
-### Phase 5 Admin Dashboard System
+### Phase 6 Ecommerce Core Features
 
-- Continue remaining admin modules using the same reusable Category/Brand/Product/Variant/Media/User/Staff module pattern.
-- Reuse `useAdminTable`, `useAdminFilters`, `useAdminPagination`, and `useAdminModal` instead of adding local duplicated table state.
+- Add or formalize public storefront product browsing endpoints separate from admin Product APIs.
+- Add public category browsing and product discovery flows without changing the existing homepage layout.
+- Add customer registration and customer login contracts separate from admin/staff auth.
+- Add cart persistence APIs and connect the existing shared cart provider to backend state.
+- Add checkout/payment handoff for COD and online gateways when backend contracts are ready.
+- Add customer order tracking backed by public customer order APIs.
+- Replace wishlist, recently viewed, homepage product sections, and search overlay mock/local data only when matching public APIs exist.
+
+### Admin Dashboard Maintenance
+
+- Keep the completed API-backed admin modules stable.
+- Reuse `useAdminTable`, `useAdminFilters`, `useAdminPagination`, `useAdminModal`, and `useDebouncedValue` instead of adding local duplicated table/search state.
 - Reuse admin module registry metadata for resource labels, routes, permissions, and service selection.
-- Add API-backed list loading, error, empty, and refresh states before replacing mock admin data.
 - Reuse shared route/sidebar/action permission policies for every admin resource page.
 - Keep ADMIN full access and require staff resource view permissions for staff module access.
-- Add create/edit/detail/delete workflows one resource at a time.
-- Add pagination, search/filter state, form validation, and safe destructive-action confirmations as pages move off mock data.
+- Keep admin dashboard and report mock data isolated until reporting APIs exist.
 
 ### Phase 4 Auth + Backend Integration Maintenance
 
@@ -254,7 +277,7 @@ Ready for Phase 5 — Admin Dashboard System
 - Public customer auth is not complete; account APIs are authenticated and user-id scoped until a customer-auth principal contract is available.
 - Client checkout/account routes are customer-session-only in the frontend, but backend ownership enforcement still needs the future customer-auth principal contract.
 - A dedicated backend cart persistence API is not implemented; cart state is shared local frontend state.
-- Admin frontend API service modules exist; `/admin/categories`, `/admin/brands`, `/admin/products`, `/admin/variants`, `/admin/media`, `/admin/orders`, `/admin/warehouse`, `/admin/users`, and `/admin/staff` are connected, remaining pages are still mock-backed.
+- Admin CRUD modules are API-backed; `/admin/dashboard` and `/admin/reports/*` still use mock analytics/report data until reporting APIs exist.
 - Category API currently has no `description` field in request/response DTOs, so category description is UI-session only until backend contract is extended.
 - Backend admin auth currently exposes login/logout; refresh-token endpoint support is not implemented yet.
 - Backend `mvn test` currently fails because `AddressMapper` is not registered as a bean for `AdminAddressServiceImpl`.

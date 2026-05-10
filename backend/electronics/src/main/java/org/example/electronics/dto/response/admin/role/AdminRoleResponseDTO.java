@@ -9,6 +9,10 @@ public record AdminRoleResponseDTO(
 
         String name,
 
+        Integer permissionCount,
+
+        Long staffCount,
+
         UserStatus status,
 
         LocalDateTime createdAt,

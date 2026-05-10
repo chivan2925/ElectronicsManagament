@@ -6,7 +6,7 @@ import Card from "../Card";
 import DataTable from "./DataTable";
 import PageHeader from "./PageHeader";
 
-function CrudPage({ title, subtitle, data, columns, permissionResource = null, searchPlaceholder = "Tìm kiếm..." }) {
+function CrudPage({ title, subtitle, data, columns, onCreate, permissionResource = null, searchPlaceholder = "Tìm kiếm..." }) {
   const table = useAdminTable({ columns, data });
   const actionPolicies = useMemo(
     () => (permissionResource ? getResourceActionPolicies(permissionResource) : null),
@@ -15,7 +15,7 @@ function CrudPage({ title, subtitle, data, columns, permissionResource = null, s
 
   return (
     <section>
-      <PageHeader actionPolicy={actionPolicies?.create} title={title} subtitle={subtitle} />
+      <PageHeader actionLabel="Thêm mới" actionPolicy={actionPolicies?.create} onAction={onCreate} title={title} subtitle={subtitle} />
 
       <Card className="mb-4 flex flex-col gap-3 p-4 md:flex-row md:items-center md:justify-between" variant="admin">
         <AdminSearch className="md:max-w-md" onChange={table.setQuery} placeholder={searchPlaceholder} value={table.query} />

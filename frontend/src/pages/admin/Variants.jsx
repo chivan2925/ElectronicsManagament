@@ -4,7 +4,7 @@ import productService from "../../api/productService";
 import variantService from "../../api/variantService";
 import { normalizeSlug } from "../../api/productMapper";
 import { AdminDrawer, AdminFilters, AdminSearch, ConfirmDialog } from "../../admin/components";
-import { ADMIN_MODAL_TYPES, useAdminModal } from "../../admin/hooks";
+import { ADMIN_MODAL_TYPES, useAdminModal, useDebouncedValue } from "../../admin/hooks";
 import { ADMIN_RESOURCES } from "../../auth/roleHelpers";
 import usePermissions from "../../auth/usePermissions";
 import ApiErrorAlert from "../../components/ui/feedback/ApiErrorAlert";
@@ -124,7 +124,7 @@ function Variants() {
   const [variants, setVariants] = useState([]);
   const [products, setProducts] = useState([]);
   const [query, setQuery] = useState("");
-  const [debouncedQuery, setDebouncedQuery] = useState("");
+  const debouncedQuery = useDebouncedValue(query.trim());
   const [productFilter, setProductFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [loading, setLoading] = useState(true);
@@ -149,14 +149,6 @@ function Variants() {
   const isEditMode = modal.modalType === ADMIN_MODAL_TYPES.edit;
   const editingVariant = isEditMode ? modal.modalPayload : null;
   const deletingVariant = modal.modalType === ADMIN_MODAL_TYPES.delete ? modal.modalPayload : null;
-
-  useEffect(() => {
-    const timer = window.setTimeout(() => {
-      setDebouncedQuery(query.trim());
-    }, 320);
-
-    return () => window.clearTimeout(timer);
-  }, [query]);
 
   const loadProducts = useCallback(async () => {
     setProductLoading(true);

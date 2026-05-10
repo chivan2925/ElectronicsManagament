@@ -3,7 +3,7 @@ import { Eye, Loader2, Lock, Pencil, Plus, Trash2, Unlock } from "lucide-react";
 import roleService from "../../api/roleService";
 import staffService from "../../api/staffService";
 import { AdminDrawer, AdminFilters, AdminForm, AdminSearch, AdminTable, ConfirmDialog, StatusBadge } from "../../admin/components";
-import { ADMIN_MODAL_TYPES, useAdminModal } from "../../admin/hooks";
+import { ADMIN_MODAL_TYPES, useAdminModal, useDebouncedValue } from "../../admin/hooks";
 import { ADMIN_RESOURCES } from "../../auth/roleHelpers";
 import usePermissions from "../../auth/usePermissions";
 import ApiErrorAlert from "../../components/ui/feedback/ApiErrorAlert";
@@ -163,7 +163,7 @@ function Staff() {
   const [staff, setStaff] = useState([]);
   const [roles, setRoles] = useState([]);
   const [query, setQuery] = useState("");
-  const [debouncedQuery, setDebouncedQuery] = useState("");
+  const debouncedQuery = useDebouncedValue(query.trim());
   const [statusFilter, setStatusFilter] = useState("");
   const [loading, setLoading] = useState(true);
   const [rolesLoading, setRolesLoading] = useState(false);
@@ -200,14 +200,6 @@ function Staff() {
 
     return String(item.id) === currentStaffId;
   }, [currentStaffId]);
-
-  useEffect(() => {
-    const timer = window.setTimeout(() => {
-      setDebouncedQuery(query.trim());
-    }, 320);
-
-    return () => window.clearTimeout(timer);
-  }, [query]);
 
   const loadStaff = useCallback(async () => {
     setLoading(true);

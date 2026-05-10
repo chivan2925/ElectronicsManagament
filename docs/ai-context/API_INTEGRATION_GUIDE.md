@@ -7,10 +7,10 @@ This guide defines how frontend API integration should be done later.
 Current phase:
 
 ```text
-Phase 4 — Auth + Backend Integration completed
+Ready for Phase 6 — Ecommerce Core Features
 ```
 
-The shared frontend API layer and centralized auth architecture exist. Admin/staff login is connected to the backend JWT API, storefront product listing/detail pages are connected to Product API data, authenticated checkout creates backend orders with Coupon/User API support, and authenticated account pages use User Profile/User Order APIs. Admin CRUD pages are not yet connected to real admin APIs and are the Phase 5 focus.
+The shared frontend API layer and centralized auth architecture exist. Admin/staff login is connected to the backend JWT API, storefront product listing/detail pages are connected to Product API data, authenticated checkout creates backend orders with Coupon/User API support, and authenticated account pages use User Profile/User Order APIs. Core admin CRUD modules are connected to backend APIs; Phase 6 focuses on public storefront ecommerce APIs and customer workflows.
 
 ## Backend API Scope
 
@@ -319,15 +319,17 @@ Current behavior:
 - Unauthorized authenticated sessions render a guard UI instead of flashing protected content.
 - A reusable toast provider shows login success, error, loading, and global API error notifications.
 
-## First Integration Order
+## Completed Admin Integration Order
 
-Recommended order:
+Phase 5 completed the core admin integration in this order:
 
 1. Admin categories.
 2. Admin brands.
 3. Admin products.
 4. Admin variants.
 5. Admin media upload.
+
+Phase 6 should focus on public storefront API contracts for browsing, cart persistence, checkout/payment, customer auth, and order tracking.
 
 ## Auth Rules
 

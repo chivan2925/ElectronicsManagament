@@ -1,5 +1,5 @@
 import { api } from "./client";
-import { normalizeAdminRole, normalizeAdminRolePage } from "./adminPeopleMapper";
+import { buildRolePayload, normalizeAdminRole, normalizeAdminRolePage } from "./adminPeopleMapper";
 import { createResourceService } from "./resourceService";
 
 const RESOURCE_PATH = "/admin/roles";
@@ -22,12 +22,12 @@ export async function getById(id, config = {}) {
 }
 
 export async function create(payload, config = {}) {
-  const data = await baseRoleService.create(payload, config);
+  const data = await baseRoleService.create(buildRolePayload(payload), config);
   return normalizeAdminRole(data);
 }
 
 export async function update(id, payload, config = {}) {
-  const data = await baseRoleService.update(id, payload, config);
+  const data = await baseRoleService.update(id, buildRolePayload(payload), config);
   return normalizeAdminRole(data);
 }
 

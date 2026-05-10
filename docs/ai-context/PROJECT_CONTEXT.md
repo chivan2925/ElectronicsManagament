@@ -41,15 +41,16 @@ Primary category display labels:
 ## Current Phase
 
 ```text
-Ready for Phase 5 — Admin Dashboard System
+Ready for Phase 6 — Ecommerce Core Features
 ```
 
 Focus:
 
-- Preserve the homepage while building API-backed admin workflows.
+- Preserve the homepage while building customer-facing ecommerce workflows.
 - Keep frontend structure clean.
 - Keep context docs accurate.
-- Convert mock admin pages into authenticated API-backed CRUD workflows.
+- Keep the completed API-backed admin dashboard stable.
+- Move remaining mock/local storefront flows to public ecommerce APIs when contracts exist.
 
 ## Frontend Stack
 
@@ -97,10 +98,10 @@ Additional backend areas:
 
 - Client homepage exists at `/`.
 - Admin dashboard exists at `/admin`.
-- Admin CRUD mock pages exist.
+- Admin CRUD pages exist for the core backend resources.
 - Client catalog, checkout, and account routes have partial real API integration.
-- Admin pages still use mock data.
-- `frontend/src/api/client.js`, `resourceService.js`, service modules, and the `frontend/src/admin` architecture foundation are ready for Phase 5 admin API integration.
+- Admin CRUD pages for the core resources are connected to backend APIs; dashboard/report analytics still use mock data.
+- `frontend/src/api/client.js`, `resourceService.js`, service modules, and the `frontend/src/admin` architecture foundation are ready for Phase 6 storefront API expansion.
 
 ## UI Direction
 
