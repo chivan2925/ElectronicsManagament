@@ -14,6 +14,10 @@ Ready for Phase 6 — Ecommerce Core Features
 
 ## Recently Completed
 
+- Built the customer loyalty/reward UI foundation on the profile overview.
+- Added reusable account widgets: `LoyaltyCard.jsx`, `RewardsWidget.jsx`, and `CouponWallet.jsx`.
+- Added premium membership card, reward points, loyalty level progress, coupon wallet, copied-code feedback, and special offers placeholders without backend loyalty logic.
+- Verified `npm run lint` and `npm run build` after the loyalty/reward UI foundation. Build still reports the existing Vite chunk-size warning.
 - Built the Notification System foundation for the storefront header.
 - Added reusable notification files: `NotificationDropdown.jsx`, `NotificationItem.jsx`, and `useNotifications.js`.
 - Added localStorage-backed notification state, unread count, mark-as-read actions, type filters, order notifications, coupon notifications, and a system placeholder without realtime sockets.

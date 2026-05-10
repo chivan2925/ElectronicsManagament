@@ -3,6 +3,9 @@ import { CalendarDays, ChevronRight, Mail, PackageSearch, Phone, Settings, UserR
 import ApiErrorAlert from "../../components/ui/feedback/ApiErrorAlert";
 import Badge from "../../components/ui/Badge";
 import Button from "../../components/ui/Button";
+import CouponWallet from "../../components/account/CouponWallet";
+import LoyaltyCard from "../../components/account/LoyaltyCard";
+import RewardsWidget from "../../components/account/RewardsWidget";
 import RecentlyViewedSection from "../../components/product/RecentlyViewedSection";
 import RecommendationSection from "../../components/product/RecommendationSection";
 import SkeletonBlock from "../../components/skeletons/SkeletonBlock";
@@ -94,6 +97,13 @@ function ProfileOverview() {
           <InfoTile icon={UserRound} label="Username" value={profile?.username} />
           <InfoTile icon={CalendarDays} label="Ngày sinh" value={formatDate(profile?.dateOfBirth)} />
         </div>
+      </section>
+
+      <LoyaltyCard profile={profile} />
+
+      <section className="grid gap-5 xl:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)]">
+        <RewardsWidget />
+        <CouponWallet />
       </section>
 
       <section className="grid gap-4 md:grid-cols-2">

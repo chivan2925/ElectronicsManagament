@@ -464,6 +464,9 @@ Reusable account components live in `frontend/src/components/account/`:
 - `OrderStatusBadge.jsx`
 - `OrderTrackingTimeline.jsx`
 - `ShipmentProgress.jsx`
+- `LoyaltyCard.jsx`
+- `RewardsWidget.jsx`
+- `CouponWallet.jsx`
 
 Account pages live in `frontend/src/pages/client/`:
 
@@ -473,6 +476,8 @@ Account pages live in `frontend/src/pages/client/`:
 - `ProfileSettings.jsx`
 
 Account API normalization lives in `frontend/src/api/accountMapper.js`. Profile fetch/update uses `userService.getCurrentUserProfile()` and `userService.updateCurrentUserProfile()`. Order history/detail/tracking uses `orderService.getUserOrders()` and `orderService.getUserOrderById()`. Shared order tracking status, estimated delivery, and activity fallback helpers live in `frontend/src/utils/orderTracking.js`.
+
+The profile overview includes local-only loyalty/reward widgets for membership card, reward points, loyalty level, coupon wallet, and special offers placeholders until a real loyalty API exists.
 
 ## Wishlist And Recently Viewed
 

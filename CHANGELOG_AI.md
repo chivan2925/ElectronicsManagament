@@ -8,6 +8,13 @@ Always update this file after meaningful work.
 
 ## 2026-05-10
 
+### Customer Loyalty Reward UI Foundation
+
+- Added reusable account widgets: `LoyaltyCard.jsx`, `RewardsWidget.jsx`, and `CouponWallet.jsx`.
+- Added the profile overview loyalty foundation with reward points, loyalty level progress, coupon wallet, special offers, copied-code feedback, and a premium membership card placeholder.
+- Kept the implementation mock/local-only with no backend loyalty logic.
+- Verified `npm run lint` and `npm run build`. Build still reports the existing Vite chunk-size warning.
+
 ### Notification System Foundation
 
 - Added `frontend/src/hooks/useNotifications.js` with localStorage-backed notification state, cross-tab sync, unread counts, mark-as-read actions, and seeded order/coupon/system notification shapes.
