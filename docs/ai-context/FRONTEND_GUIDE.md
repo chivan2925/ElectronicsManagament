@@ -27,6 +27,7 @@ Client:
 
 - `/`
 - `/products`
+- `/categories/:categorySlug`
 - `/products/:slug`
 - `/cart`
 - `/checkout`
@@ -141,6 +142,7 @@ frontend/src/
 │  ├─ payment/
 │  ├─ product/
 │  ├─ search/
+│  ├─ seo/
 │  ├─ skeletons/
 │  └─ ui/
 │     ├─ Badge.jsx
@@ -207,6 +209,8 @@ frontend/src/
 │     └─ WishlistPage.jsx
 ├─ routes/
 │  └─ AppRoutes.jsx
+├─ seo/
+│  └─ metadata.js
 ├─ services/
 ├─ store/
 │  └─ auth/
@@ -356,7 +360,7 @@ Use these primitives for new frontend work unless a feature needs a clearly diff
 
 ## Product Listing Components
 
-The `/products` page lives at `frontend/src/pages/client/ProductListingPage.jsx`.
+The `/products` page and `/categories/:categorySlug` category route live at `frontend/src/pages/client/ProductListingPage.jsx`.
 
 Reusable listing components live in `frontend/src/components/product/`:
 
@@ -375,7 +379,20 @@ Reusable listing components live in `frontend/src/components/product/`:
 
 Reusable listing API, filter, sort, and pagination state logic lives in `frontend/src/hooks/useProducts.js`.
 
-The listing page fetches Product API data through `frontend/src/api/productService.js`, normalizes flexible backend response shapes through `frontend/src/api/productMapper.js`, derives category and brand filter options from API data, and renders loading, API error, empty, and pagination foundation states without changing the existing PLP layout.
+The listing page fetches Product API data through `frontend/src/api/productService.js`, normalizes flexible backend response shapes through `frontend/src/api/productMapper.js`, derives category and brand filter options from API data, and renders loading, API error, empty, category-route, and pagination foundation states without changing the existing PLP layout.
+
+## SEO Foundation
+
+Storefront SEO metadata is client-side only and does not require SSR. Page head tags are rendered through `frontend/src/components/seo/SEOHead.jsx`, while title, description, canonical, Open Graph, Twitter card, product metadata, breadcrumb schema, item list schema, and product schema helpers live in `frontend/src/seo/metadata.js`.
+
+Current coverage:
+
+- Homepage.
+- Product listing.
+- Category pages at `/categories/:categorySlug`.
+- Product detail pages and product loading/error/not-found states.
+
+Keep new storefront SEO data centralized in `src/seo/metadata.js`.
 
 ## Product Detail Components
 

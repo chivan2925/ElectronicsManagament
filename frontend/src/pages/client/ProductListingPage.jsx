@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   ChevronRight,
@@ -22,13 +22,16 @@ import ProductCard from "../../components/product/ProductCard";
 import SearchProductsInput from "../../components/product/SearchProductsInput";
 import SortDropdown from "../../components/product/SortDropdown";
 import ProductCardSkeleton from "../../components/skeletons/ProductCardSkeleton";
+import SEOHead from "../../components/seo/SEOHead";
 import SkeletonBlock from "../../components/skeletons/SkeletonBlock";
 import Badge from "../../components/ui/Badge";
 import Button from "../../components/ui/Button";
 import Container from "../../components/ui/Container";
 import ApiErrorAlert from "../../components/ui/feedback/ApiErrorAlert";
 import IconButton from "../../components/ui/IconButton";
+import { categories as storefrontCategories } from "../../data/categories";
 import useProducts from "../../hooks/useProducts";
+import { buildCategoryMetadata, buildProductListingMetadata, slugify } from "../../seo/metadata";
 import { motionViewport, staggerContainer } from "../../styles/animations";
 import { cn } from "../../utils/classNames";
 import { compactCurrency } from "../../utils/formatters";
@@ -36,6 +39,7 @@ import { compactCurrency } from "../../utils/formatters";
 const MotionDiv = motion.div;
 
 function ProductListingPage() {
+  const { categorySlug = null } = useParams();
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
   const {
     activeFilters,
@@ -70,7 +74,7 @@ function ProductListingPage() {
     toggleCategory,
     togglePriceRange,
     toggleStock,
-  } = useProducts();
+  } = useProducts({ routeCategorySlug: categorySlug });
 
   useEffect(() => {
     if (!isMobileFiltersOpen) {
@@ -85,7 +89,19 @@ function ProductListingPage() {
     };
   }, [isMobileFiltersOpen]);
 
-  const selectedCategory = selectedCategories.length === 1 ? selectedCategories[0] : null;
+  const routeCategory =
+    categorySlug && categorySlug !== "tat-ca"
+      ? storefrontCategories.find((category) => category.slug === categorySlug) || {
+          id: categorySlug,
+          name: categorySlug
+            .split("-")
+            .filter(Boolean)
+            .join(" "),
+          slug: categorySlug,
+        }
+      : null;
+  const selectedCategory = routeCategory || (selectedCategories.length === 1 ? selectedCategories[0] : null);
+  const isCategoryPage = Boolean(routeCategory);
   const categorySummary =
     selectedCategories.length > 1 ? `${selectedCategories.length} danh mục đã chọn` : selectedCategory?.name || "Toàn bộ catalog";
   const hasActiveFilters = activeFilters.length > 0;
@@ -118,9 +134,23 @@ function ProductListingPage() {
     resultCount: filteredProducts.length,
     stockOptions,
   };
+  const seoMetadata = isCategoryPage
+    ? buildCategoryMetadata({
+        category: selectedCategory,
+        productCount: filteredProducts.length,
+        products: sortedProducts,
+      })
+    : buildProductListingMetadata({
+        filters,
+        productCount: filteredProducts.length,
+        products: sortedProducts,
+        selectedCategories,
+      });
+  const categoryCanonicalPath = selectedCategory ? `/categories/${selectedCategory.slug || slugify(selectedCategory.name)}` : "/products";
 
   return (
     <div className="store-page-shell">
+      <SEOHead metadata={seoMetadata} />
       <AnnouncementBar />
       <Header />
 
@@ -136,12 +166,17 @@ function ProductListingPage() {
           {selectedCategory && (
             <>
               <ChevronRight className="text-slate-600" size={15} />
-              <span className="text-blue-200">{selectedCategory.name}</span>
+              <Link aria-current={isCategoryPage ? "page" : undefined} className="text-blue-200" to={categoryCanonicalPath}>
+                {selectedCategory.name}
+              </Link>
             </>
           )}
         </nav>
 
-        <section className="relative isolate overflow-hidden rounded-3xl border border-blue-300/20 bg-[radial-gradient(circle_at_16%_0%,rgba(0,91,255,0.34),transparent_34%),radial-gradient(circle_at_92%_22%,rgba(56,189,248,0.14),transparent_28%),linear-gradient(135deg,rgba(15,23,42,0.9),rgba(7,17,31,0.96))] p-5 shadow-[0_28px_90px_rgba(0,0,0,0.34),0_0_42px_rgba(0,91,255,0.14)] backdrop-blur-xl sm:p-7 lg:p-8">
+        <section
+          aria-labelledby="catalog-heading"
+          className="relative isolate overflow-hidden rounded-3xl border border-blue-300/20 bg-[radial-gradient(circle_at_16%_0%,rgba(0,91,255,0.34),transparent_34%),radial-gradient(circle_at_92%_22%,rgba(56,189,248,0.14),transparent_28%),linear-gradient(135deg,rgba(15,23,42,0.9),rgba(7,17,31,0.96))] p-5 shadow-[0_28px_90px_rgba(0,0,0,0.34),0_0_42px_rgba(0,91,255,0.14)] backdrop-blur-xl sm:p-7 lg:p-8"
+        >
           <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.08),transparent_32%,rgba(0,91,255,0.12))]" />
           <div className="relative z-10 grid gap-7 lg:grid-cols-[1fr_360px] lg:items-center">
             <div>
@@ -149,7 +184,7 @@ function ProductListingPage() {
                 <Sparkles size={13} />
                 Catalog gaming & electronics
               </Badge>
-              <h1 className="text-heading max-w-3xl">
+              <h1 className="text-heading max-w-3xl" id="catalog-heading">
                 {selectedCategory ? `Mua ${selectedCategory.name}` : "Tất cả sản phẩm"}
               </h1>
               <p className="text-muted mt-3 max-w-2xl text-base md:text-lg">
@@ -207,7 +242,7 @@ function ProductListingPage() {
             <FilterSidebar {...filterSidebarProps} />
           </div>
 
-          <section className="min-w-0 space-y-4">
+          <section aria-labelledby="product-results-heading" className="min-w-0 space-y-4">
             <div
               className="scroll-mt-28 rounded-2xl border border-white/10 bg-slate-950/36 p-3 shadow-inner shadow-white/[0.03] backdrop-blur-xl sm:p-4"
               id="product-results"
@@ -215,7 +250,7 @@ function ProductListingPage() {
               <div className="flex flex-col gap-3 xl:flex-row xl:items-start xl:justify-between">
                 <div>
                   <p className="text-caption text-blue-200">{categorySummary}</p>
-                  <h2 className="text-section mt-1 text-xl">
+                  <h2 className="text-section mt-1 text-xl" id="product-results-heading">
                     {isLoading ? "Đang tải sản phẩm..." : `${filteredProducts.length} sản phẩm phù hợp`}
                   </h2>
                 </div>

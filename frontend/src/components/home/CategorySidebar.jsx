@@ -13,6 +13,7 @@ import {
   Phone,
   SquareMousePointer,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const categoryIcons = {
   Armchair,
@@ -43,19 +44,19 @@ function CategorySidebar({ categories = [] }) {
           const isActive = index === 0;
 
           return (
-            <button
+            <Link
               className={`premium-transition flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-sm font-semibold ${
                 isActive
                   ? "bg-[#005BFF] text-white shadow-[0_0_28px_rgba(0,91,255,0.35)]"
                   : "text-slate-300 hover:translate-x-1 hover:bg-white/[0.06] hover:text-white hover:shadow-[0_0_22px_rgba(0,91,255,0.12)]"
               }`}
               key={category.id}
-              type="button"
+              to={category.slug === "tat-ca" ? "/products" : `/categories/${category.slug}`}
             >
               <Icon size={18} />
               <span className="flex-1">{category.name}</span>
               <ChevronRight size={16} />
-            </button>
+            </Link>
           );
         })}
       </div>

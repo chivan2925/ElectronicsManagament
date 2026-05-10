@@ -14,6 +14,11 @@ Ready for Phase 7 — Advanced Features & Production Systems
 
 ## Recently Completed
 
+- Added the storefront SEO foundation with reusable `SEOHead` and centralized `frontend/src/seo/metadata.js` helpers.
+- Added dynamic page titles, meta descriptions, canonical URLs, Open Graph tags, Twitter cards, product metadata, and JSON-LD structured data for homepage, product listing, product detail, and category routes.
+- Added `/categories/:categorySlug` routing and updated storefront category navigation to use canonical category URLs.
+- Improved semantic HTML/accessibility basics on listing/detail breadcrumbs and listing sections without restructuring the homepage.
+- Verified `npm run lint`, `npm run build`, and `git diff --check` after the SEO foundation. `git diff --check` reported only CRLF normalization warnings for edited frontend files.
 - Upgraded the Admin Analytics System with reusable `AnalyticsFilters`, `RevenueAnalytics`, `CustomerAnalytics`, and `InventoryAnalytics` widgets.
 - Added admin analytics date range filters, channel/segment filters, and export placeholders.
 - Added revenue analytics, top-selling products, customer analytics, conversion metrics placeholder, inventory analytics, order trends, and sales report breakdowns using responsive Recharts area, line, pie, and bar charts.
@@ -290,6 +295,7 @@ Ready for Phase 7 — Advanced Features & Production Systems
 - Use `src/auth/usePermissions.js` and `src/auth/PermissionGate.jsx` instead of inline role checks in pages/components.
 - Keep mock data centralized in the domain modules under `src/data`.
 - Keep route definitions centralized in `src/routes/AppRoutes.jsx`.
+- Keep storefront SEO metadata centralized in `src/seo/metadata.js` and render page head tags through `src/components/seo/SEOHead.jsx`.
 
 ### Design System Maintenance
 
@@ -316,7 +322,7 @@ Ready for Phase 7 — Advanced Features & Production Systems
 - Connect the production-ready wishlist sync layer to a real public wishlist API when the backend contract is ready; keep recently viewed local until product history APIs exist.
 - Replace homepage product sections, wishlist/recently viewed lookup, and search overlay mock data with real storefront APIs when those contracts are ready.
 - Keep VNPay and MoMo Sandbox checkout handoff stable; move to production credentials only through environment-specific config.
-- Add category route/page when the category browsing plan is ready.
+- Keep `/categories/:categorySlug` category browsing aligned with product listing filters and canonical metadata.
 - Replace the homepage mock loading timer with real loading state when storefront data integration begins.
 
 ### Phase 7 Advanced Features & Production Systems
@@ -362,6 +368,7 @@ Ready for Phase 7 — Advanced Features & Production Systems
 - Backend local startup on default port may fail when another process already binds `8080`.
 - Local PostgreSQL still contains legacy drift in non-auth modules, including non-null columns and warehouse transaction foreign keys, and should be migrated with controlled SQL scripts instead of relying on `ddl-auto` alone.
 - Production deployment is not ready.
+- Dynamic SEO metadata is client-side only until a future SSR/prerendering plan exists.
 
 ## Maintenance Reminder
 

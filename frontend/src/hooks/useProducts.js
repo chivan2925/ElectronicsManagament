@@ -105,7 +105,7 @@ function getCategoryOptions(products) {
   return Array.from(categories.values()).sort((a, b) => a.name.localeCompare(b.name));
 }
 
-function useProducts() {
+function useProducts({ routeCategorySlug = null } = {}) {
   const [searchParams, setSearchParams] = useSearchParams();
   const [products, setProducts] = useState([]);
   const [apiMeta, setApiMeta] = useState(null);
@@ -118,13 +118,15 @@ function useProducts() {
   const filters = useMemo(() => {
     const sort = searchParams.get("sort");
     const rating = searchParams.get("rating");
+    const categoryParams = getListParam(searchParams, "category");
+    const routeCategoryFilter = routeCategorySlug && routeCategorySlug !== "tat-ca" ? [routeCategorySlug] : [];
     const priceRangeIds = getListParam(searchParams, "price").filter((id) =>
       PRICE_RANGES.some((range) => range.id === id),
     );
 
     return {
       brands: getListParam(searchParams, "brand"),
-      categories: getListParam(searchParams, "category"),
+      categories: categoryParams.length ? categoryParams : routeCategoryFilter,
       page: Math.max(Number(searchParams.get("page")) || 1, 1),
       priceRanges: priceRangeIds,
       rating: RATING_OPTIONS.some((option) => option.value === rating) ? rating : null,
@@ -132,7 +134,7 @@ function useProducts() {
       sort: validSortValues.has(sort) ? sort : "featured",
       stockStatuses: getListParam(searchParams, "stock").filter((status) => STOCK_LABELS[status]),
     };
-  }, [searchParams, validSortValues]);
+  }, [routeCategorySlug, searchParams, validSortValues]);
 
   const loadProducts = useCallback(() => {
     let isActive = true;

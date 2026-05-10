@@ -12,6 +12,7 @@ import BestSellerSection from "../../components/product/BestSellerSection";
 import ProductCard from "../../components/product/ProductCard";
 import RecentlyViewedSection from "../../components/product/RecentlyViewedSection";
 import TrendingProducts from "../../components/product/TrendingProducts";
+import SEOHead from "../../components/seo/SEOHead";
 import {
   BannerSkeleton,
   CategorySkeleton,
@@ -29,6 +30,7 @@ import {
   promoCards,
   services,
 } from "../../data";
+import { buildHomeMetadata } from "../../seo/metadata";
 import { motionViewport, staggerContainer } from "../../styles/animations";
 
 const MotionDiv = motion.div;
@@ -46,6 +48,7 @@ function Home() {
 
   return (
     <div className="store-page-shell">
+      <SEOHead metadata={buildHomeMetadata({ categories, products: featuredProducts })} />
       <AnnouncementBar />
       {isLoadingDemo ? <HeaderSkeleton /> : <Header />}
 
@@ -129,6 +132,7 @@ function Home() {
             <section className="section-visual grid gap-6 xl:grid-cols-[1fr_340px]">
               <div>
                 <SectionTitle
+                  actionHref="/products"
                   actionLabel="Xem thêm"
                   subtitle="Gear hot, cấu hình mạnh, giá tốt cho game thủ."
                   title="Sản phẩm nổi bật"

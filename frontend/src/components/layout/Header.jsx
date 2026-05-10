@@ -170,7 +170,7 @@ function Header() {
                   <Link
                     className="premium-transition flex items-center justify-between rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-300 hover:translate-x-1 hover:bg-blue-500/10 hover:text-white hover:shadow-[0_0_22px_rgba(0,91,255,0.14)]"
                     key={category.id}
-                    to={`/products?category=${category.slug}`}
+                    to={`/categories/${category.slug}`}
                   >
                     <span>{category.name}</span>
                     <ChevronDown className="-rotate-90 text-blue-300" size={15} />
@@ -272,7 +272,7 @@ function Header() {
                     className="premium-transition rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-sm font-bold text-slate-200 hover:border-blue-300/60 hover:bg-blue-500/10 hover:text-white hover:shadow-[0_0_22px_rgba(0,91,255,0.16)]"
                     key={category.id}
                     onClick={closeMobileMenu}
-                    to={`/products?category=${category.slug}`}
+                    to={`/categories/${category.slug}`}
                   >
                     {category.name}
                   </Link>

@@ -50,6 +50,7 @@ function AppRoutes() {
     <Routes>
       <Route element={storeRoute(<Home />)} path="/" />
       <Route element={storeRoute(<ProductListingPage />)} path="/products" />
+      <Route element={storeRoute(<ProductListingPage />)} path="/categories/:categorySlug" />
       <Route element={storeRoute(<ProductDetail />)} path="/products/:slug" />
       <Route element={storeRoute(<Cart />)} path="/cart" />
       <Route

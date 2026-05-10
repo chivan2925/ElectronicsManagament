@@ -20,6 +20,8 @@ The client storefront now includes the homepage, Product API-backed product list
 
 The admin analytics system now includes reusable `AnalyticsFilters`, `RevenueAnalytics`, `CustomerAnalytics`, and `InventoryAnalytics` widgets with date range filters, export placeholders, revenue analytics, top-selling products, customer analytics, conversion placeholders, inventory analytics, order trends, sales report breakdowns, and responsive Recharts line, area, pie, and bar charts.
 
+The storefront now has a client-side SEO foundation with reusable `SEOHead`, centralized metadata helpers, dynamic titles/descriptions, canonical URLs, Open Graph tags, Twitter cards, product metadata, JSON-LD structured data, and category routes at `/categories/:categorySlug` while keeping the homepage layout intact.
+
 The frontend folder structure has been normalized without changing the current visual UI.
 
 The frontend now has a theme system for shared colors, spacing, radius, shadows, typography, z-index, and transitions.
@@ -548,6 +550,7 @@ Latest validation:
 - `npm run lint` and `npm run build` passed after polishing the storefront payment experience.
 - `npm run lint` and `npm run build` passed after building the realtime notification foundation.
 - `npm run lint`, `npm run build`, and `git diff --check` passed after upgrading the Admin Analytics System. The build completed without the Vite chunk-size warning after analytics mock data was isolated in an admin lazy chunk; `git diff --check` reported only CRLF normalization warnings for edited files.
+- `npm run lint`, `npm run build`, and `git diff --check` passed after adding the storefront SEO foundation. `git diff --check` reported only CRLF normalization warnings for edited frontend files.
 
 ## Known Issues
 
@@ -568,6 +571,7 @@ Latest validation:
 - Backend Category API currently does not expose `description` in request/response DTOs; category description in admin UI is session-level until backend contract is extended.
 - Build output is valid after route splitting; Recharts remains isolated in a lazy chart chunk for admin analytics/report routes.
 - A production realtime backend endpoint is not connected yet; the frontend realtime foundation uses `VITE_REALTIME_WS_URL` when available and otherwise falls back to local queued events/polling.
+- SEO metadata is client-side only in the current SPA; SSR/prerendering is not implemented yet, and the default Open Graph image remains a placeholder until final brand assets exist.
 
 ## Next Phase
 

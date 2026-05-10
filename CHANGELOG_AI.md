@@ -8,6 +8,15 @@ Always update this file after meaningful work.
 
 ## 2026-05-10
 
+### Storefront SEO Foundation
+
+- Added `SEOHead` and centralized metadata helpers for dynamic titles, meta descriptions, canonical URLs, Open Graph tags, Twitter cards, product metadata, and JSON-LD structured data.
+- Added SEO metadata coverage for the homepage, product listing, product detail, loading/error/not-found product states, and category pages.
+- Added `/categories/:categorySlug` and updated storefront category links to use canonical category URLs.
+- Improved listing/detail semantic structure, breadcrumb accessibility, and heading anchors without changing the homepage layout.
+- Updated `CURRENT_STATE.md`, `NEXT_TASKS.md`, and `FRONTEND_GUIDE.md`.
+- Verified `npm run lint`, `npm run build`, and `git diff --check`. `git diff --check` reported only CRLF normalization warnings for edited frontend files.
+
 ### Admin Analytics System
 
 - Added reusable admin analytics widgets: `AnalyticsFilters`, `RevenueAnalytics`, `CustomerAnalytics`, and `InventoryAnalytics`.

@@ -12,6 +12,7 @@ import ProductSpecs from "../../components/product/ProductSpecs";
 import RecentlyViewedSection from "../../components/product/RecentlyViewedSection";
 import RecommendationSection from "../../components/product/RecommendationSection";
 import RelatedProducts from "../../components/product/RelatedProducts";
+import SEOHead from "../../components/seo/SEOHead";
 import Button from "../../components/ui/Button";
 import Container from "../../components/ui/Container";
 import ApiErrorAlert from "../../components/ui/feedback/ApiErrorAlert";
@@ -20,6 +21,7 @@ import SkeletonBlock from "../../components/skeletons/SkeletonBlock";
 import { products as catalogProducts } from "../../data";
 import useRecentlyViewed from "../../hooks/useRecentlyViewed";
 import useProductDetail from "../../hooks/useProductDetail";
+import { buildNoIndexMetadata, buildProductDetailMetadata, slugify } from "../../seo/metadata";
 import { fadeUp, staggerContainer } from "../../styles/animations";
 import { getProductAliases } from "../../utils/productIdentity";
 
@@ -105,9 +107,16 @@ function getMaxQuantity(product, selectedVariantOptions) {
   return Math.max(0, Math.min(product.stock, ...selectedVariantOptions.map((option) => option.stock)));
 }
 
-function ProductNotFound() {
+function ProductNotFound({ slug }) {
   return (
     <div className="store-page-shell">
+      <SEOHead
+        metadata={buildNoIndexMetadata({
+          canonicalPath: slug ? `/products/${slug}` : "/products",
+          description: "Sản phẩm này không tồn tại hoặc đã được chuyển sang đường dẫn khác trong catalog ElectronicsManagement.",
+          title: "Sản phẩm không tồn tại",
+        })}
+      />
       <AnnouncementBar />
       <Header />
 
@@ -125,9 +134,16 @@ function ProductNotFound() {
   );
 }
 
-function ProductDetailLoading() {
+function ProductDetailLoading({ slug }) {
   return (
     <div className="store-page-shell">
+      <SEOHead
+        metadata={buildNoIndexMetadata({
+          canonicalPath: slug ? `/products/${slug}` : "/products",
+          description: "Đang tải thông tin sản phẩm trong catalog ElectronicsManagement.",
+          title: "Đang tải sản phẩm",
+        })}
+      />
       <AnnouncementBar />
       <Header />
 
@@ -177,9 +193,16 @@ function ProductDetailLoading() {
   );
 }
 
-function ProductDetailError({ error, onRetry }) {
+function ProductDetailError({ error, onRetry, slug }) {
   return (
     <div className="store-page-shell">
+      <SEOHead
+        metadata={buildNoIndexMetadata({
+          canonicalPath: slug ? `/products/${slug}` : "/products",
+          description: "Không tải được chi tiết sản phẩm trong catalog ElectronicsManagement.",
+          title: "Không tải được sản phẩm",
+        })}
+      />
       <AnnouncementBar />
       <Header />
 
@@ -213,6 +236,7 @@ function ProductDetailContent({ detail, relatedProducts }) {
   const finalPrice = detail.product.price + selectedPriceDelta;
   const finalOldPrice = detail.product.oldPrice ? detail.product.oldPrice + selectedPriceDelta : null;
   const frequentlyBoughtProducts = getFrequentlyBoughtTogetherProducts(detail.product, relatedProducts);
+  const categoryPath = `/categories/${slugify(detail.product.category) || "tat-ca"}`;
 
   useEffect(() => {
     addRecentlyViewed(detail.product);
@@ -244,6 +268,7 @@ function ProductDetailContent({ detail, relatedProducts }) {
 
   return (
     <div className="store-page-shell">
+      <SEOHead metadata={buildProductDetailMetadata({ detail })} />
       <AnnouncementBar />
       <Header />
 
@@ -257,7 +282,11 @@ function ProductDetailContent({ detail, relatedProducts }) {
             Sản phẩm
           </Link>
           <ChevronRight className="text-slate-600" size={15} />
-          <span className="text-blue-200">{detail.product.category}</span>
+          <Link className="premium-transition text-blue-200 hover:text-white" to={categoryPath}>
+            {detail.product.category}
+          </Link>
+          <ChevronRight className="text-slate-600" size={15} />
+          <span aria-current="page" className="min-w-0 truncate text-blue-100">{detail.product.name}</span>
         </nav>
 
         <MotionDiv
@@ -331,15 +360,15 @@ function ProductDetail() {
   const { detail, error, isLoading, isNotFound, refresh, relatedProducts } = useProductDetail(slug);
 
   if (isLoading) {
-    return <ProductDetailLoading />;
+    return <ProductDetailLoading slug={slug} />;
   }
 
   if (error) {
-    return <ProductDetailError error={error} onRetry={refresh} />;
+    return <ProductDetailError error={error} onRetry={refresh} slug={slug} />;
   }
 
   if (isNotFound || !detail) {
-    return <ProductNotFound />;
+    return <ProductNotFound slug={slug} />;
   }
 
   return <ProductDetailContent detail={detail} key={detail.product.id} relatedProducts={relatedProducts} />;
