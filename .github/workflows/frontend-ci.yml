@@ -33,10 +33,18 @@ jobs:
 
     env:
       CI: true
-      VITE_API_BASE_URL: http://localhost:8080/api
+      VITE_API_BASE_URL: /api
       VITE_API_TIMEOUT: 15000
+      VITE_SITE_URL: https://ci.electronicsmanagement.local
+      VITE_OG_IMAGE_URL: ""
+      VITE_APP_VERSION: ci
+      VITE_BUILD_SOURCEMAP: "false"
+      VITE_ENABLE_CLIENT_MONITORING: "true"
+      VITE_ENABLE_CLIENT_LOGS: "false"
+      VITE_MONITOR_ROUTE_CHANGES: "false"
       VITE_AUTH_TOKEN_STORAGE: session
       VITE_AUTH_REFRESH_ENDPOINT: /admin/auth/refresh
+      VITE_DEMO_MODE: "false"
       VITE_PRODUCT_API_PATH: /admin/products
       VITE_COUPON_API_PATH: /admin/coupons
       VITE_ORDER_API_PATH: /orders
@@ -68,4 +76,4 @@ jobs:
         run: npm run test --if-present
 
       - name: Build frontend
-        run: npm run build
+        run: npm run build:production

@@ -114,6 +114,8 @@ The Docker deployment foundation now includes production-oriented frontend/backe
 
 The CI/CD foundation now includes GitHub Actions workflows for frontend and backend checks under `.github/workflows/`. Frontend CI installs npm dependencies, runs lint, keeps an optional test-script placeholder, and builds the Vite app. Backend CI runs Maven wrapper tests on Java 21 with a PostgreSQL service. The workflows use path filters, concurrency, dependency caching, manual dispatch, and read-only repository permissions, with no production deployment step.
 
+The Phase 8 production build audit tightened environment separation and build/runtime configs. Frontend production builds now default to `/api` when `VITE_API_BASE_URL` is omitted, expose production SEO/monitoring env templates, use npm consistently, and split Recharts into a lazy `charts-vendor` chunk. Docker/Compose now passes demo, SEO, monitoring, and source-map build args; Nginx enables gzip and forwards proxy headers. Backend now has `application-docker.yml`, `application-prod.yml`, production compression/graceful shutdown defaults, and a `prod` profile validator that rejects placeholder secrets, localhost/example URLs, sandbox payment endpoints, non-`validate` DDL, SQL logging, Swagger exposure, weak JWT secrets, and missing Cloudinary/payment credentials. CI now builds the frontend with production env shape, runs backend `verify`, and validates Docker Compose config in a deployment-config workflow.
+
 The production audit added a minimal backend health/readiness API at `/api/health` and `/api/health/readiness`, wired the production backend container healthcheck to readiness, made the production Compose frontend wait for a healthy backend, hardened storefront payment result parsing for missing/invalid callback identifiers, sanitized payment callback query text before display, restricted frontend payment provider normalization to supported providers, and improved route loading fallback accessibility/responsive safety.
 
 The Phase 6 completion review tightened customer ecommerce UX consistency across search, reviews, wishlist, recommendations, cart, checkout, order tracking, notifications, responsive behavior, animations, and performance without a large redesign. Internal storefront header and notification navigation now stays within React Router, search and wishlist states reuse cleaner shared patterns, product identity matching is centralized, PLP search normalization handles punctuation and Vietnamese/no-accent queries more consistently, and cart recommendations use the optimized image foundation.
@@ -595,6 +597,7 @@ Latest validation:
 - `npm run lint` and `npm run build` passed after the loading/error/empty-state foundation audit.
 - `npm run lint`, `npm run build`, and `git diff --check` passed after the system form UX audit. `git diff --check` reported only CRLF normalization warnings for edited frontend files.
 - `npm run lint`, `npm run build`, `git diff --check`, and Vite preview route smoke checks passed after the ecommerce QA flow audit. Smoke checks returned `200` for storefront, auth, checkout/payment, profile, and admin routes; `git diff --check` reported only CRLF normalization warnings for edited frontend files.
+- `npm run lint`, `npm run build:production`, `mvn test`, `mvn -DskipTests package`, production/development `docker compose config`, and `git diff --check` passed after the Phase 8 production build audit. Maven commands required network/cache access outside the sandbox to resolve dependencies, `mvn test` still printed the existing local PostgreSQL `media.display_order` DDL warning, and Docker Compose config printed a local Docker credential-file access warning while returning success.
 
 ## Known Issues
 
@@ -610,6 +613,7 @@ Latest validation:
 - The frontend refresh-token flow is ready, but the current backend admin auth controller only exposes login/logout; real refresh requires backend `refreshToken` response support and `POST /admin/auth/refresh`.
 - `/checkout` is frontend-auth protected and creates backend orders with VNPay Sandbox and MoMo Sandbox handoff; production payment credentials, deployed return URLs, and customer-auth ownership enforcement are not production-ready.
 - Backend config now uses environment placeholders for secrets, but real production secret injection and rotation are not configured.
+- A backend `prod` profile validator now rejects placeholder/sandbox/local production configuration, but real production secrets, provider credentials, TLS hosts, and external secret injection are still deployment-time work.
 - Backend local startup may fail if port `8080` is occupied by another local service; run on another port or free `8080`.
 - Existing local PostgreSQL schema is partially legacy and still needs controlled migration/backfill for non-auth tables instead of relying on Hibernate `ddl-auto:update`.
 - Backend Category API currently does not expose `description` in request/response DTOs; category description in admin UI is session-level until backend contract is extended.
@@ -661,6 +665,7 @@ Backend also includes:
 - Cloudinary upload support.
 - Structured logging helpers and request correlation through `X-Request-Id`/MDC for production observability groundwork.
 - Public health/readiness probes at `/api/health` and `/api/health/readiness`.
+- Docker and production Spring profiles with fail-fast production configuration validation.
 
 Backend gaps:
 
@@ -668,7 +673,7 @@ Backend gaps:
 - Customer auth APIs are not complete.
 - Cart APIs are not complete.
 - VNPay Sandbox and MoMo Sandbox handoff exist for checkout orders; production payment credentials, deployed return URLs, and public checkout ownership contracts are not complete.
-- Production secret values and deployment-time secret injection still need environment-specific setup.
+- Production secret values and deployment-time secret injection still need environment-specific setup, even though the `prod` profile now rejects obvious placeholders and sandbox/local URLs.
 - Docker Compose can run local production-like and development stacks, but real production deployment has not been performed.
 
 ## Documentation State

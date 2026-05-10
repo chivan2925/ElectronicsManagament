@@ -29,15 +29,20 @@ Services:
 
 ```text
 .env.example
+.env.production.example
 docker-compose.yml
 docker-compose.dev.yml
 frontend/Dockerfile
 frontend/nginx.conf
+frontend/.env.production.example
 frontend/.dockerignore
 backend/electronics/Dockerfile
 backend/electronics/.dockerignore
+backend/electronics/src/main/resources/application-docker.yml
+backend/electronics/src/main/resources/application-prod.yml
 .github/workflows/frontend-ci.yml
 .github/workflows/backend-ci.yml
+.github/workflows/deployment-config-ci.yml
 ```
 
 ## Environment Management
@@ -48,12 +53,15 @@ Create a local `.env` from the template:
 cp .env.example .env
 ```
 
+For real production, copy values from `.env.production.example` into your deployment secret store or an untracked production env file, then replace every placeholder before startup.
+
 Rules:
 
 - Keep `.env` local.
 - Do not commit real database, JWT, payment, or Cloudinary secrets.
 - Use hosting-platform secrets or a secret manager for real environments.
 - Keep provider callback URLs aligned with the public HTTPS backend URL.
+- Use `SPRING_PROFILES_ACTIVE=prod` only after production values, HTTPS callbacks, and controlled migrations are ready.
 
 Main environment groups:
 
@@ -66,7 +74,7 @@ Main environment groups:
 | Swagger | `SPRINGDOC_API_DOCS_ENABLED`, `SPRINGDOC_SWAGGER_UI_ENABLED` |
 | Payments | `PAYMENT_FRONTEND_SUCCESS_URL`, `PAYMENT_FRONTEND_FAILED_URL`, `VNPAY_*`, `MOMO_*` |
 | Uploads | `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` |
-| Frontend | `VITE_API_BASE_URL`, `VITE_API_TIMEOUT`, `VITE_AUTH_TOKEN_STORAGE`, `VITE_*_API_PATH` |
+| Frontend | `VITE_API_BASE_URL`, `VITE_API_TIMEOUT`, `VITE_SITE_URL`, `VITE_OG_IMAGE_URL`, `VITE_APP_VERSION`, `VITE_AUTH_TOKEN_STORAGE`, `VITE_*_API_PATH` |
 
 Detailed variable reference: [docs/ENVIRONMENT.md](docs/ENVIRONMENT.md).
 
@@ -130,7 +138,7 @@ Frontend:
 cd frontend
 npm install
 npm run lint
-npm run build
+npm run build:production
 ```
 
 Backend:
@@ -138,7 +146,7 @@ Backend:
 ```bash
 cd backend/electronics
 mvn test
-mvn -q -DskipTests compile
+mvn -DskipTests package
 ```
 
 Run backend manually:
@@ -172,14 +180,15 @@ Before deploying to a real environment:
 
 1. Replace every placeholder in `.env`.
 2. Use a unique 32+ byte `ELECTRONICS_JWT_SECRET`.
-3. Set `SPRING_JPA_HIBERNATE_DDL_AUTO=validate` after controlled migrations exist.
+3. Set `SPRING_PROFILES_ACTIVE=prod` and `SPRING_JPA_HIBERNATE_DDL_AUTO=validate` after controlled migrations exist.
 4. Disable SQL logging unless needed for debugging.
 5. Restrict `CORS_ALLOWED_ORIGIN_PATTERNS` to real frontend origins.
 6. Use HTTPS public URLs for payment return and notify endpoints.
 7. Set real Cloudinary and payment credentials through secrets management.
 8. Decide whether Swagger should be disabled with `SPRINGDOC_API_DOCS_ENABLED=false` and `SPRINGDOC_SWAGGER_UI_ENABLED=false`.
-9. Run frontend and backend CI checks.
-10. Confirm backups, restore procedure, log retention, and monitoring are ready.
+9. Confirm the backend `prod` profile starts without placeholder/sandbox configuration errors.
+10. Run frontend, backend, and deployment-config CI checks.
+11. Confirm backups, restore procedure, log retention, and monitoring are ready.
 
 ## Payment Deployment Notes
 
@@ -232,8 +241,9 @@ Check app builds:
 ```bash
 cd frontend
 npm run lint
-npm run build
+npm run build:production
 
 cd ../backend/electronics
 mvn test
+mvn -DskipTests package
 ```

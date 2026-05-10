@@ -8,6 +8,18 @@ Always update this file after meaningful work.
 
 ## 2026-05-10
 
+### Production Build Audit
+
+- Audited frontend build, backend build, bundle size, env handling, Docker configs, CI configs, API URLs, Cloudinary config, and VNPay/MoMo payment config for Phase 8 production readiness.
+- Added root and frontend `.env.production.example` templates, expanded local env examples, and kept production secrets as explicit placeholders only.
+- Changed frontend production API fallback to `/api`, added production build scripts, optional source-map handling, configurable site/OG metadata env, and npm-only lockfile usage.
+- Split Recharts into a lazy `charts-vendor` chunk, reducing the admin analytics mock chunk from about 432 kB to about 43 kB while keeping charts lazy-loaded.
+- Added backend `application-docker.yml`, `application-prod.yml`, and a `prod` profile validator for placeholder secrets, non-HTTPS/local/example URLs, sandbox payment endpoints, Cloudinary credentials, CORS, Swagger, SQL logging, JWT strength, and `ddl-auto=validate`.
+- Updated Docker/Compose/Nginx with production build args for demo/SEO/monitoring/source maps, gzip, and forwarded proxy headers.
+- Updated GitHub Actions so frontend CI builds with production env shape, backend CI runs Maven `verify`, and deployment config CI validates Docker Compose rendering.
+- Fixed the Windows Maven wrapper symlink-target check and removed the stale `pnpm-lock.yaml`.
+- Verified `npm run lint`, `npm run build:production`, `mvn test`, `mvn -DskipTests package`, Docker Compose config rendering, and `git diff --check`; Maven needed network/cache access outside the sandbox, `mvn test` still printed the existing local PostgreSQL `media.display_order` DDL warning, and Docker config rendering printed a local Docker credential-file warning while returning success.
+
 ### Demo Presentation Mode
 
 - Added a frontend demo/presentation mode gated by `VITE_DEMO_MODE=true`.

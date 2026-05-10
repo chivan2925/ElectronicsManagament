@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import process from 'node:process'
 
 function getPackageName(id) {
   const normalizedId = id.replace(/\\/g, '/')
@@ -38,17 +39,25 @@ function manualChunks(id) {
     return 'http-vendor'
   }
 
+  if (packageName === 'recharts' || packageName.startsWith('d3-') || packageName === 'victory-vendor') {
+    return 'charts-vendor'
+  }
+
   return undefined
 }
 
 // https://vite.dev/config/
 export default defineConfig({
   build: {
+    cssCodeSplit: true,
+    reportCompressedSize: true,
     rollupOptions: {
       output: {
         manualChunks,
       },
     },
+    sourcemap: process.env.VITE_BUILD_SOURCEMAP === 'true',
+    target: 'es2022',
   },
   plugins: [react()],
 })

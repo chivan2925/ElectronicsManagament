@@ -7,7 +7,8 @@ export const DEFAULT_LANGUAGE = "vi";
 export const DEFAULT_TITLE = "ElectronicsManagement | Electronics & Gaming Store";
 export const DEFAULT_DESCRIPTION =
   "ElectronicsManagement là cửa hàng ecommerce cho laptop, PC Gaming, điện thoại, linh kiện PC và phụ kiện gaming chính hãng.";
-export const DEFAULT_OG_IMAGE = "https://placehold.co/1200x630/07111F/FFFFFF?text=ElectronicsManagement";
+export const DEFAULT_OG_IMAGE =
+  import.meta.env.VITE_OG_IMAGE_URL || "https://placehold.co/1200x630/07111F/FFFFFF?text=ElectronicsManagement";
 
 const TITLE_SUFFIX = `| ${SITE_NAME}`;
 const MAX_TITLE_LENGTH = 64;

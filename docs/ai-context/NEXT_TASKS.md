@@ -14,6 +14,13 @@ Phase 8 — Production + Deploy (Phase 7 completed)
 
 ## Recently Completed
 
+- Completed a Phase 8 production build audit across frontend build, backend build, bundle size, env handling, Docker configs, CI configs, API URLs, Cloudinary config, and VNPay/MoMo payment config.
+- Added production env separation through root and frontend `.env.production.example` templates, production SEO/monitoring build variables, and a frontend production `/api` default when `VITE_API_BASE_URL` is omitted.
+- Tuned frontend production builds with npm-only lockfile usage, `build:production` scripts, optional source maps, and a lazy `charts-vendor` chunk so Recharts no longer bloats the admin analytics mock chunk.
+- Added backend `application-docker.yml`, `application-prod.yml`, and a `prod` profile configuration validator for placeholder secrets, HTTPS production URLs, sandbox payment endpoints, Cloudinary credentials, CORS, Swagger, SQL logging, JWT strength, and `ddl-auto=validate`.
+- Updated Docker/Compose/Nginx config for SEO/demo/monitoring build args, gzip, forwarded proxy headers, and production/development env parity.
+- Updated CI so frontend builds with production env shape, backend runs Maven `verify`, and deployment config validates Docker Compose rendering.
+- Verified `npm run lint`, `npm run build:production`, `mvn test`, `mvn -DskipTests package`, Docker Compose config rendering, and `git diff --check`.
 - Prepared a local demo/presentation mode gated by `VITE_DEMO_MODE=true`.
 - Added seeded frontend mock API responses for catalog browsing, checkout, payment verification, account order tracking, and admin CRUD-style demo screens without changing default backend integration.
 - Added demo account quick-fill on customer/admin login pages, a demo runbook panel on `/admin/dashboard`, and `docs/DEMO_PRESENTATION.md` with accounts, coupons, scenarios, and presenter notes.
@@ -414,7 +421,7 @@ Phase 8 — Production + Deploy (Phase 7 completed)
 ### Phase 8 Production + Deploy
 
 - Keep real deployment blocked until hosting, TLS, external secrets, backups, and migration automation are finalized.
-- Add controlled PostgreSQL migration/backfill scripts for legacy schema drift and switch production schema handling to validation.
+- Add controlled PostgreSQL migration/backfill scripts for legacy schema drift before using the production `ddl-auto=validate` posture against real data.
 - Finalize public customer registration/login, account ownership, cart persistence, wishlist persistence, and public order tracking contracts.
 - Move VNPay/MoMo from sandbox to production only through environment-specific credentials, HTTPS return URLs, provider reconciliation checks, and critical-flow tests.
 - Connect real notification, loyalty, recommendation, search, and customer-facing returns/refunds APIs when backend contracts are available.
@@ -453,7 +460,7 @@ Phase 8 — Production + Deploy (Phase 7 completed)
 - Backend startup also reports a database DDL warning for existing null `media.display_order` values.
 - Backend local startup on default port may fail when another process already binds `8080`.
 - Local PostgreSQL still contains legacy drift in non-auth modules, including non-null columns and warehouse transaction foreign keys, and should be migrated with controlled SQL scripts instead of relying on `ddl-auto` alone.
-- Docker deployment foundation exists, but real production hosting, TLS, external secrets, backups, and migration automation are not complete.
+- Docker deployment foundation and production env validation exist, but real production hosting, TLS, external secrets, backups, and migration automation are not complete.
 - Dynamic SEO metadata is client-side only until a future SSR/prerendering plan exists.
 
 ## Maintenance Reminder

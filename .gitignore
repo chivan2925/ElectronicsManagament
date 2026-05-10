@@ -44,6 +44,7 @@ node_modules
 .env
 .env.*
 !**/.env.example
+!**/.env.production.example
 
 # --- BUILD OUTPUTS ---
 frontend/dist/

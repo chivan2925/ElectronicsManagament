@@ -1,0 +1,19 @@
+spring:
+  jpa:
+    show-sql: ${SPRING_JPA_SHOW_SQL:false}
+    hibernate:
+      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:update}
+    properties:
+      hibernate:
+        format_sql: false
+
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
+
+server:
+  compression:
+    enabled: true
+    mime-types: application/json,application/problem+json,text/plain,text/css,application/javascript
+    min-response-size: 1024
+  forward-headers-strategy: framework
+  shutdown: graceful

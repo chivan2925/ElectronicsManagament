@@ -1,0 +1,63 @@
+spring:
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: false
+
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
+
+server:
+  compression:
+    enabled: true
+    mime-types: application/json,application/problem+json,text/plain,text/css,application/javascript
+    min-response-size: 1024
+  forward-headers-strategy: framework
+  shutdown: graceful
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
+
+app:
+  cors:
+    allowed-origin-patterns: ${CORS_ALLOWED_ORIGIN_PATTERNS}
+
+electronics:
+  app:
+    jwtSecret: ${ELECTRONICS_JWT_SECRET:}
+    jwtExpirationMs: ${ELECTRONICS_JWT_EXPIRATION_MS:86400000}
+
+payment:
+  frontend:
+    success-url: ${PAYMENT_FRONTEND_SUCCESS_URL:}
+    failed-url: ${PAYMENT_FRONTEND_FAILED_URL:}
+  vnpay:
+    tmn-code: ${VNPAY_TMN_CODE:}
+    secret-key: ${VNPAY_SECRET_KEY:}
+    pay-url: ${VNPAY_PAY_URL:}
+    refund-url: ${VNPAY_REFUND_URL:}
+    return-url: ${VNPAY_RETURN_URL:}
+  momo:
+    partner-code: ${MOMO_PARTNER_CODE:}
+    access-key: ${MOMO_ACCESS_KEY:}
+    secret-key: ${MOMO_SECRET_KEY:}
+    endpoint: ${MOMO_ENDPOINT:}
+    refund-url: ${MOMO_REFUND_URL:}
+    return-url: ${MOMO_RETURN_URL:}
+    notify-url: ${MOMO_NOTIFY_URL:}
+
+cloudinary:
+  cloud-name: ${CLOUDINARY_CLOUD_NAME:}
+  api-key: ${CLOUDINARY_API_KEY:}
+  api-secret: ${CLOUDINARY_API_SECRET:}
