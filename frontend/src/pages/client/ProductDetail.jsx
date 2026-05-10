@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ChevronRight, PackageSearch } from "lucide-react";
+import { ChevronRight, PackageSearch, ShoppingBag } from "lucide-react";
 import AnnouncementBar from "../../components/layout/AnnouncementBar";
 import Header from "../../components/layout/Header";
 import ProductGallery from "../../components/product/ProductGallery";
@@ -9,17 +9,78 @@ import ProductInfo from "../../components/product/ProductInfo";
 import ProductReviews from "../../components/product/ProductReviews";
 import ProductSpecs from "../../components/product/ProductSpecs";
 import RecentlyViewedSection from "../../components/product/RecentlyViewedSection";
+import RecommendationSection from "../../components/product/RecommendationSection";
 import RelatedProducts from "../../components/product/RelatedProducts";
 import Button from "../../components/ui/Button";
 import Container from "../../components/ui/Container";
 import ApiErrorAlert from "../../components/ui/feedback/ApiErrorAlert";
 import EmptyState from "../../components/ui/feedback/EmptyState";
 import SkeletonBlock from "../../components/skeletons/SkeletonBlock";
+import { products as catalogProducts } from "../../data";
 import useRecentlyViewed from "../../hooks/useRecentlyViewed";
 import useProductDetail from "../../hooks/useProductDetail";
 import { fadeUp, staggerContainer } from "../../styles/animations";
 
 const MotionDiv = motion.div;
+
+const frequentlyBoughtCategories = {
+  "điện thoại": ["tai nghe", "phụ kiện gaming"],
+  laptop: ["chuột", "bàn phím", "tai nghe", "lót chuột"],
+  "tai nghe": ["chuột", "bàn phím", "phụ kiện gaming"],
+  "chuột": ["bàn phím", "lót chuột", "tai nghe"],
+  "bàn phím": ["chuột", "lót chuột", "tai nghe"],
+  "lót chuột": ["chuột", "bàn phím"],
+  "PC Gaming": ["linh kiện PC", "chuột", "bàn phím", "tai nghe", "ghế gaming"],
+  "máy bộ": ["chuột", "bàn phím", "tai nghe", "lót chuột"],
+  "linh kiện PC": ["PC Gaming", "máy bộ", "phụ kiện gaming"],
+  "ghế gaming": ["bàn phím", "chuột", "tai nghe"],
+  "phụ kiện gaming": ["tai nghe", "chuột", "bàn phím"],
+};
+
+function getProductAliases(product = {}) {
+  return [product.id, product.apiId, product.productId, product.slug].map((value) => String(value ?? "")).filter(Boolean);
+}
+
+function getUniqueProducts(products) {
+  const productMap = new Map();
+
+  products.filter(Boolean).forEach((product) => {
+    const key = product.slug || product.id || product.apiId || product.productId;
+
+    if (key && !productMap.has(String(key))) {
+      productMap.set(String(key), product);
+    }
+  });
+
+  return Array.from(productMap.values());
+}
+
+function getFrequentlyBoughtTogetherProducts(product, relatedProducts, limit = 6) {
+  const excludedAliases = new Set(getProductAliases(product));
+  const preferredCategories = frequentlyBoughtCategories[product.category] || [];
+  const productTags = new Set(product.tags || []);
+  const candidates = getUniqueProducts([...relatedProducts, ...catalogProducts]).filter(
+    (candidate) => !getProductAliases(candidate).some((alias) => excludedAliases.has(alias)),
+  );
+
+  return candidates
+    .map((candidate) => {
+      const preferredCategoryIndex = preferredCategories.indexOf(candidate.category);
+      const matchingTags = (candidate.tags || []).filter((tag) => productTags.has(tag)).length;
+      const score =
+        (preferredCategoryIndex >= 0 ? 110 - preferredCategoryIndex * 12 : 0) +
+        (candidate.category === product.category ? 36 : 0) +
+        (candidate.brand === product.brand ? 18 : 0) +
+        matchingTags * 18 +
+        (candidate.sold || 0) * 0.22 +
+        (candidate.rating || 0) * 12;
+
+      return { product: candidate, score };
+    })
+    .sort((first, second) => second.score - first.score)
+    .slice(0, limit)
+    .map((item) => item.product);
+}
 
 function getInitialOptions(groups) {
   return groups.reduce((selectedOptions, group) => {
@@ -141,6 +202,7 @@ function ProductDetailContent({ detail, relatedProducts }) {
   const selectedPriceDelta = selectedVariantOptions.reduce((sum, option) => sum + option.priceDelta, 0);
   const finalPrice = detail.product.price + selectedPriceDelta;
   const finalOldPrice = detail.product.oldPrice ? detail.product.oldPrice + selectedPriceDelta : null;
+  const frequentlyBoughtProducts = getFrequentlyBoughtTogetherProducts(detail.product, relatedProducts);
 
   useEffect(() => {
     addRecentlyViewed(detail.product);
@@ -222,6 +284,15 @@ function ProductDetailContent({ detail, relatedProducts }) {
             reviews={detail.reviews}
           />
           <RelatedProducts products={relatedProducts} />
+          <RecommendationSection
+            actionLabel="Xem thêm combo"
+            actionTo="/products"
+            badgeLabel="Bundle gợi ý"
+            icon={ShoppingBag}
+            products={frequentlyBoughtProducts}
+            subtitle="Phụ kiện và sản phẩm bổ trợ để hoàn thiện setup quanh lựa chọn hiện tại."
+            title="Thường mua cùng"
+          />
           <RecentlyViewedSection
             excludeProductIds={[detail.product.id, detail.product.apiId, detail.product.slug]}
             limit={8}

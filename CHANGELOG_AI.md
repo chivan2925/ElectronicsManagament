@@ -8,6 +8,14 @@ Always update this file after meaningful work.
 
 ## 2026-05-10
 
+### Product Recommendation System Foundation
+
+- Added reusable recommendation components: `ProductCarousel.jsx`, `RecommendationSection.jsx`, `TrendingProducts.jsx`, and `BestSellerSection.jsx`.
+- Rebuilt related products on PDP to use the shared recommendation carousel foundation and added a frequently bought together carousel.
+- Added homepage trending and best-seller recommendation carousels while preserving the existing homepage hero and core section structure.
+- Added a recommended-for-you placeholder on the profile overview using the shared recommendation section foundation.
+- Verified `npm run lint`, `npm run build`, `git diff --check`, and route smoke checks for `/`, `/products/:slug`, and `/profile`. Build still reports the existing Vite chunk-size warning, and `git diff --check` reported CRLF normalization warnings for edited files.
+
 ### Recently Viewed Products System
 
 - Rebuilt `useRecentlyViewed.js` with lightweight localStorage product snapshots, duplicate prevention across `id`/`apiId`/`slug`, remove, clear, count, and cross-tab sync behavior.

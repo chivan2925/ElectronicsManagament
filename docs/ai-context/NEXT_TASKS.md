@@ -14,6 +14,9 @@ Ready for Phase 6 — Ecommerce Core Features
 
 ## Recently Completed
 
+- Built the frontend Product Recommendation System foundation with reusable `ProductCarousel.jsx`, `RecommendationSection.jsx`, `TrendingProducts.jsx`, and `BestSellerSection.jsx`.
+- Added homepage trending and best-seller recommendation carousels, PDP related/frequently-bought carousels, and a profile recommended-for-you placeholder without changing the homepage hero or core section structure.
+- Verified `npm run lint`, `npm run build`, `git diff --check`, and route smoke checks for `/`, `/products/:slug`, and `/profile` after adding recommendation sections. Build still reports the existing Vite chunk-size warning, and `git diff --check` reported CRLF normalization warnings for edited files.
 - Built the Recently Viewed Products system with a lightweight localStorage snapshot store, duplicate prevention, remove/clear behavior, and cross-tab sync in `useRecentlyViewed.js`.
 - Added reusable `RecentlyViewedSection.jsx` with a responsive product slider, empty state, and clear-history action for homepage, PDP, wishlist, and profile overview surfaces.
 - Verified `npm run lint`, `npm run build`, `git diff --check`, and route smoke checks for `/`, `/products/:slug`, `/profile`, and `/wishlist` after adding recently viewed. Build still reports the existing Vite chunk-size warning, and `git diff --check` reported CRLF normalization warnings for edited files.

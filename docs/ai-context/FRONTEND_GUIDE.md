@@ -348,6 +348,10 @@ The `/products` page lives at `frontend/src/pages/client/ProductListingPage.jsx`
 Reusable listing components live in `frontend/src/components/product/`:
 
 - `ProductCard.jsx`
+- `ProductCarousel.jsx`
+- `RecommendationSection.jsx`
+- `TrendingProducts.jsx`
+- `BestSellerSection.jsx`
 - `RecentlyViewedSection.jsx`
 - `FilterSidebar.jsx`
 - `SearchProductsInput.jsx`
@@ -376,6 +380,15 @@ Reusable product detail components live in `frontend/src/components/product/`:
 - `ReviewCard.jsx`
 - `ReviewForm.jsx`
 - `RelatedProducts.jsx`
+
+Recommendation UI components live in `frontend/src/components/product/`:
+
+- `ProductCarousel.jsx`
+- `RecommendationSection.jsx`
+- `TrendingProducts.jsx`
+- `BestSellerSection.jsx`
+
+The recommendation foundation is local/mock-backed for now. It powers homepage trending and best-seller sections, PDP related and frequently bought together sections, and the profile recommended-for-you placeholder until a real storefront recommendation API exists.
 
 Reusable product detail API state logic lives in `frontend/src/hooks/useProductDetail.js`.
 

@@ -8,8 +8,10 @@ import FlashSaleCard from "../../components/home/FlashSaleCard";
 import HeroBanner from "../../components/home/HeroBanner";
 import PromoCard from "../../components/home/PromoCard";
 import ServiceBar from "../../components/home/ServiceBar";
+import BestSellerSection from "../../components/product/BestSellerSection";
 import ProductCard from "../../components/product/ProductCard";
 import RecentlyViewedSection from "../../components/product/RecentlyViewedSection";
+import TrendingProducts from "../../components/product/TrendingProducts";
 import {
   BannerSkeleton,
   CategorySkeleton,
@@ -154,6 +156,9 @@ function Home() {
               subtitle="Sản phẩm bạn vừa xem được lưu tạm để quay lại so sánh nhanh."
               title="Tiếp tục xem sản phẩm"
             />
+
+            <TrendingProducts />
+            <BestSellerSection />
           </>
         )}
       </Container>

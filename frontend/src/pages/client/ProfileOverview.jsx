@@ -4,6 +4,7 @@ import ApiErrorAlert from "../../components/ui/feedback/ApiErrorAlert";
 import Badge from "../../components/ui/Badge";
 import Button from "../../components/ui/Button";
 import RecentlyViewedSection from "../../components/product/RecentlyViewedSection";
+import RecommendationSection from "../../components/product/RecommendationSection";
 import SkeletonBlock from "../../components/skeletons/SkeletonBlock";
 
 function formatDate(value) {
@@ -129,6 +130,16 @@ function ProfileOverview() {
         showClearAction={false}
         subtitle="Những sản phẩm bạn vừa mở sẽ xuất hiện ở đây để quay lại nhanh."
         title="Sản phẩm đã xem"
+      />
+
+      <RecommendationSection
+        badgeLabel="Dành cho bạn"
+        compact
+        placeholder
+        placeholderMessage="Tiếp tục duyệt catalog, thêm vào wishlist hoặc giỏ hàng để các lựa chọn ở đây sát nhu cầu hơn."
+        placeholderTitle="Sẵn sàng cá nhân hóa lựa chọn"
+        subtitle="Các gợi ý phù hợp hơn sẽ xuất hiện khi tài khoản có thêm tín hiệu mua sắm."
+        title="Gợi ý dành cho bạn"
       />
     </div>
   );
