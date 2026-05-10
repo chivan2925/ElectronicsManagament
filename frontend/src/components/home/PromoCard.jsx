@@ -29,9 +29,12 @@ function PromoCard({ promo }) {
             as={MotionImg}
             alt={promo.title}
             className="premium-transition relative z-10 h-20 w-24 rounded-lg object-cover ring-1 ring-white/10 group-hover:ring-blue-300/40 sm:h-24 sm:w-28"
+            fallbackKind="product"
+            placeholderClassName="rounded-lg bg-slate-950/70"
             sizes="112px"
             src={promo.image}
             variants={{ hover: imageZoom }}
+            wrapperClassName="relative z-10 h-20 w-24 rounded-lg sm:h-24 sm:w-28"
           />
         </div>
       </div>

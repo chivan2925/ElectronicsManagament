@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Camera, CheckCircle2, Clock3, Image as ImageIcon, ThumbsUp } from "lucide-react";
 import Badge from "../ui/Badge";
+import OptimizedImage from "../common/OptimizedImage";
 import Rating from "../ui/Rating";
 import { cn } from "../../utils/classNames";
 
@@ -52,11 +53,14 @@ function ReviewPhoto({ photo, reviewTitle }) {
   }
 
   return (
-    <img
+    <OptimizedImage
       alt={label}
-      className="aspect-square min-h-20 rounded-2xl border border-white/10 bg-slate-950/60 object-cover"
-      loading="lazy"
+      className="h-full w-full rounded-2xl border border-white/10 object-cover"
+      fallbackKind="review"
+      placeholderClassName="rounded-2xl bg-slate-950/70"
+      sizes="96px"
       src={photo}
+      wrapperClassName="aspect-square min-h-20 rounded-2xl bg-slate-950/60"
     />
   );
 }

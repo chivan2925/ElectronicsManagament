@@ -1,6 +1,7 @@
 import { Loader2, Package, Pencil, Trash2 } from "lucide-react";
 import { useMemo } from "react";
 import { AdminTable, StatusBadge } from "../../../admin/components";
+import OptimizedImage from "../../../components/common/OptimizedImage";
 import { formatCurrency } from "../../../utils/formatters";
 
 function AttributeChips({ variant }) {
@@ -32,7 +33,7 @@ function VariantImage({ variant }) {
   return (
     <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-slate-100">
       {variant.image ? (
-        <img alt={variant.name} className="h-full w-full object-cover" src={variant.image} />
+        <OptimizedImage alt={variant.name} className="h-full w-full object-cover" fallbackKind="product" sizes="44px" src={variant.image} />
       ) : (
         <Package className="text-slate-400" size={18} />
       )}

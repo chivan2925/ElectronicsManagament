@@ -2,6 +2,7 @@ import { ImagePlus } from "lucide-react";
 import { useMemo } from "react";
 import { createProductPlaceholderImage } from "../../../api/productMapper";
 import { AdminForm } from "../../../admin/components";
+import OptimizedImage from "../../../components/common/OptimizedImage";
 import { formatCurrency } from "../../../utils/formatters";
 
 const PRODUCT_STATUS_OPTIONS = [
@@ -26,7 +27,15 @@ function ProductImagePreview({ values }) {
         Ảnh sản phẩm
       </div>
       <div className="mt-4 overflow-hidden rounded-2xl border border-slate-200 bg-white">
-        <img alt={values.name || "Product preview"} className="aspect-[4/3] w-full object-cover" src={imageUrl} />
+        <OptimizedImage
+          alt={values.name || "Product preview"}
+          className="h-full w-full object-cover"
+          fallbackKind="product"
+          placeholderClassName="bg-slate-100"
+          sizes="240px"
+          src={imageUrl}
+          wrapperClassName="aspect-[4/3] w-full bg-slate-100"
+        />
       </div>
       <p className="mt-3 text-xs font-semibold leading-5 text-slate-500">
         Upload thật sẽ đi qua Media module. Trường này lưu URL ảnh chính để preview và tạo media chính cho sản phẩm.

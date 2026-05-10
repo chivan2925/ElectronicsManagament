@@ -8,6 +8,15 @@ Always update this file after meaningful work.
 
 ## 2026-05-10
 
+### Ecommerce Image System
+
+- Upgraded `OptimizedImage` with shared loading state, lazy/eager loading defaults, Cloudinary responsive `srcSet` generation, blur-up placeholders, skeleton overlays, and fallback image handling.
+- Added `frontend/src/hooks/useImageLoading.js` and `frontend/src/utils/imageFallbacks.js` for reusable image status and data-URI fallback images.
+- Applied optimized images to storefront product cards, product gallery, cart, checkout, wishlist, search results, review photos, account avatars, and admin product/variant thumbnails.
+- Optimized admin media grid and preview modal rendering, and added upload queue image previews with object URL cleanup.
+- Updated `CURRENT_STATE.md`, `NEXT_TASKS.md`, and `FRONTEND_GUIDE.md`.
+- Verified `npm run lint`, `npm run build`, `git diff --check`, and route smoke checks for `/`, `/products`, `/products/:slug`, `/cart`, `/checkout`, `/admin/media`, and `/admin/products`. `git diff --check` reported only CRLF normalization warnings for edited frontend files.
+
 ### Storefront SEO Foundation
 
 - Added `SEOHead` and centralized metadata helpers for dynamic titles, meta descriptions, canonical URLs, Open Graph tags, Twitter cards, product metadata, and JSON-LD structured data.

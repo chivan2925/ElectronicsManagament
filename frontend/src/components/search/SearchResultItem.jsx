@@ -107,8 +107,11 @@ function ProductResult({ active, onPick, result }) {
           <OptimizedImage
             alt={result.name}
             className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-105"
+            fallbackKind="product"
+            placeholderClassName="rounded-lg bg-slate-950/70"
             sizes="70px"
             src={result.image}
+            wrapperClassName="flex h-full w-full items-center justify-center rounded-lg"
           />
           {Number(result.stock) <= 0 && (
             <span className="absolute inset-x-1 bottom-1 rounded-lg bg-slate-950/86 px-1.5 py-1 text-center text-[10px] font-black text-slate-300">

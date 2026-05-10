@@ -138,8 +138,11 @@ function WishlistItemCard({ isPending, item, onMoveToCart, onRemove }) {
           <OptimizedImage
             alt={product.name}
             className="premium-transition relative z-10 h-full w-full object-contain drop-shadow-[0_16px_30px_rgba(0,0,0,0.44)] group-hover:scale-105"
+            fallbackKind="product"
+            placeholderClassName="rounded-xl bg-slate-950/70"
             sizes="148px"
             src={product.image}
+            wrapperClassName="relative z-10 flex h-full w-full items-center justify-center rounded-xl"
           />
         </Link>
 

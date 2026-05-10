@@ -1,5 +1,6 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AlertCircle, CheckCircle2, ImagePlus, Loader2, Star, Upload, X } from "lucide-react";
+import OptimizedImage from "../../../components/common/OptimizedImage";
 import { cn } from "../../../utils/classNames";
 
 function formatFileSize(size = 0) {
@@ -18,12 +19,33 @@ function getErrorMessage(error) {
   return error?.apiError?.message || error?.normalizedError?.message || error?.message || "Upload thất bại.";
 }
 
+function createObjectPreviewUrl(file) {
+  if (typeof URL === "undefined" || typeof URL.createObjectURL !== "function") {
+    return "";
+  }
+
+  return URL.createObjectURL(file);
+}
+
+function revokePreviewUrl(previewUrl) {
+  if (!previewUrl || !previewUrl.startsWith("blob:") || typeof URL === "undefined" || typeof URL.revokeObjectURL !== "function") {
+    return;
+  }
+
+  URL.revokeObjectURL(previewUrl);
+}
+
+function revokeQueuePreviews(items = []) {
+  items.forEach((item) => revokePreviewUrl(item.previewUrl));
+}
+
 function createQueueItem(file) {
   return {
     error: "",
     file,
     id: `${file.name}-${file.lastModified}-${Math.random().toString(36).slice(2)}`,
     name: file.name,
+    previewUrl: createObjectPreviewUrl(file),
     progress: 0,
     size: file.size,
     status: "queued",
@@ -41,6 +63,7 @@ function MediaUploader({
   onProductChange,
 }) {
   const inputRef = useRef(null);
+  const queueRef = useRef([]);
   const [dragActive, setDragActive] = useState(false);
   const [makePrimary, setMakePrimary] = useState(false);
   const [queue, setQueue] = useState([]);
@@ -53,6 +76,17 @@ function MediaUploader({
   const isUploading = queue.some((item) => item.status === "uploading");
   const isDisabled = disabled || !canUpload || isUploading;
   const canStartUpload = !isDisabled && selectedProductId;
+
+  useEffect(() => {
+    queueRef.current = queue;
+  }, [queue]);
+
+  useEffect(
+    () => () => {
+      revokeQueuePreviews(queueRef.current);
+    },
+    [],
+  );
 
   const updateQueueItem = (id, patch) => {
     setQueue((currentQueue) => currentQueue.map((item) => (item.id === id ? { ...item, ...patch } : item)));
@@ -80,7 +114,15 @@ function MediaUploader({
     const nextQueueItems = acceptedFiles.map(createQueueItem);
     const uploadedItems = [];
 
-    setQueue((currentQueue) => [...nextQueueItems, ...currentQueue].slice(0, 8));
+    setQueue((currentQueue) => {
+      const combinedQueue = [...nextQueueItems, ...currentQueue];
+      const nextQueue = combinedQueue.slice(0, 8);
+      const nextIds = new Set(nextQueue.map((item) => item.id));
+
+      revokeQueuePreviews(combinedQueue.filter((item) => !nextIds.has(item.id)));
+
+      return nextQueue;
+    });
 
     for (const [index, queueItem] of nextQueueItems.entries()) {
       updateQueueItem(queueItem.id, { progress: 4, status: "uploading" });
@@ -140,7 +182,14 @@ function MediaUploader({
   };
 
   const clearFinished = () => {
-    setQueue((currentQueue) => currentQueue.filter((item) => item.status === "uploading" || item.status === "queued"));
+    setQueue((currentQueue) => {
+      const nextQueue = currentQueue.filter((item) => item.status === "uploading" || item.status === "queued");
+      const nextIds = new Set(nextQueue.map((item) => item.id));
+
+      revokeQueuePreviews(currentQueue.filter((item) => !nextIds.has(item.id)));
+
+      return nextQueue;
+    });
   };
 
   return (
@@ -226,14 +275,33 @@ function MediaUploader({
             <div className="mt-5 space-y-3">
               {queue.map((item) => (
                 <div key={item.id} className="rounded-2xl border border-slate-800 bg-slate-900/80 p-3">
-                  <div className="flex items-start justify-between gap-3">
+                  <div className="grid gap-3 sm:grid-cols-[64px_minmax(0,1fr)_auto] sm:items-start">
+                    <OptimizedImage
+                      alt={item.name}
+                      className="h-full w-full object-cover"
+                      fallbackKind="media"
+                      placeholderClassName="rounded-xl bg-slate-800"
+                      sizes="64px"
+                      src={item.previewUrl}
+                      wrapperClassName="h-16 w-16 rounded-xl border border-slate-800 bg-slate-950"
+                    />
                     <div className="min-w-0">
                       <p className="truncate text-sm font-black text-slate-100">{item.name}</p>
                       <p className="mt-1 text-xs font-semibold text-slate-500">{formatFileSize(item.size)}</p>
+                      <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-800">
+                        <div
+                          className={cn(
+                            "h-full rounded-full transition-all",
+                            item.status === "failed" ? "bg-rose-500" : item.status === "completed" ? "bg-emerald-400" : "bg-blue-500",
+                          )}
+                          style={{ width: `${Math.max(4, Math.min(100, item.progress))}%` }}
+                        />
+                      </div>
+                      {item.error ? <p className="mt-2 text-xs font-semibold leading-5 text-rose-200">{item.error}</p> : null}
                     </div>
                     <span
                       className={cn(
-                        "inline-flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 text-xs font-black",
+                        "inline-flex w-fit shrink-0 items-center gap-1 rounded-full px-2.5 py-1 text-xs font-black",
                         item.status === "completed"
                           ? "bg-emerald-400/10 text-emerald-200"
                           : item.status === "failed"
@@ -247,17 +315,6 @@ function MediaUploader({
                       {item.status === "completed" ? "Done" : item.status === "failed" ? "Failed" : "Uploading"}
                     </span>
                   </div>
-
-                  <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-800">
-                    <div
-                      className={cn(
-                        "h-full rounded-full transition-all",
-                        item.status === "failed" ? "bg-rose-500" : item.status === "completed" ? "bg-emerald-400" : "bg-blue-500",
-                      )}
-                      style={{ width: `${Math.max(4, Math.min(100, item.progress))}%` }}
-                    />
-                  </div>
-                  {item.error ? <p className="mt-2 text-xs font-semibold leading-5 text-rose-200">{item.error}</p> : null}
                 </div>
               ))}
             </div>

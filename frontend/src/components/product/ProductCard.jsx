@@ -127,9 +127,12 @@ function ProductCard({ product }) {
             as={MotionImg}
             alt={product.name}
             className="premium-transition h-full w-full object-contain drop-shadow-[0_18px_36px_rgba(0,0,0,0.42)] group-hover:drop-shadow-[0_26px_52px_rgba(0,91,255,0.28)]"
+            fallbackKind="product"
+            placeholderClassName="rounded-xl bg-slate-950/70"
             sizes="(max-width: 640px) 46vw, (max-width: 1280px) 30vw, 280px"
             src={product.image}
             variants={{ hover: imageZoom }}
+            wrapperClassName="relative z-10 flex h-full w-full items-center justify-center rounded-xl"
           />
         </Link>
 

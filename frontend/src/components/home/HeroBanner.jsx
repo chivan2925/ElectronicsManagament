@@ -73,6 +73,7 @@ function HeroBanner({ promotion }) {
             as={MotionImg}
             alt={promotion.imageAlt}
             className="premium-transition relative z-10 max-h-[250px] w-full max-w-[300px] object-contain drop-shadow-[0_34px_72px_rgba(0,91,255,0.36)] hover:scale-[1.03] sm:max-h-[300px] sm:max-w-[340px] lg:max-h-[390px] lg:max-w-[390px] lg:translate-x-2"
+            fallbackKind="product"
             priority
             sizes="(max-width: 768px) 300px, 390px"
             src={promotion.image}

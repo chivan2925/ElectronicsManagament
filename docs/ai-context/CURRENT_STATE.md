@@ -22,6 +22,8 @@ The admin analytics system now includes reusable `AnalyticsFilters`, `RevenueAna
 
 The storefront now has a client-side SEO foundation with reusable `SEOHead`, centralized metadata helpers, dynamic titles/descriptions, canonical URLs, Open Graph tags, Twitter cards, product metadata, JSON-LD structured data, and category routes at `/categories/:categorySlug` while keeping the homepage layout intact.
 
+The ecommerce image system now uses an upgraded `OptimizedImage` component with shared loading state, lazy/responsive image defaults, Cloudinary `srcSet` generation, blur-up placeholders, skeleton overlays, and data-URI fallback images for product, media, brand, category, avatar, and review imagery.
+
 The frontend folder structure has been normalized without changing the current visual UI.
 
 The frontend now has a theme system for shared colors, spacing, radius, shadows, typography, z-index, and transitions.
@@ -551,6 +553,7 @@ Latest validation:
 - `npm run lint` and `npm run build` passed after building the realtime notification foundation.
 - `npm run lint`, `npm run build`, and `git diff --check` passed after upgrading the Admin Analytics System. The build completed without the Vite chunk-size warning after analytics mock data was isolated in an admin lazy chunk; `git diff --check` reported only CRLF normalization warnings for edited files.
 - `npm run lint`, `npm run build`, and `git diff --check` passed after adding the storefront SEO foundation. `git diff --check` reported only CRLF normalization warnings for edited frontend files.
+- `npm run lint`, `npm run build`, `git diff --check`, and local route smoke checks passed after upgrading the ecommerce image system. Smoke checks returned `200` for `/`, `/products`, `/products/:slug`, `/cart`, `/checkout`, `/admin/media`, and `/admin/products`; `git diff --check` reported only CRLF normalization warnings for edited frontend files.
 
 ## Known Issues
 

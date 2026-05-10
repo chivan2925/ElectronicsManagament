@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import { Camera, Save, UserRound } from "lucide-react";
 import { normalizePhoneNumber } from "../../api/accountMapper";
+import OptimizedImage from "../../components/common/OptimizedImage";
 import ApiErrorAlert from "../../components/ui/feedback/ApiErrorAlert";
 import Badge from "../../components/ui/Badge";
 import Button from "../../components/ui/Button";
@@ -137,7 +138,11 @@ function ProfileSettings() {
 
         <div className="flex items-center gap-3 rounded-2xl border border-blue-300/15 bg-blue-500/[0.055] p-3">
           <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl border border-blue-200/20 bg-[linear-gradient(135deg,#005BFF,#07111F)] text-lg font-black text-white">
-            {values.avatarUrl ? <img alt={values.fullName || "Avatar"} className="h-full w-full object-cover" src={values.avatarUrl} /> : getInitials(profile)}
+            {values.avatarUrl ? (
+              <OptimizedImage alt={values.fullName || "Avatar"} className="h-full w-full object-cover" fallbackKind="avatar" sizes="56px" src={values.avatarUrl} />
+            ) : (
+              getInitials(profile)
+            )}
           </div>
           <div>
             <p className="text-sm font-black text-white">Avatar placeholder</p>

@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { ExternalLink, Image, Layers3, Loader2, Package, Star, Trash2, X } from "lucide-react";
+import OptimizedImage from "../../../components/common/OptimizedImage";
 import { cn } from "../../../utils/classNames";
 
 function formatDateTime(value) {
@@ -104,7 +105,16 @@ function MediaPreviewModal({
         <div className="grid flex-1 overflow-y-auto lg:grid-cols-[minmax(0,1fr)_360px]">
           <div className="flex min-h-[360px] items-center justify-center bg-slate-900/70 p-4 sm:p-6">
             <div className="w-full overflow-hidden rounded-3xl border border-slate-800 bg-slate-950">
-              <img alt={media.fileName} className="max-h-[68vh] w-full object-contain" src={media.imageUrl} />
+              <OptimizedImage
+                alt={media.fileName}
+                className="max-h-[68vh] w-full object-contain"
+                fallbackKind="media"
+                placeholderClassName="bg-slate-900"
+                priority
+                sizes="(max-width: 1024px) 92vw, 760px"
+                src={media.imageUrl}
+                wrapperClassName="flex min-h-[320px] w-full items-center justify-center bg-slate-950"
+              />
             </div>
           </div>
 

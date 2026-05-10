@@ -16,6 +16,7 @@ import {
 } from "recharts";
 import { CircleDollarSign, MousePointerClick, ReceiptText, ShoppingBag, TrendingUp, Wallet } from "lucide-react";
 import AnalyticsCard from "../components/dashboard/AnalyticsCard";
+import OptimizedImage from "../../components/common/OptimizedImage";
 import { cn } from "../../utils/classNames";
 import { compactCurrency, formatCurrency } from "../../utils/formatters";
 
@@ -250,7 +251,15 @@ function RevenueAnalytics({ className, data }) {
                   <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-sm font-black text-primary">
                     {index + 1}
                   </span>
-                  <img alt={item.name} className="h-12 w-12 shrink-0 rounded-xl object-cover ring-1 ring-slate-200" src={item.image} />
+                  <OptimizedImage
+                    alt={item.name}
+                    className="h-full w-full object-cover"
+                    fallbackKind="product"
+                    placeholderClassName="rounded-xl bg-slate-100"
+                    sizes="48px"
+                    src={item.image}
+                    wrapperClassName="h-12 w-12 shrink-0 rounded-xl bg-slate-100 ring-1 ring-slate-200"
+                  />
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-black text-slate-950">{item.name}</p>
                     <p className="mt-0.5 text-xs font-semibold text-slate-500">

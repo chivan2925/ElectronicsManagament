@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import PermissionGate from "../../../auth/PermissionGate";
 import { ADMIN_RESOURCES, getResourceActionPolicy } from "../../../auth/roleHelpers";
 import { AdminIconButton, AdminTable, StatusBadge } from "../../../admin/components";
+import OptimizedImage from "../../../components/common/OptimizedImage";
 import { formatCurrency } from "../../../utils/formatters";
 
 const variantToolPolicy = getResourceActionPolicy(ADMIN_RESOURCES.variants, "view");
@@ -12,7 +13,7 @@ function ProductThumb({ product }) {
   return (
     <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-slate-100">
       {product.image ? (
-        <img alt={product.name} className="h-full w-full object-cover" src={product.image} />
+        <OptimizedImage alt={product.name} className="h-full w-full object-cover" fallbackKind="product" sizes="48px" src={product.image} />
       ) : (
         <Image className="text-slate-400" size={18} />
       )}

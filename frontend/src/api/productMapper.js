@@ -1,19 +1,7 @@
-const DEFAULT_PRODUCT_STATUS = "ACTIVE";
-const PRODUCT_PLACEHOLDER_IMAGE = "https://placehold.co/480x360/F1F5F9/64748B?text=Product+Image";
+import { getImageFallbackSrc } from "../utils/imageFallbacks";
 
-const PLACEHOLDER_TONES = {
-  "PC Gaming": "0B1730",
-  laptop: "0D182B",
-  "bàn phím": "111827",
-  "chuột": "081322",
-  "ghế gaming": "101827",
-  "linh kiện PC": "0D182B",
-  "lót chuột": "0F172A",
-  "máy bộ": "0A1324",
-  "phụ kiện gaming": "081322",
-  "tai nghe": "101827",
-  "điện thoại": "0A1324",
-};
+const DEFAULT_PRODUCT_STATUS = "ACTIVE";
+const PRODUCT_PLACEHOLDER_IMAGE = getImageFallbackSrc("product");
 
 const CATEGORY_DESCRIPTIONS = {
   "PC Gaming": "Cấu hình gaming cân bằng, linh kiện đồng bộ và sẵn sàng nâng cấp cho các tựa game mới.",
@@ -88,15 +76,10 @@ export function normalizeSlug(value) {
     .trim();
 }
 
-function encodeImageText(value) {
-  return encodeURIComponent(String(value ?? "Product").replace(/\s+/g, " ").trim());
-}
-
 export function createProductPlaceholderImage(product, width = 460, height = 360) {
-  const tone = PLACEHOLDER_TONES[product?.category] ?? "0A1324";
   const label = product?.name ?? "ElectronicsManagement";
 
-  return `https://placehold.co/${width}x${height}/${tone}/FFFFFF?text=${encodeImageText(label)}`;
+  return getImageFallbackSrc("product", label, { height, width });
 }
 
 function getPageItems(payload) {

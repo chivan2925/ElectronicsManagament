@@ -1,6 +1,7 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { LogOut, PackageSearch, Settings, ShieldCheck, UserRound } from "lucide-react";
 import authService from "../../api/authService";
+import OptimizedImage from "../common/OptimizedImage";
 import { useToast } from "../ui/toast";
 import { cn } from "../../utils/classNames";
 
@@ -58,7 +59,7 @@ function AccountSidebar({ isLoading = false, profile }) {
         <div className="flex items-center gap-3 lg:block">
           <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-2xl border border-blue-200/20 bg-[radial-gradient(circle_at_30%_20%,rgba(56,189,248,0.45),transparent_34%),linear-gradient(135deg,#005BFF,#07111F)] shadow-[0_0_34px_rgba(0,91,255,0.38)] lg:h-20 lg:w-20">
             {profile?.avatarUrl ? (
-              <img alt={profile.fullName || "Avatar"} className="h-full w-full object-cover" src={profile.avatarUrl} />
+              <OptimizedImage alt={profile.fullName || "Avatar"} className="h-full w-full object-cover" fallbackKind="avatar" sizes="80px" src={profile.avatarUrl} />
             ) : (
               <span className="flex h-full w-full items-center justify-center text-xl font-black text-white lg:text-2xl">
                 {getInitials(profile)}

@@ -1,6 +1,7 @@
 import { Loader2, Plus, Save, Trash2 } from "lucide-react";
 import { useMemo } from "react";
 import { normalizeSlug } from "../../../api/productMapper";
+import OptimizedImage from "../../../components/common/OptimizedImage";
 import { formatCurrency } from "../../../utils/formatters";
 
 const STATUS_OPTIONS = [
@@ -82,7 +83,15 @@ function VariantForm({
         <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
           <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
             {imagePreview ? (
-              <img alt={values.name || "Variant preview"} className="aspect-[4/3] w-full object-cover" src={imagePreview} />
+              <OptimizedImage
+                alt={values.name || "Variant preview"}
+                className="h-full w-full object-cover"
+                fallbackKind="product"
+                placeholderClassName="bg-slate-100"
+                sizes="220px"
+                src={imagePreview}
+                wrapperClassName="aspect-[4/3] w-full bg-slate-100"
+              />
             ) : (
               <div className="flex aspect-[4/3] items-center justify-center text-sm font-black text-slate-400">
                 Variant image

@@ -1,4 +1,5 @@
 import { ChevronLeft, ChevronRight, Eye, Image, Layers3, Loader2, Package, Star, Trash2 } from "lucide-react";
+import OptimizedImage from "../../../components/common/OptimizedImage";
 import { cn } from "../../../utils/classNames";
 
 const pageSizeOptions = [12, 24, 48, 96];
@@ -165,11 +166,14 @@ function MediaGrid({
               onClick={() => onPreview?.(item)}
               type="button"
             >
-              <img
+              <OptimizedImage
                 alt={item.fileName}
                 className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-                loading="lazy"
+                fallbackKind="media"
+                placeholderClassName="bg-slate-800"
+                sizes="(max-width: 640px) 92vw, (max-width: 1280px) 33vw, 320px"
                 src={item.imageUrl}
+                wrapperClassName="h-full w-full bg-slate-900"
               />
               <span className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent opacity-80" />
               {item.isPrimary ? (

@@ -14,6 +14,11 @@ Ready for Phase 7 — Advanced Features & Production Systems
 
 ## Recently Completed
 
+- Upgraded the ecommerce image system with shared image loading state, blur-up placeholders, responsive Cloudinary `srcSet` generation, and fallback data-URI images.
+- Added `frontend/src/hooks/useImageLoading.js` and `frontend/src/utils/imageFallbacks.js`.
+- Extended `OptimizedImage` across product cards, product gallery, cart, checkout, wishlist, search results, review photos, account avatars, admin product/variant thumbnails, admin media grid, admin media preview modal, and upload queue previews.
+- Added admin media upload object-URL previews with cleanup after clear/unmount.
+- Verified `npm run lint`, `npm run build`, `git diff --check`, and local route smoke checks for `/`, `/products`, `/products/:slug`, `/cart`, `/checkout`, `/admin/media`, and `/admin/products` after the image-system upgrade.
 - Added the storefront SEO foundation with reusable `SEOHead` and centralized `frontend/src/seo/metadata.js` helpers.
 - Added dynamic page titles, meta descriptions, canonical URLs, Open Graph tags, Twitter cards, product metadata, and JSON-LD structured data for homepage, product listing, product detail, and category routes.
 - Added `/categories/:categorySlug` routing and updated storefront category navigation to use canonical category URLs.
@@ -296,6 +301,7 @@ Ready for Phase 7 — Advanced Features & Production Systems
 - Keep mock data centralized in the domain modules under `src/data`.
 - Keep route definitions centralized in `src/routes/AppRoutes.jsx`.
 - Keep storefront SEO metadata centralized in `src/seo/metadata.js` and render page head tags through `src/components/seo/SEOHead.jsx`.
+- Keep responsive/fallback image behavior centralized in `src/components/common/OptimizedImage.jsx`, `src/hooks/useImageLoading.js`, and `src/utils/imageFallbacks.js`.
 
 ### Design System Maintenance
 

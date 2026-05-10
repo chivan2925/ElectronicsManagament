@@ -226,9 +226,12 @@ function ProductListingPage() {
                     <OptimizedImage
                       alt={product.name}
                       className="h-full w-full object-contain drop-shadow-[0_18px_34px_rgba(0,0,0,0.44)]"
+                      fallbackKind="product"
+                      placeholderClassName="rounded-xl bg-slate-950/70"
                       priority={index === 0}
                       sizes="210px"
                       src={product.image}
+                      wrapperClassName="flex h-full w-full items-center justify-center rounded-xl"
                     />
                   </div>
                 </div>

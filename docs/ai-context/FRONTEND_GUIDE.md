@@ -182,6 +182,7 @@ frontend/src/
 │  ├─ useCheckoutProfile.js
 │  ├─ usePaymentResult.js
 │  ├─ useAccountProfile.js
+│  ├─ useImageLoading.js
 │  ├─ useRecentlyViewed.js
 │  ├─ useRecentSearches.js
 │  ├─ useSearch.js
@@ -224,6 +225,7 @@ frontend/src/
 ├─ utils/
 │  ├─ classNames.js
 │  ├─ formatters.js
+│  ├─ imageFallbacks.js
 │  ├─ orderTracking.js
 │  └─ paymentStatus.js
 ├─ App.jsx
@@ -393,6 +395,18 @@ Current coverage:
 - Product detail pages and product loading/error/not-found states.
 
 Keep new storefront SEO data centralized in `src/seo/metadata.js`.
+
+## Image System
+
+Reusable ecommerce image loading lives in:
+
+- `frontend/src/components/common/OptimizedImage.jsx`
+- `frontend/src/hooks/useImageLoading.js`
+- `frontend/src/utils/imageFallbacks.js`
+
+Use `OptimizedImage` for product, media, avatar, brand, category, and review images. It owns lazy loading, priority/eager loading for above-the-fold media, Cloudinary responsive `srcSet`, blur-up placeholders, skeleton overlays when a wrapper is provided, and fallback data-URI images.
+
+Admin media upload previews use local object URLs and must revoke them when cleared or unmounted.
 
 ## Product Detail Components
 

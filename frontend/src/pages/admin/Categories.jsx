@@ -5,6 +5,7 @@ import { AdminDrawer, AdminFilters, AdminForm, AdminSearch, AdminTable, ConfirmD
 import { ADMIN_MODAL_TYPES, useAdminModal, useDebouncedValue } from "../../admin/hooks";
 import { ADMIN_RESOURCES } from "../../auth/roleHelpers";
 import usePermissions from "../../auth/usePermissions";
+import OptimizedImage from "../../components/common/OptimizedImage";
 import ApiErrorAlert from "../../components/ui/feedback/ApiErrorAlert";
 import useToast from "../../components/ui/toast/useToast";
 
@@ -341,7 +342,7 @@ function Categories() {
           <div className="flex min-w-[220px] items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-slate-50 text-xs font-black uppercase text-slate-500">
               {item.icon ? (
-                <img alt={item.name} className="h-full w-full object-cover" src={item.icon} />
+                <OptimizedImage alt={item.name} className="h-full w-full object-cover" fallbackKind="category" sizes="40px" src={item.icon} />
               ) : (
                 <span>{String(item.name || "?").slice(0, 1)}</span>
               )}

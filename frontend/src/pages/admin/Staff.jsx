@@ -6,6 +6,7 @@ import { AdminDrawer, AdminFilters, AdminForm, AdminSearch, AdminTable, ConfirmD
 import { ADMIN_MODAL_TYPES, useAdminModal, useDebouncedValue } from "../../admin/hooks";
 import { ADMIN_RESOURCES } from "../../auth/roleHelpers";
 import usePermissions from "../../auth/usePermissions";
+import OptimizedImage from "../../components/common/OptimizedImage";
 import ApiErrorAlert from "../../components/ui/feedback/ApiErrorAlert";
 import useToast from "../../components/ui/toast/useToast";
 
@@ -88,7 +89,7 @@ function Avatar({ item, size = "md" }) {
   return (
     <div className={`flex ${sizeClass} shrink-0 items-center justify-center overflow-hidden border border-slate-200 bg-slate-100 font-black text-slate-500`}>
       {item.avatar ? (
-        <img alt={item.name} className="h-full w-full object-cover" src={item.avatar} />
+        <OptimizedImage alt={item.name} className="h-full w-full object-cover" fallbackKind="avatar" sizes={size === "lg" ? "64px" : "44px"} src={item.avatar} />
       ) : (
         <span>{getInitials(item.name)}</span>
       )}

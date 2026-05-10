@@ -5,6 +5,7 @@ import { AdminDrawer, AdminFilters, AdminForm, AdminSearch, AdminTable, ConfirmD
 import { ADMIN_MODAL_TYPES, useAdminModal, useDebouncedValue } from "../../admin/hooks";
 import { ADMIN_RESOURCES } from "../../auth/roleHelpers";
 import usePermissions from "../../auth/usePermissions";
+import OptimizedImage from "../../components/common/OptimizedImage";
 import ApiErrorAlert from "../../components/ui/feedback/ApiErrorAlert";
 import useToast from "../../components/ui/toast/useToast";
 import { cn } from "../../utils/classNames";
@@ -88,7 +89,7 @@ function LogoUploadPlaceholder({ brandName, onChange, value }) {
       <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-3">
         <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-slate-200 bg-white text-lg font-black uppercase text-slate-500 shadow-sm">
           {value ? (
-            <img alt={brandName || "Brand logo"} className="h-full w-full object-contain p-2" src={value} />
+            <OptimizedImage alt={brandName || "Brand logo"} className="h-full w-full object-contain p-2" fallbackKind="brand" sizes="64px" src={value} />
           ) : (
             <ImagePlus size={22} />
           )}
@@ -401,7 +402,7 @@ function Brands() {
           <div className="flex min-w-[240px] items-center gap-3">
             <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 text-sm font-black uppercase text-slate-500">
               {item.logo ? (
-                <img alt={item.name} className="h-full w-full object-contain p-2" src={item.logo} />
+                <OptimizedImage alt={item.name} className="h-full w-full object-contain p-2" fallbackKind="brand" sizes="48px" src={item.logo} />
               ) : (
                 <span>{String(item.name || "?").slice(0, 1)}</span>
               )}

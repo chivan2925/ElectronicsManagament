@@ -156,6 +156,7 @@ function ProductGallery({ images = [], productName }) {
               exit={{ opacity: 0, scale: 0.98, x: -18 }}
               initial={{ opacity: 0, scale: 0.96, x: 18 }}
               onClick={() => openPreview(activeIndex)}
+              fallbackKind="product"
               onLoad={() => setIsMainLoaded(true)}
               priority
               sizes="(max-width: 1024px) 92vw, 620px"
@@ -225,6 +226,7 @@ function ProductGallery({ images = [], productName }) {
                 <OptimizedImage
                   alt={image.label}
                   className="premium-transition h-full w-full object-contain drop-shadow-[0_10px_24px_rgba(0,0,0,0.34)] group-hover:scale-105"
+                  fallbackKind="product"
                   sizes="120px"
                   src={image.image}
                 />
@@ -286,6 +288,7 @@ function ProductGallery({ images = [], productName }) {
                     animate={{ opacity: isPreviewLoaded ? 1 : 0, scale: 1 }}
                     className="relative z-10 max-h-[68vh] w-full object-contain drop-shadow-[0_36px_90px_rgba(0,0,0,0.56)]"
                     exit={{ opacity: 0, scale: 0.98 }}
+                    fallbackKind="product"
                     initial={{ opacity: 0, scale: 0.96 }}
                     onLoad={() => setIsPreviewLoaded(true)}
                     sizes="(max-width: 1024px) 92vw, 960px"
@@ -331,7 +334,7 @@ function ProductGallery({ images = [], productName }) {
                     onClick={() => showPreviewImage(index)}
                     type="button"
                   >
-                    <OptimizedImage alt={image.label} className="h-full w-full object-contain" sizes="80px" src={image.image} />
+                    <OptimizedImage alt={image.label} className="h-full w-full object-contain" fallbackKind="product" sizes="80px" src={image.image} />
                   </button>
                 ))}
               </div>

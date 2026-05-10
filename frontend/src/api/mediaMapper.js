@@ -1,6 +1,7 @@
 import { unwrapApiPayload } from "./productMapper";
+import { getImageFallbackSrc } from "../utils/imageFallbacks";
 
-const FALLBACK_MEDIA_IMAGE = "https://placehold.co/640x480/0F172A/FFFFFF?text=Media";
+const FALLBACK_MEDIA_IMAGE = getImageFallbackSrc("media");
 
 function isPlainObject(value) {
   return Boolean(value && typeof value === "object" && !Array.isArray(value));
