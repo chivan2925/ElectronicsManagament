@@ -28,11 +28,11 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Integer>
             "LEFT JOIN FETCH p.brand " +
             "WHERE 1=1 " +
 
-            "AND (:keyword IS NULL OR ( " +
-            "    CAST(p.id AS string) LIKE CONCAT('%', :keyword, '%') " +
-            "    OR LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-            "    OR LOWER(p.slug) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-            ")) " +
+            "AND (:keyword IS NULL OR :keyword = '' OR " +
+            "    CAST(p.id AS string) LIKE CONCAT('%', COALESCE(CAST(:keyword AS string), ''), '%') " +
+            "    OR LOWER(p.name) LIKE LOWER(CONCAT('%', COALESCE(CAST(:keyword AS string), ''), '%')) " +
+            "    OR LOWER(p.slug) LIKE LOWER(CONCAT('%', COALESCE(CAST(:keyword AS string), ''), '%')) " +
+            ") " +
 
             "AND (:status IS NULL OR p.status = :status) " +
             "AND (:categoryId IS NULL OR p.category.id = :categoryId) " +
@@ -51,11 +51,11 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Integer>
 
             countQuery = "SELECT COUNT(p) FROM ProductEntity p " +
                     "WHERE 1=1 " +
-                    "AND (:keyword IS NULL OR ( " +
-                    "    CAST(p.id AS string) LIKE CONCAT('%', :keyword, '%') " +
-                    "    OR LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-                    "    OR LOWER(p.slug) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-                    ")) " +
+                    "AND (:keyword IS NULL OR :keyword = '' OR " +
+                    "    CAST(p.id AS string) LIKE CONCAT('%', COALESCE(CAST(:keyword AS string), ''), '%') " +
+                    "    OR LOWER(p.name) LIKE LOWER(CONCAT('%', COALESCE(CAST(:keyword AS string), ''), '%')) " +
+                    "    OR LOWER(p.slug) LIKE LOWER(CONCAT('%', COALESCE(CAST(:keyword AS string), ''), '%')) " +
+                    ") " +
                     "AND (:status IS NULL OR p.status = :status) " +
                     "AND (:categoryId IS NULL OR p.category.id = :categoryId) " +
                     "AND (:brandId IS NULL OR p.brand.id = :brandId) " +
