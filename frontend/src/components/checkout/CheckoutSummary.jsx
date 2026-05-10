@@ -53,7 +53,7 @@ function CheckoutSummary({
   const isDigitalPayment = paymentMethod?.apiValue === "DIGITAL";
 
   return (
-    <aside className="store-surface-panel-strong rounded-3xl p-4 lg:sticky lg:top-28 lg:p-5">
+    <aside className="store-premium-sheen store-surface-panel-strong rounded-3xl p-4 lg:sticky lg:top-28 lg:p-5">
       <div className="mb-4 flex items-start justify-between gap-3">
         <div>
           <p className="text-caption text-blue-200">Tổng quan đơn</p>
@@ -66,7 +66,7 @@ function CheckoutSummary({
 
       <div className="grid gap-3">
         {items.map((item) => (
-          <div className="grid grid-cols-[56px_minmax(0,1fr)] items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.035] p-2 sm:grid-cols-[64px_minmax(0,1fr)_auto]" key={item.id}>
+          <div className="store-action-card grid grid-cols-[56px_minmax(0,1fr)] items-center gap-3 rounded-2xl p-2 sm:grid-cols-[64px_minmax(0,1fr)_auto]" key={item.id}>
             <Link
               className="relative flex aspect-square items-center justify-center overflow-hidden rounded-xl bg-[radial-gradient(circle_at_50%_18%,rgba(0,91,255,0.22),rgba(15,23,42,0.78)_52%,rgba(2,6,23,0.96)_100%)] p-1.5"
               to={`/products/${item.product.slug}`}
@@ -182,7 +182,7 @@ function CheckoutSummary({
           <span>Thanh toán</span>
           <span className="font-black text-slate-200">{paymentMethod.name}</span>
         </div>
-        <div className="mt-2 flex items-end justify-between gap-3 border-t border-white/10 pt-3">
+        <div className="mt-2 flex items-end justify-between gap-3 rounded-2xl border border-blue-300/20 bg-blue-500/10 p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
           <span className="font-black text-white">Tổng thanh toán</span>
           <span className="text-2xl font-black text-blue-200">{formatCurrency(total)}</span>
         </div>

@@ -9,11 +9,14 @@ Always update this file after meaningful work.
 ## Current Phase
 
 ```text
-Phase 8 — Production + Deploy (Phase 7 completed)
+Phase 8 — Production + Deploy (Completed showcase)
 ```
 
 ## Recently Completed
 
+- Completed the final graduation showcase polish pass across homepage wow-factor, PDP presentation, checkout trust UX, admin analytics, dashboard panels, subtle motion, hover states, and shared visual utilities.
+- Marked Phase 8 completed, the ecommerce platform finalized, and the production-ready showcase completed while preserving the homepage layout and frontend/admin architecture.
+- Verified `npm run lint`, `npm run build`, and `git diff --check` after the showcase polish pass; `git diff --check` reported only CRLF normalization warnings for edited files.
 - Completed a final QA stability pass across storefront, auth, payment result pages, account, checkout, admin analytics, CRUD routes, and media upload.
 - Made wishlist backend sync opt-in by leaving `VITE_WISHLIST_API_PATH` empty by default, preventing `/api/wishlist` 404 console noise while the public wishlist API is not implemented.
 - Verified clean demo preview smoke checks across desktop/mobile routes, customer/admin demo login, category create, and media upload, plus `npm run lint`, `npm run build:production`, `mvn test`, production/development Docker Compose config rendering, and `git diff --check`.
@@ -354,9 +357,9 @@ Phase 8 — Production + Deploy (Phase 7 completed)
 
 1. Preserve the existing homepage layout.
 2. Keep the normalized frontend folder structure stable.
-3. Start Phase 8 production/deploy preparation without deploying production from this repo yet.
-4. Keep the completed Phase 7 ecommerce production-ready foundation stable while backend public APIs mature.
-5. Keep the completed Phase 6 customer ecommerce and Phase 5 admin CRUD systems stable while production infrastructure is prepared.
+3. Keep the completed Phase 8 production-ready showcase stable for portfolio/demo presentation.
+4. Treat real production hosting, TLS, external secrets, backups, and production payment credentials as environment handoff tasks.
+5. Keep the completed Phase 7 ecommerce production-ready foundation, Phase 6 customer ecommerce, and Phase 5 admin CRUD systems stable while future backend public APIs mature.
 6. Use centralized feedback components for loading, error, empty, permission, and refresh states in new workflows.
 7. Move customer auth and account ownership checks to a dedicated public customer auth contract when ready.
 8. Keep `mvn test` as a backend validation gate and continue reducing local schema warnings.
@@ -421,9 +424,10 @@ Phase 8 — Production + Deploy (Phase 7 completed)
 - Keep `/categories/:categorySlug` category browsing aligned with product listing filters and canonical metadata.
 - Replace the homepage mock loading timer with real loading state when storefront data integration begins.
 
-### Phase 8 Production + Deploy
+### Post-Phase 8 Deployment Handoff
 
-- Keep real deployment blocked until hosting, TLS, external secrets, backups, and migration automation are finalized.
+- Keep the finalized ecommerce showcase stable; do not make broad redesigns after completion.
+- Keep real deployment blocked until hosting, TLS, external secrets, backups, and migration automation are finalized outside committed code.
 - Add controlled PostgreSQL migration/backfill scripts for legacy schema drift before using the production `ddl-auto=validate` posture against real data.
 - Finalize public customer registration/login, account ownership, cart persistence, wishlist persistence, and public order tracking contracts.
 - Move VNPay/MoMo from sandbox to production only through environment-specific credentials, HTTPS return URLs, provider reconciliation checks, and critical-flow tests.

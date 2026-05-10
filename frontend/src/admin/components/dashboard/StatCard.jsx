@@ -52,17 +52,18 @@ function StatCard({ helper, icon, title, tone = "blue", trend, trendType = "up",
           {helper ? <p className="mt-1 truncate text-xs font-semibold text-slate-500">{helper}</p> : null}
         </div>
 
-        <div className={cn("rounded-xl p-3 ring-1", toneClass.accent)}>
+        <div className={cn("transition-default rounded-xl p-3 ring-1 group-hover:scale-105", toneClass.accent)}>
           {icon ? createElement(icon, { size: 22, strokeWidth: 2.2 }) : null}
         </div>
       </div>
 
       {trend ? (
-        <div className="relative mt-5 flex items-center gap-2">
+        <div className="relative mt-5 flex items-center justify-between gap-2 border-t border-slate-100 pt-3">
           <span className={cn("inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-black", trendClasses[trendType])}>
             <TrendIcon size={14} />
             {trend}
           </span>
+          <span className="text-xs font-bold text-slate-400">vs previous</span>
         </div>
       ) : null}
     </article>

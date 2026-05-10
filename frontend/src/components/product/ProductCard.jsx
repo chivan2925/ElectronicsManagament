@@ -85,7 +85,7 @@ function ProductCard({ product }) {
   }, [addItem, product, toast]);
 
   return (
-    <Card as={MotionArticle} className="isolate flex h-full flex-col" variants={{ ...fadeUp, hover: hoverGlow }} variant="product" whileHover="hover">
+    <Card as={MotionArticle} className="store-premium-sheen isolate flex h-full flex-col" variants={{ ...fadeUp, hover: hoverGlow }} variant="product" whileHover="hover">
       <div className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-blue-200/50 to-transparent" />
 
       <div className="relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-[radial-gradient(circle_at_50%_20%,rgba(0,91,255,0.24),rgba(15,23,42,0.72)_42%,rgba(2,6,23,0.94)_100%)] p-4 shadow-inner shadow-white/[0.04]">

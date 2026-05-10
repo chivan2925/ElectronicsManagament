@@ -90,7 +90,7 @@ function TrustSignalBar({
 
           return (
             <MotionDiv
-              className="store-stat-card group rounded-2xl p-3"
+              className="store-premium-sheen store-stat-card group rounded-2xl p-3"
               key={`${signal.label}-${signal.value}`}
               variants={fadeUp}
               whileHover={{ y: -3 }}

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ChevronRight, ClipboardCheck, CreditCard, PackageSearch, ShieldCheck, Truck } from "lucide-react";
+import { CheckCircle2, ChevronRight, ClipboardCheck, CreditCard, PackageSearch, ShieldCheck, Truck } from "lucide-react";
 import CheckoutForm from "../../components/checkout/CheckoutForm";
 import CheckoutSummary from "../../components/checkout/CheckoutSummary";
 import PaymentMethodSelector from "../../components/checkout/PaymentMethodSelector";
@@ -87,6 +87,39 @@ const paymentMethods = [
     subtitle: "Ví điện tử",
   },
 ];
+
+function CheckoutProgress({ itemCount, paymentMethod, shippingMethod }) {
+  const steps = [
+    { icon: PackageSearch, label: "Giỏ hàng", value: `${itemCount} sản phẩm` },
+    { icon: Truck, label: "Giao hàng", value: shippingMethod.eta },
+    { icon: CreditCard, label: "Thanh toán", value: paymentMethod.name },
+  ];
+
+  return (
+    <div className="relative z-10 mt-6 grid gap-3 border-t border-white/10 pt-5 sm:grid-cols-3">
+      {steps.map((step, index) => {
+        const Icon = step.icon;
+
+        return (
+          <div className="store-action-card rounded-2xl p-3" key={step.label}>
+            <div className="flex items-start gap-3">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-blue-300/20 bg-blue-500/12 text-blue-100">
+                <Icon size={18} />
+              </span>
+              <span className="min-w-0">
+                <span className="flex items-center gap-1.5 text-sm font-black text-white">
+                  {step.label}
+                  {index < steps.length - 1 ? <CheckCircle2 className="text-emerald-200" size={14} /> : null}
+                </span>
+                <span className="text-caption mt-1 block text-slate-400">{step.value}</span>
+              </span>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
 
 function validateCheckout(values) {
   const errors = {};
@@ -493,6 +526,12 @@ function Checkout() {
               })}
             </div>
           </div>
+
+          <CheckoutProgress
+            itemCount={displayItemCount}
+            paymentMethod={selectedPaymentMethod}
+            shippingMethod={selectedShippingMethod}
+          />
         </section>
 
         <TrustSignalBar

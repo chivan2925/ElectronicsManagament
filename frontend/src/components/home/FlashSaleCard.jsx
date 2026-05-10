@@ -31,6 +31,7 @@ function FlashSaleCard({ product }) {
   return (
     <Card
       as={motion.aside}
+      className="store-premium-sheen"
       initial="hidden"
       variants={{ ...fadeUp, hover: hoverGlow }}
       variant="flash"

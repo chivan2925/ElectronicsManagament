@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ArrowLeft, ArrowRight, CheckCircle2, ShoppingBag } from "lucide-react";
+import { ArrowLeft, ArrowRight, CheckCircle2, ShieldCheck, ShoppingBag, Truck, WalletCards } from "lucide-react";
 import { fadeIn, fadeUp, hoverLift, imageZoom, staggerContainer, tapSoft } from "../../styles/animations";
 import OptimizedImage from "../common/OptimizedImage";
 import Badge from "../ui/Badge";
@@ -15,11 +15,17 @@ const MotionP = motion.p;
 const MotionSection = motion.section;
 const MotionUl = motion.ul;
 
+const heroTrustSignals = [
+  { icon: ShieldCheck, label: "Chính hãng", value: "Bảo hành rõ ràng" },
+  { icon: Truck, label: "Giao nhanh", value: "Theo dõi đơn hàng" },
+  { icon: WalletCards, label: "Thanh toán", value: "COD, VNPay, MoMo" },
+];
+
 function HeroBanner({ promotion }) {
   return (
     <MotionSection
       animate="visible"
-      className="relative isolate min-h-0 overflow-hidden rounded-2xl border border-blue-200/15 bg-[radial-gradient(circle_at_82%_22%,rgba(0,91,255,0.52),transparent_32%),radial-gradient(circle_at_18%_80%,rgba(56,189,248,0.18),transparent_30%),radial-gradient(circle_at_48%_0%,rgba(255,255,255,0.1),transparent_24%),linear-gradient(135deg,#0D1A34_0%,#07111F_48%,#050B14_100%)] p-5 shadow-[0_34px_100px_rgba(0,0,0,0.44),0_0_46px_rgba(0,91,255,0.16)] before:absolute before:inset-0 before:bg-[linear-gradient(120deg,rgba(255,255,255,0.12),transparent_24%,transparent_70%,rgba(0,91,255,0.18))] before:opacity-70 sm:p-6 md:min-h-[500px] lg:p-8 xl:min-h-[520px] xl:p-9"
+      className="store-premium-sheen relative isolate min-h-0 overflow-hidden rounded-2xl border border-blue-200/15 bg-[radial-gradient(circle_at_82%_22%,rgba(0,91,255,0.52),transparent_32%),radial-gradient(circle_at_18%_80%,rgba(56,189,248,0.18),transparent_30%),radial-gradient(circle_at_48%_0%,rgba(255,255,255,0.1),transparent_24%),linear-gradient(135deg,#0D1A34_0%,#07111F_48%,#050B14_100%)] p-5 shadow-[0_34px_100px_rgba(0,0,0,0.44),0_0_46px_rgba(0,91,255,0.16)] before:absolute before:inset-0 before:bg-[linear-gradient(120deg,rgba(255,255,255,0.12),transparent_24%,transparent_70%,rgba(0,91,255,0.18))] before:opacity-70 sm:p-6 md:min-h-[500px] lg:p-8 xl:min-h-[520px] xl:p-9"
       initial="hidden"
       variants={fadeIn}
     >
@@ -63,6 +69,28 @@ function HeroBanner({ promotion }) {
                 <ArrowRight size={18} />
               </Button>
             </MotionDiv>
+          </MotionDiv>
+
+          <MotionDiv className="mt-5 grid gap-2 sm:grid-cols-3" variants={staggerContainer}>
+            {heroTrustSignals.map((signal) => {
+              const Icon = signal.icon;
+
+              return (
+                <MotionDiv
+                  className="rounded-2xl border border-white/10 bg-slate-950/26 px-3 py-2 shadow-inner shadow-white/[0.03] backdrop-blur-xl"
+                  key={signal.label}
+                  variants={fadeUp}
+                >
+                  <div className="flex items-start gap-2">
+                    <Icon className="mt-0.5 shrink-0 text-blue-200" size={16} />
+                    <span className="min-w-0">
+                      <span className="block text-xs font-black text-white">{signal.label}</span>
+                      <span className="text-caption block text-slate-400">{signal.value}</span>
+                    </span>
+                  </div>
+                </MotionDiv>
+              );
+            })}
           </MotionDiv>
         </MotionDiv>
 

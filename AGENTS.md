@@ -37,15 +37,15 @@ Product category display labels:
 Current phase:
 
 ```text
-Phase 8 — Production + Deploy
+Phase 8 — Production + Deploy (Completed showcase)
 ```
 
-Phase 8 focuses on:
+Post-Phase 8 focus:
 
-- Real production deployment preparation without committing secrets.
-- Controlled migrations/backfills, tests, TLS, backups, and rollout policy.
-- Production payment credentials, public customer auth, account ownership, and API contract finalization.
-- Keeping the completed Phase 5 admin dashboard, Phase 6 ecommerce foundations, and Phase 7 production-ready foundation stable.
+- Keeping the finalized production-ready ecommerce showcase stable.
+- Preserving homepage layout, admin/client separation, and existing architecture.
+- Treating real hosting, TLS, external secrets, backups, production payment credentials, public customer auth, account ownership, and rollout policy as deployment handoff tasks.
+- Keeping the completed Phase 5 admin dashboard, Phase 6 ecommerce foundations, Phase 7 production-ready foundation, and Phase 8 showcase stable.
 
 ## Required Reading Before Work
 

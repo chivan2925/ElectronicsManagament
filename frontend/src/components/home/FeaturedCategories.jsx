@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import {
+  ArrowRight,
   Armchair,
   Boxes,
   Cpu,
@@ -54,7 +55,7 @@ function FeaturedCategories({ categories = [] }) {
 
           return (
             <MotionLink
-              className="premium-transition group relative min-h-[108px] overflow-hidden rounded-2xl border border-white/10 bg-[radial-gradient(circle_at_50%_0%,rgba(0,91,255,0.16),transparent_44%),linear-gradient(180deg,rgba(15,23,42,0.9),rgba(7,17,31,0.94))] p-3 text-left shadow-xl shadow-black/18 backdrop-blur-xl hover:-translate-y-1 hover:border-blue-300/60 hover:shadow-[0_0_34px_rgba(0,91,255,0.22),0_20px_50px_rgba(0,0,0,0.3)] sm:p-4"
+              className="store-premium-sheen premium-transition group relative min-h-[108px] overflow-hidden rounded-2xl border border-white/10 bg-[radial-gradient(circle_at_50%_0%,rgba(0,91,255,0.16),transparent_44%),linear-gradient(180deg,rgba(15,23,42,0.9),rgba(7,17,31,0.94))] p-3 text-left shadow-xl shadow-black/18 backdrop-blur-xl hover:-translate-y-1 hover:border-blue-300/60 hover:shadow-[0_0_34px_rgba(0,91,255,0.22),0_20px_50px_rgba(0,0,0,0.3)] sm:p-4"
               key={category.id}
               to={`/categories/${category.slug}`}
               variants={{ ...fadeUp, hover: hoverGlow }}
@@ -65,7 +66,10 @@ function FeaturedCategories({ categories = [] }) {
               <div className="premium-transition mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-blue-500/10 text-blue-300 group-hover:bg-[#005BFF] group-hover:text-white group-hover:shadow-[0_0_28px_rgba(0,91,255,0.42)] sm:mb-4">
                 <Icon size={21} />
               </div>
-              <p className="break-words text-sm font-black leading-snug text-white">{category.name}</p>
+              <p className="break-words pr-9 text-sm font-black leading-snug text-white">{category.name}</p>
+              <span className="premium-transition absolute bottom-3 right-3 flex h-8 w-8 translate-x-2 items-center justify-center rounded-full border border-white/10 bg-white/[0.05] text-blue-100 opacity-0 shadow-inner shadow-white/[0.03] group-hover:translate-x-0 group-hover:opacity-100">
+                <ArrowRight size={15} />
+              </span>
             </MotionLink>
           );
         })}

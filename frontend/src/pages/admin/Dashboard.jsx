@@ -90,9 +90,14 @@ function Dashboard() {
     <section className="admin-page-shell">
       <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-end">
         <div>
-          <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-black text-primary">
-            <CalendarDays size={14} />
-            10/05/2026 · Admin analytics
+          <div className="mb-3 flex flex-wrap gap-2">
+            <span className="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-black text-primary">
+              <CalendarDays size={14} />
+              10/05/2026 · Admin analytics
+            </span>
+            <span className="inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50 px-3 py-1 text-xs font-black text-emerald-700">
+              Production-ready showcase
+            </span>
           </div>
           <h1 className="text-2xl font-black tracking-normal text-slate-950 md:text-3xl">Dashboard analytics</h1>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-500">

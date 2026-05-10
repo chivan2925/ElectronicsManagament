@@ -58,13 +58,13 @@ function CustomerMetric({ helper, metricKey, placeholder, title, tone = "blue", 
   const Icon = metricIcons[metricKey] || UsersRound;
 
   return (
-    <div className="admin-panel admin-panel-hover rounded-2xl p-4">
+    <div className="admin-panel admin-panel-hover group rounded-2xl p-4">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="truncate text-xs font-black uppercase tracking-normal text-slate-400">{title}</p>
           <p className="mt-2 text-2xl font-black text-slate-950">{value}</p>
         </div>
-        <span className={cn("rounded-xl p-2.5 ring-1", toneClasses[tone] || toneClasses.blue)}>
+        <span className={cn("transition-default rounded-xl p-2.5 ring-1 group-hover:scale-105", toneClasses[tone] || toneClasses.blue)}>
           <Icon size={19} />
         </span>
       </div>

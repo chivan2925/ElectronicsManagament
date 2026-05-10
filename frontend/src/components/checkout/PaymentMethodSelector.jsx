@@ -12,7 +12,7 @@ function PaymentMethodSelector({ disabled = false, onChange, options, value }) {
   const selectedOption = options.find((option) => option.id === value) || options[0];
 
   return (
-    <section className="store-surface-panel rounded-3xl p-4 sm:p-5">
+    <section className="store-premium-sheen store-surface-panel rounded-3xl p-4 sm:p-5">
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <p className="text-caption text-blue-200">Thanh toán đơn hàng</p>
@@ -35,7 +35,7 @@ function PaymentMethodSelector({ disabled = false, onChange, options, value }) {
               aria-checked={isSelected}
               aria-disabled={isDisabled}
               className={cn(
-                "premium-transition min-h-[156px] rounded-2xl border p-4 text-left outline-none focus-visible:ring-2 focus-visible:ring-blue-300/60 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 disabled:cursor-not-allowed disabled:opacity-60",
+                "premium-transition min-h-[156px] rounded-2xl border p-4 text-left outline-none hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:ring-blue-300/60 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 disabled:cursor-not-allowed disabled:opacity-60",
                 isSelected
                   ? "border-blue-300/70 bg-blue-500/12 shadow-[0_0_30px_rgba(0,91,255,0.18)]"
                   : "border-white/10 bg-white/[0.035] hover:border-blue-300/45 hover:bg-blue-500/[0.07]",

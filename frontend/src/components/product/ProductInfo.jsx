@@ -5,6 +5,7 @@ import {
   CreditCard,
   Heart,
   Loader2,
+  LockKeyhole,
   PackageCheck,
   ShieldCheck,
   ShoppingCart,
@@ -102,7 +103,7 @@ function ProductInfo({
   };
 
   return (
-    <section className="store-glass rounded-3xl p-4 sm:p-5 lg:sticky lg:top-28">
+    <section className="store-premium-sheen store-glass rounded-3xl p-4 sm:p-5 lg:sticky lg:top-28">
       <div className="flex flex-wrap items-center gap-2">
         <Badge className="gap-2" variant="primary">
           <Zap size={13} />
@@ -135,7 +136,7 @@ function ProductInfo({
           )}
         </div>
 
-        <div className="mt-3 grid gap-2 sm:grid-cols-2">
+        <div className="mt-3 grid gap-2 sm:grid-cols-3">
           <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-3">
             <div className="flex items-start gap-2">
               <CreditCard className="mt-0.5 shrink-0 text-blue-200" size={18} />
@@ -146,6 +147,12 @@ function ProductInfo({
             <div className="flex items-start gap-2">
               <PackageCheck className="mt-0.5 shrink-0 text-emerald-200" size={18} />
               <p className="text-caption text-slate-300">{detail.stockInfo.warehouse}</p>
+            </div>
+          </div>
+          <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-3">
+            <div className="flex items-start gap-2">
+              <LockKeyhole className="mt-0.5 shrink-0 text-cyan-200" size={18} />
+              <p className="text-caption text-slate-300">Thanh toán được xác minh trước khi cập nhật trạng thái.</p>
             </div>
           </div>
         </div>
@@ -225,7 +232,7 @@ function ProductInfo({
           const Icon = index === 0 ? Truck : index === 1 ? ShieldCheck : CheckCircle2;
 
           return (
-            <div className="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/[0.035] p-3" key={item}>
+            <div className="store-action-card flex items-start gap-3 rounded-2xl p-3" key={item}>
               <Icon className="mt-0.5 shrink-0 text-blue-200" size={18} />
               <p className="text-caption text-slate-300">{item}</p>
             </div>

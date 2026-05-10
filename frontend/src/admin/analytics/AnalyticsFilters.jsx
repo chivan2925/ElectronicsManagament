@@ -48,7 +48,7 @@ function AnalyticsFilters({
   return (
     <section
       className={cn(
-        "admin-panel rounded-2xl p-4",
+        "admin-panel admin-panel-hover rounded-2xl p-4",
         "xl:flex xl:items-center xl:justify-between xl:gap-5",
         className,
       )}
@@ -66,7 +66,7 @@ function AnalyticsFilters({
       </div>
 
       <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-[auto_1fr_1fr_1fr_auto] xl:mt-0 xl:min-w-[820px]">
-        <div className="flex rounded-xl border border-slate-200 bg-slate-50 p-1">
+        <div className="flex rounded-xl border border-slate-200 bg-slate-50 p-1 shadow-inner shadow-white">
           {presets.map((preset) => (
             <button
               aria-pressed={filters.preset === preset.value}

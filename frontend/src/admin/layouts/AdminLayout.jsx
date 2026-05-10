@@ -17,7 +17,7 @@ function AdminLayout() {
   }, [isMobileSidebarOpen]);
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-[#F6F8FB] font-sans text-slate-950">
+    <div className="min-h-screen overflow-x-hidden bg-[radial-gradient(circle_at_18%_0%,rgba(0,91,255,0.075),transparent_28%),linear-gradient(180deg,#F8FAFC_0%,#F6F8FB_38%,#EEF3F8_100%)] font-sans text-slate-950">
       <AdminSidebar
         collapsed={isSidebarCollapsed}
         mobileOpen={isMobileSidebarOpen}

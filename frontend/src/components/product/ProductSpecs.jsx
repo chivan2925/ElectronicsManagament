@@ -4,7 +4,7 @@ import Badge from "../ui/Badge";
 function ProductSpecs({ description, specs }) {
   return (
     <section className="grid gap-5 lg:grid-cols-[1fr_420px]">
-      <div className="store-glass-soft rounded-3xl p-5 sm:p-6">
+      <div className="store-premium-sheen store-glass-soft rounded-3xl p-5 sm:p-6">
         <Badge className="mb-4 gap-2" variant="primary">
           <FileText size={13} />
           Mô tả sản phẩm
@@ -22,7 +22,7 @@ function ProductSpecs({ description, specs }) {
 
         <div className="mt-5 grid gap-3 sm:grid-cols-3">
           {description.bullets.map((bullet) => (
-            <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-3" key={bullet}>
+            <div className="store-action-card rounded-2xl p-3" key={bullet}>
               <Sparkles className="mb-3 text-blue-200" size={18} />
               <p className="text-caption text-slate-300">{bullet}</p>
             </div>
@@ -30,7 +30,7 @@ function ProductSpecs({ description, specs }) {
         </div>
       </div>
 
-      <div className="store-glass-soft rounded-3xl p-5 sm:p-6">
+      <div className="store-premium-sheen store-glass-soft rounded-3xl p-5 sm:p-6">
         <Badge className="mb-4 gap-2" variant="primary">
           <Cpu size={13} />
           Thông số
@@ -40,7 +40,7 @@ function ProductSpecs({ description, specs }) {
         <div className="mt-5 overflow-hidden rounded-2xl border border-white/10">
           {specs.map((spec, index) => (
             <div
-              className="grid grid-cols-[130px_1fr] gap-3 border-b border-white/10 bg-slate-950/28 px-3 py-3 last:border-b-0 sm:grid-cols-[160px_1fr]"
+              className="premium-transition grid grid-cols-[130px_1fr] gap-3 border-b border-white/10 bg-slate-950/28 px-3 py-3 hover:bg-blue-500/[0.055] last:border-b-0 sm:grid-cols-[160px_1fr]"
               key={`${spec.label}-${index}`}
             >
               <p className="text-caption font-black text-slate-400">{spec.label}</p>

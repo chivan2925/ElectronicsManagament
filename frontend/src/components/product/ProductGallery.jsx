@@ -121,7 +121,7 @@ function ProductGallery({ images = [], productName }) {
 
   return (
     <>
-      <section className="store-glass-soft overflow-hidden rounded-3xl p-3 sm:p-4">
+      <section className="store-premium-sheen store-glass-soft overflow-hidden rounded-3xl p-3 sm:p-4">
         <div
           className="group relative flex aspect-square min-h-[320px] items-center justify-center overflow-hidden rounded-3xl border border-white/10 bg-[radial-gradient(circle_at_50%_18%,rgba(0,91,255,0.34),rgba(15,23,42,0.78)_45%,rgba(2,6,23,0.96)_100%)] p-5 shadow-inner shadow-white/[0.04]"
           onMouseLeave={handleMouseLeave}

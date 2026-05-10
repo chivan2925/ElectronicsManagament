@@ -4,7 +4,7 @@ import { formatCurrency } from "../../utils/formatters";
 
 function ShippingMethodSelector({ disabled = false, onChange, options, value }) {
   return (
-    <section className="store-surface-panel rounded-3xl p-4 sm:p-5">
+    <section className="store-premium-sheen store-surface-panel rounded-3xl p-4 sm:p-5">
       <div className="mb-4">
         <p className="text-caption text-blue-200">Cách nhận hàng</p>
         <h2 className="text-section mt-1 text-xl" id="shipping-method-heading">Phương thức giao hàng</h2>
@@ -19,7 +19,7 @@ function ShippingMethodSelector({ disabled = false, onChange, options, value }) 
               aria-checked={isSelected}
               aria-disabled={disabled}
               className={cn(
-                "premium-transition w-full rounded-2xl border p-4 text-left outline-none focus-visible:ring-2 focus-visible:ring-blue-300/60 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 disabled:cursor-not-allowed disabled:opacity-60",
+                "premium-transition w-full rounded-2xl border p-4 text-left outline-none hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:ring-blue-300/60 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 disabled:cursor-not-allowed disabled:opacity-60",
                 isSelected
                   ? "border-blue-300/70 bg-blue-500/12 shadow-[0_0_30px_rgba(0,91,255,0.18)]"
                   : "border-white/10 bg-white/[0.035] hover:border-blue-300/45 hover:bg-blue-500/[0.07]",

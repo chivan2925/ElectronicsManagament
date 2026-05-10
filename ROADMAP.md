@@ -4,10 +4,10 @@
 
 This roadmap defines the planned phases for ElectronicsManagement.
 
-The project is currently in:
+The project status is:
 
 ```text
-Phase 8 — Production + Deploy
+Phase 8 — Production + Deploy completed as a production-ready showcase
 ```
 
 ## Product Scope
@@ -37,7 +37,7 @@ ElectronicsManagement is built for an electronics and gaming catalog with these 
 | 5 | Admin Dashboard | Completed | Convert mock admin pages into authenticated API-backed CRUD workflows. |
 | 6 | Ecommerce Core | Completed | Implement real browsing, cart, checkout, payment, and order tracking foundations. |
 | 7 | Advanced Features & Production Systems | Completed | Add mature ecommerce features and harden production-facing systems. |
-| 8 | Production + Deploy | Current | Harden config, secrets, migrations, testing, performance, and deployment. |
+| 8 | Production + Deploy | Completed | Harden config, secrets, migrations, testing, performance, and deployment-readiness foundations. |
 
 ## Phase 1 — Frontend Foundation
 
@@ -179,8 +179,8 @@ Key tasks:
 
 ## Current Priority
 
-1. Start Phase 8 production/deploy preparation without performing a real production deployment yet.
-2. Preserve homepage layout while improving quality.
-3. Reuse Phase 2 design-system primitives and visual patterns.
+1. Keep the finalized ecommerce showcase stable for portfolio/demo presentation.
+2. Preserve the homepage layout and client/admin separation.
+3. Reuse Phase 2 design-system primitives and visual patterns for maintenance work.
 4. Keep AI context files up to date.
-5. Keep the completed Phase 7 ecommerce production-ready foundation, Phase 6 customer ecommerce, and Phase 5 admin CRUD systems stable while production infrastructure is prepared.
+5. Treat real hosting, TLS, external secrets, backups, production payment credentials, and migration automation as deployment handoff tasks outside committed code.

@@ -18,7 +18,7 @@ function AnalyticsCard({
   const isDark = variant === "dark";
 
   return (
-    <article className={cn("overflow-hidden rounded-2xl", variantClasses[variant] || variantClasses.light, className)}>
+    <article className={cn("admin-panel-hover overflow-hidden rounded-2xl", variantClasses[variant] || variantClasses.light, className)}>
       {(title || description || action) && (
         <div className={cn("flex items-start justify-between gap-4 px-5 pt-5", headerClassName)}>
           <div className="min-w-0">

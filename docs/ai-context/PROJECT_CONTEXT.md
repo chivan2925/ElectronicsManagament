@@ -41,16 +41,16 @@ Primary category display labels:
 ## Current Phase
 
 ```text
-Phase 8 — Production + Deploy
+Phase 8 — Production + Deploy (Completed showcase)
 ```
 
 Focus:
 
-- Preserve the homepage while preparing real production deployment.
+- Preserve the finalized homepage and production-ready showcase.
 - Keep frontend structure clean.
 - Keep context docs accurate.
-- Keep the completed API-backed admin dashboard and Phase 7 ecommerce production-ready foundation stable.
-- Finalize migrations, secrets, TLS, backups, public customer auth, ownership, and production payment contracts before real deployment.
+- Keep the completed API-backed admin dashboard and ecommerce platform foundation stable.
+- Treat migrations, secrets, TLS, backups, public customer auth, ownership, and production payment contracts as deployment handoff tasks before real hosting.
 
 ## Frontend Stack
 

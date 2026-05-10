@@ -7,7 +7,7 @@ This guide describes the frontend direction for ElectronicsManagement.
 Current phase:
 
 ```text
-Phase 8 — Production + Deploy
+Phase 8 — Production + Deploy (Completed showcase)
 ```
 
 ## Stack

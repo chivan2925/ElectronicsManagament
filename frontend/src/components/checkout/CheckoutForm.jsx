@@ -103,7 +103,7 @@ function CheckoutField({
 
 function CheckoutSection({ children, eyebrow, title }) {
   return (
-    <section className="store-surface-panel rounded-3xl p-4 sm:p-5">
+    <section className="store-premium-sheen store-surface-panel rounded-3xl p-4 sm:p-5">
       <div className="mb-4">
         <p className="text-caption text-blue-200">{eyebrow}</p>
         <h2 className="text-section mt-1 text-xl">{title}</h2>
