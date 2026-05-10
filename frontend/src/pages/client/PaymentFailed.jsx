@@ -9,16 +9,20 @@ import Button from "../../components/ui/Button";
 import Container from "../../components/ui/Container";
 import ApiErrorAlert from "../../components/ui/feedback/ApiErrorAlert";
 import { formatCurrency } from "../../utils/formatters";
-
-function normalizeStatus(value) {
-  return String(value || "failed").toLowerCase();
-}
+import {
+  getPaymentProviderLabel,
+  getPaymentResultCopy,
+  isCancelledStatus,
+  normalizePaymentProvider,
+  normalizePaymentStatus,
+} from "../../utils/paymentStatus";
 
 function PaymentFailed() {
   const [searchParams] = useSearchParams();
   const orderId = searchParams.get("orderId");
   const transactionId = searchParams.get("transactionId");
-  const queryStatus = normalizeStatus(searchParams.get("status"));
+  const queryStatus = normalizePaymentStatus(searchParams.get("status"), "failed");
+  const queryProvider = normalizePaymentProvider(searchParams.get("provider"), "VNPAY");
   const queryMessage = searchParams.get("message");
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
@@ -49,24 +53,16 @@ function PaymentFailed() {
   }, [orderId, transactionId]);
 
   const isVerifying = Boolean(orderId) && !result && !error;
-  const status = result?.status || queryStatus;
-  const isCancelled = status === "cancelled";
+  const status = normalizePaymentStatus(result?.status || queryStatus, "failed");
+  const provider = normalizePaymentProvider(result?.provider || queryProvider);
+  const providerLabel = getPaymentProviderLabel(provider);
+  const isCancelled = isCancelledStatus(status);
   const pageMeta = useMemo(
-    () =>
-      isCancelled
-        ? {
-            badge: "Đã hủy",
-            description: "Phiên VNPay Sandbox đã được hủy và đơn hàng được đóng để hoàn lại tồn kho giữ chỗ.",
-            icon: Ban,
-            title: "Thanh toán đã được hủy",
-          }
-        : {
-            badge: isVerifying ? "Đang xác minh" : "Chưa thành công",
-            description: "Hệ thống chưa ghi nhận trạng thái paid cho giao dịch này. Bạn có thể kiểm tra lại đơn hoặc tạo checkout mới.",
-            icon: ShieldAlert,
-            title: "Thanh toán chưa thành công",
-          },
-    [isCancelled, isVerifying],
+    () => ({
+      ...getPaymentResultCopy({ isVerifying, provider, status }),
+      icon: isCancelled ? Ban : ShieldAlert,
+    }),
+    [isCancelled, isVerifying, provider, status],
   );
   const Icon = pageMeta.icon;
 
@@ -133,6 +129,10 @@ function PaymentFailed() {
                 <div className="flex items-center justify-between gap-3 text-slate-400">
                   <span>Trạng thái</span>
                   <span className="font-black text-red-100">{status}</span>
+                </div>
+                <div className="flex items-center justify-between gap-3 text-slate-400">
+                  <span>Phương thức</span>
+                  <span className="font-black text-blue-100">{providerLabel}</span>
                 </div>
                 <div className="flex items-center justify-between gap-3 text-slate-400">
                   <span>Mã phản hồi</span>

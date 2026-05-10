@@ -14,6 +14,10 @@ Ready for Phase 7 — Advanced Features & Production Systems
 
 ## Recently Completed
 
+- Integrated MoMo Sandbox checkout handoff for ecommerce orders.
+- Added reusable backend payment gateway abstraction, signed MoMo payment request creation, browser return/IPN signature validation, merchant/amount validation, paid/failed/cancelled transaction handling, and unpaid order close/release behavior.
+- Enabled MoMo in checkout with provider-aware payment loading states, shared payment API helpers, payment status helpers, and result routes `/payment/success` and `/payment/failed`.
+- Verified `npm run lint`, `npm run build`, `mvn -q -DskipTests compile`, and `git diff --check` after the MoMo Sandbox integration.
 - Integrated VNPay Sandbox checkout handoff for ecommerce orders.
 - Added signed backend VNPay payment URL creation, secure return/IPN verification, amount validation, paid/failed/cancelled transaction handling, and unpaid order close/release behavior.
 - Added storefront VNPay checkout selection, payment loading/redirect state, payment API service/mappers, and result routes `/payment/success` and `/payment/failed`.
@@ -294,7 +298,7 @@ Ready for Phase 7 — Advanced Features & Production Systems
 - Keep the shared cart provider as the single cart state source for header drawer, cart page, product cards, product detail, and checkout.
 - Connect the production-ready wishlist sync layer to a real public wishlist API when the backend contract is ready; keep recently viewed local until product history APIs exist.
 - Replace homepage product sections, wishlist/recently viewed lookup, and search overlay mock data with real storefront APIs when those contracts are ready.
-- Keep VNPay Sandbox checkout handoff stable; move to production credentials only through environment-specific config.
+- Keep VNPay and MoMo Sandbox checkout handoff stable; move to production credentials only through environment-specific config.
 - Add category route/page when the category browsing plan is ready.
 - Replace the homepage mock loading timer with real loading state when storefront data integration begins.
 
@@ -304,7 +308,7 @@ Ready for Phase 7 — Advanced Features & Production Systems
 - Deepen review workflows with moderation-ready states, ownership checks, and richer media/helpfulness behavior.
 - Add real notification, loyalty, and recommendation backends when API contracts are available; keep current local foundations as fallbacks.
 - Harden customer registration, customer login, account ownership, cart persistence, and public order tracking contracts.
-- Harden payment state handling with production return URLs, customer ownership checks, critical-flow tests, and deployment-safe credentials.
+- Harden payment state handling with production return URLs, customer ownership checks, critical-flow tests, deployment-safe credentials, and provider reconciliation checks.
 - Replace remaining homepage, search, wishlist, recently viewed, and recommendation mock/local data with public APIs as those APIs mature.
 - Add critical-flow tests, database migration/backfill scripts, production config review, deployment docs, and monitoring/observability planning.
 

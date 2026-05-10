@@ -8,6 +8,16 @@ Always update this file after meaningful work.
 
 ## 2026-05-10
 
+### MoMo Sandbox Payment Flow
+
+- Added a reusable backend payment gateway abstraction for storefront online payment handoff.
+- Integrated MoMo Sandbox payment request creation, browser return handling, IPN signature validation, merchant/amount validation, and paid/failed/cancelled transaction handling.
+- Added `/api/payments/momo/create` and `/api/payments/momo-return`, and aligned the MoMo notify URL with `/api/system/payment/momo-ipn`.
+- Enabled MoMo Sandbox in checkout with shared payment API helpers, provider-aware loading states, and provider-aware payment result pages.
+- Added frontend payment status helpers for `pending`, `paid`, `failed`, and `cancelled`.
+- Updated `docs/backend/PAYMENT.md`, `CURRENT_STATE.md`, and `NEXT_TASKS.md`.
+- Verified `npm run lint`, `npm run build`, `mvn -q -DskipTests compile`, and `git diff --check`.
+
 ### VNPay Sandbox Payment Flow
 
 - Integrated VNPay Sandbox checkout handoff for ecommerce orders.

@@ -48,6 +48,8 @@ function CheckoutSummary({
 }) {
   const total = Math.max(subtotal + shippingFee - couponDiscount, 0);
   const { hasBlockingIssues } = getCartStockInsights(items);
+  const paymentProviderName = paymentMethod?.name || "cổng thanh toán";
+  const isDigitalPayment = paymentMethod?.apiValue === "DIGITAL";
 
   return (
     <aside className="rounded-3xl border border-blue-300/20 bg-[#07111F]/96 p-4 shadow-[0_28px_90px_rgba(0,0,0,0.34),0_0_36px_rgba(0,91,255,0.12)] backdrop-blur-2xl lg:sticky lg:top-28 lg:p-5">
@@ -197,7 +199,7 @@ function CheckoutSummary({
         <div className="mt-4 rounded-2xl border border-blue-300/30 bg-blue-500/10 p-3 text-sm font-bold text-blue-100">
           <div className="flex items-center gap-2">
             <Loader2 className="shrink-0 animate-spin" size={17} />
-            <span>Đang mở phiên thanh toán VNPay Sandbox...</span>
+            <span>Đang mở phiên thanh toán {paymentProviderName} Sandbox...</span>
           </div>
         </div>
       )}
@@ -216,7 +218,7 @@ function CheckoutSummary({
           {isPaymentRedirecting ? (
             <>
               <Loader2 className="animate-spin" size={18} />
-              Đang chuyển sang VNPay
+              Đang chuyển sang {paymentProviderName}
             </>
           ) : isSubmitting ? (
             <>
@@ -225,9 +227,9 @@ function CheckoutSummary({
             </>
           ) : hasBlockingIssues ? (
             "Kiểm tra tồn kho trước"
-          ) : paymentMethod.id === "vnpay" ? (
+          ) : isDigitalPayment ? (
             <>
-              Thanh toán qua VNPay
+              Thanh toán qua {paymentProviderName}
               <ChevronRight size={18} />
             </>
           ) : (

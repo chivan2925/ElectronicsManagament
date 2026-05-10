@@ -48,7 +48,7 @@ payment:
     endpoint: "https://test-payment.momo.vn/v2/gateway/api/create"
     refund-url: "https://test-payment.momo.vn/v2/gateway/api/refund"
     return-url: "http://localhost:8080/api/payments/momo-return"
-    notify-url: "http://localhost:8080/api/webhook/momo-ipn" # Đường dẫn Momo bắn IPN về
+    notify-url: "http://localhost:8080/api/system/payment/momo-ipn" # Đường dẫn Momo bắn IPN về
 
 # Cấu hình Cloudinary
 cloudinary:

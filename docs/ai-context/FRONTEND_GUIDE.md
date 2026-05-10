@@ -7,7 +7,7 @@ This guide describes the frontend direction for ElectronicsManagement.
 Current phase:
 
 ```text
-Ready for Phase 6 — Ecommerce Core Features
+Ready for Phase 7 — Advanced Features & Production Systems
 ```
 
 ## Stack
@@ -193,6 +193,8 @@ frontend/src/
 │     ├─ Checkout.jsx
 │     ├─ Home.jsx
 │     ├─ Login.jsx
+│     ├─ PaymentFailed.jsx
+│     ├─ PaymentSuccess.jsx
 │     ├─ ProfileOrderDetail.jsx
 │     ├─ ProfileOrders.jsx
 │     ├─ ProfileOverview.jsx
@@ -216,7 +218,8 @@ frontend/src/
 ├─ utils/
 │  ├─ classNames.js
 │  ├─ formatters.js
-│  └─ orderTracking.js
+│  ├─ orderTracking.js
+│  └─ paymentStatus.js
 ├─ App.jsx
 └─ main.jsx
 ```
@@ -447,7 +450,7 @@ Checkout API state logic lives in `frontend/src/hooks/`:
 
 Checkout API response and payload mapping lives in `frontend/src/api/checkoutMapper.js`.
 
-The checkout page uses shared cart state, local form validation, backend Coupon API validation, backend User API profile prefill when available, and backend Order API creation through `orderService.createOrder()`. Checkout summary reuses free-shipping progress, stock validation, shipping estimate, coupon apply/clear, and loading/error states. COD creates the order only. VNPay creates the order, requests a backend-signed sandbox payment URL through `paymentService.createVNPayPayment()`, redirects to VNPay Sandbox, then verifies the final server-side status on `/payment/success` or `/payment/failed`. MoMo remains disabled until a real customer-facing handoff is implemented.
+The checkout page uses shared cart state, local form validation, backend Coupon API validation, backend User API profile prefill when available, and backend Order API creation through `orderService.createOrder()`. Checkout summary reuses free-shipping progress, stock validation, shipping estimate, coupon apply/clear, and loading/error states. COD creates the order only. VNPay and MoMo create the order, request a backend-signed sandbox payment handoff through `paymentService.createPayment()`, redirect to the provider sandbox, then verify the final server-side status on `/payment/success` or `/payment/failed`. Payment result pages use `utils/paymentStatus.js` for provider-aware paid, failed, cancelled, and pending feedback.
 
 ## Customer Auth Components
 

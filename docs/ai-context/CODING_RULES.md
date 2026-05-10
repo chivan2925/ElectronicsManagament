@@ -8,7 +8,7 @@ These rules keep ElectronicsManagement changes consistent and safe.
 
 - Project name: ElectronicsManagement.
 - Product type: electronics and gaming e-commerce website.
-- Current phase: `Ready for Phase 6 — Ecommerce Core Features`.
+- Current phase: `Ready for Phase 7 — Advanced Features & Production Systems`.
 - Frontend stack: React + Vite + Tailwind CSS.
 - Backend stack: Spring Boot REST API.
 - Do not break the existing homepage layout.

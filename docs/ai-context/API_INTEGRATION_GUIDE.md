@@ -7,10 +7,10 @@ This guide defines how frontend API integration should be done later.
 Current phase:
 
 ```text
-Ready for Phase 6 — Ecommerce Core Features
+Ready for Phase 7 — Advanced Features & Production Systems
 ```
 
-The shared frontend API layer and centralized auth architecture exist. Admin/staff login is connected to the backend JWT API, storefront product listing/detail pages are connected to Product API data, authenticated checkout creates backend orders with Coupon/User API support, and authenticated account pages use User Profile/User Order APIs including the `/profile/orders/:id` tracking detail route. Core admin CRUD modules are connected to backend APIs; Phase 6 focuses on public storefront ecommerce APIs and customer workflows.
+The shared frontend API layer and centralized auth architecture exist. Admin/staff login is connected to the backend JWT API, storefront product listing/detail pages are connected to Product API data, authenticated checkout creates backend orders with Coupon/User API support, and authenticated account pages use User Profile/User Order APIs including the `/profile/orders/:id` tracking detail route. Core admin CRUD modules are connected to backend APIs; Phase 7 focuses on advanced storefront workflows, payment hardening, and production readiness.
 
 ## Backend API Scope
 
@@ -234,8 +234,9 @@ Current behavior:
 - `checkoutMapper.js` builds create-order payloads and normalizes coupon/order responses before they reach UI components.
 - `/checkout` remains protected by `ProtectedRoute` and customer-only route policy; unauthorized users are redirected through the auth route guard.
 - VNPay Sandbox handoff is implemented through `POST /payments/vnpay/create`, backend secure hash signing, VNPay browser return handling at `/payments/vnpay-return`, and result verification through `GET /payments/orders/{orderId}/status`.
+- MoMo Sandbox handoff is implemented through `POST /payments/momo/create`, backend HMAC-SHA256 signing, MoMo browser return handling at `/payments/momo-return`, MoMo IPN handling at `/api/system/payment/momo-ipn`, and the same result verification endpoint.
 - Frontend routes `/payment/success` and `/payment/failed` verify the server-side payment state before showing paid, failed, or cancelled feedback.
-- MoMo remains disabled until a real customer-facing handoff is implemented.
+- Payment result UI is provider-aware for VNPay and MoMo and uses lowercase storefront statuses: `pending`, `paid`, `failed`, and `cancelled`.
 
 ## Account Integration
 
@@ -370,7 +371,7 @@ Phase 5 completed the core admin integration in this order:
 4. Admin variants.
 5. Admin media upload.
 
-Phase 6 should focus on public storefront API contracts for browsing, cart persistence, checkout/payment, customer auth, and order tracking.
+Phase 7 should focus on advanced storefront workflows, payment hardening, customer ownership, tests, and production-ready API contracts.
 
 ## Auth Rules
 

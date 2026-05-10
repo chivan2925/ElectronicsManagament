@@ -41,16 +41,16 @@ Primary category display labels:
 ## Current Phase
 
 ```text
-Ready for Phase 6 — Ecommerce Core Features
+Ready for Phase 7 — Advanced Features & Production Systems
 ```
 
 Focus:
 
-- Preserve the homepage while building customer-facing ecommerce workflows.
+- Preserve the homepage while hardening customer-facing ecommerce workflows.
 - Keep frontend structure clean.
 - Keep context docs accurate.
 - Keep the completed API-backed admin dashboard stable.
-- Move remaining mock/local storefront flows to public ecommerce APIs when contracts exist.
+- Harden payment, customer auth, ownership, and production readiness as backend contracts mature.
 
 ## Frontend Stack
 
@@ -92,6 +92,7 @@ Additional backend areas:
 - Payment transactions.
 - Return requests.
 - VNPay and Momo system payment webhooks.
+- VNPay Sandbox and MoMo Sandbox checkout handoff APIs.
 - Cloudinary media upload.
 
 ## Current Frontend State
@@ -101,7 +102,7 @@ Additional backend areas:
 - Admin CRUD pages exist for the core backend resources.
 - Client catalog, checkout, and account routes have partial real API integration.
 - Admin CRUD pages for the core resources are connected to backend APIs; dashboard/report analytics still use mock data.
-- `frontend/src/api/client.js`, `resourceService.js`, service modules, and the `frontend/src/admin` architecture foundation are ready for Phase 6 storefront API expansion.
+- `frontend/src/api/client.js`, `resourceService.js`, payment service modules, and the `frontend/src/admin` architecture foundation are ready for Phase 7 production hardening.
 
 ## UI Direction
 

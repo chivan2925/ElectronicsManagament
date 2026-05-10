@@ -19,7 +19,6 @@ public class MomoUtils {
     @Value("${electronics.app.momo.accessKey:${payment.momo.access-key:}}")
     private String accessKey;
 
-    // 🚀 Vũ khí của Momo: HMAC-SHA256
     public static String hmacSHA256(String data, String secretKey) {
         try {
             Mac sha256_HMAC = Mac.getInstance("HmacSHA256");
@@ -45,45 +44,43 @@ public class MomoUtils {
 
     public boolean validateSignature(Map<String, Object> requestBody) {
         try {
-            // Bóc tách các trường Momo gửi về
-            String amount = String.valueOf(requestBody.get("amount"));
-            String extraData = String.valueOf(requestBody.get("extraData"));
-            String message = String.valueOf(requestBody.get("message"));
-            String orderId = String.valueOf(requestBody.get("orderId"));
-            String orderInfo = String.valueOf(requestBody.get("orderInfo"));
-            String orderType = String.valueOf(requestBody.get("orderType"));
-            String partnerCode = String.valueOf(requestBody.get("partnerCode"));
-            String payType = String.valueOf(requestBody.get("payType"));
-            String requestId = String.valueOf(requestBody.get("requestId"));
-            String responseTime = String.valueOf(requestBody.get("responseTime"));
-            String resultCode = String.valueOf(requestBody.get("resultCode"));
-            String transId = String.valueOf(requestBody.get("transId"));
+            if (requestBody == null) {
+                return false;
+            }
 
-            // Chữ ký IPN của Momo bắt buộc phải nối chuỗi THEO ĐÚNG THỨ TỰ này
-            String rawHash = "accessKey=" + accessKey +
-                    "&amount=" + amount +
-                    "&extraData=" + extraData +
-                    "&message=" + message +
-                    "&orderId=" + orderId +
-                    "&orderInfo=" + orderInfo +
-                    "&orderType=" + orderType +
-                    "&partnerCode=" + partnerCode +
-                    "&payType=" + payType +
-                    "&requestId=" + requestId +
-                    "&responseTime=" + responseTime +
-                    "&resultCode=" + resultCode +
-                    "&transId=" + transId;
+            String momoSignature = valueOf(requestBody.get("signature"));
+            if (momoSignature.isBlank()) {
+                return false;
+            }
 
-            // Mã băm bằng HMAC SHA256
+            String rawHash = buildCallbackRawHash(requestBody);
             String mySignature = hmacSHA256(rawHash, secretKey);
-            String momoSignature = String.valueOf(requestBody.get("signature"));
 
-            // So sánh
-            return mySignature.equals(momoSignature);
+            return mySignature.equalsIgnoreCase(momoSignature);
 
         } catch (Exception e) {
             log.error("Lỗi khi giải mã chữ ký Momo: {}", e.getMessage());
             return false;
         }
+    }
+
+    private String buildCallbackRawHash(Map<String, Object> requestBody) {
+        return "accessKey=" + accessKey +
+                "&amount=" + valueOf(requestBody.get("amount")) +
+                "&extraData=" + valueOf(requestBody.get("extraData")) +
+                "&message=" + valueOf(requestBody.get("message")) +
+                "&orderId=" + valueOf(requestBody.get("orderId")) +
+                "&orderInfo=" + valueOf(requestBody.get("orderInfo")) +
+                "&orderType=" + valueOf(requestBody.get("orderType")) +
+                "&partnerCode=" + valueOf(requestBody.get("partnerCode")) +
+                "&payType=" + valueOf(requestBody.get("payType")) +
+                "&requestId=" + valueOf(requestBody.get("requestId")) +
+                "&responseTime=" + valueOf(requestBody.get("responseTime")) +
+                "&resultCode=" + valueOf(requestBody.get("resultCode")) +
+                "&transId=" + valueOf(requestBody.get("transId"));
+    }
+
+    private String valueOf(Object value) {
+        return value == null ? "" : String.valueOf(value);
     }
 }

@@ -8,23 +8,26 @@ The backend has payment integration code for:
 
 - COD
 - VNPay
-- Momo
+- MoMo
 
-The current implemented surface includes VNPay Sandbox checkout handoff, VNPay browser return handling, VNPay IPN handling, Momo IPN handling, and refund strategy code.
+The current implemented surface includes VNPay Sandbox checkout handoff, MoMo Sandbox checkout handoff, browser return handling, VNPay IPN handling, MoMo IPN handling, and refund strategy code.
 
 ## Main Classes
 
 | Class | Responsibility |
 | --- | --- |
-| `UserPaymentController` | Storefront payment URL creation, VNPay return redirect, and payment status verification. |
-| `SystemPaymentTransactionController` | VNPay and Momo IPN endpoints. |
-| `SystemPaymentServiceImpl` | Validates IPN payloads and updates payment/order state. |
+| `UserPaymentController` | Storefront payment URL/request creation, VNPay/MoMo return redirects, and payment status verification. |
+| `SystemPaymentTransactionController` | VNPay and MoMo IPN endpoints. |
+| `SystemPaymentServiceImpl` | Validates provider payloads and updates payment/order state. |
+| `PaymentGatewayService` | Shared storefront payment handoff abstraction. |
+| `VNPayPaymentGatewayService` | VNPay Sandbox payment URL signing. |
+| `MomoPaymentGatewayService` | MoMo Sandbox payment request signing and pay URL creation. |
 | `SystemOrderServiceImpl` | Confirms successful payments and order side effects. |
 | `PaymentTransactionEntity` | Stores payment and refund records. |
 | `VNPayUtils` | VNPay signature and helper utilities. |
-| `MomoUtils` | Momo signature and helper utilities. |
+| `MomoUtils` | MoMo signature and helper utilities. |
 | `VNPayRefundStrategy` | VNPay refund behavior. |
-| `MomoRefundStrategy` | Momo refund behavior. |
+| `MomoRefundStrategy` | MoMo refund behavior. |
 | `CodRefundStrategy` | COD refund recording behavior. |
 
 ## Payment Tables
@@ -88,13 +91,34 @@ Verify payment status:
 GET /api/payments/orders/{orderId}/status
 ```
 
+Create MoMo Sandbox payment request:
+
+```http
+POST /api/payments/momo/create
+```
+
+Request:
+
+```json
+{
+  "orderId": 123,
+  "provider": "MOMO"
+}
+```
+
 VNPay browser return URL:
 
 ```http
 GET /api/payments/vnpay-return
 ```
 
-Return handling validates the secure hash, validates merchant code and amount, updates the transaction/order state, then redirects the browser to:
+MoMo browser return URL:
+
+```http
+GET /api/payments/momo-return
+```
+
+Return handling validates the provider signature, merchant code and amount, updates the transaction/order state, then redirects the browser to:
 
 - `/payment/success` for paid payments.
 - `/payment/failed` for failed or cancelled payments.
@@ -107,7 +131,7 @@ VNPay:
 GET /api/system/payment/vnpay-ipn
 ```
 
-Momo:
+MoMo:
 
 ```http
 POST /api/system/payment/momo-ipn
@@ -146,11 +170,12 @@ Provider response codes returned by current service:
 | `04` | Amount mismatch. |
 | `97` | Invalid signature. |
 
-## Momo IPN Flow
+## MoMo IPN Flow
 
 ```text
-Momo -> POST /api/system/payment/momo-ipn
+MoMo -> POST /api/system/payment/momo-ipn
   -> validate signature
+  -> validate merchant code
   -> locate order
   -> locate payment transaction
   -> reject duplicate successful transaction
@@ -158,12 +183,15 @@ Momo -> POST /api/system/payment/momo-ipn
   -> if resultCode is 0:
        mark transaction SUCCESS
        confirm successful order payment
+     else if resultCode is 1006:
+       mark transaction CANCELLED
+       close unpaid order as CANCELLED
      else:
        mark transaction FAILED
-       mark order payment FAILED
+       close unpaid order as FAILED
 ```
 
-The current Momo endpoint returns no body on success path.
+The current MoMo endpoint returns no body on success path.
 
 ## Refund Strategy
 
@@ -220,6 +248,7 @@ Rules:
 
 - Use placeholders in docs.
 - VNPay payment URL creation is sandbox-only and rejects non-sandbox pay URLs.
+- MoMo payment request creation is sandbox-only and rejects non-`test-payment.momo.vn` endpoints.
 - Move secrets to environment variables before deployment.
 - Keep return URLs and notify URLs aligned with actual deployed API paths.
 

@@ -9,16 +9,19 @@ import Button from "../../components/ui/Button";
 import Container from "../../components/ui/Container";
 import ApiErrorAlert from "../../components/ui/feedback/ApiErrorAlert";
 import { formatCurrency } from "../../utils/formatters";
-
-function getQueryStatus(searchParams) {
-  return String(searchParams.get("status") || "").toLowerCase();
-}
+import {
+  getPaymentProviderLabel,
+  isPaidStatus,
+  normalizePaymentProvider,
+  normalizePaymentStatus,
+} from "../../utils/paymentStatus";
 
 function PaymentSuccess() {
   const [searchParams] = useSearchParams();
   const orderId = searchParams.get("orderId");
   const transactionId = searchParams.get("transactionId");
-  const queryStatus = getQueryStatus(searchParams);
+  const queryStatus = normalizePaymentStatus(searchParams.get("status"), "pending");
+  const queryProvider = normalizePaymentProvider(searchParams.get("provider"), "VNPAY");
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
 
@@ -48,8 +51,10 @@ function PaymentSuccess() {
   }, [orderId, transactionId]);
 
   const isVerifying = Boolean(orderId) && !result && !error;
-  const status = result?.status || queryStatus || "pending";
-  const isPaid = status === "paid";
+  const status = normalizePaymentStatus(result?.status || queryStatus, "pending");
+  const provider = normalizePaymentProvider(result?.provider || queryProvider);
+  const providerLabel = getPaymentProviderLabel(provider);
+  const isPaid = isPaidStatus(status);
   const verifiedLabel = useMemo(() => {
     if (isVerifying) {
       return "Đang xác minh";
@@ -77,11 +82,11 @@ function PaymentSuccess() {
                 {verifiedLabel}
               </Badge>
               <h1 className="text-heading mt-5 max-w-3xl">
-                {isPaid ? "Thanh toán VNPay thành công" : "Đang kiểm tra thanh toán"}
+                {isPaid ? `Thanh toán ${providerLabel} thành công` : "Đang kiểm tra thanh toán"}
               </h1>
               <p className="text-muted mt-3 max-w-2xl text-base md:text-lg">
                 {isPaid
-                  ? "Hệ thống đã ghi nhận giao dịch sandbox và cập nhật trạng thái đơn hàng."
+                  ? `Hệ thống đã ghi nhận giao dịch ${providerLabel} Sandbox và cập nhật trạng thái đơn hàng.`
                   : "Trang thanh toán đã quay lại, nhưng hệ thống chưa xác nhận trạng thái paid cho đơn này."}
               </p>
 
@@ -122,7 +127,7 @@ function PaymentSuccess() {
                 </div>
                 <div className="flex items-center justify-between gap-3 text-slate-400">
                   <span>Phương thức</span>
-                  <span className="font-black text-blue-100">VNPay</span>
+                  <span className="font-black text-blue-100">{providerLabel}</span>
                 </div>
                 <div className="flex items-center justify-between gap-3 text-slate-400">
                   <span>Số tiền</span>
@@ -132,7 +137,7 @@ function PaymentSuccess() {
                   <div className="flex gap-2">
                     <CreditCard className="mt-0.5 shrink-0 text-blue-200" size={17} />
                     <p className="text-caption text-slate-300">
-                      Trạng thái thành công chỉ hiển thị sau khi hệ thống xác minh phản hồi VNPay.
+                      Trạng thái thành công chỉ hiển thị sau khi hệ thống xác minh phản hồi {providerLabel}.
                     </p>
                   </div>
                 </div>

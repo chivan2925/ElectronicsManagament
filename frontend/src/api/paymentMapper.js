@@ -18,10 +18,14 @@ export function normalizePaymentLinkResponse(response = {}) {
   const source = unwrapApiPayload(response) ?? {};
 
   return {
+    deeplink: firstDefined(source.deeplink, source.deepLink, ""),
+    message: firstDefined(source.message, ""),
     orderId: firstDefined(source.orderId, source.order?.id, null),
-    paymentUrl: firstDefined(source.paymentUrl, source.url, ""),
+    paymentUrl: firstDefined(source.paymentUrl, source.payUrl, source.url, source.deeplink, ""),
     provider: String(firstDefined(source.provider, "VNPAY")).toUpperCase(),
+    qrCodeUrl: firstDefined(source.qrCodeUrl, source.qrUrl, ""),
     raw: source,
+    responseCode: firstDefined(source.responseCode, source.resultCode, source.code, ""),
     status: normalizeStatus(source.status),
     transactionId: firstDefined(source.transactionId, source.paymentTransactionId, null),
   };

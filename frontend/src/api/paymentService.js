@@ -3,12 +3,18 @@ import { normalizePaymentLinkResponse, normalizePaymentStatusResponse } from "./
 
 const PAYMENT_RESOURCE_PATH = import.meta.env.VITE_PAYMENT_API_PATH || "/payments";
 
-export async function createVNPayPayment(orderId, config = {}) {
+export async function createPayment({ orderId, provider }, config = {}) {
+  const normalizedProvider = String(provider || "").trim().toUpperCase();
+
+  if (!normalizedProvider) {
+    throw new Error("Thiếu nhà cung cấp thanh toán.");
+  }
+
   const data = await api.post(
-    `${PAYMENT_RESOURCE_PATH}/vnpay/create`,
+    `${PAYMENT_RESOURCE_PATH}/${normalizedProvider.toLowerCase()}/create`,
     {
       orderId: Number(orderId),
-      provider: "VNPAY",
+      provider: normalizedProvider,
     },
     {
       skipGlobalErrorHandler: true,
@@ -17,6 +23,14 @@ export async function createVNPayPayment(orderId, config = {}) {
   );
 
   return normalizePaymentLinkResponse(data);
+}
+
+export async function createVNPayPayment(orderId, config = {}) {
+  return createPayment({ orderId, provider: "VNPAY" }, config);
+}
+
+export async function createMomoPayment(orderId, config = {}) {
+  return createPayment({ orderId, provider: "MOMO" }, config);
 }
 
 export async function getOrderPaymentStatus(orderId, params = {}, config = {}) {
@@ -34,6 +48,8 @@ export async function getOrderPaymentStatus(orderId, params = {}, config = {}) {
 }
 
 const paymentService = {
+  createMomoPayment,
+  createPayment,
   createVNPayPayment,
   getOrderPaymentStatus,
 };

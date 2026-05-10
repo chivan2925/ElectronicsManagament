@@ -10,6 +10,7 @@ import org.example.electronics.config.payment.VNPayConfig;
 import org.example.electronics.dto.request.user.payment.CreatePaymentLinkRequestDTO;
 import org.example.electronics.dto.response.user.payment.PaymentLinkResponseDTO;
 import org.example.electronics.dto.response.user.payment.PaymentStatusResponseDTO;
+import org.example.electronics.entity.enums.PaymentProvider;
 import org.example.electronics.service.system.SystemPaymentService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.util.Enumeration;
@@ -45,7 +47,27 @@ public class UserPaymentController {
             @Valid @RequestBody CreatePaymentLinkRequestDTO requestDTO,
             HttpServletRequest request
     ) {
-        PaymentLinkResponseDTO responseDTO = systemPaymentService.createVNPayPaymentLink(requestDTO, request);
+        PaymentLinkResponseDTO responseDTO = systemPaymentService.createVNPayPaymentLink(
+                withProvider(requestDTO, PaymentProvider.VNPAY),
+                request
+        );
+
+        return ResponseEntity.ok(responseDTO);
+    }
+
+    @PostMapping("/momo/create")
+    @Operation(
+            summary = "Create MoMo sandbox payment request",
+            description = "Creates a signed MoMo sandbox payment request for a pending digital order."
+    )
+    public ResponseEntity<PaymentLinkResponseDTO> createMomoPaymentUrl(
+            @Valid @RequestBody CreatePaymentLinkRequestDTO requestDTO,
+            HttpServletRequest request
+    ) {
+        PaymentLinkResponseDTO responseDTO = systemPaymentService.createMomoPaymentLink(
+                withProvider(requestDTO, PaymentProvider.MOMO),
+                request
+        );
 
         return ResponseEntity.ok(responseDTO);
     }
@@ -65,7 +87,27 @@ public class UserPaymentController {
         } catch (Exception exception) {
             log.error("VNPay return handling failed", exception);
             return ResponseEntity.status(HttpStatus.FOUND)
-                    .location(URI.create(vnPayConfig.getFrontendFailedUrl() + "?status=failed&verified=false"))
+                    .location(URI.create(buildFailedRedirect(PaymentProvider.VNPAY)))
+                    .build();
+        }
+    }
+
+    @GetMapping("/momo-return")
+    @Operation(
+            summary = "Handle MoMo browser return",
+            description = "Validates MoMo return signature, updates payment state, and redirects back to the storefront result page."
+    )
+    public ResponseEntity<Void> handleMomoReturn(HttpServletRequest request) {
+        try {
+            PaymentStatusResponseDTO responseDTO = systemPaymentService.processMomoReturn(extractRequestObjectParams(request));
+
+            return ResponseEntity.status(HttpStatus.FOUND)
+                    .header(HttpHeaders.LOCATION, responseDTO.redirectUrl())
+                    .build();
+        } catch (Exception exception) {
+            log.error("MoMo return handling failed", exception);
+            return ResponseEntity.status(HttpStatus.FOUND)
+                    .location(URI.create(buildFailedRedirect(PaymentProvider.MOMO)))
                     .build();
         }
     }
@@ -92,5 +134,34 @@ public class UserPaymentController {
         }
 
         return fields;
+    }
+
+    private Map<String, Object> extractRequestObjectParams(HttpServletRequest request) {
+        Map<String, Object> fields = new HashMap<>();
+
+        for (Enumeration<String> params = request.getParameterNames(); params.hasMoreElements();) {
+            String fieldName = params.nextElement();
+            String fieldValue = request.getParameter(fieldName);
+
+            if (fieldValue != null && !fieldValue.isEmpty()) {
+                fields.put(fieldName, fieldValue);
+            }
+        }
+
+        return fields;
+    }
+
+    private CreatePaymentLinkRequestDTO withProvider(CreatePaymentLinkRequestDTO requestDTO, PaymentProvider provider) {
+        return new CreatePaymentLinkRequestDTO(requestDTO.orderId(), provider);
+    }
+
+    private String buildFailedRedirect(PaymentProvider provider) {
+        return UriComponentsBuilder.fromUriString(vnPayConfig.getFrontendFailedUrl())
+                .queryParam("status", "failed")
+                .queryParam("provider", provider.name())
+                .queryParam("verified", false)
+                .build()
+                .encode()
+                .toUriString();
     }
 }

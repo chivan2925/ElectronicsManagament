@@ -48,6 +48,7 @@ const paymentMethods = [
     id: "cod",
     name: "COD",
     placeholder: false,
+    provider: "COD",
   },
   {
     badge: "Sandbox",
@@ -56,15 +57,16 @@ const paymentMethods = [
     id: "vnpay",
     name: "VNPay",
     placeholder: false,
+    provider: "VNPAY",
   },
   {
-    badge: "Sắp có",
-    description: "Thanh toán ví MoMo sẽ được bật khi hệ thống thanh toán sẵn sàng.",
+    badge: "Sandbox",
+    description: "Tạo phiên thanh toán ví MoMo Sandbox với xác minh chữ ký giao dịch.",
     apiValue: "DIGITAL",
-    disabled: true,
     id: "momo",
     name: "MoMo",
-    placeholder: true,
+    placeholder: false,
+    provider: "MOMO",
   },
 ];
 
@@ -318,16 +320,19 @@ function Checkout() {
         values,
       });
 
-      if (selectedPaymentMethod.id === "vnpay") {
+      if (selectedPaymentMethod.apiValue === "DIGITAL") {
         setPaymentHandoff({ error: null, isRedirecting: true });
 
-        const paymentLink = await paymentService.createVNPayPayment(order.id);
+        const paymentLink = await paymentService.createPayment({
+          orderId: order.id,
+          provider: selectedPaymentMethod.provider,
+        });
 
         if (!paymentLink.paymentUrl) {
-          throw new Error("Không nhận được đường dẫn thanh toán VNPay từ hệ thống.");
+          throw new Error(`Không nhận được đường dẫn thanh toán ${selectedPaymentMethod.name} từ hệ thống.`);
         }
 
-        toast.showInfo("Đang chuyển sang VNPay Sandbox để hoàn tất thanh toán.", {
+        toast.showInfo(`Đang chuyển sang ${selectedPaymentMethod.name} Sandbox để hoàn tất thanh toán.`, {
           duration: 2200,
           title: "Mở cổng thanh toán",
         });
@@ -343,11 +348,11 @@ function Checkout() {
     } catch (error) {
       setOrderPlaced(false);
       setPaymentHandoff({
-        error: selectedPaymentMethod.id === "vnpay" ? error : null,
+        error: selectedPaymentMethod.apiValue === "DIGITAL" ? error : null,
         isRedirecting: false,
       });
       toast.showApiError(error, {
-        title: selectedPaymentMethod.id === "vnpay" ? "Chưa mở được VNPay" : "Chưa tạo được đơn hàng",
+        title: selectedPaymentMethod.apiValue === "DIGITAL" ? `Chưa mở được ${selectedPaymentMethod.name}` : "Chưa tạo được đơn hàng",
       });
     }
   };
@@ -403,7 +408,7 @@ function Checkout() {
               </Badge>
               <h1 className="text-heading max-w-3xl">Hoàn tất đơn hàng</h1>
               <p className="text-muted mt-3 max-w-2xl text-base md:text-lg">
-                Nhập thông tin giao hàng, chọn vận chuyển và phương thức thanh toán. COD và VNPay Sandbox đã sẵn sàng cho đơn hàng ecommerce.
+                Nhập thông tin giao hàng, chọn vận chuyển và phương thức thanh toán. COD, VNPay Sandbox và MoMo Sandbox đã sẵn sàng cho đơn hàng ecommerce.
               </p>
             </div>
 
@@ -432,7 +437,7 @@ function Checkout() {
           compact
           signals={[
             { icon: "ShieldCheck", label: "Bảo mật", value: "Thông tin giao hàng rõ ràng" },
-            { icon: "CreditCard", label: "Thanh toán linh hoạt", value: "COD và VNPay Sandbox" },
+            { icon: "CreditCard", label: "Thanh toán linh hoạt", value: "COD, VNPay và MoMo Sandbox" },
             { icon: "Clock3", label: "Xử lý nhanh", value: "Ước tính thời gian giao" },
             { icon: "Headphones", label: "Hỗ trợ", value: "Theo dõi sau khi đặt đơn" },
           ]}
@@ -495,7 +500,7 @@ function Checkout() {
               onCouponClear={handleCouponClear}
               onPlaceOrder={handlePlaceOrder}
               orderError={paymentHandoff.error || createOrderError}
-              orderErrorTitle={paymentHandoff.error ? "Chưa mở được VNPay" : "Chưa tạo được đơn hàng"}
+              orderErrorTitle={paymentHandoff.error ? `Chưa mở được ${selectedPaymentMethod.name}` : "Chưa tạo được đơn hàng"}
               orderPlaced={orderPlaced}
               paymentMethod={selectedPaymentMethod}
               shippingEstimate={shippingEstimate}

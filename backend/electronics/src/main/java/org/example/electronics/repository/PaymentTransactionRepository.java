@@ -19,6 +19,8 @@ public interface PaymentTransactionRepository extends JpaRepository<PaymentTrans
 
     Optional<PaymentTransactionEntity> findByOrderIdAndTypeAndStatus(Integer id, PaymentTransactionType type, PaymentTransactionStatus status);
 
+    Optional<PaymentTransactionEntity> findTopByOrderIdAndTypeOrderByCreatedAtDesc(Integer id, PaymentTransactionType type);
+
     Optional<PaymentTransactionEntity> findTopByOrderIdAndTypeAndProviderOrderByCreatedAtDesc(
             Integer id,
             PaymentTransactionType type,

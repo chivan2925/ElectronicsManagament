@@ -8,6 +8,10 @@ public record PaymentLinkResponseDTO(
         PaymentProvider provider,
         Integer orderId,
         Integer transactionId,
-        String status
+        String status,
+        String deeplink,
+        String qrCodeUrl,
+        String responseCode,
+        String message
 ) {
 }
