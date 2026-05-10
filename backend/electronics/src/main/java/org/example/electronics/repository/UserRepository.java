@@ -29,15 +29,15 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer> {
 
     @Query("SELECT u FROM UserEntity u WHERE 1=1 " +
 
-            "AND (:keyword IS NULL OR ( " +
-            "    CAST(u.id AS string) LIKE CONCAT('%', :keyword, '%') " +
-            "    OR LOWER(u.fullName) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-            "    OR LOWER(u.username) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-            "    OR LOWER(u.email) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-            "    OR LOWER(u.phoneNumber) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "AND (CAST(:keyword AS string) IS NULL OR ( " +
+            "    CAST(u.id AS string) LIKE CONCAT('%', CAST(:keyword AS string), '%') " +
+            "    OR LOWER(u.fullName) LIKE LOWER(CONCAT('%', CAST(:keyword AS string), '%')) " +
+            "    OR LOWER(u.username) LIKE LOWER(CONCAT('%', CAST(:keyword AS string), '%')) " +
+            "    OR LOWER(u.email) LIKE LOWER(CONCAT('%', CAST(:keyword AS string), '%')) " +
+            "    OR LOWER(u.phoneNumber) LIKE LOWER(CONCAT('%', CAST(:keyword AS string), '%')) " +
             ")) " +
 
-            "AND (:status IS NULL OR u.status = :status) " +
+            "AND (CAST(:status AS string) IS NULL OR u.status = :status) " +
 
             "AND (CAST(:fromDate AS timestamp) IS NULL OR " +
             "    (:dateType = 'CREATED_AT' AND u.createdAt >= :fromDate) OR " +

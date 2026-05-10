@@ -26,13 +26,13 @@ public interface CategoryRepository extends JpaRepository<CategoryEntity, Intege
     @EntityGraph(attributePaths = {"parent"})
     @Query("SELECT c FROM CategoryEntity c WHERE c.parent IS NULL " +
 
-            "AND (:keyword IS NULL OR ( " +
-            "    CAST(c.id AS string) LIKE CONCAT('%', :keyword, '%') " +
-            "    OR LOWER(c.name) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-            "    OR LOWER(c.slug) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "AND (CAST(:keyword AS string) IS NULL OR ( " +
+            "    CAST(c.id AS string) LIKE CONCAT('%', CAST(:keyword AS string), '%') " +
+            "    OR LOWER(c.name) LIKE LOWER(CONCAT('%', CAST(:keyword AS string), '%')) " +
+            "    OR LOWER(c.slug) LIKE LOWER(CONCAT('%', CAST(:keyword AS string), '%')) " +
             ")) " +
 
-            "AND (:status IS NULL OR c.status = :status) " +
+            "AND (CAST(:status AS string) IS NULL OR c.status = :status) " +
 
             "AND (CAST(:fromDate AS timestamp) IS NULL OR " +
             "    (:dateType = 'CREATED_AT' AND c.createdAt >= :fromDate) OR " +
@@ -55,13 +55,13 @@ public interface CategoryRepository extends JpaRepository<CategoryEntity, Intege
 
     @Query("SELECT c FROM CategoryEntity c WHERE c.parent.id = :parentId " +
 
-            "AND (:keyword IS NULL OR ( " +
-            "    CAST(c.id AS string) LIKE CONCAT('%', :keyword, '%') " +
-            "    OR LOWER(c.name) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-            "    OR LOWER(c.slug) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "AND (CAST(:keyword AS string) IS NULL OR ( " +
+            "    CAST(c.id AS string) LIKE CONCAT('%', CAST(:keyword AS string), '%') " +
+            "    OR LOWER(c.name) LIKE LOWER(CONCAT('%', CAST(:keyword AS string), '%')) " +
+            "    OR LOWER(c.slug) LIKE LOWER(CONCAT('%', CAST(:keyword AS string), '%')) " +
             ")) " +
 
-            "AND (:status IS NULL OR c.status = :status) " +
+            "AND (CAST(:status AS string) IS NULL OR c.status = :status) " +
 
             "AND (CAST(:fromDate AS timestamp) IS NULL OR " +
             "    (:dateType = 'CREATED_AT' AND c.createdAt >= :fromDate) OR " +

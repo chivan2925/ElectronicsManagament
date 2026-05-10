@@ -24,13 +24,13 @@ public interface WarehouseTransactionRepository extends JpaRepository<WarehouseT
     @EntityGraph(attributePaths = {"warehouse", "staff"})
     @Query("SELECT wt FROM WarehouseTransactionEntity wt WHERE 1=1 " +
 
-            "AND (:keyword IS NULL OR (" +
-            "   CAST(wt.id AS STRING) LIKE CONCAT('%', :keyword, '%')" +
-            "   OR LOWER(wt.code) LIKE LOWER(CONCAT('%', :keyword, '%'))" +
+            "AND (CAST(:keyword AS string) IS NULL OR (" +
+            "   CAST(wt.id AS STRING) LIKE CONCAT('%', CAST(:keyword AS string), '%')" +
+            "   OR LOWER(wt.code) LIKE LOWER(CONCAT('%', CAST(:keyword AS string), '%'))" +
             "))" +
 
-            "AND (:type IS NULL OR wt.type = :type) " +
-            "AND (:status IS NULL OR wt.status = :status) " +
+            "AND (CAST(:type AS string) IS NULL OR wt.type = :type) " +
+            "AND (CAST(:status AS string) IS NULL OR wt.status = :status) " +
 
             "AND (CAST(:fromDate AS timestamp) IS NULL OR " +
             "    (:dateType = 'CREATED_AT' AND wt.createdAt >= :fromDate) OR " +

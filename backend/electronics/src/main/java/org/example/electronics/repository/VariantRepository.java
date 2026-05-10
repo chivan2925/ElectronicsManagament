@@ -33,17 +33,17 @@ public interface VariantRepository extends JpaRepository<VariantEntity, Integer>
             "LEFT JOIN FETCH v.product " +
             "WHERE 1=1 " +
 
-            "AND (:keyword IS NULL OR ( " +
-            "    CAST(v.id AS string) LIKE CONCAT('%', :keyword, '%') " +
-            "    OR LOWER(v.name) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-            "    OR LOWER(v.slug) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-            "    OR LOWER(v.sku) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-            "    OR LOWER(v.color) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-            "    OR LOWER(v.product.name) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "AND (CAST(:keyword AS string) IS NULL OR ( " +
+            "    CAST(v.id AS string) LIKE CONCAT('%', CAST(:keyword AS string), '%') " +
+            "    OR LOWER(v.name) LIKE LOWER(CONCAT('%', CAST(:keyword AS string), '%')) " +
+            "    OR LOWER(v.slug) LIKE LOWER(CONCAT('%', CAST(:keyword AS string), '%')) " +
+            "    OR LOWER(v.sku) LIKE LOWER(CONCAT('%', CAST(:keyword AS string), '%')) " +
+            "    OR LOWER(v.color) LIKE LOWER(CONCAT('%', CAST(:keyword AS string), '%')) " +
+            "    OR LOWER(v.product.name) LIKE LOWER(CONCAT('%', CAST(:keyword AS string), '%')) " +
             ")) " +
 
-            "AND (:status IS NULL OR v.status = :status) " +
-            "AND (:productId IS NULL OR v.product.id = :productId) " +
+            "AND (CAST(:status AS string) IS NULL OR v.status = :status) " +
+            "AND (CAST(:productId AS string) IS NULL OR v.product.id = :productId) " +
 
             "AND (CAST(:fromDate AS timestamp) IS NULL OR " +
             "    (:dateType = 'CREATED_AT' AND v.createdAt >= :fromDate) OR " +
@@ -57,16 +57,16 @@ public interface VariantRepository extends JpaRepository<VariantEntity, Integer>
 
             countQuery = "SELECT COUNT(v) FROM VariantEntity v " +
                     "WHERE 1=1 " +
-                    "AND (:keyword IS NULL OR ( " +
-                    "    CAST(v.id AS string) LIKE CONCAT('%', :keyword, '%') " +
-                    "    OR LOWER(v.name) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-                    "    OR LOWER(v.slug) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-                    "    OR LOWER(v.sku) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-                    "    OR LOWER(v.color) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-                    "    OR LOWER(v.product.name) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+                    "AND (CAST(:keyword AS string) IS NULL OR ( " +
+                    "    CAST(v.id AS string) LIKE CONCAT('%', CAST(:keyword AS string), '%') " +
+                    "    OR LOWER(v.name) LIKE LOWER(CONCAT('%', CAST(:keyword AS string), '%')) " +
+                    "    OR LOWER(v.slug) LIKE LOWER(CONCAT('%', CAST(:keyword AS string), '%')) " +
+                    "    OR LOWER(v.sku) LIKE LOWER(CONCAT('%', CAST(:keyword AS string), '%')) " +
+                    "    OR LOWER(v.color) LIKE LOWER(CONCAT('%', CAST(:keyword AS string), '%')) " +
+                    "    OR LOWER(v.product.name) LIKE LOWER(CONCAT('%', CAST(:keyword AS string), '%')) " +
                     ")) " +
-                    "AND (:status IS NULL OR v.status = :status) " +
-                    "AND (:productId IS NULL OR v.product.id = :productId) " +
+                    "AND (CAST(:status AS string) IS NULL OR v.status = :status) " +
+                    "AND (CAST(:productId AS string) IS NULL OR v.product.id = :productId) " +
 
                     "AND (CAST(:fromDate AS timestamp) IS NULL OR " +
                     "    (:dateType = 'CREATED_AT' AND v.createdAt >= :fromDate) OR " +

@@ -22,17 +22,17 @@ public interface CouponRepository extends JpaRepository<CouponEntity, Integer> {
 
     @Query("SELECT c FROM CouponEntity c WHERE 1=1 " +
 
-            "AND (:keyword IS NULL OR ( " +
-            "    CAST(c.id AS string) LIKE CONCAT('%', :keyword, '%') " +
-            "    OR LOWER(c.code) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "AND (CAST(:keyword AS string) IS NULL OR ( " +
+            "    CAST(c.id AS string) LIKE CONCAT('%', CAST(:keyword AS string), '%') " +
+            "    OR LOWER(c.code) LIKE LOWER(CONCAT('%', CAST(:keyword AS string), '%')) " +
             ")) " +
 
-            "AND (:timeStatus IS NULL OR " +
+            "AND (CAST(:timeStatus AS string) IS NULL OR " +
             "    (:timeStatus = 'VALID' AND CURRENT_TIMESTAMP >= c.startDate AND CURRENT_TIMESTAMP <= c.endDate) OR " +
             "    (:timeStatus = 'EXPIRED' AND (CURRENT_TIMESTAMP < c.startDate OR CURRENT_TIMESTAMP > c.endDate)) " +
             ") " +
 
-            "AND (:status IS NULL OR c.status = :status) " +
+            "AND (CAST(:status AS string) IS NULL OR c.status = :status) " +
 
             "AND (CAST(:fromDate AS timestamp) IS NULL OR " +
             "    (:dateType = 'CREATED_AT' AND c.createdAt >= :fromDate) OR " +

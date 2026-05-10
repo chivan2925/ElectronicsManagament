@@ -22,16 +22,16 @@ public interface BrandRepository extends JpaRepository<BrandEntity, Integer> {
 
     @Query("SELECT b FROM BrandEntity b WHERE 1=1 " +
 
-            "AND (:keyword IS NULL OR ( " +
-            "    CAST(b.id AS string) LIKE CONCAT('%', :keyword, '%') " +
-            "    OR LOWER(b.name) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-            "    OR LOWER(b.slug) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-            "    OR LOWER(b.description) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "AND (CAST(:keyword AS string) IS NULL OR ( " +
+            "    CAST(b.id AS string) LIKE CONCAT('%', CAST(:keyword AS string), '%') " +
+            "    OR LOWER(b.name) LIKE LOWER(CONCAT('%', CAST(:keyword AS string), '%')) " +
+            "    OR LOWER(b.slug) LIKE LOWER(CONCAT('%', CAST(:keyword AS string), '%')) " +
+            "    OR LOWER(b.description) LIKE LOWER(CONCAT('%', CAST(:keyword AS string), '%')) " +
             ")) " +
 
-            "AND (:status IS NULL OR b.status = :status) " +
+            "AND (CAST(:status AS string) IS NULL OR b.status = :status) " +
 
-            "AND (:featured IS NULL OR COALESCE(b.featured, false) = :featured) " +
+            "AND (CAST(:featured AS string) IS NULL OR COALESCE(b.featured, false) = :featured) " +
 
             "AND (CAST(:fromDate AS timestamp) IS NULL OR " +
             "    (:dateType = 'CREATED_AT' AND b.createdAt >= :fromDate) OR " +
