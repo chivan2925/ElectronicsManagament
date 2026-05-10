@@ -26,6 +26,7 @@ import Badge from "../../components/ui/Badge";
 import Button from "../../components/ui/Button";
 import Container from "../../components/ui/Container";
 import ApiErrorAlert from "../../components/ui/feedback/ApiErrorAlert";
+import EmptyState from "../../components/ui/feedback/EmptyState";
 import Price from "../../components/ui/Price";
 import Rating from "../../components/ui/Rating";
 import { useToast } from "../../components/ui/toast";
@@ -38,20 +39,16 @@ const MotionDiv = motion.div;
 
 function EmptyWishlistState() {
   return (
-    <section className="flex min-h-[420px] items-center justify-center rounded-3xl border border-white/10 bg-white/[0.035] p-6 text-center shadow-inner shadow-white/[0.03] backdrop-blur-xl">
-      <div>
-        <PackageSearch className="mx-auto text-blue-200 drop-shadow-[0_0_18px_rgba(0,91,255,0.55)]" size={54} />
-        <Badge className="mx-auto mt-5" variant="primary">Wishlist trống</Badge>
-        <h2 className="text-heading mt-4 text-3xl">Chưa có sản phẩm yêu thích</h2>
-        <p className="text-muted mx-auto mt-3 max-w-md text-sm">
-          Bấm biểu tượng trái tim trên product card để lưu laptop, tai nghe, chuột hoặc linh kiện bạn muốn quay lại xem.
-        </p>
-        <Button as={Link} className="mt-6 rounded-2xl" to="/products">
-          Khám phá sản phẩm
-          <ChevronRight size={18} />
-        </Button>
-      </div>
-    </section>
+    <EmptyState
+      actionIcon={ChevronRight}
+      actionLabel="Khám phá sản phẩm"
+      actionTo="/products"
+      className="min-h-[420px]"
+      eyebrow="Wishlist trống"
+      icon={PackageSearch}
+      message="Bấm biểu tượng trái tim trên product card để lưu laptop, tai nghe, chuột hoặc linh kiện bạn muốn quay lại xem."
+      title="Chưa có sản phẩm yêu thích"
+    />
   );
 }
 

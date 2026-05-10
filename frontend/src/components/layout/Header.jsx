@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 import {
   ChevronDown,
   Grid3X3,
@@ -112,6 +113,10 @@ function Header() {
     setIsSearchOpen(true);
   };
 
+  const closeMobileMenu = () => {
+    setIsMobileMenuOpen(false);
+  };
+
   const handleNotificationOpenChange = (nextOpen) => {
     if (nextOpen) {
       setIsMobileMenuOpen(false);
@@ -135,7 +140,7 @@ function Header() {
     >
       <div className="page-container">
         <div className="flex items-center gap-3 py-3 lg:gap-4 lg:py-4">
-          <a className="group flex min-w-fit items-center gap-2 sm:gap-3" href="/">
+          <Link className="group flex min-w-fit items-center gap-2 sm:gap-3" to="/">
             <div className="premium-transition flex h-10 w-10 items-center justify-center rounded-xl bg-[#005BFF] text-white shadow-[0_0_28px_rgba(0,91,255,0.45)] group-hover:scale-105 group-hover:shadow-[0_0_42px_rgba(0,91,255,0.72)] sm:h-11 sm:w-11">
               <Zap size={24} fill="currentColor" />
             </div>
@@ -143,17 +148,17 @@ function Header() {
               <p className="text-base font-black leading-none text-white drop-shadow-[0_0_18px_rgba(255,255,255,0.12)] sm:text-lg">ElectroStore</p>
               <p className="mt-1 text-[11px] font-semibold text-blue-300 sm:text-xs">Smart Choice</p>
             </div>
-          </a>
+          </Link>
 
           <div className="group/category relative hidden lg:block">
-            <a
+            <Link
               className="premium-transition flex h-11 items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-4 text-sm font-bold text-slate-200 shadow-inner shadow-white/[0.03] backdrop-blur-xl hover:-translate-y-0.5 hover:border-blue-300/70 hover:bg-blue-500/10 hover:text-white hover:shadow-[0_0_28px_rgba(0,91,255,0.2)]"
-              href="/products"
+              to="/products"
             >
               <Grid3X3 size={18} />
               Tất cả danh mục
               <ChevronDown className="premium-transition group-hover/category:rotate-180" size={16} />
-            </a>
+            </Link>
 
             <div className="invisible absolute left-0 top-[calc(100%+12px)] w-72 translate-y-2 rounded-2xl border border-blue-200/15 bg-[#07111F]/95 p-2 opacity-0 shadow-[0_24px_80px_rgba(0,0,0,0.42),0_0_34px_rgba(0,91,255,0.16)] backdrop-blur-2xl transition-default group-hover/category:visible group-hover/category:translate-y-0 group-hover/category:opacity-100 group-focus-within/category:visible group-focus-within/category:translate-y-0 group-focus-within/category:opacity-100">
               <div className="mb-2 px-3 py-2">
@@ -162,14 +167,14 @@ function Header() {
               </div>
               <div className="grid gap-1">
                 {categoryItems.map((category) => (
-                  <a
+                  <Link
                     className="premium-transition flex items-center justify-between rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-300 hover:translate-x-1 hover:bg-blue-500/10 hover:text-white hover:shadow-[0_0_22px_rgba(0,91,255,0.14)]"
-                    href={`/products?category=${category.slug}`}
                     key={category.id}
+                    to={`/products?category=${category.slug}`}
                   >
                     <span>{category.name}</span>
                     <ChevronDown className="-rotate-90 text-blue-300" size={15} />
-                  </a>
+                  </Link>
                 ))}
               </div>
             </div>
@@ -190,11 +195,11 @@ function Header() {
           </button>
 
           <nav className="ml-auto flex shrink-0 items-center gap-1.5 text-sm sm:gap-2">
-            <a className={cn(headerLinkClass, "hidden xl:flex")} href={ordersHref}>
+            <Link className={cn(headerLinkClass, "hidden xl:flex")} to={ordersHref}>
               <PackageSearch size={19} />
               Theo dõi đơn hàng
-            </a>
-            <a className={cn(headerLinkClass, "hidden xl:flex")} href="/wishlist">
+            </Link>
+            <Link className={cn(headerLinkClass, "hidden xl:flex")} to="/wishlist">
               <span className="relative flex">
                 <Heart size={19} />
                 {wishlistCount > 0 && (
@@ -208,13 +213,13 @@ function Header() {
                 )}
               </span>
               Yêu thích
-            </a>
+            </Link>
             <NotificationDropdown onOpenChange={handleNotificationOpenChange} />
-            <a className={cn(headerLinkClass, "hidden sm:flex")} href={accountHref}>
+            <Link className={cn(headerLinkClass, "hidden sm:flex")} to={accountHref}>
               <UserRound size={19} />
               <span className="hidden max-w-40 truncate xl:inline">{accountLabel}</span>
               <span className="xl:hidden">{compactAccountLabel}</span>
-            </a>
+            </Link>
             <button className="premium-transition relative flex h-10 min-w-10 items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.06] px-2 font-bold text-white shadow-inner shadow-white/[0.03] outline-none hover:-translate-y-0.5 hover:border-blue-300/80 hover:bg-blue-500/10 hover:shadow-[0_0_30px_rgba(0,91,255,0.24)] focus-visible:ring-2 focus-visible:ring-blue-300/60 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 sm:h-11 sm:min-w-11 sm:px-3" onClick={openCartDrawer} type="button">
               <ShoppingCart size={20} />
               <span className="hidden lg:inline">Giỏ hàng</span>
@@ -263,22 +268,23 @@ function Header() {
 
               <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
                 {categoryItems.slice(0, 6).map((category) => (
-                  <a
+                  <Link
                     className="premium-transition rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-sm font-bold text-slate-200 hover:border-blue-300/60 hover:bg-blue-500/10 hover:text-white hover:shadow-[0_0_22px_rgba(0,91,255,0.16)]"
-                    href={`/products?category=${category.slug}`}
                     key={category.id}
+                    onClick={closeMobileMenu}
+                    to={`/products?category=${category.slug}`}
                   >
                     {category.name}
-                  </a>
+                  </Link>
                 ))}
               </div>
 
               <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                <a className={cn(headerLinkClass, "justify-center border border-white/10 bg-white/[0.04]")} href={ordersHref}>
+                <Link className={cn(headerLinkClass, "justify-center border border-white/10 bg-white/[0.04]")} onClick={closeMobileMenu} to={ordersHref}>
                   <PackageSearch size={18} />
                   Theo dõi đơn
-                </a>
-                <a className={cn(headerLinkClass, "justify-center border border-white/10 bg-white/[0.04]")} href="/wishlist">
+                </Link>
+                <Link className={cn(headerLinkClass, "justify-center border border-white/10 bg-white/[0.04]")} onClick={closeMobileMenu} to="/wishlist">
                   <span className="relative flex">
                     <Heart size={18} />
                     {wishlistCount > 0 && (
@@ -292,11 +298,11 @@ function Header() {
                     )}
                   </span>
                   Yêu thích
-                </a>
-                <a className={cn(headerLinkClass, "justify-center border border-white/10 bg-white/[0.04] sm:col-span-2")} href={accountHref}>
+                </Link>
+                <Link className={cn(headerLinkClass, "justify-center border border-white/10 bg-white/[0.04] sm:col-span-2")} onClick={closeMobileMenu} to={accountHref}>
                   <UserRound size={18} />
                   Tài khoản
-                </a>
+                </Link>
               </div>
             </div>
           </div>

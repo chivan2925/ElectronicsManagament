@@ -7,6 +7,8 @@ import { products as catalogProducts } from "../../data";
 import { fadeUp, motionViewport, staggerContainer } from "../../styles/animations";
 import { cn } from "../../utils/classNames";
 import { formatCurrency } from "../../utils/formatters";
+import { getProductAliases } from "../../utils/productIdentity";
+import OptimizedImage from "../common/OptimizedImage";
 import Badge from "../ui/Badge";
 import Button from "../ui/Button";
 import { useToast } from "../ui/toast";
@@ -25,10 +27,6 @@ const complementaryCategories = {
   "ghế gaming": ["chuột", "bàn phím", "tai nghe"],
   "phụ kiện gaming": ["tai nghe", "chuột", "bàn phím"],
 };
-
-function getProductAliases(product = {}) {
-  return [product.id, product.apiId, product.productId, product.slug].map((value) => String(value ?? "")).filter(Boolean);
-}
 
 function getCartRecommendationProducts(items = [], limit = 8) {
   const cartAliases = new Set(items.flatMap((item) => getProductAliases(item.product)));
@@ -61,9 +59,10 @@ function RecommendationMiniCard({ onAdd, product }) {
         to={`/products/${product.slug}`}
       >
         <div className="pointer-events-none absolute inset-x-5 bottom-3 h-8 rounded-full bg-blue-500/20 blur-xl" />
-        <img
+        <OptimizedImage
           alt={product.name}
           className="premium-transition relative z-10 h-full w-full object-contain drop-shadow-[0_14px_28px_rgba(0,0,0,0.42)] group-hover:scale-105"
+          sizes="238px"
           src={product.image}
         />
       </Link>

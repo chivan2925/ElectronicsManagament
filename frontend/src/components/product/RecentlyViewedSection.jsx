@@ -4,16 +4,13 @@ import { ChevronLeft, ChevronRight, Clock3, Eye, PackageSearch, Trash2 } from "l
 import useRecentlyViewed from "../../hooks/useRecentlyViewed";
 import { fadeUp, motionViewport, staggerContainer } from "../../styles/animations";
 import { cn } from "../../utils/classNames";
+import { getProductAliases } from "../../utils/productIdentity";
 import Badge from "../ui/Badge";
 import Button from "../ui/Button";
 import IconButton from "../ui/IconButton";
 import ProductCard from "./ProductCard";
 
 const MotionDiv = motion.div;
-
-function getProductAliases(product = {}) {
-  return [product.id, product.apiId, product.productId, product.slug].map((value) => String(value ?? "")).filter(Boolean);
-}
 
 function filterProducts(products, excludedProductIds) {
   const excluded = new Set(excludedProductIds.map((value) => String(value)));

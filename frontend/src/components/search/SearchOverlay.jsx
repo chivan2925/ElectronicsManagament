@@ -90,14 +90,7 @@ function SearchOverlay({ isOpen, onClose }) {
   };
 
   const handlePickResult = (result) => {
-    const recentTerm =
-      result.resultType === "product"
-        ? result.name
-        : result.resultType === "brand"
-          ? result.name
-          : result.name;
-
-    handleNavigate(result.href, recentTerm);
+    handleNavigate(result.href, result.name);
   };
 
   const handleKeyDown = (event) => {
@@ -141,7 +134,7 @@ function SearchOverlay({ isOpen, onClose }) {
         variants={fadeUp}
       >
         <form
-          className="relative overflow-hidden rounded-3xl border border-blue-300/20 bg-[#07111F]/96 shadow-[0_28px_90px_rgba(0,0,0,0.48),0_0_44px_rgba(0,91,255,0.16)] backdrop-blur-2xl"
+          className="relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-3xl border border-blue-300/20 bg-[#07111F]/96 shadow-[0_28px_90px_rgba(0,0,0,0.48),0_0_44px_rgba(0,91,255,0.16)] backdrop-blur-2xl"
           onKeyDown={handleKeyDown}
           onSubmit={handleSubmit}
         >
@@ -195,7 +188,7 @@ function SearchOverlay({ isOpen, onClose }) {
             </div>
           </div>
 
-          <div className="max-h-[calc(100dvh-190px)] overflow-y-auto p-3 sm:p-4" id="search-results">
+          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-3 sm:p-4" id="search-results">
             <SearchSuggestions
               activeResult={activeResult}
               brandResults={brandResults}

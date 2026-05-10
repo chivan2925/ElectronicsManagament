@@ -9,11 +9,17 @@ Always update this file after meaningful work.
 ## Current Phase
 
 ```text
-Ready for Phase 6 — Ecommerce Core Features
+Ready for Phase 7 — Advanced Features & Production Systems
 ```
 
 ## Recently Completed
 
+- Completed the Phase 6 Ecommerce Core Features review and marked the project ready for Phase 7 — Advanced Features & Production Systems.
+- Tightened customer ecommerce UX consistency across search, wishlist, recommendations, cart, checkout, tracking, notifications, responsive behavior, animations, and performance without a large redesign.
+- Converted storefront header and notification internal navigation to React Router links, closed mobile/notification surfaces after navigation, improved search overlay scroll containment, and reused the shared wishlist empty-state pattern.
+- Added `frontend/src/utils/productIdentity.js` to remove repeated product alias matching across recently viewed and recommendation flows.
+- Improved PLP search normalization for punctuation and Vietnamese/no-accent matching, memoized derived trending searches, and applied `OptimizedImage` to cart mini recommendations.
+- Verified `npm run lint`, `npm run build`, `git diff --check`, `npm ls react react-dom framer-motion lucide-react`, and local route smoke checks for `/`, `/products`, `/products?category=laptop&q=asus`, `/products/:slug`, `/cart`, `/checkout`, `/wishlist`, `/profile`, `/profile/orders`, and `/profile/orders/1`.
 - Optimized frontend performance for the ecommerce app with route-level lazy loading, loading boundaries, deferred header overlays, optimized image foundation, and focused memoization.
 - Added `lazyRoutes.jsx`, `RouteLoadingBoundary.jsx`, and `OptimizedImage.jsx`.
 - Verified `npm run lint`, `npm run build`, `git diff --check`, dependency duplication with `npm ls`, and local route smoke checks for `/`, `/products`, `/products/:slug`, `/cart`, `/checkout`, `/wishlist`, `/profile`, and `/admin/login`.
@@ -228,13 +234,14 @@ Ready for Phase 6 — Ecommerce Core Features
 
 1. Preserve the existing homepage layout.
 2. Keep the normalized frontend folder structure stable.
-3. Start Phase 6 by defining public storefront API contracts for customer auth, browsing, cart, checkout, payment, and customer-owned order tracking.
-4. Keep the completed admin CRUD system stable while storefront ecommerce APIs are expanded.
-5. Use centralized feedback components for loading, error, empty, permission, and refresh states in new ecommerce workflows.
-6. Move customer auth and account ownership checks to a dedicated public customer auth contract when ready.
-7. Resolve existing backend test blockers before relying on `mvn test` as a clean validation gate.
-8. Add controlled PostgreSQL migration/backfill scripts for legacy non-auth tables before relying on a clean backend startup log.
-9. Keep AI context docs current.
+3. Start Phase 7 with advanced customer features and production-system hardening.
+4. Keep the completed Phase 6 customer ecommerce foundations stable while backend public APIs mature.
+5. Keep the completed admin CRUD system stable while advanced storefront workflows are added.
+6. Use centralized feedback components for loading, error, empty, permission, and refresh states in new workflows.
+7. Move customer auth and account ownership checks to a dedicated public customer auth contract when ready.
+8. Resolve existing backend test blockers before relying on `mvn test` as a clean validation gate.
+9. Add controlled PostgreSQL migration/backfill scripts for legacy non-auth tables before relying on a clean backend startup log.
+10. Keep AI context docs current.
 
 ## Next Recommended Tasks
 
@@ -275,7 +282,7 @@ Ready for Phase 6 — Ecommerce Core Features
 
 ### Client Ecommerce
 
-- Use Phase 6 to move customer-facing ecommerce workflows from mock/local state to public backend APIs.
+- Use Phase 7 to harden and extend customer-facing ecommerce workflows without destabilizing the completed Phase 6 UI foundations.
 - Keep the register flow local until public customer auth APIs are ready.
 - Move storefront customer login to a public customer auth endpoint when the API contract is available.
 - Keep `/profile`, `/profile/orders`, and `/profile/settings` behind `ProtectedRoute`.
@@ -287,15 +294,15 @@ Ready for Phase 6 — Ecommerce Core Features
 - Add category route/page when the category browsing plan is ready.
 - Replace the homepage mock loading timer with real loading state when storefront data integration begins.
 
-### Phase 6 Ecommerce Core Features
+### Phase 7 Advanced Features & Production Systems
 
-- Add or formalize public storefront product browsing endpoints separate from admin Product APIs.
-- Add public category browsing and product discovery flows without changing the existing homepage layout.
-- Add customer registration and customer login contracts separate from admin/staff auth.
-- Add cart persistence APIs and connect the existing shared cart provider to backend state.
-- Add checkout/payment handoff for COD and online gateways when backend contracts are ready.
-- Harden customer order tracking when backend exposes richer shipment history or public customer ownership contracts.
-- Connect wishlist, recently viewed, homepage product sections, and search overlay to matching public APIs when those contracts exist.
+- Add returns/refunds UI and connect it to backend return request flows when customer-facing contracts are ready.
+- Deepen review workflows with moderation-ready states, ownership checks, and richer media/helpfulness behavior.
+- Add real notification, loyalty, and recommendation backends when API contracts are available; keep current local foundations as fallbacks.
+- Harden customer registration, customer login, account ownership, cart persistence, and public order tracking contracts.
+- Add real online payment gateway handoff and production-grade payment state handling when the payment task starts.
+- Replace remaining homepage, search, wishlist, recently viewed, and recommendation mock/local data with public APIs as those APIs mature.
+- Add critical-flow tests, database migration/backfill scripts, production config review, deployment docs, and monitoring/observability planning.
 
 ### Admin Dashboard Maintenance
 

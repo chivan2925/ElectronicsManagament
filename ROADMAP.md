@@ -7,7 +7,7 @@ This roadmap defines the planned phases for ElectronicsManagement.
 The project is currently in:
 
 ```text
-Ready for Phase 6 — Ecommerce Core Features
+Ready for Phase 7 — Advanced Features & Production Systems
 ```
 
 ## Product Scope
@@ -35,8 +35,8 @@ ElectronicsManagement is built for an electronics and gaming catalog with these 
 | 3 | Client Ecommerce | Completed | Build product listing, product detail, cart, checkout UI, and customer flows. |
 | 4 | Auth + API | Completed | Add admin login, protected routes, API modules, and real data integration. |
 | 5 | Admin Dashboard | Completed | Convert mock admin pages into authenticated API-backed CRUD workflows. |
-| 6 | Ecommerce Core | Current | Implement real browsing, cart, checkout, payment, and order tracking. |
-| 7 | Advanced Features | Planned | Add reviews, returns, coupons, search depth, reports, and richer management tools. |
+| 6 | Ecommerce Core | Completed | Implement real browsing, cart, checkout, payment, and order tracking foundations. |
+| 7 | Advanced Features & Production Systems | Current | Add mature ecommerce features and harden production-facing systems. |
 | 8 | Production + Deploy | Planned | Harden config, secrets, migrations, testing, performance, and deployment. |
 
 ## Phase 1 — Frontend Foundation
@@ -144,21 +144,21 @@ Key tasks:
 - Payment flow.
 - Order tracking.
 
-## Phase 7 — Advanced Features
+## Phase 7 — Advanced Features & Production Systems
 
 Goals:
 
-- Add features expected from a mature ecommerce system.
+- Add features expected from a mature ecommerce system and harden production-facing systems.
 
 Key tasks:
 
 - Reviews.
-- Coupons in client checkout.
 - Returns/refunds UI.
-- Wishlist or saved products.
-- Advanced search and filters.
-- Admin activity log.
-- Improved reporting.
+- Notification and loyalty backend integration.
+- Advanced search, recommendations, and personalization depth.
+- Real online payment handoff and payment state hardening.
+- Customer auth/account ownership hardening.
+- Critical-flow tests, migrations, deployment config, and observability.
 
 ## Phase 8 — Production + Deploy
 
@@ -178,8 +178,8 @@ Key tasks:
 
 ## Current Priority
 
-1. Start Phase 6 ecommerce core features.
+1. Start Phase 7 advanced features and production systems.
 2. Preserve homepage layout while improving quality.
 3. Reuse Phase 2 design-system primitives and visual patterns.
 4. Keep AI context files up to date.
-5. Keep the completed admin CRUD system stable while storefront APIs are expanded.
+5. Keep the completed Phase 6 customer ecommerce and Phase 5 admin CRUD systems stable while advanced features are added.

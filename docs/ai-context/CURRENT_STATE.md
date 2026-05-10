@@ -9,12 +9,12 @@ Always update this file after meaningful work.
 ## Current Phase
 
 ```text
-Ready for Phase 6 — Ecommerce Core Features
+Ready for Phase 7 — Advanced Features & Production Systems
 ```
 
 ## Current Summary
 
-ElectronicsManagement has completed Phase 5 — Admin Dashboard System and is ready for Phase 6 — Ecommerce Core Features.
+ElectronicsManagement has completed Phase 6 — Ecommerce Core Features and is ready for Phase 7 — Advanced Features & Production Systems.
 
 The client storefront now includes the homepage, Product API-backed product listing and product detail, shared-cart cart and checkout, customer authentication, wishlist, recently viewed, product recommendations, order tracking, search overlay, notifications, loyalty/reward UI, and authenticated account experiences. Checkout now creates real backend orders and validates coupons through backend APIs. Wishlist now uses persistent product snapshots, optimistic UI, optional backend sync, wishlist count, move-to-cart, remove, and loading/error states. Recently viewed now uses lightweight localStorage product snapshots, duplicate prevention, clear/remove support, and a reusable responsive recommendation slider on homepage, PDP, wishlist, and profile surfaces. Product recommendations now use reusable carousel and section foundations for related products, frequently bought together, trending products, best sellers, and a recommended-for-you placeholder. Search and homepage product sections still use mock/local state. Frontend admin/staff authentication is connected to the backend JWT API, the admin architecture foundation exists under `frontend/src/admin`, and the `/admin/categories`, `/admin/brands`, `/admin/products`, `/admin/variants`, `/admin/media`, `/admin/orders`, `/admin/warehouse`, `/admin/coupons`, `/admin/users`, `/admin/staff`, and `/admin/roles` modules are connected to real backend APIs with table/grid, search, filters, status controls, detail views, protected actions, and pagination. The admin dashboard and report routes still use mock analytics/report data until reporting APIs are added.
 
@@ -76,6 +76,8 @@ The customer ecommerce experience now has a reusable trust-signal foundation, st
 
 The frontend now has route-level lazy loading, route loading boundaries, deferred header search/cart overlays, an optimized image component foundation, and targeted memoization for repeated ecommerce rows. The production build emits route chunks instead of one large JavaScript bundle.
 
+The Phase 6 completion review tightened customer ecommerce UX consistency across search, reviews, wishlist, recommendations, cart, checkout, order tracking, notifications, responsive behavior, animations, and performance without a large redesign. Internal storefront header and notification navigation now stays within React Router, search and wishlist states reuse cleaner shared patterns, product identity matching is centralized, PLP search normalization handles punctuation and Vietnamese/no-accent queries more consistently, and cart recommendations use the optimized image foundation.
+
 Phase 2 cleanup normalized shared/admin visual patterns for cards, borders, shadows, hover states, focus states, icon buttons, typography usage, and responsive behavior without a large rewrite.
 
 Frontend routing now includes client ecommerce routes and admin routes with placeholders for pages that are not implemented yet.
@@ -89,7 +91,7 @@ The frontend now has a centralized global feedback system with reusable toast no
 The next phase is:
 
 ```text
-Phase 6 — Ecommerce Core Features
+Phase 7 — Advanced Features & Production Systems
 ```
 
 ## Phase 1 Completed Items
@@ -240,6 +242,16 @@ Phase 6 — Ecommerce Core Features
 - Hardened reusable admin CRUD components so legacy page headers do not render dead actions, table row action tones are consistent, forms avoid invalid nested labels, confirm/modal footers fit mobile, and status badges normalize common backend/admin statuses.
 - Kept `/admin/dashboard` and `/admin/reports/*` on mock analytics/report data while aligning chart/table styling with the reusable admin dashboard components.
 
+## Phase 6 Completed Items
+
+- Built and reviewed the customer ecommerce core across search, reviews, wishlist, recommendations, cart, checkout, order tracking, notifications, loyalty placeholders, responsive polish, and performance.
+- Kept the existing homepage layout intact while adding customer ecommerce polish and recommendation sections.
+- Added route-level lazy loading, route loading boundaries, deferred header overlays, optimized image handling, and targeted memoization so the production build emits route chunks without the previous Vite chunk-size warning.
+- Tightened Phase 6 consistency by keeping storefront header and notification links inside React Router, closing notification/mobile surfaces after navigation, improving search overlay scroll containment, and aligning PLP search normalization for Vietnamese/no-accent queries.
+- Centralized reusable product identity matching in `frontend/src/utils/productIdentity.js` for recently viewed and recommendation flows.
+- Reused shared store empty-state and optimized-image foundations in wishlist and cart recommendation surfaces.
+- Marked Phase 6 completed and set the project ready for Phase 7 — Advanced Features & Production Systems.
+
 ## Frontend State
 
 Current stack:
@@ -264,6 +276,7 @@ Current client routes:
 - `/wishlist`
 - `/profile`
 - `/profile/orders`
+- `/profile/orders/:id`
 - `/profile/settings`
 
 Current admin routes:
@@ -365,6 +378,7 @@ Current frontend structure:
 - Design tokens live in `frontend/src/styles/tokens.js`.
 - The primary theme object lives in `frontend/src/styles/theme.js`.
 - Motion presets live in `frontend/src/styles/animations.js`.
+- Shared product identity helpers live in `frontend/src/utils/productIdentity.js`.
 - CSS variables and global defaults live in `frontend/src/styles/globals.css`.
 - Reusable utility classes live in `frontend/src/styles/utilities.css`.
 - The styles entrypoint remains `frontend/src/styles/index.css`.
@@ -520,6 +534,7 @@ Latest validation:
 - `npm run lint` and `npm run build` passed after building the customer loyalty/reward UI foundation. Build still reports the existing Vite chunk-size warning.
 - `npm run lint`, `npm run build`, `git diff --check`, and local route smoke checks passed for `/`, `/products`, `/products/:slug`, `/cart`, `/checkout`, and `/profile` after customer ecommerce experience polish. Build still reports the existing Vite chunk-size warning, and `git diff --check` reported CRLF normalization warnings for edited frontend files.
 - `npm run lint`, `npm run build`, `git diff --check`, dependency duplication checks with `npm ls`, and local route smoke checks passed after frontend performance optimization. The main production JS chunk is about 496 kB, route chunks are emitted, and the previous Vite chunk-size warning is gone.
+- `npm run lint`, `npm run build`, `git diff --check`, targeted dependency duplication checks with `npm ls react react-dom framer-motion lucide-react`, and local route smoke checks passed after the Phase 6 ecommerce review and completion polish. `git diff --check` still reports only CRLF normalization warnings for edited frontend files.
 
 ## Known Issues
 
@@ -543,14 +558,14 @@ Latest validation:
 ## Next Phase
 
 ```text
-Phase 6 — Ecommerce Core Features
+Phase 7 — Advanced Features & Production Systems
 ```
 
 Next focus:
 
-- Build public storefront ecommerce APIs and connect customer-facing browsing flows.
-- Add cart persistence, real checkout/payment handoff, and public customer order tracking hardening.
-- Keep the completed admin CRUD system stable while Phase 6 expands storefront workflows.
+- Add advanced customer features such as returns/refunds, deeper review workflows, richer notifications, loyalty logic, and recommendation/search depth.
+- Harden public customer auth, cart persistence, payment handoff, account ownership, and production data contracts as backend APIs mature.
+- Prepare production systems: migrations, tests for critical flows, deployment config, observability, and security hardening.
 
 ## Backend State
 
@@ -587,7 +602,7 @@ Backend gaps:
 - Public storefront APIs are not complete.
 - Customer auth APIs are not complete.
 - Cart APIs are not complete.
-- Checkout APIs are not complete.
+- Real online payment handoff and public checkout ownership contracts are not complete; authenticated backend order creation exists.
 - Production secret management is not ready.
 
 ## Documentation State
@@ -610,7 +625,7 @@ Standard AI context files:
 - Do not assume customer registration or public customer login APIs are implemented.
 - Do not assume every admin CRUD page uses real API data.
 - Do not assume public ecommerce APIs are ready.
-- Do not assume checkout backend submission or real payment integration exists.
+- Do not assume real payment integration, public cart persistence, or public customer auth APIs are implemented.
 - Do not assume production deployment is ready.
 
 ## Last Updated

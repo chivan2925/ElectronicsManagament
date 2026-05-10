@@ -376,6 +376,10 @@ function useSearch({
     () => [...productResults, ...categoryResults, ...brandResults],
     [brandResults, categoryResults, productResults],
   );
+  const resolvedTrendingSearches = useMemo(
+    () => getTrendingSearches(products, trendingSearches),
+    [products, trendingSearches],
+  );
   const resolvedActiveIndex = flattenedResults.length
     ? Math.min(Math.max(activeIndex, 0), flattenedResults.length - 1)
     : -1;
@@ -425,7 +429,7 @@ function useSearch({
     selectPrevious,
     setActiveIndex,
     setQuery,
-    trendingSearches: getTrendingSearches(products, trendingSearches),
+    trendingSearches: resolvedTrendingSearches,
   };
 }
 

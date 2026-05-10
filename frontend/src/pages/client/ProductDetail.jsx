@@ -21,6 +21,7 @@ import { products as catalogProducts } from "../../data";
 import useRecentlyViewed from "../../hooks/useRecentlyViewed";
 import useProductDetail from "../../hooks/useProductDetail";
 import { fadeUp, staggerContainer } from "../../styles/animations";
+import { getProductAliases } from "../../utils/productIdentity";
 
 const MotionDiv = motion.div;
 
@@ -37,10 +38,6 @@ const frequentlyBoughtCategories = {
   "ghế gaming": ["bàn phím", "chuột", "tai nghe"],
   "phụ kiện gaming": ["tai nghe", "chuột", "bàn phím"],
 };
-
-function getProductAliases(product = {}) {
-  return [product.id, product.apiId, product.productId, product.slug].map((value) => String(value ?? "")).filter(Boolean);
-}
 
 function getUniqueProducts(products) {
   const productMap = new Map();

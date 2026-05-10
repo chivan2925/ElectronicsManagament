@@ -37,16 +37,16 @@ Product category display labels:
 Current phase:
 
 ```text
-Ready for Phase 6 — Ecommerce Core Features
+Ready for Phase 7 — Advanced Features & Production Systems
 ```
 
-Phase 6 focuses on:
+Phase 7 focuses on:
 
-- Public storefront ecommerce APIs.
-- Product browsing and category workflows.
-- Cart persistence.
-- Checkout, payment handoff, and order tracking.
-- Keeping the completed admin dashboard stable.
+- Advanced customer ecommerce features.
+- Production system hardening.
+- Payment, customer auth, account ownership, and API contract hardening.
+- Tests, migrations, deployment readiness, and observability.
+- Keeping the completed Phase 5 admin dashboard and Phase 6 ecommerce foundations stable.
 
 ## Required Reading Before Work
 

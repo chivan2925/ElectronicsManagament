@@ -126,7 +126,7 @@ function NotificationContent({ notification }) {
   );
 }
 
-function NotificationItem({ notification, onMarkAsRead }) {
+function NotificationItem({ notification, onMarkAsRead, onNavigate }) {
   const isUnread = !notification.readAt;
   const sharedClassName = cn(
     "premium-transition group block w-full rounded-2xl border p-3 text-left outline-none focus-visible:ring-2 focus-visible:ring-blue-300/60 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950",
@@ -138,6 +138,7 @@ function NotificationItem({ notification, onMarkAsRead }) {
 
   const handleClick = () => {
     onMarkAsRead?.(notification.id);
+    onNavigate?.(notification);
   };
 
   return (

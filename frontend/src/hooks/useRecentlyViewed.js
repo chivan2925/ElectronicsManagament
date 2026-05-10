@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { normalizeProduct } from "../api/productMapper";
 import { products as catalogProducts } from "../data";
+import { firstDefined, hasSameProduct } from "../utils/productIdentity";
 
 const RECENTLY_VIEWED_STORAGE_KEY = "electronicsManagement:recentlyViewed";
 const RECENTLY_VIEWED_CHANGE_EVENT = "electronicsManagement:recently-viewed-change";
@@ -22,36 +23,6 @@ function getStorage() {
 
 function isPlainObject(value) {
   return Boolean(value && typeof value === "object" && !Array.isArray(value));
-}
-
-function firstDefined(...values) {
-  return values.find((value) => value !== null && value !== undefined && value !== "");
-}
-
-function toProductKey(value) {
-  const key = firstDefined(value);
-
-  return key === undefined ? "" : String(key);
-}
-
-function getProductAliases(productOrEntry = {}) {
-  const product = productOrEntry.product ?? productOrEntry;
-
-  return [
-    productOrEntry.id,
-    productOrEntry.productId,
-    productOrEntry.apiId,
-    product?.id,
-    product?.productId,
-    product?.apiId,
-    product?.slug,
-  ].map(toProductKey).filter(Boolean);
-}
-
-function hasSameProduct(left, right) {
-  const leftAliases = new Set(getProductAliases(left));
-
-  return getProductAliases(right).some((alias) => leftAliases.has(alias));
 }
 
 function getEntryProductSource(entry) {

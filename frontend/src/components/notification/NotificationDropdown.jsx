@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { Link } from "react-router-dom";
 import { Bell, BellRing, CheckCheck, PackageSearch, TicketPercent } from "lucide-react";
 import useNotifications from "../../hooks/useNotifications";
 import { cn } from "../../utils/classNames";
@@ -206,7 +207,7 @@ function NotificationDropdown({ className, onOpenChange }) {
               </div>
             </div>
 
-            <div className="max-h-[calc(100dvh-260px)] overflow-y-auto p-3 sm:max-h-[390px]">
+            <div className="max-h-[calc(100dvh-260px)] overflow-y-auto overscroll-contain p-3 sm:max-h-[390px]">
               <AnimatePresence initial={false} mode="popLayout">
                 {filteredNotifications.length ? (
                   <div className="grid gap-2">
@@ -215,6 +216,7 @@ function NotificationDropdown({ className, onOpenChange }) {
                         key={notification.id}
                         notification={notification}
                         onMarkAsRead={markAsRead}
+                        onNavigate={() => updateOpen(false)}
                       />
                     ))}
                   </div>
@@ -236,20 +238,22 @@ function NotificationDropdown({ className, onOpenChange }) {
             </div>
 
             <div className="grid grid-cols-2 gap-2 border-t border-white/10 p-3">
-              <a
+              <Link
                 className="premium-transition inline-flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/[0.04] px-3 py-2.5 text-xs font-black text-slate-200 hover:border-blue-300/50 hover:bg-blue-500/10 hover:text-white"
-                href="/profile/orders"
+                onClick={() => updateOpen(false)}
+                to="/profile/orders"
               >
                 <PackageSearch size={15} />
                 Đơn hàng
-              </a>
-              <a
+              </Link>
+              <Link
                 className="premium-transition inline-flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/[0.04] px-3 py-2.5 text-xs font-black text-slate-200 hover:border-blue-300/50 hover:bg-blue-500/10 hover:text-white"
-                href="/cart"
+                onClick={() => updateOpen(false)}
+                to="/cart"
               >
                 <TicketPercent size={15} />
                 Ưu đãi
-              </a>
+              </Link>
             </div>
           </MotionDiv>
         )}
