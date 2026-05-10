@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.electronics.monitoring.MonitoringLogger;
 import org.example.electronics.repository.InvalidatedTokenRepository;
 import org.example.electronics.security.auth.admin.StaffDetailsService;
+import org.example.electronics.security.auth.user.CustomerDetailsService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,6 +28,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtils jwtUtils;
     private final StaffDetailsService staffDetailsService;
+    private final CustomerDetailsService customerDetailsService;
 
     private final InvalidatedTokenRepository invalidatedTokenRepository;
 
@@ -43,8 +45,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 if (tokenId != null && !invalidatedTokenRepository.existsById(tokenId)) {
                     String email = jwtUtils.getEmailFromJwtToken(jwt);
+                    String accountType = jwtUtils.getAccountTypeFromJwtToken(jwt);
 
-                    UserDetails userDetails = staffDetailsService.loadUserByUsername(email);
+                    UserDetails userDetails = loadUserDetails(email, accountType);
                     UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                             userDetails, null, userDetails.getAuthorities()
                     );
@@ -81,5 +84,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         return null;
+    }
+
+    private UserDetails loadUserDetails(String email, String accountType) {
+        if (JwtUtils.ACCOUNT_TYPE_CUSTOMER.equalsIgnoreCase(accountType)) {
+            return customerDetailsService.loadUserByUsername(email);
+        }
+
+        return staffDetailsService.loadUserByUsername(email);
     }
 }

@@ -15,10 +15,13 @@ Phase 8 — Production + Deploy (Completed showcase)
 ## Recently Completed
 
 - Added public backend customer registration at `POST /api/auth/register` with DTO validation, BCrypt hashing, generated customer usernames, optional unique phone handling, safe `USER` response metadata, and a public security rule that preserves existing admin/staff auth.
+- Added separate public customer login at `POST /api/auth/login` plus customer logout at `POST /api/auth/logout`, backed by `CustomerDetailsService`, customer-only authorities, and a JWT `accountType` claim so admin/staff auth remains separate.
 - Connected the storefront `/register` form to the new customer registration API outside demo mode while keeping demo mode local-first for presentations.
-- Added focused service tests for successful registration, optional phone handling, password confirmation mismatch, and duplicate email rejection; `mvn test` passes with the known local PostgreSQL `media.display_order` DDL warning.
+- Connected the storefront `/login` form to the customer auth endpoint while keeping `/admin/login` on `POST /api/admin/auth/login`; demo mode now keeps customer/admin login surfaces separate.
+- Added focused service tests for customer login success/invalid password, successful registration, optional phone handling, password confirmation mismatch, and duplicate email rejection; `mvn test` passes with the known local PostgreSQL `media.display_order` DDL warning.
+- Verified `mvn test`, `npm run lint`, `npm run build`, and `git diff --check` after the customer auth split; `git diff --check` reported only CRLF normalization warnings.
 - Completed a backend API gap audit for Customer Register, Customer Cart, User Password Reset, and Analytics/Report APIs.
-- Confirmed during the audit that those four areas did not have dedicated backend endpoints/modules yet; Customer Register has now been implemented, while Customer Cart, User Password Reset, and Analytics/Report remain open.
+- Confirmed during the audit that those four areas did not have dedicated backend endpoints/modules yet; Customer Register and Customer Login have now been implemented, while Customer Cart, User Password Reset, and Analytics/Report remain open.
 - Completed the final graduation showcase polish pass across homepage wow-factor, PDP presentation, checkout trust UX, admin analytics, dashboard panels, subtle motion, hover states, and shared visual utilities.
 - Marked Phase 8 completed, the ecommerce platform finalized, and the production-ready showcase completed while preserving the homepage layout and frontend/admin architecture.
 - Verified `npm run lint`, `npm run build`, and `git diff --check` after the showcase polish pass; `git diff --check` reported only CRLF normalization warnings for edited files.
@@ -366,7 +369,7 @@ Phase 8 — Production + Deploy (Completed showcase)
 4. Treat real production hosting, TLS, external secrets, backups, and production payment credentials as environment handoff tasks.
 5. Keep the completed Phase 7 ecommerce production-ready foundation, Phase 6 customer ecommerce, and Phase 5 admin CRUD systems stable while future backend public APIs mature.
 6. Use centralized feedback components for loading, error, empty, permission, and refresh states in new workflows.
-7. Move customer auth and account ownership checks to a dedicated public customer auth contract when ready.
+7. Use the dedicated customer auth contract for new storefront account flows and keep tightening customer ownership checks.
 8. Keep `mvn test` as a backend validation gate and continue reducing local schema warnings.
 9. Add controlled PostgreSQL migration/backfill scripts for legacy non-auth tables before relying on a clean backend startup log.
 10. Keep AI context docs current.
@@ -419,7 +422,7 @@ Phase 8 — Production + Deploy (Completed showcase)
 
 - Maintain the completed Phase 7 customer-facing ecommerce foundation without destabilizing the completed Phase 6 UI foundations.
 - Keep the `/register` API-backed flow stable outside demo mode and preserve the local demo-mode success path.
-- Move storefront customer login to a public customer auth endpoint when the API contract is available.
+- Keep the `/login` API-backed customer auth flow stable outside demo mode and keep `/admin/login` on the admin/staff auth endpoint.
 - Keep `/profile`, `/profile/orders`, and `/profile/settings` behind `ProtectedRoute`.
 - Keep account profile/order API calls centralized in `userService.js`, `orderService.js`, and `accountMapper.js`.
 - Keep the shared cart provider as the single cart state source for header drawer, cart page, product cards, product detail, and checkout.
@@ -434,7 +437,7 @@ Phase 8 — Production + Deploy (Completed showcase)
 - Keep the finalized ecommerce showcase stable; do not make broad redesigns after completion.
 - Keep real deployment blocked until hosting, TLS, external secrets, backups, and migration automation are finalized outside committed code.
 - Add controlled PostgreSQL migration/backfill scripts for legacy schema drift before using the production `ddl-auto=validate` posture against real data.
-- Finalize public customer login, account ownership, cart persistence, wishlist persistence, and public order tracking contracts.
+- Finalize customer account ownership, cart persistence, wishlist persistence, and public order tracking contracts.
 - Move VNPay/MoMo from sandbox to production only through environment-specific credentials, HTTPS return URLs, provider reconciliation checks, and critical-flow tests.
 - Connect real notification, loyalty, recommendation, search, and customer-facing returns/refunds APIs when backend contracts are available.
 - Connect a backend WebSocket/SSE notification endpoint to `VITE_REALTIME_WS_URL` when the API contract is ready.
@@ -453,7 +456,7 @@ Phase 8 — Production + Deploy (Completed showcase)
 
 ### Phase 4 Auth + Backend Integration Maintenance
 
-- Maintain the real `/admin/login` backend JWT authentication flow.
+- Maintain the separate real `/login` customer JWT flow and `/admin/login` admin/staff JWT flow.
 - Use the existing auth architecture in `frontend/src/auth`, `frontend/src/guards`, and `frontend/src/store/auth`.
 - Preserve protected routing behavior: admin/staff shell access, admin-only management pages, customer-only checkout/account gates, and guest-only auth pages.
 - Preserve centralized role/permission behavior: ADMIN full access, STAFF access requires resource view permissions, USER blocked from admin, and admin sidebar/actions filtered by policy.
@@ -461,14 +464,14 @@ Phase 8 — Production + Deploy (Completed showcase)
 
 ## Blocked Or Not Ready
 
-- Public customer APIs are not complete.
-- Public customer auth is not complete; account APIs are authenticated and user-id scoped until a customer-auth principal contract is available.
-- Client checkout/account routes are customer-session-only in the frontend, but backend ownership enforcement still needs the future customer-auth principal contract.
+- Public customer APIs are not complete beyond customer auth, checkout/order creation, account profile/order reads, and payment handoff.
+- Public customer auth now supports registration/login/logout; account APIs remain authenticated and user-id scoped until customer ownership checks are tightened.
+- Client checkout/account routes are customer-session-only in the frontend, but backend ownership enforcement still needs endpoint-level tightening using the customer-auth principal.
 - A dedicated backend cart persistence API is not implemented; cart state is shared local frontend state.
 - A dedicated backend wishlist persistence API is not implemented; wishlist state is local-first with optional frontend sync support through `VITE_WISHLIST_API_PATH`.
 - Admin CRUD modules are API-backed; upgraded `/admin/dashboard` and `/admin/reports/revenue` analytics still use isolated mock reporting data until reporting APIs exist.
 - Category API currently has no `description` field in request/response DTOs, so category description is UI-session only until backend contract is extended.
-- Backend admin auth currently exposes login/logout; refresh-token endpoint support is not implemented yet.
+- Backend customer/admin auth currently exposes login/logout; refresh-token endpoint support is not implemented yet.
 - Backend startup also reports a database DDL warning for existing null `media.display_order` values.
 - Backend local startup on default port may fail when another process already binds `8080`.
 - Local PostgreSQL still contains legacy drift in non-auth modules, including non-null columns and warehouse transaction foreign keys, and should be migrated with controlled SQL scripts instead of relying on `ddl-auto` alone.

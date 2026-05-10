@@ -4,7 +4,7 @@
 
 This file documents the backend endpoints that currently exist in `backend/electronics/src/main/java/org/example/electronics/controller`.
 
-The current backend surface includes admin/staff operations, public customer registration, authenticated storefront checkout/account flows, VNPay/MoMo sandbox payment handoff, payment callbacks, media upload, and health probes. Public customer login, persisted cart, and final customer ownership contracts are not complete yet.
+The current backend surface includes admin/staff operations, public customer registration/login, authenticated storefront checkout/account flows, VNPay/MoMo sandbox payment handoff, payment callbacks, media upload, and health probes. Persisted cart and final customer ownership contracts are not complete yet.
 
 ## Base URL
 
@@ -35,6 +35,7 @@ Public endpoints:
 - `GET /health`
 - `GET /health/readiness`
 - `POST /admin/auth/login`
+- `POST /auth/login`
 - `POST /auth/register`
 - `GET /payments/vnpay-return`
 - `GET /payments/momo-return`
@@ -84,7 +85,9 @@ Common filters used by many admin list endpoints:
 
 | Method | Path | Body | Response | Notes |
 | --- | --- | --- | --- | --- |
+| `POST` | `/auth/login` | `CustomerLoginRequestDTO` | `CustomerLoginResponseDTO` | Public. Authenticates an `ACTIVE` customer from `users` and returns a customer-scoped JWT session. |
 | `POST` | `/auth/register` | `CustomerRegisterRequestDTO` | `CustomerRegisterResponseDTO` | Public. Creates an `ACTIVE` customer account with derived `USER` role metadata. Does not return password/hash or create ADMIN/STAFF roles. |
+| `POST` | `/auth/logout` | None | string | Requires customer token. Invalidates the current token id until expiry. |
 
 ## Admin Catalog
 
@@ -301,6 +304,7 @@ Common filters used by many admin list endpoints:
 | DTO | Fields |
 | --- | --- |
 | `AdminLoginRequestDTO` | `email`, `password` |
+| `CustomerLoginRequestDTO` | `email`, `password` |
 | `CustomerRegisterRequestDTO` | `fullName`, `email`, optional `phone`, `password`, `confirmPassword` |
 | `AdminCategoryRequestDTO` | `name`, `iconUrl`, `slug`, `parentId`, `status` |
 | `AdminBrandRequestDTO` | `name`, `slug`, `imageUrl`, `description`, `featured`, `status` |

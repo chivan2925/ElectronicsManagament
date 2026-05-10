@@ -148,7 +148,7 @@ See [../DEPLOYMENT.md](../DEPLOYMENT.md).
 - Admin CRUD is API-backed.
 - Storefront product listing/detail, checkout, payment, and account routes have partial real API integration.
 - Homepage product sections and search overlay still use mock/local data.
-- Public customer registration exists; customer login and ownership contracts are not finalized.
+- Public customer registration/login exists; customer ownership contracts still need final tightening.
 - Dashboard/report analytics still use mock analytics data until reporting APIs exist.
 - Production migrations, public customer ownership, and real payment credentials remain Phase 8 work.
 

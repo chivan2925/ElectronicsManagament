@@ -48,7 +48,7 @@
 2. Connect admin brand pages to `brandService`.
 3. Connect admin product pages to `productService`.
 4. Add backend refresh-token endpoint support if long-lived admin sessions are required.
-5. Move storefront customer login to a public customer auth API when available.
+5. Tighten customer-owned account/order/cart/wishlist checks using the customer auth principal.
 6. Wire storefront cart and checkout flows into shared state when ready.
 
 ## Backend Notes

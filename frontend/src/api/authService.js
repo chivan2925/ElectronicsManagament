@@ -1,4 +1,4 @@
-import { buildAuthSession } from "../auth/authHelpers";
+import { buildAuthSession, canAccessAdmin } from "../auth/authHelpers";
 import {
   ACCESS_TOKEN_KEY,
   REFRESH_TOKEN_KEY,
@@ -44,11 +44,32 @@ export function clearAccessToken() {
   notifyAuthSessionChanged(null);
 }
 
-export async function login(credentials) {
+function getAuthSurface(options = {}) {
+  return options.surface === "admin" || options.demoSurface === "admin" || options.authSurface === "admin"
+    ? "admin"
+    : "store";
+}
+
+function getLoginEndpoint(surface) {
+  return surface === "admin" ? "/admin/auth/login" : "/auth/login";
+}
+
+function getLogoutEndpoint(session) {
+  return session && !canAccessAdmin(session) ? "/auth/logout" : "/admin/auth/logout";
+}
+
+function clearAndNotifyAuthSession() {
+  clearAuthSession();
+  notifyAuthSessionChanged(null);
+}
+
+export async function login(credentials, options = {}) {
+  const surface = getAuthSurface(options);
+
   if (isDemoModeEnabled) {
     const demoAccount = getDemoAccountByEmail(credentials?.email ?? credentials?.identity);
 
-    if (demoAccount) {
+    if (demoAccount && demoAccount.surface === surface) {
       if (credentials?.password !== demoAccount.password) {
         throw createDemoApiError("Demo account password is incorrect.", {
           code: "DEMO_INVALID_CREDENTIALS",
@@ -65,7 +86,7 @@ export async function login(credentials) {
     }
   }
 
-  const data = await api.post("/admin/auth/login", credentials, {
+  const data = await api.post(getLoginEndpoint(surface), credentials, {
     retry: false,
     skipAuth: true,
     skipGlobalErrorHandler: true,
@@ -103,16 +124,22 @@ export async function register(payload) {
 }
 
 export async function logout() {
+  if (isDemoModeEnabled) {
+    clearAndNotifyAuthSession();
+    return null;
+  }
+
+  const session = getStoredAuthSession();
+
   try {
-    return await api.post("/admin/auth/logout", null, {
+    return await api.post(getLogoutEndpoint(session), null, {
       retry: false,
       skipGlobalErrorHandler: true,
       skipAuthRefresh: true,
       skipUnauthorizedHandler: true,
     });
   } finally {
-    clearAuthSession();
-    notifyAuthSessionChanged(null);
+    clearAndNotifyAuthSession();
   }
 }
 

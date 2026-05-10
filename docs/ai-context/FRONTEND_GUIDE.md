@@ -366,7 +366,7 @@ Current protected routing behavior:
 - Unauthenticated redirects preserve the original route in `location.state.from`.
 - Guard loading states prevent unauthorized content flashing while sessions restore.
 
-`/login` and `/admin/login` submit through `frontend/src/api/authService.js`, store the backend JWT session through auth storage, and redirect by role:
+`/login` and `/admin/login` submit through `frontend/src/api/authService.js`, store the backend JWT session through auth storage, and redirect by role. `/login` calls `POST /auth/login`; `/admin/login` calls `POST /admin/auth/login`:
 
 - user-shaped session: `/`
 - admin/staff session: `/admin/dashboard`
@@ -537,7 +537,7 @@ Reusable customer auth components live in `frontend/src/components/auth/`:
 - `LoginForm.jsx`
 - `RegisterForm.jsx`
 
-The login form uses local form state, local validation, `authService.login()`, AuthProvider session updates, role-based redirect, and toast notifications. `/register` uses `authService.register()` to call `POST /auth/register` outside demo mode and keeps local demo-mode success behavior; social login and forgot-password remain placeholders until those public customer auth APIs are ready.
+The login form uses local form state, local validation, `authService.login()`, AuthProvider session updates, role-based redirect, and toast notifications. Customer `/login` now calls `POST /auth/login`, while `/admin/login` keeps the admin/staff endpoint. `/register` uses `authService.register()` to call `POST /auth/register` outside demo mode and keeps local demo-mode success behavior; social login and forgot-password remain placeholders until those APIs are ready.
 
 ## Account Components
 

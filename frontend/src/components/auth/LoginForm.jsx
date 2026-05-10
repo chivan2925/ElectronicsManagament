@@ -171,10 +171,15 @@ function LoginForm({
     });
 
     try {
-      const response = await authService.login({
-        email: values.identity.trim(),
-        password: values.password,
-      });
+      const response = await authService.login(
+        {
+          email: values.identity.trim(),
+          password: values.password,
+        },
+        {
+          surface: demoSurface === "admin" ? "admin" : "store",
+        },
+      );
       const session = buildAuthSession(response);
       auth.setAuthSession(session);
 

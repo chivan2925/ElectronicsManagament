@@ -4,7 +4,7 @@
 
 This document describes backend security behavior and rules for the Spring Boot API.
 
-The current login surface is admin/staff focused. Public customer registration exists, but customer login and account ownership tokens are not complete yet.
+The current login surface supports separate admin/staff auth and storefront customer auth. Public customer registration exists at `POST /api/auth/register`, and customer login exists at `POST /api/auth/login`.
 
 ## Security Stack
 
@@ -13,6 +13,7 @@ The current login surface is admin/staff focused. Public customer registration e
 - JWT access tokens through `jjwt`
 - BCrypt password hashing
 - Staff authentication through `StaffDetailsService`
+- Customer authentication through `CustomerDetailsService`
 - Token invalidation through `invalidated_tokens`
 
 ## Main Security Classes
@@ -22,6 +23,8 @@ The current login surface is admin/staff focused. Public customer registration e
 | `SecurityConfig` | Security filter chain, public/protected route rules, password encoder, authentication manager. |
 | `StaffDetailsService` | Loads staff account by email for authentication. |
 | `StaffDetails` | Exposes staff identity and authorities to Spring Security. |
+| `CustomerDetailsService` | Loads customer account by email for JWT authentication. |
+| `CustomerDetails` | Exposes customer identity and `ROLE_USER`/`ROLE_CUSTOMER` authorities. |
 | `JwtUtils` | Generates, validates, and reads JWT values. |
 | `JwtAuthenticationFilter` | Reads bearer tokens and populates `SecurityContext`. |
 | `JwtAuthEntryPoint` | Writes `401 Unauthorized` responses. |
@@ -33,6 +36,7 @@ The following routes are public:
 
 ```text
 POST /api/admin/auth/login
+POST /api/auth/login
 POST /api/auth/register
 GET  /api/health
 GET  /api/health/readiness
@@ -67,6 +71,30 @@ Successful login returns:
 - `email`
 - `role`
 
+## Customer Login Flow
+
+```text
+POST /api/auth/login
+  -> UserRepository.findByEmailIgnoreCase
+  -> BCrypt password verification
+  -> CustomerDetails
+  -> JwtUtils.generateJwtToken
+  -> CustomerLoginResponseDTO
+```
+
+Successful customer login returns:
+
+- `accessToken`
+- `tokenType`
+- `id` / `userId`
+- `fullName`
+- `email`
+- `phone`
+- `role`
+- `roles`
+- `accountType`
+- `status`
+
 ## Authenticated Request Flow
 
 ```text
@@ -75,7 +103,7 @@ HTTP request
   -> JwtAuthenticationFilter
   -> JwtUtils.validateJwtToken
   -> invalidated token check
-  -> StaffDetailsService.loadUserByUsername
+  -> StaffDetailsService or CustomerDetailsService based on JWT accountType
   -> SecurityContext authentication
   -> Controller
 ```
@@ -83,7 +111,7 @@ HTTP request
 ## Logout Flow
 
 ```text
-POST /api/admin/auth/logout
+POST /api/admin/auth/logout or POST /api/auth/logout
   -> extract bearer token
   -> extract token id and expiration
   -> store token id in invalidated_tokens
@@ -110,10 +138,13 @@ Rules:
 
 The JWT contains:
 
-- Subject: staff email.
+- Subject: staff or customer email.
 - Token id: `jti`.
 - Issued-at timestamp.
 - Expiration timestamp.
+- Account type: `STAFF` or `CUSTOMER`.
+
+Tokens without `accountType` are treated as staff tokens for backwards compatibility with existing admin sessions.
 
 Rules:
 
@@ -136,7 +167,9 @@ Current state:
 - Admin-only account, staff, role, and permission endpoints require `ROLE_ADMIN`.
 - Other admin resources require `ROLE_ADMIN` or a matching normalized `PERM:*` authority.
 - `StaffDetails` exposes `ROLE_STAFF`, inferred `ROLE_ADMIN`, raw role/permission values, and normalized permission values such as `PERM:product:view`.
+- `CustomerDetails` exposes customer-only authorities such as `ROLE_USER` and `ROLE_CUSTOMER`.
 - Disabled staff or staff assigned to an inactive role cannot authenticate.
+- Blocked/deleted customers cannot authenticate.
 
 Current authorization matrix:
 
@@ -200,7 +233,7 @@ Before production:
 
 1. Override every placeholder secret through environment variables.
 2. Keep frontend and backend permission matrices aligned.
-3. Add customer auth if public user flows are built.
+3. Complete customer-owned resource checks before public account launch.
 4. Review token cleanup schedule.
 5. Review password reset flow.
 6. Ensure payment webhook signature validation is covered by tests.

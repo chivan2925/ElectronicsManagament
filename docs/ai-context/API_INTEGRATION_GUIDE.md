@@ -177,7 +177,7 @@ Admin dashboard API orchestration lives under `frontend/src/admin/services`:
 - `adminCrudService.js` provides generic list/detail/create/update/remove wrappers so pages do not duplicate CRUD calls.
 - Registered admin modules are categories, brands, products, variants, media, users, staff, roles, permissions, orders, warehouses, and coupons.
 
-`authService.js` owns login/logout/register and token helpers. It calls `POST /admin/auth/login` for the current backend admin/staff JWT flow and `POST /auth/register` for public customer registration outside demo mode.
+`authService.js` owns login/logout/register and token helpers. It calls `POST /auth/login` for storefront customer login, `POST /admin/auth/login` for admin/staff login, and `POST /auth/register` for public customer registration outside demo mode.
 
 The homepage product sections, storefront search overlay, and recently viewed must continue using mock/local data until their API contracts are ready. Wishlist is local-first with optional backend sync through `wishlistService.js`; cart is shared local frontend state; checkout creates backend orders through the configured Order API.
 
@@ -355,7 +355,7 @@ Current behavior:
 - `roleHelpers.js` centralizes ADMIN/STAFF/USER roles, route policies, resource action policies, and flexible permission matching.
 - `usePermissions.js` and `PermissionGate.jsx` provide reusable permission checks for pages, sidebar items, and action buttons.
 - `refreshTokenService.js` validates JWT expiry on startup, refreshes expired access tokens when possible, and logs out when refresh fails.
-- `/login` and `/admin/login` submit through `authService.login()`.
+- `/login` submits through `authService.login()` to `POST /auth/login`; `/admin/login` submits through the same service to `POST /admin/auth/login`.
 - Admin/staff sessions redirect to `/admin/dashboard`; user-shaped sessions redirect to `/`.
 - `StaffRoute` protects the `/admin/*` shell for admin/staff sessions.
 - `AdminRoute` protects admin-only pages such as users, staff, and roles.
@@ -406,7 +406,7 @@ Frontend should:
 - Redirect to admin login after token removal once route guards are applied.
 - Never store passwords.
 
-Admin login response should be normalized through `authHelpers.buildAuthSession()` or passed to `useAuth().setAuthSession()`.
+Customer and admin login responses should be normalized through `authHelpers.buildAuthSession()` or passed to `useAuth().setAuthSession()`.
 
 Refresh response should return:
 
@@ -419,8 +419,8 @@ Refresh response should return:
 
 Current backend note:
 
-- The existing Spring Boot admin auth controller currently exposes login/logout.
-- The frontend refresh flow is ready for `POST /admin/auth/refresh`, but real refresh requires the backend to return `refreshToken` and implement that endpoint.
+- The Spring Boot auth controllers currently expose customer login/register/logout and admin login/logout.
+- The frontend refresh flow is ready for `POST /admin/auth/refresh`, but real refresh requires the backend to return `refreshToken` and implement a refresh endpoint.
 - If no `refreshToken` exists, the frontend treats `401` as non-refreshable; if refresh fails, the frontend clears auth and redirects through the route guards.
 
 Current backend auth error handling:

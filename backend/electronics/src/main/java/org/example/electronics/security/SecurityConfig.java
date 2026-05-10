@@ -106,10 +106,12 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/health", "/api/health/**").permitAll()
                         .requestMatchers("/api/admin/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
                         .requestMatchers("/api/system/payment/vnpay-ipn", "/api/system/payment/momo-ipn").permitAll()
                         .requestMatchers("/api/payments/vnpay-return", "/api/payments/momo-return").permitAll()
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                        .requestMatchers("/api/auth/logout").hasAnyAuthority("ROLE_USER", "ROLE_CUSTOMER")
                         .requestMatchers("/api/admin/auth/logout").hasAnyAuthority(ROLE_ADMIN, ROLE_STAFF)
                         .requestMatchers(ADMIN_ONLY_ENDPOINTS).hasAuthority(ROLE_ADMIN)
                         .requestMatchers(HttpMethod.GET, CATEGORY_ENDPOINTS).hasAnyAuthority(adminOrPermission("category:view"))

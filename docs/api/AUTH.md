@@ -2,9 +2,9 @@
 
 ## Scope
 
-The current backend authentication flow is still admin/staff focused for login. Public customer registration exists at `POST /api/auth/register`, but customer login/ownership tokens are not complete yet.
+The backend now supports separate admin/staff login and customer auth for the storefront. Public customer registration exists at `POST /api/auth/register`, and public customer login exists at `POST /api/auth/login`.
 
-Auth is implemented with Spring Security, JWT, stateless sessions, and a staff details service.
+Auth is implemented with Spring Security, JWT, stateless sessions, a staff details service, and a customer details service.
 
 ## Public And Protected Routes
 
@@ -13,6 +13,7 @@ Public routes:
 - `GET /api/health`
 - `GET /api/health/readiness`
 - `POST /api/admin/auth/login`
+- `POST /api/auth/login`
 - `POST /api/auth/register`
 - `GET /api/payments/vnpay-return`
 - `GET /api/payments/momo-return`
@@ -65,7 +66,49 @@ Notes:
 - Clients cannot provide ADMIN or STAFF role data in the request.
 - The endpoint does not return password or hash values.
 
-## Login
+## Customer Login
+
+Endpoint:
+
+```http
+POST /api/auth/login
+Content-Type: application/json
+```
+
+Request body:
+
+```json
+{
+  "email": "customer@example.com",
+  "password": "Password123!"
+}
+```
+
+Response body:
+
+```json
+{
+  "accessToken": "jwt-token",
+  "tokenType": "Bearer",
+  "id": 1,
+  "userId": 1,
+  "fullName": "Nguyễn Văn A",
+  "email": "customer@example.com",
+  "phone": "0909123456",
+  "role": "USER",
+  "roles": ["USER"],
+  "accountType": "user",
+  "status": "ACTIVE"
+}
+```
+
+Notes:
+
+- Customer login authenticates against the `users` table, not `staffs`.
+- The JWT includes `accountType=CUSTOMER` so the JWT filter loads the customer principal.
+- Customers receive customer authorities only and cannot self-register ADMIN or STAFF access.
+
+## Admin Login
 
 Endpoint:
 
@@ -134,6 +177,13 @@ POST /api/admin/auth/logout
 Authorization: Bearer <accessToken>
 ```
 
+Customer logout endpoint:
+
+```http
+POST /api/auth/logout
+Authorization: Bearer <accessToken>
+```
+
 Behavior:
 
 - Extracts the current token from the request header.
@@ -151,11 +201,14 @@ The current backend response string is localized. Frontend code should not depen
 
 ## Token Contents And Expiry
 
-The JWT subject is the staff email. The token also has:
+The JWT subject is the authenticated staff or customer email. The token also has:
 
 - `jti`: generated token id.
 - `iat`: issued-at timestamp.
 - `exp`: expiration timestamp based on `electronics.app.jwtExpirationMs`.
+- `accountType`: `STAFF` for admin/staff sessions or `CUSTOMER` for storefront customer sessions.
+
+Tokens without `accountType` are treated as staff tokens for backwards compatibility with existing admin sessions.
 
 Token secrets and expiration are configured through backend application properties. Do not copy real secrets into documentation or frontend code.
 
@@ -178,13 +231,13 @@ The actual backend message may be localized. Frontend code should branch on `sta
 
 ## Login Error Responses
 
-The login endpoint returns explicit status codes for common authentication failures:
+The login endpoints return explicit status codes for common authentication failures:
 
 | Case | HTTP status | Notes |
 | --- | --- | --- |
 | Invalid email or password | `401 Unauthorized` | Frontend should show an invalid credentials message. |
-| Disabled or blocked staff account | `403 Forbidden` | Frontend should show an account disabled/blocked message. |
-| Locked or deleted staff account | `423 Locked` | Frontend should show an account locked message. |
+| Disabled or blocked account | `403 Forbidden` | Frontend should show an account disabled/blocked message. |
+| Locked or deleted account | `423 Locked` | Frontend should show an account locked message. |
 
 ## Frontend Handling Rules
 
@@ -194,11 +247,11 @@ The login endpoint returns explicit status codes for common authentication failu
 - Remove the auth session when refresh fails or no refresh token is available.
 - Redirect admin users to the login page after token removal.
 - Redirect successful admin/staff login to `/admin/dashboard`.
-- Redirect successful user-shaped login sessions to `/`.
+- Redirect successful customer login sessions to `/`.
 - Prefer `VITE_AUTH_TOKEN_STORAGE=session` unless a long-lived local development session is needed.
 - Do not store passwords.
 - Do not display raw JWT values in the UI.
-- The frontend refresh flow is ready, but the current backend admin auth controller exposes login/logout only. Real refresh requires backend refresh-token response and `POST /api/admin/auth/refresh` support.
+- The frontend refresh flow is ready, but backend refresh-token endpoints are not implemented yet. Real refresh requires backend refresh-token response and refresh endpoint support.
 
 ## Role And Permission Notes
 

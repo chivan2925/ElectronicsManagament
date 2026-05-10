@@ -6,6 +6,8 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.example.electronics.security.auth.admin.StaffDetails;
+import org.example.electronics.security.auth.user.CustomerDetails;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,6 +25,9 @@ import java.util.UUID;
 public class JwtUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
+    public static final String ACCOUNT_TYPE_CUSTOMER = "CUSTOMER";
+    public static final String ACCOUNT_TYPE_STAFF = "STAFF";
+    private static final String ACCOUNT_TYPE_CLAIM = "accountType";
 
     @Value("${electronics.app.jwtSecret}")
     private String jwtSecret;
@@ -55,6 +60,7 @@ public class JwtUtils {
             return Jwts.builder()
                     .subject(userPrincipal.getUsername())
                     .id(UUID.randomUUID().toString())
+                    .claim(ACCOUNT_TYPE_CLAIM, resolveAccountType(principal))
                     .issuedAt(new Date())
                     .expiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
                     .signWith(key())
@@ -73,6 +79,17 @@ public class JwtUtils {
                 .parseSignedClaims(token)
                 .getPayload()
                 .getSubject();
+    }
+
+    public String getAccountTypeFromJwtToken(String token) {
+        String accountType = Jwts.parser()
+                .verifyWith(key())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .get(ACCOUNT_TYPE_CLAIM, String.class);
+
+        return accountType == null || accountType.isBlank() ? ACCOUNT_TYPE_STAFF : accountType;
     }
 
     public boolean validateJwtToken(String token) {
@@ -110,5 +127,17 @@ public class JwtUtils {
         return expirationDate.toInstant()
                 .atZone(ZoneId.systemDefault())
                 .toLocalDateTime();
+    }
+
+    private String resolveAccountType(Object principal) {
+        if (principal instanceof CustomerDetails) {
+            return ACCOUNT_TYPE_CUSTOMER;
+        }
+
+        if (principal instanceof StaffDetails) {
+            return ACCOUNT_TYPE_STAFF;
+        }
+
+        return ACCOUNT_TYPE_STAFF;
     }
 }

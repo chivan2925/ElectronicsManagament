@@ -8,11 +8,20 @@ Always update this file after meaningful work.
 
 ## 2026-05-10
 
+### Customer Login API
+
+- Added separate public `POST /api/auth/login` for storefront customer accounts and `POST /api/auth/logout` for customer token invalidation.
+- Added customer login request/response DTOs, `CustomerDetails`, `CustomerDetailsService`, customer-only authorities, and JWT `accountType` handling so customer tokens load the customer principal while existing admin/staff tokens remain supported.
+- Updated Spring Security to keep customer login/register public, protect customer logout with customer authorities, and leave admin/staff auth rules unchanged.
+- Updated `authService.login()` so `/login` calls the customer endpoint and `/admin/login` keeps `POST /api/admin/auth/login`; demo mode now keeps customer/admin surfaces separate.
+- Added focused customer login service tests and refreshed auth/API/security docs.
+- Verified `mvn test`, `npm run lint`, `npm run build`, and `git diff --check`; Maven still prints the known local PostgreSQL `media.display_order` DDL warning.
+
 ### Customer Registration API
 
 - Added public `POST /api/auth/register` for customer self-registration without changing the existing admin/staff JWT login flow.
 - Added customer register request/response DTOs, customer auth controller/service, BCrypt password hashing, generated unique usernames, email/phone uniqueness checks, optional phone handling, and safe `USER` role metadata in the response.
-- Updated Spring Security to permit only the register endpoint publicly under `/api/auth/register`.
+- Updated Spring Security to permit the customer register endpoint publicly under `/api/auth/register`.
 - Connected the storefront `/register` form to the new API outside demo mode while preserving demo-mode local success behavior.
 - Added focused customer registration service tests and verified `mvn test`; the run still prints the known local PostgreSQL `media.display_order` DDL warning.
 

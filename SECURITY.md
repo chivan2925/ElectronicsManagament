@@ -11,6 +11,7 @@ Detailed backend security behavior lives in [docs/backend/SECURITY.md](docs/back
 ElectronicsManagement currently includes:
 
 - JWT-based admin/staff authentication.
+- JWT-based customer registration/login for storefront accounts.
 - Protected admin routes with role and permission policies.
 - Protected storefront checkout and account routes.
 - Payment callback validation for VNPay and MoMo.
@@ -18,7 +19,7 @@ ElectronicsManagement currently includes:
 - Environment-driven backend secrets and provider credentials.
 - Frontend auth storage controls through `VITE_AUTH_TOKEN_STORAGE`.
 
-Customer registration is backed by `POST /api/auth/register`; customer login and final customer account ownership contracts remain future work.
+Customer registration is backed by `POST /api/auth/register`, and customer login is backed by `POST /api/auth/login`. Final customer-owned resource checks remain future work.
 
 ## Authentication
 
@@ -32,6 +33,12 @@ Customer registration:
 
 ```http
 POST /api/auth/register
+```
+
+Customer login:
+
+```http
+POST /api/auth/login
 ```
 
 Authenticated requests use:
@@ -54,6 +61,7 @@ Backend auth rules:
 - Sessions are stateless.
 - Logout invalidates the JWT token id until expiry.
 - Staff with inactive roles or blocked/deleted status cannot authenticate.
+- Customers must be `ACTIVE` and receive customer-scoped JWT authorities only.
 
 ## Authorization
 
@@ -146,12 +154,12 @@ Before production:
 7. Confirm payment provider callback URLs in provider dashboards.
 8. Add backup and restore procedures for PostgreSQL.
 9. Add rate limiting for auth, payment, and upload endpoints when deploying behind an edge layer.
-10. Complete customer auth and customer ownership checks before public account launch.
+10. Complete customer-owned resource checks before public account launch.
 
 ## Known Remaining Risks
 
-- Public customer registration exists, but customer login and customer-owned resource checks are not finalized.
-- Customer-owned resource checks need a dedicated public customer principal contract.
+- Customer registration/login exists, but customer-owned resource checks are not finalized.
+- Customer-owned resource checks still need endpoint-level enforcement across account, order, cart, and wishlist APIs.
 - Backend refresh-token support is not complete yet.
 - Upload rate limiting and malware scanning are not implemented.
 - Production migrations are not yet formalized.
