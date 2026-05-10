@@ -32,6 +32,9 @@ electronics:
 
 # 4. Payment Integration
 payment:
+  frontend:
+    success-url: "http://localhost:5173/payment/success"
+    failed-url: "http://localhost:5173/payment/failed"
   vnpay:
     tmn-code: "YOUR_TMN_CODE" # Lấy trên trang Sandbox VNPay
     secret-key: "YOUR_SECRET_KEY" # Lấy trên trang Sandbox VNPay

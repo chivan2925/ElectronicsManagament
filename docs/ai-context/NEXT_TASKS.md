@@ -14,6 +14,10 @@ Ready for Phase 7 — Advanced Features & Production Systems
 
 ## Recently Completed
 
+- Integrated VNPay Sandbox checkout handoff for ecommerce orders.
+- Added signed backend VNPay payment URL creation, secure return/IPN verification, amount validation, paid/failed/cancelled transaction handling, and unpaid order close/release behavior.
+- Added storefront VNPay checkout selection, payment loading/redirect state, payment API service/mappers, and result routes `/payment/success` and `/payment/failed`.
+- Verified `npm run lint`, `npm run build`, and `mvn -q -DskipTests compile` after the VNPay Sandbox integration.
 - Completed the Phase 6 Ecommerce Core Features review and marked the project ready for Phase 7 — Advanced Features & Production Systems.
 - Tightened customer ecommerce UX consistency across search, wishlist, recommendations, cart, checkout, tracking, notifications, responsive behavior, animations, and performance without a large redesign.
 - Converted storefront header and notification internal navigation to React Router links, closed mobile/notification surfaces after navigation, improved search overlay scroll containment, and reused the shared wishlist empty-state pattern.
@@ -290,7 +294,7 @@ Ready for Phase 7 — Advanced Features & Production Systems
 - Keep the shared cart provider as the single cart state source for header drawer, cart page, product cards, product detail, and checkout.
 - Connect the production-ready wishlist sync layer to a real public wishlist API when the backend contract is ready; keep recently viewed local until product history APIs exist.
 - Replace homepage product sections, wishlist/recently viewed lookup, and search overlay mock data with real storefront APIs when those contracts are ready.
-- Add real online payment gateway handoff when the payment task starts.
+- Keep VNPay Sandbox checkout handoff stable; move to production credentials only through environment-specific config.
 - Add category route/page when the category browsing plan is ready.
 - Replace the homepage mock loading timer with real loading state when storefront data integration begins.
 
@@ -300,7 +304,7 @@ Ready for Phase 7 — Advanced Features & Production Systems
 - Deepen review workflows with moderation-ready states, ownership checks, and richer media/helpfulness behavior.
 - Add real notification, loyalty, and recommendation backends when API contracts are available; keep current local foundations as fallbacks.
 - Harden customer registration, customer login, account ownership, cart persistence, and public order tracking contracts.
-- Add real online payment gateway handoff and production-grade payment state handling when the payment task starts.
+- Harden payment state handling with production return URLs, customer ownership checks, critical-flow tests, and deployment-safe credentials.
 - Replace remaining homepage, search, wishlist, recently viewed, and recommendation mock/local data with public APIs as those APIs mature.
 - Add critical-flow tests, database migration/backfill scripts, production config review, deployment docs, and monitoring/observability planning.
 

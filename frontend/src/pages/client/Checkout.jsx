@@ -15,6 +15,7 @@ import {
   getCartStockInsights,
   getShippingEstimate,
 } from "../../cart/cartInsights";
+import paymentService from "../../api/paymentService";
 import { useCart } from "../../cart";
 import Badge from "../../components/ui/Badge";
 import Container from "../../components/ui/Container";
@@ -49,17 +50,18 @@ const paymentMethods = [
     placeholder: false,
   },
   {
-    badge: "Sắp có",
-    description: "Thanh toán qua cổng VNPay sẽ được bật khi hệ thống thanh toán sẵn sàng.",
+    badge: "Sandbox",
+    description: "Tạo phiên thanh toán VNPay Sandbox và chuyển hướng sang cổng bảo mật.",
     apiValue: "DIGITAL",
     id: "vnpay",
     name: "VNPay",
-    placeholder: true,
+    placeholder: false,
   },
   {
     badge: "Sắp có",
     description: "Thanh toán ví MoMo sẽ được bật khi hệ thống thanh toán sẵn sàng.",
     apiValue: "DIGITAL",
+    disabled: true,
     id: "momo",
     name: "MoMo",
     placeholder: true,
@@ -118,6 +120,10 @@ function Checkout() {
   const [submitAttempted, setSubmitAttempted] = useState(false);
   const [shippingMethodId, setShippingMethodId] = useState("standard");
   const [paymentMethodId, setPaymentMethodId] = useState("cod");
+  const [paymentHandoff, setPaymentHandoff] = useState({
+    error: null,
+    isRedirecting: false,
+  });
   const [couponCode, setCouponCode] = useState("");
   const [orderPlaced, setOrderPlaced] = useState(false);
   const {
@@ -229,6 +235,7 @@ function Checkout() {
       [fieldName]: nextValue,
     }));
     setOrderPlaced(false);
+    setPaymentHandoff({ error: null, isRedirecting: false });
     resetOrder();
   };
 
@@ -252,6 +259,7 @@ function Checkout() {
         title: "Coupon hợp lệ",
       });
       setOrderPlaced(false);
+      setPaymentHandoff({ error: null, isRedirecting: false });
       resetOrder();
     } catch (error) {
       toast.showApiError(error, {
@@ -264,6 +272,7 @@ function Checkout() {
     clearCoupon();
     setCouponCode("");
     setOrderPlaced(false);
+    setPaymentHandoff({ error: null, isRedirecting: false });
     resetOrder();
     toast.showInfo("Đã gỡ mã giảm giá khỏi đơn hàng.", {
       duration: 2400,
@@ -309,14 +318,36 @@ function Checkout() {
         values,
       });
 
+      if (selectedPaymentMethod.id === "vnpay") {
+        setPaymentHandoff({ error: null, isRedirecting: true });
+
+        const paymentLink = await paymentService.createVNPayPayment(order.id);
+
+        if (!paymentLink.paymentUrl) {
+          throw new Error("Không nhận được đường dẫn thanh toán VNPay từ hệ thống.");
+        }
+
+        toast.showInfo("Đang chuyển sang VNPay Sandbox để hoàn tất thanh toán.", {
+          duration: 2200,
+          title: "Mở cổng thanh toán",
+        });
+        window.location.assign(paymentLink.paymentUrl);
+        return;
+      }
+
+      setPaymentHandoff({ error: null, isRedirecting: false });
       setOrderPlaced(true);
       toast.showSuccess(order?.code ? `Đơn hàng ${order.code} đã được tạo.` : "Đơn hàng đã được tạo.", {
         title: "Đặt hàng thành công",
       });
     } catch (error) {
       setOrderPlaced(false);
+      setPaymentHandoff({
+        error: selectedPaymentMethod.id === "vnpay" ? error : null,
+        isRedirecting: false,
+      });
       toast.showApiError(error, {
-        title: "Chưa tạo được đơn hàng",
+        title: selectedPaymentMethod.id === "vnpay" ? "Chưa mở được VNPay" : "Chưa tạo được đơn hàng",
       });
     }
   };
@@ -372,14 +403,14 @@ function Checkout() {
               </Badge>
               <h1 className="text-heading max-w-3xl">Hoàn tất đơn hàng</h1>
               <p className="text-muted mt-3 max-w-2xl text-base md:text-lg">
-                Nhập thông tin giao hàng, chọn vận chuyển và phương thức thanh toán. COD sẵn sàng, VNPay và MoMo đang được chuẩn bị cho bước tích hợp.
+                Nhập thông tin giao hàng, chọn vận chuyển và phương thức thanh toán. COD và VNPay Sandbox đã sẵn sàng cho đơn hàng ecommerce.
               </p>
             </div>
 
             <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
               {[
                 { icon: Truck, label: "Vận chuyển rõ ràng", value: selectedShippingMethod.eta },
-                { icon: CreditCard, label: "3 phương thức", value: "COD, VNPay, MoMo" },
+                { icon: CreditCard, label: "Thanh toán bảo mật", value: selectedPaymentMethod.name },
                 { icon: ShieldCheck, label: "Thông tin rõ ràng", value: "Kiểm tra trước khi đặt" },
               ].map((item) => {
                 const Icon = item.icon;
@@ -401,7 +432,7 @@ function Checkout() {
           compact
           signals={[
             { icon: "ShieldCheck", label: "Bảo mật", value: "Thông tin giao hàng rõ ràng" },
-            { icon: "CreditCard", label: "Thanh toán linh hoạt", value: "COD sẵn sàng, online placeholder" },
+            { icon: "CreditCard", label: "Thanh toán linh hoạt", value: "COD và VNPay Sandbox" },
             { icon: "Clock3", label: "Xử lý nhanh", value: "Ước tính thời gian giao" },
             { icon: "Headphones", label: "Hỗ trợ", value: "Theo dõi sau khi đặt đơn" },
           ]}
@@ -424,6 +455,7 @@ function Checkout() {
               onChange={(nextMethodId) => {
                 setShippingMethodId(nextMethodId);
                 setOrderPlaced(false);
+                setPaymentHandoff({ error: null, isRedirecting: false });
                 resetOrder();
               }}
               options={shippingMethods}
@@ -433,6 +465,7 @@ function Checkout() {
               onChange={(nextMethodId) => {
                 setPaymentMethodId(nextMethodId);
                 setOrderPlaced(false);
+                setPaymentHandoff({ error: null, isRedirecting: false });
                 resetOrder();
               }}
               options={paymentMethods}
@@ -451,7 +484,8 @@ function Checkout() {
               itemCount={itemCount}
               items={cartItems}
               isApplyingCoupon={isApplyingCoupon}
-              isSubmitting={isCreatingOrder}
+              isPaymentRedirecting={paymentHandoff.isRedirecting}
+              isSubmitting={isCreatingOrder || paymentHandoff.isRedirecting}
               onCouponApply={handleCouponApply}
               onCouponChange={(nextCouponCode) => {
                 setCouponCode(nextCouponCode);
@@ -460,7 +494,8 @@ function Checkout() {
               }}
               onCouponClear={handleCouponClear}
               onPlaceOrder={handlePlaceOrder}
-              orderError={createOrderError}
+              orderError={paymentHandoff.error || createOrderError}
+              orderErrorTitle={paymentHandoff.error ? "Chưa mở được VNPay" : "Chưa tạo được đơn hàng"}
               orderPlaced={orderPlaced}
               paymentMethod={selectedPaymentMethod}
               shippingEstimate={shippingEstimate}

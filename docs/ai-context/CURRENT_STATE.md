@@ -56,6 +56,8 @@ The storefront cart page now exists at `/cart` with shared local cart items, ani
 
 The storefront checkout page now exists at `/checkout` with authenticated checkout, customer profile prefill from User API when available, shipping address, shipping method, payment method, form validation UI, backend coupon validation, backend order creation, API loading/error states, stock validation, free-shipping progress, shipping estimate, and sticky trust-focused order summary.
 
+Checkout now supports VNPay Sandbox payment handoff with signed backend payment URL creation, VNPay browser return handling, server-side status verification, paid/failed/cancelled transaction states, and customer result pages at `/payment/success` and `/payment/failed`.
+
 The storefront customer authentication pages now exist at `/login` and `/register` with reusable dark auth layout/forms, social login placeholders, remember-me, forgot-password placeholder, local validation UI, and responsive dark glass styling. The `/login` form now calls the backend JWT auth service; `/register` remains local until customer registration APIs are ready.
 
 The storefront wishlist page now exists at `/wishlist` with persistent localStorage-backed product snapshots, optional backend wishlist sync through `VITE_WISHLIST_API_PATH`, optimistic add/remove/clear behavior, move-to-cart actions, wishlist count, loading/error states, product-card quick toggles, recently viewed tracking, and reusable wishlist/recently-viewed hooks.
@@ -428,7 +430,7 @@ Homepage state:
 - The PDP now renders reusable recommendation carousels for related products and frequently bought together products.
 - The profile overview now includes a recommended-for-you placeholder using the shared recommendation section foundation.
 - `/profile`, `/profile/orders`, `/profile/orders/:id`, and `/profile/settings` now render the protected customer account area with real profile/order APIs and a dedicated order tracking detail experience.
-- Client routes beyond homepage, product listing, product detail, cart, checkout, login, register, wishlist, and profile routes that are not fully implemented render dark ecommerce placeholder pages.
+- Client routes beyond homepage, product listing, product detail, cart, checkout, payment result, login, register, wishlist, and profile routes that are not fully implemented render dark ecommerce placeholder pages.
 - `/admin/login` now renders the dark premium admin auth page and submits through `authService.login()`.
 - `/admin/*` routes are protected by `StaffRoute`; unauthenticated users are redirected to `/admin/login`.
 - `/admin/users`, `/admin/staff`, and `/admin/roles` are additionally protected by `AdminRoute`.
@@ -535,6 +537,7 @@ Latest validation:
 - `npm run lint`, `npm run build`, `git diff --check`, and local route smoke checks passed for `/`, `/products`, `/products/:slug`, `/cart`, `/checkout`, and `/profile` after customer ecommerce experience polish. Build still reports the existing Vite chunk-size warning, and `git diff --check` reported CRLF normalization warnings for edited frontend files.
 - `npm run lint`, `npm run build`, `git diff --check`, dependency duplication checks with `npm ls`, and local route smoke checks passed after frontend performance optimization. The main production JS chunk is about 496 kB, route chunks are emitted, and the previous Vite chunk-size warning is gone.
 - `npm run lint`, `npm run build`, `git diff --check`, targeted dependency duplication checks with `npm ls react react-dom framer-motion lucide-react`, and local route smoke checks passed after the Phase 6 ecommerce review and completion polish. `git diff --check` still reports only CRLF normalization warnings for edited frontend files.
+- `npm run lint`, `npm run build`, and `mvn -q -DskipTests compile` passed after integrating the VNPay Sandbox payment flow.
 
 ## Known Issues
 
@@ -548,7 +551,7 @@ Latest validation:
 - The current real JWT login endpoint is the backend admin/staff auth endpoint; customer login should move to a public customer auth endpoint when that API exists.
 - Client checkout/profile routes are customer-session only in the frontend; backend account ownership enforcement should still be tightened when public customer auth is implemented.
 - The frontend refresh-token flow is ready, but the current backend admin auth controller only exposes login/logout; real refresh requires backend `refreshToken` response support and `POST /admin/auth/refresh`.
-- `/checkout` is frontend-auth protected and creates backend orders, but real online payment gateway submission remains out of scope.
+- `/checkout` is frontend-auth protected and creates backend orders with VNPay Sandbox handoff; production payment credentials, deployed return URLs, and customer-auth ownership enforcement are not production-ready.
 - Backend `mvn test` is blocked by existing ApplicationContext issues unrelated to the login UI integration.
 - Backend local startup may fail if port `8080` is occupied by another local service; run on another port or free `8080`.
 - Existing local PostgreSQL schema is partially legacy and still needs controlled migration/backfill for non-auth tables instead of relying on Hibernate `ddl-auto:update`.
@@ -602,7 +605,7 @@ Backend gaps:
 - Public storefront APIs are not complete.
 - Customer auth APIs are not complete.
 - Cart APIs are not complete.
-- Real online payment handoff and public checkout ownership contracts are not complete; authenticated backend order creation exists.
+- VNPay Sandbox handoff exists for checkout orders; production payment credentials, deployed return URLs, and public checkout ownership contracts are not complete.
 - Production secret management is not ready.
 
 ## Documentation State

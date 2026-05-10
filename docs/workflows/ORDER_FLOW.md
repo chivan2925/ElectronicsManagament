@@ -43,6 +43,7 @@ Allowed order transitions:
 PENDING
 PAID
 FAILED
+CANCELLED
 REFUNDED
 ```
 
@@ -50,9 +51,10 @@ Allowed payment transitions:
 
 | Current | Allowed next |
 | --- | --- |
-| `PENDING` | `PAID`, `FAILED` |
+| `PENDING` | `PAID`, `FAILED`, `CANCELLED` |
 | `PAID` | `REFUNDED` |
 | `FAILED` | None |
+| `CANCELLED` | None |
 | `REFUNDED` | None |
 
 ## Shipping Statuses
@@ -152,8 +154,9 @@ Digital payment failure:
 ```text
 Payment provider IPN
   -> validate signature
-  -> mark transaction FAILED
-  -> mark order payment FAILED
+  -> mark transaction FAILED or CANCELLED
+  -> close unpaid pending order
+  -> release reserved stock
 ```
 
 ## Expired Pending Orders

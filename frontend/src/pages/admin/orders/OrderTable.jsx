@@ -5,6 +5,7 @@ import { AdminIconButton, AdminTable, StatusBadge } from "../../../admin/compone
 import { formatCurrency } from "../../../utils/formatters";
 
 const paymentLabels = {
+  CANCELLED: "Cancelled",
   FAILED: "Failed",
   PAID: "Paid",
   PENDING: "Pending",
@@ -12,6 +13,7 @@ const paymentLabels = {
 };
 
 const paymentTones = {
+  CANCELLED: "rose",
   FAILED: "rose",
   PAID: "emerald",
   PENDING: "amber",

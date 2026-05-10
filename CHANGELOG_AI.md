@@ -8,6 +8,16 @@ Always update this file after meaningful work.
 
 ## 2026-05-10
 
+### VNPay Sandbox Payment Flow
+
+- Integrated VNPay Sandbox checkout handoff for ecommerce orders.
+- Added backend `POST /api/payments/vnpay/create`, `GET /api/payments/vnpay-return`, and `GET /api/payments/orders/{orderId}/status`.
+- Added secure VNPay hash verification, merchant/amount validation, sandbox-only payment URL creation, and paid/failed/cancelled transaction state handling.
+- Added unpaid order close and reserved-stock release behavior for failed or cancelled online payments.
+- Enabled VNPay in checkout, added payment loading/redirect states, and added `/payment/success` plus `/payment/failed` result pages with server-side status verification.
+- Updated `docs/backend/PAYMENT.md`, `CURRENT_STATE.md`, and `NEXT_TASKS.md`.
+- Verified `npm run lint`, `npm run build`, and `mvn -q -DskipTests compile`.
+
 ### Phase 6 Ecommerce Review And Completion
 
 - Reviewed Phase 6 customer ecommerce surfaces across search, reviews, wishlist, recommendations, cart, checkout, order tracking, notifications, performance, responsive quality, and animation consistency.

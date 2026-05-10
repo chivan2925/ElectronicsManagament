@@ -30,6 +30,12 @@ public class VNPayConfig {
     @Value("${payment.vnpay.return-url}")
     private String vnp_ReturnUrl;
 
+    @Value("${payment.frontend.success-url:http://localhost:5173/payment/success}")
+    private String frontendSuccessUrl;
+
+    @Value("${payment.frontend.failed-url:http://localhost:5173/payment/failed}")
+    private String frontendFailedUrl;
+
     // 🚀 Vũ khí bí mật: Hàm tự động build các tham số mặc định
     public Map<String, String> getVNPayConfig() {
         Map<String, String> vnpParamsMap = new HashMap<>();
@@ -41,7 +47,7 @@ public class VNPayConfig {
         vnpParamsMap.put("vnp_ReturnUrl", this.vnp_ReturnUrl);
 
         // Xử lý múi giờ chuẩn VN (GMT+7)
-        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Asia/Ho_Chi_Minh"));
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
         String vnpCreateDate = formatter.format(calendar.getTime());
         vnpParamsMap.put("vnp_CreateDate", vnpCreateDate);

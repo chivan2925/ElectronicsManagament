@@ -10,12 +10,13 @@ The backend has payment integration code for:
 - VNPay
 - Momo
 
-The current implemented surface is mostly system webhook handling and refund strategy code. Full public checkout APIs are not complete yet.
+The current implemented surface includes VNPay Sandbox checkout handoff, VNPay browser return handling, VNPay IPN handling, Momo IPN handling, and refund strategy code.
 
 ## Main Classes
 
 | Class | Responsibility |
 | --- | --- |
+| `UserPaymentController` | Storefront payment URL creation, VNPay return redirect, and payment status verification. |
 | `SystemPaymentTransactionController` | VNPay and Momo IPN endpoints. |
 | `SystemPaymentServiceImpl` | Validates IPN payloads and updates payment/order state. |
 | `SystemOrderServiceImpl` | Confirms successful payments and order side effects. |
@@ -53,10 +54,50 @@ Important fields:
 ```text
 PaymentProvider: COD, VNPAY, MOMO
 PaymentMethodType: CASH, DIGITAL
-PaymentStatus: PENDING, PAID, FAILED, REFUNDED
+PaymentStatus: PENDING, PAID, FAILED, CANCELLED, REFUNDED
 PaymentTransactionType: PAYMENT, REFUND
-PaymentTransactionStatus: PENDING, SUCCESS, FAILED, REFUNDED
+PaymentTransactionStatus: PENDING, SUCCESS, FAILED, CANCELLED, REFUNDED
 ```
+
+Storefront status labels use lowercase equivalents:
+
+```text
+pending, paid, failed, cancelled
+```
+
+## Storefront Payment Endpoints
+
+Create VNPay Sandbox payment URL:
+
+```http
+POST /api/payments/vnpay/create
+```
+
+Request:
+
+```json
+{
+  "orderId": 123,
+  "provider": "VNPAY"
+}
+```
+
+Verify payment status:
+
+```http
+GET /api/payments/orders/{orderId}/status
+```
+
+VNPay browser return URL:
+
+```http
+GET /api/payments/vnpay-return
+```
+
+Return handling validates the secure hash, validates merchant code and amount, updates the transaction/order state, then redirects the browser to:
+
+- `/payment/success` for paid payments.
+- `/payment/failed` for failed or cancelled payments.
 
 ## Public Webhook Endpoints
 
@@ -79,6 +120,7 @@ These endpoints are public because payment providers call them directly.
 ```text
 VNPay -> GET /api/system/payment/vnpay-ipn
   -> validate signature
+  -> validate merchant code
   -> locate order
   -> locate payment transaction
   -> reject duplicate successful transaction
@@ -86,9 +128,12 @@ VNPay -> GET /api/system/payment/vnpay-ipn
   -> if response code is 00:
        mark transaction SUCCESS
        confirm successful order payment
+     else if response code is 24:
+       mark transaction CANCELLED
+       close unpaid order as CANCELLED
      else:
        mark transaction FAILED
-       mark order payment FAILED
+       close unpaid order as FAILED
 ```
 
 Provider response codes returned by current service:
@@ -150,6 +195,13 @@ Failed payment should:
 
 - Mark the payment transaction as `FAILED`.
 - Mark order payment status as `FAILED`.
+- Close unpaid pending orders and release reserved stock.
+
+Cancelled payment should:
+
+- Mark the payment transaction as `CANCELLED`.
+- Mark order payment status as `CANCELLED`.
+- Close unpaid pending orders and release reserved stock.
 
 ## Security Rules
 
@@ -167,12 +219,13 @@ Provider configuration currently lives in backend application config.
 Rules:
 
 - Use placeholders in docs.
+- VNPay payment URL creation is sandbox-only and rejects non-sandbox pay URLs.
 - Move secrets to environment variables before deployment.
 - Keep return URLs and notify URLs aligned with actual deployed API paths.
 
 ## Known Gaps
 
-- Full client checkout/payment-link APIs are not complete.
 - Payment config paths should be reviewed before deployment.
 - Refund edge cases need tests.
 - Payment state and order state should be documented as a stricter state machine before production.
+- Customer auth and account ownership checks still need a dedicated public customer principal contract before production.

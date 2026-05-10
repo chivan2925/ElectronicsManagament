@@ -79,36 +79,37 @@ public class VNPayUtils {
         return stringBuilder.toString();
     }
 
+    public String buildHashData(Map<String, String> fields) {
+        List<String> fieldNames = new ArrayList<>(fields.keySet());
+        Collections.sort(fieldNames);
+
+        List<String> encodedFields = new ArrayList<>();
+
+        for (String fieldName : fieldNames) {
+            String fieldValue = fields.get(fieldName);
+
+            if (fieldValue != null && !fieldValue.isEmpty()) {
+                encodedFields.add(fieldName + "=" + URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII));
+            }
+        }
+
+        return String.join("&", encodedFields);
+    }
+
+    public String buildQueryString(Map<String, String> fields) {
+        return buildHashData(fields);
+    }
+
+    public String createSecureHash(Map<String, String> fields) {
+        return hmacSHA512(secretKey, buildHashData(fields));
+    }
+
     public boolean validateSignature(Map<String, String> fields, String vnpSecureHash) {
         try {
-            // 1. Tạo danh sách các key và sắp xếp theo bảng chữ cái (Bắt buộc theo chuẩn VNPay)
-            List<String> fieldNames = new ArrayList<>(fields.keySet());
-            Collections.sort(fieldNames);
-
-            // 2. Ghép chuỗi HashData
-            StringBuilder hashData = new StringBuilder();
-            Iterator<String> itr = fieldNames.iterator();
-            while (itr.hasNext()) {
-                String fieldName = itr.next();
-                String fieldValue = fields.get(fieldName);
-                if ((fieldValue != null) && (!fieldValue.isEmpty())) {
-                    // Build hash data
-                    hashData.append(fieldName);
-                    hashData.append('=');
-                    hashData.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII));
-
-                    // Thêm '&' nếu chưa phải là tham số cuối cùng
-                    if (itr.hasNext()) {
-                        hashData.append('&');
-                    }
-                }
-            }
-
-            // 3. Băm chuỗi HashData với SecretKey
-            String secureHash = hmacSHA512(secretKey, hashData.toString());
+            String secureHash = createSecureHash(fields);
 
             // 4. So sánh mã băm của mình với mã VNPay gửi về
-            return secureHash.equals(vnpSecureHash);
+            return secureHash.equalsIgnoreCase(vnpSecureHash);
 
         } catch (Exception e) {
             return false;

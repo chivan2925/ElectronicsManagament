@@ -21,6 +21,8 @@ import {
   Checkout,
   Home,
   Login,
+  PaymentFailed,
+  PaymentSuccess,
   ProductDetail,
   ProductListingPage,
   ProfileLayout,
@@ -58,6 +60,8 @@ function AppRoutes() {
         }
         path="/checkout"
       />
+      <Route element={storeRoute(<PaymentSuccess />)} path="/payment/success" />
+      <Route element={storeRoute(<PaymentFailed />)} path="/payment/failed" />
       <Route
         element={
           <GuestRoute>

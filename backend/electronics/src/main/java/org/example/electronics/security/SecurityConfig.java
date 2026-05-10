@@ -65,6 +65,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/admin/auth/login").permitAll()
                         .requestMatchers("/api/system/payment/vnpay-ipn", "/api/system/payment/momo-ipn").permitAll()
+                        .requestMatchers("/api/payments/vnpay-return").permitAll()
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .anyRequest().authenticated()
                 );

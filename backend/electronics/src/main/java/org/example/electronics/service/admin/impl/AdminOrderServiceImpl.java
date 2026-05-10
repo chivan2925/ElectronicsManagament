@@ -46,10 +46,11 @@ public class AdminOrderServiceImpl implements AdminOrderService {
     );
 
     private static final Map<PaymentStatus, Set<PaymentStatus>> ALLOWED_PAYMENT_TRANSITIONS = Map.of(
-            PaymentStatus.PENDING, Set.of(PaymentStatus.PAID, PaymentStatus.FAILED),
+            PaymentStatus.PENDING, Set.of(PaymentStatus.PAID, PaymentStatus.FAILED, PaymentStatus.CANCELLED),
             PaymentStatus.PAID, Set.of(PaymentStatus.REFUNDED),
 
             PaymentStatus.FAILED, Set.of(),
+            PaymentStatus.CANCELLED, Set.of(),
             PaymentStatus.REFUNDED, Set.of()
     );
 

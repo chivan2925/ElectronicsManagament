@@ -26,6 +26,7 @@ function PaymentMethodSelector({ onChange, options, value }) {
         {options.map((option) => {
           const Icon = methodIcons[option.id] || CreditCard;
           const isSelected = value === option.id;
+          const isDisabled = Boolean(option.disabled || option.placeholder);
 
           return (
             <button
@@ -35,7 +36,7 @@ function PaymentMethodSelector({ onChange, options, value }) {
                   ? "border-blue-300/70 bg-blue-500/12 shadow-[0_0_30px_rgba(0,91,255,0.18)]"
                   : "border-white/10 bg-white/[0.035] hover:border-blue-300/45 hover:bg-blue-500/[0.07]",
               )}
-              disabled={option.placeholder}
+              disabled={isDisabled}
               key={option.id}
               onClick={() => onChange(option.id)}
               type="button"
@@ -59,7 +60,7 @@ function PaymentMethodSelector({ onChange, options, value }) {
                 </div>
 
                 {option.badge && (
-                  <Badge className="mt-auto" variant={option.placeholder ? "warning" : "soft"}>
+                  <Badge className="mt-auto" variant={isDisabled ? "warning" : "soft"}>
                     {option.badge}
                   </Badge>
                 )}

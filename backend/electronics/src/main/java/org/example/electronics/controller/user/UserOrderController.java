@@ -61,7 +61,7 @@ public class UserOrderController {
     @PostMapping
     @Operation(
             summary = "Tạo đơn hàng từ checkout",
-            description = "Tạo đơn hàng PENDING, áp dụng coupon hợp lệ nếu có, và giữ tồn kho. Không tạo link thanh toán ở bước này."
+            description = "Tạo đơn hàng PENDING, áp dụng coupon hợp lệ nếu có, và giữ tồn kho. Link VNPay được tạo riêng qua Payment API."
     )
     public ResponseEntity<AdminOrderDetailResponseDTO> createOrder(
             @Valid @RequestBody UserCreateOrderRequestDTO requestDTO

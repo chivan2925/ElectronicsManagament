@@ -30,6 +30,8 @@ Client:
 - `/products/:slug`
 - `/cart`
 - `/checkout`
+- `/payment/success`
+- `/payment/failed`
 - `/login`
 - `/register`
 - `/wishlist`
@@ -71,6 +73,7 @@ frontend/src/
 │  ├─ normalizeApiError.js
 │  ├─ resourceService.js
 │  ├─ checkoutMapper.js
+│  ├─ paymentMapper.js
 │  ├─ accountMapper.js
 │  ├─ productMapper.js
 │  ├─ wishlistMapper.js
@@ -85,6 +88,7 @@ frontend/src/
 │  ├─ roleService.js
 │  ├─ permissionService.js
 │  ├─ orderService.js
+│  ├─ paymentService.js
 │  ├─ warehouseService.js
 │  ├─ couponService.js
 │  ├─ wishlistService.js
@@ -430,6 +434,11 @@ Reusable checkout components live in `frontend/src/components/checkout/`:
 - `PaymentMethodSelector.jsx`
 - `CheckoutSummary.jsx`
 
+Payment result pages live at:
+
+- `frontend/src/pages/client/PaymentSuccess.jsx`
+- `frontend/src/pages/client/PaymentFailed.jsx`
+
 Checkout API state logic lives in `frontend/src/hooks/`:
 
 - `useCheckoutCoupon.js`
@@ -438,7 +447,7 @@ Checkout API state logic lives in `frontend/src/hooks/`:
 
 Checkout API response and payload mapping lives in `frontend/src/api/checkoutMapper.js`.
 
-The checkout page uses shared cart state, local form validation, backend Coupon API validation, backend User API profile prefill when available, and backend Order API creation through `orderService.createOrder()`. Checkout summary reuses free-shipping progress, stock validation, shipping estimate, coupon apply/clear, and loading/error states. COD creates the order only; VNPay and MoMo remain disabled placeholders until the real payment gateway task starts.
+The checkout page uses shared cart state, local form validation, backend Coupon API validation, backend User API profile prefill when available, and backend Order API creation through `orderService.createOrder()`. Checkout summary reuses free-shipping progress, stock validation, shipping estimate, coupon apply/clear, and loading/error states. COD creates the order only. VNPay creates the order, requests a backend-signed sandbox payment URL through `paymentService.createVNPayPayment()`, redirects to VNPay Sandbox, then verifies the final server-side status on `/payment/success` or `/payment/failed`. MoMo remains disabled until a real customer-facing handoff is implemented.
 
 ## Customer Auth Components
 

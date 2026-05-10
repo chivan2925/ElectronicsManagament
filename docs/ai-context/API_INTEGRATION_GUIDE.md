@@ -71,6 +71,7 @@ Current behavior:
 - Uses `VITE_AUTH_REFRESH_ENDPOINT`.
 - Product catalog services use `VITE_PRODUCT_API_PATH`.
 - Checkout services use `VITE_COUPON_API_PATH`, `VITE_ORDER_API_PATH`, and `VITE_USER_API_PATH`.
+- Payment services use `VITE_PAYMENT_API_PATH`.
 - Account services use `VITE_USER_PROFILE_API_PATH` and `VITE_USER_ORDER_API_PATH`.
 - Wishlist sync uses `VITE_WISHLIST_API_PATH` when a compatible backend endpoint exists.
 - Falls back to `http://localhost:8080/api`.
@@ -104,6 +105,7 @@ VITE_AUTH_REFRESH_ENDPOINT=/admin/auth/refresh
 VITE_PRODUCT_API_PATH=/admin/products
 VITE_COUPON_API_PATH=/admin/coupons
 VITE_ORDER_API_PATH=/orders
+VITE_PAYMENT_API_PATH=/payments
 VITE_USER_API_PATH=/admin/users
 VITE_USER_PROFILE_API_PATH=/users
 VITE_USER_ORDER_API_PATH=/orders
@@ -131,6 +133,7 @@ frontend/src/api/
 ├─ apiErrorEvents.js
 ├─ resourceService.js
 ├─ checkoutMapper.js
+├─ paymentMapper.js
 ├─ accountMapper.js
 ├─ productMapper.js
 ├─ wishlistMapper.js
@@ -145,6 +148,7 @@ frontend/src/api/
 ├─ roleService.js
 ├─ permissionService.js
 ├─ orderService.js
+├─ paymentService.js
 ├─ warehouseService.js
 ├─ couponService.js
 ├─ wishlistService.js
@@ -198,7 +202,7 @@ Current behavior:
 
 Do not hardcode a single backend response shape in pages or presentational components. If the backend later exposes a dedicated public storefront product endpoint, point `VITE_PRODUCT_API_PATH` to that endpoint and keep response adaptation inside `productMapper.js`.
 
-## Checkout Integration
+## Checkout And Payment Integration
 
 Current storefront checkout routes:
 
@@ -210,8 +214,10 @@ Checkout files:
 ```text
 frontend/src/cart/
 frontend/src/api/checkoutMapper.js
+frontend/src/api/paymentMapper.js
 frontend/src/api/couponService.js
 frontend/src/api/orderService.js
+frontend/src/api/paymentService.js
 frontend/src/api/userService.js
 frontend/src/hooks/useCheckoutCoupon.js
 frontend/src/hooks/useCheckoutOrder.js
@@ -227,7 +233,9 @@ Current behavior:
 - `userService.getCurrentUserProfile()` reads the account profile endpoint configured by `VITE_USER_PROFILE_API_PATH`, defaulting to `/users`.
 - `checkoutMapper.js` builds create-order payloads and normalizes coupon/order responses before they reach UI components.
 - `/checkout` remains protected by `ProtectedRoute` and customer-only route policy; unauthorized users are redirected through the auth route guard.
-- VNPay and MoMo are disabled placeholders in this phase; no real payment gateway handoff is performed.
+- VNPay Sandbox handoff is implemented through `POST /payments/vnpay/create`, backend secure hash signing, VNPay browser return handling at `/payments/vnpay-return`, and result verification through `GET /payments/orders/{orderId}/status`.
+- Frontend routes `/payment/success` and `/payment/failed` verify the server-side payment state before showing paid, failed, or cancelled feedback.
+- MoMo remains disabled until a real customer-facing handoff is implemented.
 
 ## Account Integration
 

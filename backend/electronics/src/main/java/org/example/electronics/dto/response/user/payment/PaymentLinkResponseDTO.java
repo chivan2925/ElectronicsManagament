@@ -6,6 +6,8 @@ public record PaymentLinkResponseDTO(
 
         String paymentUrl,
         PaymentProvider provider,
-        Integer orderId
+        Integer orderId,
+        Integer transactionId,
+        String status
 ) {
 }

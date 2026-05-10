@@ -1,6 +1,7 @@
 package org.example.electronics.repository;
 
 import org.example.electronics.entity.PaymentTransactionEntity;
+import org.example.electronics.entity.enums.PaymentProvider;
 import org.example.electronics.entity.enums.PaymentTransactionStatus;
 import org.example.electronics.entity.enums.PaymentTransactionType;
 import org.springframework.data.domain.Page;
@@ -17,6 +18,12 @@ public interface PaymentTransactionRepository extends JpaRepository<PaymentTrans
     Optional<PaymentTransactionEntity> findByOrderId(Integer id);
 
     Optional<PaymentTransactionEntity> findByOrderIdAndTypeAndStatus(Integer id, PaymentTransactionType type, PaymentTransactionStatus status);
+
+    Optional<PaymentTransactionEntity> findTopByOrderIdAndTypeAndProviderOrderByCreatedAtDesc(
+            Integer id,
+            PaymentTransactionType type,
+            PaymentProvider provider
+    );
 
     boolean existsByProviderPaymentId(String id);
 

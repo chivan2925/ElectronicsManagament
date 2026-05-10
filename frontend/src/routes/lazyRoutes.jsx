@@ -5,6 +5,8 @@ export const ProductListingPage = lazy(() => import("../pages/client/ProductList
 export const ProductDetail = lazy(() => import("../pages/client/ProductDetail"));
 export const Cart = lazy(() => import("../pages/client/Cart"));
 export const Checkout = lazy(() => import("../pages/client/Checkout"));
+export const PaymentFailed = lazy(() => import("../pages/client/PaymentFailed"));
+export const PaymentSuccess = lazy(() => import("../pages/client/PaymentSuccess"));
 export const Login = lazy(() => import("../pages/client/Login"));
 export const Register = lazy(() => import("../pages/client/Register"));
 export const WishlistPage = lazy(() => import("../pages/client/WishlistPage"));

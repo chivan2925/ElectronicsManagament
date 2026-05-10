@@ -10,6 +10,7 @@ export const PAYMENT_STATUS_OPTIONS = [
   { label: "Pending", value: "PENDING" },
   { label: "Paid", value: "PAID" },
   { label: "Failed", value: "FAILED" },
+  { label: "Cancelled", value: "CANCELLED" },
   { label: "Refunded", value: "REFUNDED" },
 ];
 

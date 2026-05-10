@@ -30,12 +30,14 @@ function CheckoutSummary({
   items,
   itemCount,
   isApplyingCoupon = false,
+  isPaymentRedirecting = false,
   isSubmitting = false,
   onCouponApply,
   onCouponChange,
   onCouponClear,
   onPlaceOrder,
   orderError,
+  orderErrorTitle = "Chưa tạo được đơn hàng",
   orderPlaced,
   paymentMethod,
   shippingEstimate,
@@ -187,8 +189,17 @@ function CheckoutSummary({
           compact
           error={orderError}
           surface="store"
-          title="Chưa tạo được đơn hàng"
+          title={orderErrorTitle}
         />
+      )}
+
+      {isPaymentRedirecting && (
+        <div className="mt-4 rounded-2xl border border-blue-300/30 bg-blue-500/10 p-3 text-sm font-bold text-blue-100">
+          <div className="flex items-center gap-2">
+            <Loader2 className="shrink-0 animate-spin" size={17} />
+            <span>Đang mở phiên thanh toán VNPay Sandbox...</span>
+          </div>
+        </div>
       )}
 
       {orderPlaced ? (
@@ -197,18 +208,28 @@ function CheckoutSummary({
           <p className="mt-2 font-black text-white">Đơn hàng đã được tạo</p>
           <p className="text-caption mt-1 text-slate-400">
             {createdOrder?.code ? `Mã đơn: ${createdOrder.code}. ` : ""}
-            Thanh toán online sẽ được kích hoạt ở bước tích hợp riêng.
+            Bạn có thể theo dõi đơn hàng trong khu vực tài khoản.
           </p>
         </div>
       ) : (
         <Button className="mt-4 h-12 rounded-2xl" disabled={isSubmitting || hasBlockingIssues} fullWidth onClick={onPlaceOrder}>
-          {isSubmitting ? (
+          {isPaymentRedirecting ? (
+            <>
+              <Loader2 className="animate-spin" size={18} />
+              Đang chuyển sang VNPay
+            </>
+          ) : isSubmitting ? (
             <>
               <Loader2 className="animate-spin" size={18} />
               Đang tạo đơn
             </>
           ) : hasBlockingIssues ? (
             "Kiểm tra tồn kho trước"
+          ) : paymentMethod.id === "vnpay" ? (
+            <>
+              Thanh toán qua VNPay
+              <ChevronRight size={18} />
+            </>
           ) : (
             <>
               Xác nhận đặt hàng
