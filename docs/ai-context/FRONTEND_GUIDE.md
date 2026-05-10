@@ -138,6 +138,7 @@ frontend/src/
 │  ├─ home/
 │  ├─ layout/
 │  │  └─ admin/
+│  ├─ payment/
 │  ├─ product/
 │  ├─ search/
 │  ├─ skeletons/
@@ -177,6 +178,7 @@ frontend/src/
 │  ├─ useCheckoutCoupon.js
 │  ├─ useCheckoutOrder.js
 │  ├─ useCheckoutProfile.js
+│  ├─ usePaymentResult.js
 │  ├─ useAccountProfile.js
 │  ├─ useRecentlyViewed.js
 │  ├─ useRecentSearches.js
@@ -442,15 +444,25 @@ Payment result pages live at:
 - `frontend/src/pages/client/PaymentSuccess.jsx`
 - `frontend/src/pages/client/PaymentFailed.jsx`
 
+Reusable payment UX components live in `frontend/src/components/payment/`:
+
+- `PaymentTimeline.jsx`
+- `TransactionSummary.jsx`
+- `PaymentRetryPanel.jsx`
+- `PaymentProcessingState.jsx`
+- `PaymentTrustIndicators.jsx`
+- `OrderConfirmationPanel.jsx`
+
 Checkout API state logic lives in `frontend/src/hooks/`:
 
 - `useCheckoutCoupon.js`
 - `useCheckoutOrder.js`
 - `useCheckoutProfile.js`
+- `usePaymentResult.js`
 
 Checkout API response and payload mapping lives in `frontend/src/api/checkoutMapper.js`.
 
-The checkout page uses shared cart state, local form validation, backend Coupon API validation, backend User API profile prefill when available, and backend Order API creation through `orderService.createOrder()`. Checkout summary reuses free-shipping progress, stock validation, shipping estimate, coupon apply/clear, and loading/error states. COD creates the order only. VNPay and MoMo create the order, request a backend-signed sandbox payment handoff through `paymentService.createPayment()`, redirect to the provider sandbox, then verify the final server-side status on `/payment/success` or `/payment/failed`. Payment result pages use `utils/paymentStatus.js` for provider-aware paid, failed, cancelled, and pending feedback.
+The checkout page uses shared cart state, local form validation, backend Coupon API validation, backend User API profile prefill when available, and backend Order API creation through `orderService.createOrder()`. Checkout summary reuses free-shipping progress, stock validation, shipping estimate, coupon apply/clear, and loading/error states. COD creates the order only. VNPay and MoMo create the order, request a backend-signed sandbox payment handoff through `paymentService.createPayment()`, redirect to the provider sandbox, then verify the final server-side status on `/payment/success` or `/payment/failed`. Payment result pages use `usePaymentResult`, reusable payment UI components, and `utils/paymentStatus.js` for provider-aware paid, failed, cancelled, pending, timeline, retry, and transaction summary feedback.
 
 ## Customer Auth Components
 

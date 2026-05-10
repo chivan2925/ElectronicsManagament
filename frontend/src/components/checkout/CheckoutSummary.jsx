@@ -5,10 +5,8 @@ import {
   ChevronRight,
   Clock3,
   Loader2,
-  LockKeyhole,
   MapPin,
   PackageCheck,
-  ShieldCheck,
   X,
 } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -17,6 +15,9 @@ import { formatCurrency } from "../../utils/formatters";
 import FreeShippingProgress from "../cart/FreeShippingProgress";
 import StockValidationPanel from "../cart/StockValidationPanel";
 import OptimizedImage from "../common/OptimizedImage";
+import OrderConfirmationPanel from "../payment/OrderConfirmationPanel";
+import PaymentProcessingState from "../payment/PaymentProcessingState";
+import PaymentTrustIndicators from "../payment/PaymentTrustIndicators";
 import Button from "../ui/Button";
 import ApiErrorAlert from "../ui/feedback/ApiErrorAlert";
 
@@ -196,23 +197,11 @@ function CheckoutSummary({
       )}
 
       {isPaymentRedirecting && (
-        <div className="mt-4 rounded-2xl border border-blue-300/30 bg-blue-500/10 p-3 text-sm font-bold text-blue-100">
-          <div className="flex items-center gap-2">
-            <Loader2 className="shrink-0 animate-spin" size={17} />
-            <span>Đang mở phiên thanh toán {paymentProviderName} Sandbox...</span>
-          </div>
-        </div>
+        <PaymentProcessingState provider={paymentMethod?.provider} />
       )}
 
       {orderPlaced ? (
-        <div className="mt-4 rounded-2xl border border-emerald-300/30 bg-emerald-500/10 p-4 text-center">
-          <CheckCircle2 className="mx-auto text-emerald-200" size={30} />
-          <p className="mt-2 font-black text-white">Đơn hàng đã được tạo</p>
-          <p className="text-caption mt-1 text-slate-400">
-            {createdOrder?.code ? `Mã đơn: ${createdOrder.code}. ` : ""}
-            Bạn có thể theo dõi đơn hàng trong khu vực tài khoản.
-          </p>
-        </div>
+        <OrderConfirmationPanel order={createdOrder} paymentMethod={paymentMethod} />
       ) : (
         <Button className="mt-4 h-12 rounded-2xl" disabled={isSubmitting || hasBlockingIssues} fullWidth onClick={onPlaceOrder}>
           {isPaymentRedirecting ? (
@@ -245,16 +234,7 @@ function CheckoutSummary({
         Quay lại giỏ hàng
       </Button>
 
-      <div className="mt-4 grid grid-cols-2 gap-2">
-        <div className="store-stat-card rounded-2xl p-3">
-          <LockKeyhole className="mb-2 text-blue-200" size={18} />
-          <p className="text-caption text-slate-400">Không lưu thông tin thẻ trên giao diện này</p>
-        </div>
-        <div className="store-stat-card rounded-2xl p-3">
-          <ShieldCheck className="mb-2 text-emerald-200" size={18} />
-          <p className="text-caption text-slate-400">Kiểm tra thông tin trước khi xác nhận</p>
-        </div>
-      </div>
+      <PaymentTrustIndicators className="mt-4" compact provider={paymentMethod?.provider} />
     </aside>
   );
 }

@@ -8,6 +8,15 @@ Always update this file after meaningful work.
 
 ## 2026-05-10
 
+### Payment Experience Polish
+
+- Polished checkout payment selection for COD, VNPay, and MoMo with richer trust copy, selected-method guidance, and provider-specific trust indicators.
+- Added reusable storefront payment components: payment timeline, transaction summary, retry panel, payment processing state, trust indicators, and COD order confirmation.
+- Added `usePaymentResult` and expanded `paymentStatus` helpers so payment result pages share provider/status normalization, copy, and timeline logic.
+- Updated `/payment/success` and `/payment/failed` with transaction summaries, payment timelines, clearer verification feedback, and retry guidance.
+- Updated `CURRENT_STATE.md`, `NEXT_TASKS.md`, and `FRONTEND_GUIDE.md`.
+- Verified `npm run lint` and `npm run build`.
+
 ### MoMo Sandbox Payment Flow
 
 - Added a reusable backend payment gateway abstraction for storefront online payment handoff.

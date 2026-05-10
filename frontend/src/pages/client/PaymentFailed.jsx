@@ -1,61 +1,36 @@
-import { useEffect, useMemo, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
-import { AlertTriangle, Ban, CreditCard, RefreshCw, ShieldAlert } from "lucide-react";
-import paymentService from "../../api/paymentService";
+import { useMemo } from "react";
+import { AlertTriangle, Ban, ShieldAlert } from "lucide-react";
 import AnnouncementBar from "../../components/layout/AnnouncementBar";
 import Header from "../../components/layout/Header";
+import PaymentRetryPanel from "../../components/payment/PaymentRetryPanel";
+import PaymentTimeline from "../../components/payment/PaymentTimeline";
+import TransactionSummary from "../../components/payment/TransactionSummary";
 import Badge from "../../components/ui/Badge";
-import Button from "../../components/ui/Button";
 import Container from "../../components/ui/Container";
 import ApiErrorAlert from "../../components/ui/feedback/ApiErrorAlert";
-import { formatCurrency } from "../../utils/formatters";
+import usePaymentResult from "../../hooks/usePaymentResult";
 import {
-  getPaymentProviderLabel,
   getPaymentResultCopy,
+  getPaymentTimelineSteps,
   isCancelledStatus,
-  normalizePaymentProvider,
-  normalizePaymentStatus,
 } from "../../utils/paymentStatus";
 
 function PaymentFailed() {
-  const [searchParams] = useSearchParams();
-  const orderId = searchParams.get("orderId");
-  const transactionId = searchParams.get("transactionId");
-  const queryStatus = normalizePaymentStatus(searchParams.get("status"), "failed");
-  const queryProvider = normalizePaymentProvider(searchParams.get("provider"), "VNPAY");
-  const queryMessage = searchParams.get("message");
-  const [result, setResult] = useState(null);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    if (!orderId) {
-      return undefined;
-    }
-
-    let isActive = true;
-
-    paymentService
-      .getOrderPaymentStatus(orderId, { transactionId })
-      .then((paymentStatus) => {
-        if (isActive) {
-          setResult(paymentStatus);
-        }
-      })
-      .catch((statusError) => {
-        if (isActive) {
-          setError(statusError);
-        }
-      });
-
-    return () => {
-      isActive = false;
-    };
-  }, [orderId, transactionId]);
-
-  const isVerifying = Boolean(orderId) && !result && !error;
-  const status = normalizePaymentStatus(result?.status || queryStatus, "failed");
-  const provider = normalizePaymentProvider(result?.provider || queryProvider);
-  const providerLabel = getPaymentProviderLabel(provider);
+  const paymentResult = usePaymentResult({ defaultStatus: "failed" });
+  const {
+    amount,
+    error,
+    isVerifying,
+    message,
+    orderCode,
+    orderId,
+    provider,
+    providerPaymentId,
+    responseCode,
+    status,
+    transactionId,
+    verified,
+  } = paymentResult;
   const isCancelled = isCancelledStatus(status);
   const pageMeta = useMemo(
     () => ({
@@ -63,6 +38,10 @@ function PaymentFailed() {
       icon: isCancelled ? Ban : ShieldAlert,
     }),
     [isCancelled, isVerifying, provider, status],
+  );
+  const timelineSteps = useMemo(
+    () => getPaymentTimelineSteps({ isVerifying, provider, status }),
+    [isVerifying, provider, status],
   );
   const Icon = pageMeta.icon;
 
@@ -83,11 +62,11 @@ function PaymentFailed() {
               <h1 className="text-heading mt-5 max-w-3xl">{pageMeta.title}</h1>
               <p className="text-muted mt-3 max-w-2xl text-base md:text-lg">{pageMeta.description}</p>
 
-              {(queryMessage || result?.message) && (
+              {message && (
                 <div className="mt-5 max-w-2xl rounded-2xl border border-white/10 bg-white/[0.045] p-4">
                   <div className="flex gap-2">
                     <AlertTriangle className="mt-0.5 shrink-0 text-amber-200" size={18} />
-                    <p className="text-sm font-bold text-slate-300">{result?.message || queryMessage}</p>
+                    <p className="text-sm font-bold text-slate-300">{message}</p>
                   </div>
                 </div>
               )}
@@ -101,55 +80,26 @@ function PaymentFailed() {
                 />
               )}
 
-              <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-                <Button as={Link} className="rounded-2xl" to="/checkout">
-                  <RefreshCw size={18} />
-                  Quay lại checkout
-                </Button>
-                <Button as={Link} className="rounded-2xl" to="/cart" variant="outline">
-                  Kiểm tra giỏ hàng
-                </Button>
-                {orderId && (
-                  <Button as={Link} className="rounded-2xl" to={`/profile/orders/${orderId}`} variant="outline">
-                    Xem đơn
-                  </Button>
-                )}
-              </div>
+              <PaymentRetryPanel orderId={orderId} provider={provider} status={status} />
             </div>
 
-            <div className="rounded-3xl border border-white/10 bg-slate-950/48 p-4 shadow-inner shadow-white/[0.03]">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-red-500/15 text-red-100 ring-1 ring-red-300/30">
-                <CreditCard size={25} />
-              </div>
-              <div className="mt-5 space-y-3 text-sm">
-                <div className="flex items-center justify-between gap-3 text-slate-400">
-                  <span>Mã đơn</span>
-                  <span className="font-black text-white">{result?.orderCode || (orderId ? `#${orderId}` : "Đang cập nhật")}</span>
-                </div>
-                <div className="flex items-center justify-between gap-3 text-slate-400">
-                  <span>Trạng thái</span>
-                  <span className="font-black text-red-100">{status}</span>
-                </div>
-                <div className="flex items-center justify-between gap-3 text-slate-400">
-                  <span>Phương thức</span>
-                  <span className="font-black text-blue-100">{providerLabel}</span>
-                </div>
-                <div className="flex items-center justify-between gap-3 text-slate-400">
-                  <span>Mã phản hồi</span>
-                  <span className="font-black text-white">{result?.responseCode || searchParams.get("code") || "N/A"}</span>
-                </div>
-                <div className="flex items-center justify-between gap-3 text-slate-400">
-                  <span>Số tiền</span>
-                  <span className="font-black text-blue-100">{result?.amount ? formatCurrency(result.amount) : "Đang cập nhật"}</span>
-                </div>
-                <div className="rounded-2xl border border-amber-300/20 bg-amber-500/10 p-3">
-                  <p className="text-caption text-slate-300">
-                    Đơn không được đánh dấu đã thanh toán nếu chữ ký, số tiền hoặc trạng thái giao dịch không hợp lệ.
-                  </p>
-                </div>
-              </div>
-            </div>
+            <TransactionSummary
+              amount={amount}
+              note="Đơn không được đánh dấu đã thanh toán nếu chữ ký, số tiền hoặc trạng thái giao dịch không hợp lệ."
+              orderCode={orderCode}
+              orderId={orderId}
+              provider={provider}
+              providerPaymentId={providerPaymentId}
+              responseCode={responseCode}
+              status={status}
+              transactionId={transactionId}
+              verified={verified}
+            />
           </div>
+        </section>
+
+        <section className="mt-5">
+          <PaymentTimeline steps={timelineSteps} />
         </section>
       </Container>
     </div>

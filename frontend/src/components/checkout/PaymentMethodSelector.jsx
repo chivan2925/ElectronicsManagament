@@ -1,4 +1,4 @@
-import { Banknote, CheckCircle2, CreditCard, ShieldCheck, Smartphone } from "lucide-react";
+import { Banknote, CheckCircle2, CreditCard, LockKeyhole, ShieldCheck, Smartphone } from "lucide-react";
 import { cn } from "../../utils/classNames";
 import Badge from "../ui/Badge";
 
@@ -9,6 +9,8 @@ const methodIcons = {
 };
 
 function PaymentMethodSelector({ onChange, options, value }) {
+  const selectedOption = options.find((option) => option.id === value) || options[0];
+
   return (
     <section className="rounded-3xl border border-white/10 bg-slate-950/36 p-4 shadow-inner shadow-white/[0.03] backdrop-blur-xl sm:p-5">
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -56,8 +58,20 @@ function PaymentMethodSelector({ onChange, options, value }) {
 
                 <div className="mt-4">
                   <p className="font-black text-white">{option.name}</p>
+                  {option.subtitle && <p className="text-caption mt-0.5 text-blue-200">{option.subtitle}</p>}
                   <p className="text-caption mt-1 text-slate-400">{option.description}</p>
                 </div>
+
+                {option.highlights?.length > 0 && (
+                  <div className="mt-3 grid gap-1.5">
+                    {option.highlights.slice(0, 2).map((highlight) => (
+                      <span className="inline-flex items-center gap-1.5 text-[11px] font-black text-slate-300" key={highlight}>
+                        <ShieldCheck className="text-emerald-200" size={12} />
+                        {highlight}
+                      </span>
+                    ))}
+                  </div>
+                )}
 
                 {option.badge && (
                   <Badge className="mt-auto" variant={isDisabled ? "warning" : "soft"}>
@@ -69,6 +83,22 @@ function PaymentMethodSelector({ onChange, options, value }) {
           );
         })}
       </div>
+
+      {selectedOption && (
+        <div className="mt-4 rounded-2xl border border-blue-300/20 bg-blue-500/10 p-3">
+          <div className="flex gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-slate-950/44 text-blue-100 ring-1 ring-blue-300/30">
+              <LockKeyhole size={18} />
+            </div>
+            <div className="min-w-0">
+              <p className="text-sm font-black text-white">{selectedOption.flowTitle || `Luồng ${selectedOption.name}`}</p>
+              <p className="text-caption mt-1 text-slate-400">
+                {selectedOption.settlement || "Thông tin thanh toán được xử lý theo trạng thái đơn hàng và chỉ cập nhật sau khi xác minh."}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

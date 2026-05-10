@@ -58,6 +58,8 @@ The storefront checkout page now exists at `/checkout` with authenticated checko
 
 Checkout now supports VNPay Sandbox and MoMo Sandbox payment handoff with signed backend payment URL/request creation, browser return handling, IPN validation, server-side status verification, paid/failed/cancelled transaction states, and customer result pages at `/payment/success` and `/payment/failed`.
 
+The payment experience now has reusable storefront payment UI for provider trust indicators, payment processing state, transaction summaries, payment timelines, retry guidance, and COD order confirmation. Payment result pages share the `usePaymentResult` hook and `paymentStatus` helpers so COD, VNPay, and MoMo status copy and timeline logic are centralized.
+
 The storefront customer authentication pages now exist at `/login` and `/register` with reusable dark auth layout/forms, social login placeholders, remember-me, forgot-password placeholder, local validation UI, and responsive dark glass styling. The `/login` form now calls the backend JWT auth service; `/register` remains local until customer registration APIs are ready.
 
 The storefront wishlist page now exists at `/wishlist` with persistent localStorage-backed product snapshots, optional backend wishlist sync through `VITE_WISHLIST_API_PATH`, optimistic add/remove/clear behavior, move-to-cart actions, wishlist count, loading/error states, product-card quick toggles, recently viewed tracking, and reusable wishlist/recently-viewed hooks.
@@ -539,6 +541,7 @@ Latest validation:
 - `npm run lint`, `npm run build`, `git diff --check`, targeted dependency duplication checks with `npm ls react react-dom framer-motion lucide-react`, and local route smoke checks passed after the Phase 6 ecommerce review and completion polish. `git diff --check` still reports only CRLF normalization warnings for edited frontend files.
 - `npm run lint`, `npm run build`, and `mvn -q -DskipTests compile` passed after integrating the VNPay Sandbox payment flow.
 - `npm run lint`, `npm run build`, `mvn -q -DskipTests compile`, and `git diff --check` passed after integrating the MoMo Sandbox payment flow.
+- `npm run lint` and `npm run build` passed after polishing the storefront payment experience.
 
 ## Known Issues
 

@@ -9,6 +9,7 @@ import ShippingMethodSelector from "../../components/checkout/ShippingMethodSele
 import TrustSignalBar from "../../components/common/TrustSignalBar";
 import AnnouncementBar from "../../components/layout/AnnouncementBar";
 import Header from "../../components/layout/Header";
+import PaymentTrustIndicators from "../../components/payment/PaymentTrustIndicators";
 import {
   FREE_SHIPPING_THRESHOLD,
   STANDARD_SHIPPING_FEE,
@@ -44,29 +45,41 @@ const paymentMethods = [
   {
     badge: "Khuyến nghị",
     description: "Thanh toán khi nhận hàng, kiểm tra thông tin đơn trước khi trả tiền.",
+    flowTitle: "Xác nhận COD",
+    highlights: ["Không nhập thẻ", "Kiểm tra khi nhận"],
     apiValue: "CASH",
     id: "cod",
     name: "COD",
     placeholder: false,
     provider: "COD",
+    settlement: "Đơn được ghi nhận ngay, thanh toán trực tiếp cho đơn vị giao hàng khi nhận sản phẩm.",
+    subtitle: "Thanh toán khi nhận hàng",
   },
   {
     badge: "Sandbox",
     description: "Tạo phiên thanh toán VNPay Sandbox và chuyển hướng sang cổng bảo mật.",
+    flowTitle: "Luồng VNPay Sandbox",
+    highlights: ["Secure hash", "Server xác minh"],
     apiValue: "DIGITAL",
     id: "vnpay",
     name: "VNPay",
     placeholder: false,
     provider: "VNPAY",
+    settlement: "Website chỉ cập nhật paid sau khi backend xác minh secure hash, merchant code và số tiền.",
+    subtitle: "Cổng thanh toán nội địa",
   },
   {
     badge: "Sandbox",
     description: "Tạo phiên thanh toán ví MoMo Sandbox với xác minh chữ ký giao dịch.",
+    flowTitle: "Luồng MoMo Sandbox",
+    highlights: ["HMAC-SHA256", "Server xác minh"],
     apiValue: "DIGITAL",
     id: "momo",
     name: "MoMo",
     placeholder: false,
     provider: "MOMO",
+    settlement: "Website chỉ cập nhật paid sau khi backend xác minh chữ ký MoMo, merchant code và số tiền.",
+    subtitle: "Ví điện tử",
   },
 ];
 
@@ -476,6 +489,7 @@ function Checkout() {
               options={paymentMethods}
               value={paymentMethodId}
             />
+            <PaymentTrustIndicators provider={selectedPaymentMethod.provider} />
           </MotionDiv>
 
           <MotionDiv variants={fadeUp}>

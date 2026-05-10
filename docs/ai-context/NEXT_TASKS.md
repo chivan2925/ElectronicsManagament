@@ -14,6 +14,10 @@ Ready for Phase 7 — Advanced Features & Production Systems
 
 ## Recently Completed
 
+- Polished the storefront payment experience for COD, VNPay, and MoMo.
+- Added reusable payment UI for payment trust indicators, processing state, transaction summary, payment timeline, retry guidance, and COD order confirmation.
+- Centralized payment result fetch/normalization in `usePaymentResult` and expanded `paymentStatus` helpers to reduce duplicated payment logic.
+- Verified `npm run lint` and `npm run build` after the payment UX polish.
 - Integrated MoMo Sandbox checkout handoff for ecommerce orders.
 - Added reusable backend payment gateway abstraction, signed MoMo payment request creation, browser return/IPN signature validation, merchant/amount validation, paid/failed/cancelled transaction handling, and unpaid order close/release behavior.
 - Enabled MoMo in checkout with provider-aware payment loading states, shared payment API helpers, payment status helpers, and result routes `/payment/success` and `/payment/failed`.

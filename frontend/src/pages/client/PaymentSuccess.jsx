@@ -1,71 +1,58 @@
-import { useEffect, useMemo, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
-import { CheckCircle2, Clock3, CreditCard, ReceiptText, ShieldCheck } from "lucide-react";
-import paymentService from "../../api/paymentService";
+import { useMemo } from "react";
+import { Link } from "react-router-dom";
+import { CheckCircle2, Clock3, ReceiptText } from "lucide-react";
 import AnnouncementBar from "../../components/layout/AnnouncementBar";
 import Header from "../../components/layout/Header";
+import PaymentTimeline from "../../components/payment/PaymentTimeline";
+import TransactionSummary from "../../components/payment/TransactionSummary";
 import Badge from "../../components/ui/Badge";
 import Button from "../../components/ui/Button";
 import Container from "../../components/ui/Container";
 import ApiErrorAlert from "../../components/ui/feedback/ApiErrorAlert";
-import { formatCurrency } from "../../utils/formatters";
+import usePaymentResult from "../../hooks/usePaymentResult";
 import {
-  getPaymentProviderLabel,
+  getPaymentResultCopy,
+  getPaymentTimelineSteps,
   isPaidStatus,
-  normalizePaymentProvider,
-  normalizePaymentStatus,
 } from "../../utils/paymentStatus";
 
 function PaymentSuccess() {
-  const [searchParams] = useSearchParams();
-  const orderId = searchParams.get("orderId");
-  const transactionId = searchParams.get("transactionId");
-  const queryStatus = normalizePaymentStatus(searchParams.get("status"), "pending");
-  const queryProvider = normalizePaymentProvider(searchParams.get("provider"), "VNPAY");
-  const [result, setResult] = useState(null);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    if (!orderId) {
-      return undefined;
-    }
-
-    let isActive = true;
-
-    paymentService
-      .getOrderPaymentStatus(orderId, { transactionId })
-      .then((paymentStatus) => {
-        if (isActive) {
-          setResult(paymentStatus);
-        }
-      })
-      .catch((statusError) => {
-        if (isActive) {
-          setError(statusError);
-        }
-      });
-
-    return () => {
-      isActive = false;
-    };
-  }, [orderId, transactionId]);
-
-  const isVerifying = Boolean(orderId) && !result && !error;
-  const status = normalizePaymentStatus(result?.status || queryStatus, "pending");
-  const provider = normalizePaymentProvider(result?.provider || queryProvider);
-  const providerLabel = getPaymentProviderLabel(provider);
+  const paymentResult = usePaymentResult({ defaultStatus: "pending" });
+  const {
+    amount,
+    error,
+    isVerifying,
+    message,
+    orderCode,
+    orderId,
+    provider,
+    providerLabel,
+    providerPaymentId,
+    responseCode,
+    status,
+    transactionId,
+    verified,
+  } = paymentResult;
   const isPaid = isPaidStatus(status);
+  const pageMeta = useMemo(
+    () => getPaymentResultCopy({ isVerifying, provider, status }),
+    [isVerifying, provider, status],
+  );
+  const timelineSteps = useMemo(
+    () => getPaymentTimelineSteps({ isVerifying, provider, status }),
+    [isVerifying, provider, status],
+  );
   const verifiedLabel = useMemo(() => {
     if (isVerifying) {
       return "Đang xác minh";
     }
 
-    if (isPaid && result?.verified) {
+    if (isPaid && verified) {
       return "Đã xác minh";
     }
 
     return "Cần kiểm tra";
-  }, [isPaid, isVerifying, result?.verified]);
+  }, [isPaid, isVerifying, verified]);
 
   return (
     <div className="store-page-shell">
@@ -82,11 +69,11 @@ function PaymentSuccess() {
                 {verifiedLabel}
               </Badge>
               <h1 className="text-heading mt-5 max-w-3xl">
-                {isPaid ? `Thanh toán ${providerLabel} thành công` : "Đang kiểm tra thanh toán"}
+                {isPaid ? pageMeta.title : "Đang kiểm tra thanh toán"}
               </h1>
               <p className="text-muted mt-3 max-w-2xl text-base md:text-lg">
                 {isPaid
-                  ? `Hệ thống đã ghi nhận giao dịch ${providerLabel} Sandbox và cập nhật trạng thái đơn hàng.`
+                  ? pageMeta.description
                   : "Trang thanh toán đã quay lại, nhưng hệ thống chưa xác nhận trạng thái paid cho đơn này."}
               </p>
 
@@ -112,37 +99,28 @@ function PaymentSuccess() {
               </div>
             </div>
 
-            <div className="rounded-3xl border border-white/10 bg-slate-950/48 p-4 shadow-inner shadow-white/[0.03]">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-500/15 text-emerald-100 ring-1 ring-emerald-300/30">
-                <ShieldCheck size={25} />
-              </div>
-              <div className="mt-5 space-y-3 text-sm">
-                <div className="flex items-center justify-between gap-3 text-slate-400">
-                  <span>Mã đơn</span>
-                  <span className="font-black text-white">{result?.orderCode || (orderId ? `#${orderId}` : "Đang cập nhật")}</span>
-                </div>
-                <div className="flex items-center justify-between gap-3 text-slate-400">
-                  <span>Giao dịch</span>
-                  <span className="font-black text-white">{result?.providerPaymentId || transactionId || "Sandbox"}</span>
-                </div>
-                <div className="flex items-center justify-between gap-3 text-slate-400">
-                  <span>Phương thức</span>
-                  <span className="font-black text-blue-100">{providerLabel}</span>
-                </div>
-                <div className="flex items-center justify-between gap-3 text-slate-400">
-                  <span>Số tiền</span>
-                  <span className="font-black text-emerald-200">{result?.amount ? formatCurrency(result.amount) : "Đang cập nhật"}</span>
-                </div>
-                <div className="rounded-2xl border border-blue-300/20 bg-blue-500/10 p-3">
-                  <div className="flex gap-2">
-                    <CreditCard className="mt-0.5 shrink-0 text-blue-200" size={17} />
-                    <p className="text-caption text-slate-300">
-                      Trạng thái thành công chỉ hiển thị sau khi hệ thống xác minh phản hồi {providerLabel}.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <TransactionSummary
+              amount={amount}
+              note={`Trạng thái thành công chỉ hiển thị sau khi hệ thống xác minh phản hồi ${providerLabel}.`}
+              orderCode={orderCode}
+              orderId={orderId}
+              provider={provider}
+              providerPaymentId={providerPaymentId}
+              responseCode={responseCode}
+              status={status}
+              transactionId={transactionId}
+              verified={verified}
+            />
+          </div>
+        </section>
+
+        <section className="mt-5 grid gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
+          <PaymentTimeline steps={timelineSteps} />
+          <div className="rounded-2xl border border-white/10 bg-slate-950/36 p-4">
+            <p className="text-sm font-black text-white">Phản hồi giao dịch</p>
+            <p className="text-caption mt-2 text-slate-400">
+              {message || `${providerLabel} Sandbox đã được ghi nhận qua kênh return/IPN và xác minh server-side.`}
+            </p>
           </div>
         </section>
       </Container>
