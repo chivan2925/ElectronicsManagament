@@ -2,28 +2,30 @@
 
 ## Purpose
 
-This document describes the Docker and deployment foundation for ElectronicsManagement.
+This guide describes the deployment foundation for ElectronicsManagement.
 
-No real deployment has been performed. The files in this repository are a local, production-oriented foundation for building containers, running the app stack, and preparing environment-specific deployment work later.
+No production deployment has been performed from this repository. The current setup is a production-oriented local foundation with Docker, health checks, environment templates, and CI checks.
 
-## Services
+## Deployment Topology
 
-The Docker foundation includes:
+```text
+Browser
+  -> Frontend container (Nginx serving Vite build)
+  -> /api proxy
+  -> Backend container (Spring Boot)
+  -> PostgreSQL
+  -> Cloudinary / VNPay / MoMo
+```
 
-- `frontend`: React + Vite app built into static assets and served by unprivileged Nginx.
-- `backend`: Spring Boot API packaged as a Java 21 runtime image.
-- `postgres`: PostgreSQL database with a named Docker volume.
+Services:
 
-## Health Checks
+| Service | Purpose | Default local port |
+| --- | --- | --- |
+| `frontend` | Static React app served by unprivileged Nginx | `8088` |
+| `backend` | Spring Boot REST API | `8080` |
+| `postgres` | PostgreSQL database | `5432` |
 
-The backend exposes minimal deployment probes:
-
-- `GET /api/health`: liveness check for the API process.
-- `GET /api/health/readiness`: readiness check that verifies database connectivity.
-
-The production backend image uses `/api/health/readiness` for its Docker healthcheck, and the production Compose frontend waits for the backend service to become healthy before starting.
-
-## Files
+## Deployment Files
 
 ```text
 .env.example
@@ -34,57 +36,79 @@ frontend/nginx.conf
 frontend/.dockerignore
 backend/electronics/Dockerfile
 backend/electronics/.dockerignore
+.github/workflows/frontend-ci.yml
+.github/workflows/backend-ci.yml
 ```
 
 ## Environment Management
 
-Copy the example file before running Docker locally:
+Create a local `.env` from the template:
 
 ```bash
 cp .env.example .env
 ```
 
-Use `.env` for local values only. Do not commit real credentials, provider secrets, or production database passwords.
+Rules:
 
-Important environment groups:
+- Keep `.env` local.
+- Do not commit real database, JWT, payment, or Cloudinary secrets.
+- Use hosting-platform secrets or a secret manager for real environments.
+- Keep provider callback URLs aligned with the public HTTPS backend URL.
 
-- Postgres: `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_PORT`.
-- Backend: `DB_URL`, `DB_USERNAME`, `DB_PASSWORD`, `ELECTRONICS_JWT_SECRET`, `SPRING_JPA_HIBERNATE_DDL_AUTO`, `CORS_ALLOWED_ORIGIN_PATTERNS`.
-- Payment: `PAYMENT_FRONTEND_SUCCESS_URL`, `PAYMENT_FRONTEND_FAILED_URL`, `VNPAY_*`, `MOMO_*`.
-- Uploads: `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`.
-- Frontend build: `VITE_API_BASE_URL`, `VITE_AUTH_TOKEN_STORAGE`, `VITE_*_API_PATH`.
+Main environment groups:
 
-For production-like local containers, `VITE_API_BASE_URL=/api` lets Nginx proxy API traffic to the backend service without exposing cross-origin browser requests.
+| Group | Variables |
+| --- | --- |
+| Compose | `COMPOSE_PROJECT_NAME`, `FRONTEND_PORT`, `BACKEND_PORT`, `FRONTEND_DEV_PORT` |
+| Database | `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_PORT`, `DB_URL`, `DB_USERNAME`, `DB_PASSWORD` |
+| Backend | `SPRING_PROFILES_ACTIVE`, `SPRING_JPA_HIBERNATE_DDL_AUTO`, `SPRING_JPA_SHOW_SQL`, `SERVER_PORT`, `JAVA_OPTS` |
+| Security | `ELECTRONICS_JWT_SECRET`, `ELECTRONICS_JWT_EXPIRATION_MS`, `CORS_ALLOWED_ORIGIN_PATTERNS` |
+| Swagger | `SPRINGDOC_API_DOCS_ENABLED`, `SPRINGDOC_SWAGGER_UI_ENABLED` |
+| Payments | `PAYMENT_FRONTEND_SUCCESS_URL`, `PAYMENT_FRONTEND_FAILED_URL`, `VNPAY_*`, `MOMO_*` |
+| Uploads | `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` |
+| Frontend | `VITE_API_BASE_URL`, `VITE_API_TIMEOUT`, `VITE_AUTH_TOKEN_STORAGE`, `VITE_*_API_PATH` |
+
+Detailed variable reference: [docs/ENVIRONMENT.md](docs/ENVIRONMENT.md).
 
 ## Production-Like Local Stack
 
-Build and start the containerized stack:
+Build and run the Docker stack:
 
 ```bash
 docker compose --env-file .env up --build -d
 ```
 
-Default local URLs from `.env.example`:
+Open:
 
-- Frontend: `http://localhost:8088`
-- Backend API: `http://localhost:8080/api`
-- Postgres: `localhost:5432`
+```text
+http://localhost:8088
+http://localhost:8080/api/health
+http://localhost:8080/swagger-ui.html
+```
 
-Stop the stack:
+View logs:
+
+```bash
+docker compose logs -f frontend backend postgres
+```
+
+Stop:
 
 ```bash
 docker compose down
 ```
 
-Stop and remove the database volume only when you intentionally want to delete local data:
+Stop and remove local database data:
 
 ```bash
 docker compose down -v
 ```
 
-## Development Stack
+Use `down -v` only when local data can be deleted.
 
-Use the development compose file when you want live source mounts and Vite dev server behavior:
+## Development Docker Stack
+
+Run live-mounted containers for development:
 
 ```bash
 docker compose -f docker-compose.dev.yml --env-file .env up --build
@@ -94,37 +118,116 @@ Default development URLs:
 
 - Frontend: `http://localhost:5173`
 - Backend API: `http://localhost:8080/api`
-- Postgres: `localhost:5432`
+- PostgreSQL: `localhost:5432`
 
-The dev stack uses:
+The development stack uses Vite dev server and `mvn spring-boot:run`.
 
-- `frontend` Dockerfile `development` target with Vite on port `5173`.
-- `backend` Dockerfile `development` target with `mvnw spring-boot:run`.
-- Named cache volumes for frontend `node_modules` and Maven dependencies.
+## Manual Build And Run
 
-## Production Notes
+Frontend:
 
-Before a real deployment:
+```bash
+cd frontend
+npm install
+npm run lint
+npm run build
+```
 
-- Replace all placeholder values in `.env`.
-- Inject secrets through the hosting platform or a secret manager, not committed files.
-- Set `SPRING_JPA_HIBERNATE_DDL_AUTO=validate` after controlled migrations/backfills exist.
-- Set production payment return, notify, and frontend URLs to public HTTPS URLs.
-- Restrict `CORS_ALLOWED_ORIGIN_PATTERNS` to the real frontend origins if the backend is exposed directly.
-- Consider disabling Swagger in production with `SPRINGDOC_API_DOCS_ENABLED=false` and `SPRINGDOC_SWAGGER_UI_ENABLED=false`.
-- Run frontend and backend validation before building release images.
-- Add TLS, backups, log collection, database migration automation, and infrastructure-specific health checks in the hosting layer.
+Backend:
+
+```bash
+cd backend/electronics
+mvn test
+mvn -q -DskipTests compile
+```
+
+Run backend manually:
+
+```bash
+cd backend/electronics
+mvn spring-boot:run
+```
+
+Run frontend manually:
+
+```bash
+cd frontend
+npm run dev
+```
+
+## Health Checks
+
+Backend probes:
+
+| Endpoint | Purpose |
+| --- | --- |
+| `GET /api/health` | Liveness: API process is running. |
+| `GET /api/health/readiness` | Readiness: API and database connectivity are available. |
+
+Docker Compose uses backend readiness before starting the production-like frontend service.
+
+## Release Checklist
+
+Before deploying to a real environment:
+
+1. Replace every placeholder in `.env`.
+2. Use a unique 32+ byte `ELECTRONICS_JWT_SECRET`.
+3. Set `SPRING_JPA_HIBERNATE_DDL_AUTO=validate` after controlled migrations exist.
+4. Disable SQL logging unless needed for debugging.
+5. Restrict `CORS_ALLOWED_ORIGIN_PATTERNS` to real frontend origins.
+6. Use HTTPS public URLs for payment return and notify endpoints.
+7. Set real Cloudinary and payment credentials through secrets management.
+8. Decide whether Swagger should be disabled with `SPRINGDOC_API_DOCS_ENABLED=false` and `SPRINGDOC_SWAGGER_UI_ENABLED=false`.
+9. Run frontend and backend CI checks.
+10. Confirm backups, restore procedure, log retention, and monitoring are ready.
+
+## Payment Deployment Notes
+
+For VNPay and MoMo:
+
+- Backend return URLs must be public HTTPS URLs.
+- MoMo notify URL must point to `/api/system/payment/momo-ipn`.
+- VNPay IPN must point to `/api/system/payment/vnpay-ipn`.
+- Frontend success/failed URLs must point to deployed frontend routes.
+- Do not expose provider secrets to the frontend.
+
+See [PAYMENT.md](PAYMENT.md).
+
+## Database And Migration Notes
+
+Current local defaults allow Hibernate schema updates for development. Production should use controlled migrations/backfills instead of `ddl-auto:update`.
+
+Recommended production posture:
+
+```env
+SPRING_JPA_HIBERNATE_DDL_AUTO=validate
+SPRING_JPA_SHOW_SQL=false
+```
+
+Add migration tooling before a real rollout if the schema will be managed across environments.
+
+## Rollback Notes
+
+This repository does not include an automated rollout or rollback pipeline yet.
+
+For a real deployment, prepare:
+
+- Versioned images.
+- Database backup before schema changes.
+- A tested restore command.
+- A way to shift traffic back to the previous frontend/backend image.
+- Payment callback compatibility between old and new backend versions.
 
 ## Validation Commands
 
-Check Docker Compose rendering without starting containers:
+Check Compose rendering:
 
 ```bash
 docker compose --env-file .env.example config
 docker compose -f docker-compose.dev.yml --env-file .env.example config
 ```
 
-Existing project validation:
+Check app builds:
 
 ```bash
 cd frontend

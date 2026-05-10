@@ -2,258 +2,184 @@
 
 ## Purpose
 
-This document describes the current and recommended frontend structure for the React application in `frontend/`.
+This document describes the current React frontend structure under `frontend/`.
 
-The frontend contains two surfaces:
+The frontend has two main surfaces:
 
-- Client storefront at `/`.
-- Admin console under `/admin`.
+- Customer storefront.
+- Admin/staff dashboard.
 
 ## Stack
 
-- React + Vite
-- Tailwind CSS
+- React 19
+- Vite/Rolldown
 - React Router
+- Tailwind CSS
 - Axios
+- Framer Motion
 - lucide-react
 - Recharts
 
-Additional packages are installed, including Ant Design, react-icons, and Swiper, but the current project rules prefer Tailwind CSS and lucide-react for new UI work unless a feature explicitly needs another library.
-
-## Current Source Tree
+## Source Tree
 
 ```text
 frontend/src/
-├─ api/
-│  ├─ client.js
-│  ├─ authService.js
-│  ├─ categoryService.js
-│  ├─ brandService.js
-│  ├─ productService.js
-│  ├─ userService.js
-│  ├─ staffService.js
-│  ├─ orderService.js
-│  ├─ warehouseService.js
-│  ├─ couponService.js
-│  └─ mediaService.js
-├─ components/
-│  ├─ admin/
-│  │  ├─ CrudPage.jsx
-│  │  ├─ DataTable.jsx
-│  │  ├─ PageHeader.jsx
-│  │  ├─ Sidebar.jsx
-│  │  ├─ StatCard.jsx
-│  │  ├─ StatusBadge.jsx
-│  │  └─ Topbar.jsx
-│  ├─ AnnouncementBar.jsx
-│  ├─ CategorySidebar.jsx
-│  ├─ FeaturedCategories.jsx
-│  ├─ FlashSaleCard.jsx
-│  ├─ Header.jsx
-│  ├─ HeroBanner.jsx
-│  ├─ ProductCard.jsx
-│  ├─ PromoCard.jsx
-│  └─ ServiceBar.jsx
-├─ data/
-│  ├─ mockAdminData.js
-│  └─ mockData.js
-├─ layouts/
-│  └─ AdminLayout.jsx
-├─ pages/
-│  ├─ admin/
-│  │  ├─ ActivityLog.jsx
-│  │  ├─ BestSellers.jsx
-│  │  ├─ Brands.jsx
-│  │  ├─ Categories.jsx
-│  │  ├─ Coupons.jsx
-│  │  ├─ Dashboard.jsx
-│  │  ├─ Media.jsx
-│  │  ├─ Orders.jsx
-│  │  ├─ Products.jsx
-│  │  ├─ Revenue.jsx
-│  │  ├─ Roles.jsx
-│  │  ├─ Staff.jsx
-│  │  ├─ Users.jsx
-│  │  ├─ Variants.jsx
-│  │  └─ Warehouse.jsx
-│  └─ Home.jsx
-├─ utils/
-│  └─ formatters.js
-├─ App.jsx
-├─ index.css
-└─ main.jsx
+├─ admin/              Admin components, hooks, layouts, analytics, services
+├─ api/                Axios client, API services, mappers, shared mapper utilities
+├─ auth/               Auth provider, storage, roles, permissions
+├─ cart/               Shared cart provider and cart utilities
+├─ components/         Storefront, shared UI, feedback, payment, account components
+├─ data/               Mock/local data used where APIs are not finalized
+├─ guards/             Route guards for auth/admin/staff/guest access
+├─ hooks/              Storefront and API-backed feature hooks
+├─ layouts/            Compatibility layout exports
+├─ monitoring/         Client logging/error/API/payment tracking helpers
+├─ pages/              Client pages and admin pages
+├─ realtime/           Realtime notification abstractions
+├─ routes/             Lazy routes and route preload helpers
+├─ seo/                Metadata and structured-data helpers
+├─ store/              Store namespaces
+├─ styles/             Global and utility CSS
+├─ utils/              Formatters, product identity, payment status, tracking
+└─ wishlist/           Wishlist provider and persistence logic
 ```
 
 ## Route Structure
 
-`frontend/src/App.jsx` owns top-level routing.
-
-Client route:
+Client routes:
 
 | Route | Page |
 | --- | --- |
-| `/` | `Home` |
+| `/` | Homepage |
+| `/products` | Product listing |
+| `/categories/:categorySlug` | Category listing |
+| `/products/:slug` | Product detail |
+| `/cart` | Cart |
+| `/checkout` | Protected checkout |
+| `/payment/success` | Payment success/result |
+| `/payment/failed` | Payment failed/cancelled/result |
+| `/login` | Login |
+| `/register` | Register placeholder |
+| `/wishlist` | Wishlist |
+| `/profile` | Account overview |
+| `/profile/orders` | Order history |
+| `/profile/orders/:id` | Order detail/tracking |
+| `/profile/settings` | Profile settings |
 
 Admin routes:
 
 | Route | Page |
 | --- | --- |
-| `/admin` | `Dashboard` |
-| `/admin/categories` | `Categories` |
-| `/admin/brands` | `Brands` |
-| `/admin/products` | `Products` |
-| `/admin/variants` | `Variants` |
-| `/admin/media` | `Media` |
-| `/admin/users` | `Users` |
-| `/admin/staff` | `Staff` |
-| `/admin/roles` | `Roles` |
-| `/admin/orders` | `Orders` |
-| `/admin/warehouse` | `Warehouse` |
-| `/admin/coupons` | `Coupons` |
-| `/admin/reports/revenue` | `Revenue` |
-| `/admin/reports/best-sellers` | `BestSellers` |
-| `/admin/reports/activity` | `ActivityLog` |
-
-Fallback route:
-
-```text
-* -> /
-```
-
-## Layout Model
-
-Client storefront:
-
-- Currently rendered directly by `Home.jsx`.
-- Uses dark e-commerce components under `src/components/`.
-- Uses `src/data/mockData.js`.
-
-Admin console:
-
-- Uses nested routing under `AdminLayout.jsx`.
-- `AdminLayout` owns sidebar, topbar, and page shell.
-- Admin pages use reusable admin components under `src/components/admin/`.
-- Uses `src/data/mockAdminData.js`.
-
-## Recommended Future Structure
-
-As the storefront grows, split client and admin more explicitly:
-
-```text
-frontend/src/
-├─ api/
-│  ├─ client.js
-│  ├─ authService.js
-│  ├─ categoryService.js
-│  ├─ brandService.js
-│  └─ productService.js
-├─ components/
-│  ├─ admin/
-│  └─ client/
-├─ pages/
-│  ├─ admin/
-│  └─ client/
-├─ layouts/
-│  ├─ AdminLayout.jsx
-│  └─ ClientLayout.jsx
-└─ data/
-   ├─ mockAdminData.js
-   └─ mockData.js
-```
-
-Keep this split conservative. Move files only when the additional structure removes confusion.
+| `/admin/login` | Admin login |
+| `/admin/dashboard` | Dashboard |
+| `/admin/categories` | Categories |
+| `/admin/brands` | Brands |
+| `/admin/products` | Products |
+| `/admin/variants` | Variants |
+| `/admin/media` | Media |
+| `/admin/users` | Users |
+| `/admin/staff` | Staff |
+| `/admin/roles` | Roles and permissions |
+| `/admin/orders` | Orders |
+| `/admin/warehouse` | Warehouse |
+| `/admin/coupons` | Coupons |
+| `/admin/reports/revenue` | Revenue report |
+| `/admin/reports/best-sellers` | Best sellers report |
+| `/admin/reports/activity` | Activity log |
 
 ## API Layer
 
-The shared Axios client is `frontend/src/api/client.js`.
+API access is centralized in:
+
+```text
+frontend/src/api/client.js
+frontend/src/api/resourceService.js
+frontend/src/api/*Service.js
+frontend/src/api/*Mapper.js
+frontend/src/api/mapperUtils.js
+```
+
+Rules:
+
+- UI components should not duplicate Axios request logic.
+- Services own endpoint paths and request config.
+- Mappers normalize flexible backend wrappers and DTO variants.
+- `mapperUtils.js` owns common helpers for payload unwrap, page items, page metadata, number conversion, status normalization, and query cleanup.
+
+## Auth And Permissions
+
+Important files:
+
+```text
+frontend/src/auth/AuthProvider.jsx
+frontend/src/auth/authStorage.js
+frontend/src/auth/authHelpers.js
+frontend/src/auth/roleHelpers.js
+frontend/src/auth/usePermissions.js
+frontend/src/guards/
+```
 
 Current behavior:
 
-- Base URL: `VITE_API_BASE_URL` or `http://localhost:8080/api`.
-- Timeout: 15 seconds.
-- Default content type: `application/json`.
-- Reads `accessToken` from `localStorage`.
-- Adds `Authorization: Bearer <token>` when a token exists.
-- Removes the admin token on `401`.
+- Admin/staff login calls the backend JWT login API.
+- Customer-shaped sessions are supported by route policy and UI state, while public registration APIs remain incomplete.
+- Admin shell is protected by staff/admin route guards.
+- Admin-only modules use `AdminRoute`.
+- Resource actions can be gated through shared permission helpers.
 
-API integration should use service modules rather than direct axios calls inside large UI components.
+## State Strategy
 
-Example target pattern:
-
-```text
-pages/admin/Categories.jsx
-  -> api/categoryService.js
-  -> api/client.js
-  -> backend /api/admin/categories
-```
-
-## Data Strategy
-
-Current state:
-
-- Client mock data: `src/data/mockData.js`.
-- Admin mock data: `src/data/mockAdminData.js`.
-
-When replacing mock data:
-
-- Keep DTO shapes close to backend response DTOs.
-- Replace data access at the page/service boundary.
-- Preserve the same UI components where possible.
-- Add loading, error, and empty states before switching pages to real API data.
+| Area | State owner |
+| --- | --- |
+| Auth | `AuthProvider` and auth storage helpers |
+| Cart | `frontend/src/cart` |
+| Wishlist | `frontend/src/wishlist` with optional backend sync |
+| Products | `useProducts`, `useProductDetail`, API mappers |
+| Checkout | `useCheckoutCoupon`, `useCheckoutOrder`, `useCheckoutProfile` |
+| Payment result | `usePaymentResult` and payment status helpers |
+| Admin tables | Shared admin components and hooks such as `useAdminServerTableState` |
+| Notifications | `useNotifications`, realtime notification helpers |
 
 ## Styling Rules
 
-Client storefront:
+Storefront:
 
-- Dark theme: `#050B14` / `#07111F`.
-- Accent blue: `#005BFF`.
-- Dark gradient cards with `#1E293B` borders.
-- Product and purchase CTAs should stay visually prominent.
+- Dark gaming ecommerce style.
+- Primary blue accent `#005BFF`.
+- Product-focused premium visuals.
+- Preserve homepage layout.
 
-Admin console:
+Admin:
 
-- Sidebar: `#07111F`.
-- Main background: `#F6F8FB`.
-- Primary blue: `#005BFF`.
-- White cards, light borders, soft shadows.
-- Work-focused layout with scannable tables and clear actions.
+- Work-focused SaaS dashboard style.
+- Dark navy sidebar.
+- Light content background.
+- Dense, scannable tables and forms.
 
-Shared rules:
+Shared:
 
-- Use Tailwind CSS.
+- Prefer Tailwind CSS.
 - Prefer lucide-react icons.
-- Keep components responsive.
-- Avoid unnecessary inline styles.
+- Keep responsive layouts stable.
+- Avoid hardcoded backend URLs in components.
 
-## Component Responsibilities
+## Performance Structure
 
-Pages:
+The frontend uses:
 
-- Compose layout.
-- Own page-level state.
-- Fetch data through API modules when real APIs are connected.
-- Pass normalized props to reusable components.
+- Route-level lazy loading.
+- Route preload helpers for common next navigations.
+- Deferred below-fold storefront sections.
+- Optimized image handling.
+- Vendor chunking for React, Router, Motion, and HTTP code.
+- API GET deduplication and opt-in TTL caching.
 
-Reusable components:
+## Current Known Gaps
 
-- Render focused UI pieces.
-- Avoid owning cross-page business logic.
-- Receive data and callbacks through props.
-
-Data files:
-
-- Hold mock data only.
-- Should be easy to delete or replace once APIs are connected.
-
-## Environment Variables
-
-Use:
-
-```text
-VITE_API_BASE_URL=http://localhost:8080/api
-```
-
-Do not hardcode backend hosts in components.
+- Homepage product sections and search overlay still use mock/local data.
+- Dashboard/report analytics use mock analytics data until reporting APIs exist.
+- Customer registration API contract is not finalized.
+- Public wishlist backend integration remains optional.
 
 ## Commands
 
@@ -265,11 +191,3 @@ npm run dev
 npm run lint
 npm run build
 ```
-
-## Near-Term Frontend Priorities
-
-1. Add admin login page and protected admin route behavior.
-2. Connect admin categories, brands, and products to real APIs.
-3. Split client components into `components/client/` when more client pages are added.
-4. Add client product listing and product detail pages.
-5. Add cart and checkout UI after public backend endpoints exist.

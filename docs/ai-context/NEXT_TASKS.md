@@ -14,6 +14,9 @@ Phase 8 — Production + Deploy (Phase 7 completed)
 
 ## Recently Completed
 
+- Completed a full project documentation pass for onboarding, setup, environment variables, API, architecture, deployment, payment sandbox, and security.
+- Rebuilt `README.md` with project overview, stack, screenshots placeholders, setup/run guides, route maps, API links, and payment sandbox guidance.
+- Added root `PAYMENT.md` plus `docs/API.md`, `docs/ARCHITECTURE.md`, `docs/SETUP.md`, and `docs/ENVIRONMENT.md`; refreshed stale API, architecture, and workflow docs.
 - Completed a senior maintainability cleanup across frontend API mappers/services and selected admin CRUD table flows.
 - Added shared `frontend/src/api/mapperUtils.js` for API payload unwrapping, array/page metadata normalization, status normalization, number handling, and service query cleanup.
 - Added `useAdminServerTableState` and applied it to Brands, Categories, Media, Orders, and Users to reduce repeated pagination/reload/table state logic without a large rewrite.

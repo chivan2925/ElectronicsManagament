@@ -8,6 +8,15 @@ Always update this file after meaningful work.
 
 ## 2026-05-10
 
+### Project Documentation Pass
+
+- Rebuilt `README.md` into a professional onboarding guide with project overview, tech stack, screenshots placeholders, setup/run commands, client/admin route maps, API links, and payment sandbox notes.
+- Expanded root `DEPLOYMENT.md`, `SECURITY.md`, and added root `PAYMENT.md` for production-like local deployment, security posture, and VNPay/MoMo sandbox workflows.
+- Added `docs/SETUP.md`, `docs/ENVIRONMENT.md`, `docs/API.md`, and `docs/ARCHITECTURE.md` as focused onboarding entry points.
+- Refreshed `docs/api/ENDPOINTS.md`, `docs/api/AUTH.md`, `docs/api/ERROR_FORMAT.md`, architecture docs, backend security docs, and workflow docs to match the current Phase 8 state.
+- Updated `CURRENT_STATE.md` and `NEXT_TASKS.md`.
+- Verified documentation consistency with targeted `rg` checks and `git diff --check`.
+
 ### Codebase Maintainability Cleanup
 
 - Audited frontend/backend code organization for duplicated API mapper helpers, repeated service query cleanup, oversized admin CRUD pages, and repeated server table state.

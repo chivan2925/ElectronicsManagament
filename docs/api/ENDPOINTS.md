@@ -4,7 +4,7 @@
 
 This file documents the backend endpoints that currently exist in `backend/electronics/src/main/java/org/example/electronics/controller`.
 
-The current backend surface is mostly admin and system-facing. Authenticated storefront checkout, profile, and order-history endpoints exist, but public customer auth, persisted cart, and real payment handoff flows are not complete yet.
+The current backend surface includes admin/staff operations, authenticated storefront checkout/account flows, VNPay/MoMo sandbox payment handoff, payment callbacks, media upload, and health probes. Public customer registration/auth, persisted cart, and final customer ownership contracts are not complete yet.
 
 ## Base URL
 
@@ -32,12 +32,25 @@ Authorization: Bearer <accessToken>
 
 Public endpoints:
 
+- `GET /health`
+- `GET /health/readiness`
 - `POST /admin/auth/login`
+- `GET /payments/vnpay-return`
+- `GET /payments/momo-return`
 - `GET /system/payment/vnpay-ipn`
 - `POST /system/payment/momo-ipn`
 - `/v3/api-docs/**`
 - `/swagger-ui/**`
 - `/swagger-ui.html`
+
+Remember that these paths are listed relative to the `/api` base path.
+
+## Health
+
+| Method | Path | Body | Response | Notes |
+| --- | --- | --- | --- | --- |
+| `GET` | `/health` | None | health summary | Public liveness probe. |
+| `GET` | `/health/readiness` | None | readiness summary | Public readiness probe with database connectivity check. |
 
 ## Common Query Parameters
 
@@ -167,6 +180,16 @@ Common filters used by many admin list endpoints:
 | Method | Path | Body | Response | Notes |
 | --- | --- | --- | --- | --- |
 | `POST` | `/orders` | `UserCreateOrderRequestDTO` | `AdminOrderDetailResponseDTO` | Requires token. Creates a `PENDING` order, validates active user, validates coupon if supplied, checks stock, and creates a reserved stock transaction. Does not create a payment gateway link. |
+
+## Storefront Payments
+
+| Method | Path | Body | Response | Notes |
+| --- | --- | --- | --- | --- |
+| `POST` | `/payments/vnpay/create` | payment create request with `orderId` | payment link response | Requires token. Creates a signed VNPay Sandbox payment URL for an existing order. |
+| `POST` | `/payments/momo/create` | payment create request with `orderId` | payment link response | Requires token. Creates a signed MoMo Sandbox payment request for an existing order. |
+| `GET` | `/payments/orders/{orderId}/status` | None | payment status response | Requires token. Verifies server-side order/payment state for payment result pages. |
+| `GET` | `/payments/vnpay-return` | VNPay query string | Redirect | Public browser return endpoint. Validates provider payload and redirects to frontend success/failed route. |
+| `GET` | `/payments/momo-return` | MoMo query string | Redirect | Public browser return endpoint. Validates provider payload and redirects to frontend success/failed route. |
 
 ## Storefront Account
 

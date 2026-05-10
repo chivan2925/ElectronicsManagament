@@ -2,9 +2,9 @@
 
 ## Purpose
 
-This document describes the intended order lifecycle and the backend state transitions currently visible in admin order and warehouse services.
+This document describes the order lifecycle, checkout handoff, backend state transitions, and admin order operations currently visible in the project.
 
-Customer checkout APIs are not complete yet, so this document focuses on the backend/admin flow that exists now.
+Authenticated storefront order creation exists through `/api/orders`. Public customer registration and final customer ownership contracts are still Phase 8 work.
 
 ## Main Entities
 
@@ -139,6 +139,17 @@ Rules:
 
 ## Payment Provider Flow
 
+Storefront online payment request:
+
+```text
+Checkout
+  -> POST /api/orders
+  -> POST /api/payments/vnpay/create or /api/payments/momo/create
+  -> browser redirects to provider sandbox
+  -> backend return/IPN validates provider payload
+  -> frontend result page verifies /api/payments/orders/{orderId}/status
+```
+
 Digital payment success:
 
 ```text
@@ -203,6 +214,6 @@ Client order UI should:
 
 ## Known Gaps
 
-- Public checkout APIs are not complete.
+- Public customer registration and final account ownership checks are not complete.
 - Full return/refund state matrix needs stronger documentation before production.
 - Payment state and order state should be tested together.

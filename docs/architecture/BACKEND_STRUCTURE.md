@@ -2,14 +2,14 @@
 
 ## Purpose
 
-This document describes the current backend structure for the Spring Boot application in `backend/electronics`.
+This document describes the Spring Boot backend under `backend/electronics`.
 
-The backend is the source of truth for admin operations, catalog management, warehouse workflows, order state, payment handling, authentication, and persistence.
+The backend is the source of truth for admin operations, catalog data, orders, payments, warehouse workflows, media uploads, authentication, authorization, monitoring, and persistence.
 
 ## Stack
 
-- Java 25
-- Spring Boot 4.0.5
+- Java 21
+- Spring Boot 4.0.3
 - Spring Web MVC
 - Spring Data JPA
 - Spring Security
@@ -38,12 +38,11 @@ backend/electronics/src/main/java/org/example/electronics/ElectronicsApplication
 ```text
 org.example.electronics/
 ├─ config/
-│  ├─ payment/
-│  ├─ AppConfig.java
-│  └─ CloudinaryConfig.java
+│  └─ payment/
 ├─ controller/
 │  ├─ admin/
-│  └─ system/
+│  ├─ system/
+│  └─ user/
 ├─ dto/
 │  ├─ request/
 │  └─ response/
@@ -52,45 +51,41 @@ org.example.electronics/
 │  ├─ key/
 │  ├─ order/
 │  ├─ warehouse/
-│  └─ root entity classes
+│  └─ root entities
 ├─ exception/
 ├─ job/
 ├─ mapper/
+├─ monitoring/
 ├─ repository/
 ├─ security/
-│  ├─ auth/admin/
+│  ├─ auth/
 │  └─ jwt/
 ├─ service/
 │  ├─ admin/
-│  ├─ admin/impl/
-│  ├─ admin/payment/
 │  ├─ system/
-│  └─ system/impl/
+│  └─ user-facing/payment helpers
 └─ util/
    └─ payment/
 ```
 
 ## Layer Responsibilities
 
-### Controllers
+| Layer | Responsibility |
+| --- | --- |
+| Controller | HTTP routes, request/response contracts, auth principal access. |
+| DTO | Validated input and frontend-safe output contracts. |
+| Service | Business rules, lifecycle transitions, side effects. |
+| Repository | JPA persistence access. |
+| Mapper | Entity-to-DTO and DTO-to-entity conversion. |
+| Security | JWT validation, auth entry points, role/permission enforcement. |
+| Monitoring | Structured request and domain event logging. |
+| Job | Scheduled cleanup and lifecycle tasks. |
 
-Location:
+## Controller Groups
 
-```text
-controller/admin/
-controller/system/
-```
+Admin:
 
-Responsibilities:
-
-- Define REST endpoints.
-- Accept path variables, query parameters, request bodies, and authenticated staff principal.
-- Delegate business logic to services.
-- Return response DTOs or empty success responses.
-
-Current controller groups:
-
-- Admin auth
+- Auth
 - Categories
 - Brands
 - Products
@@ -105,277 +100,78 @@ Current controller groups:
 - Coupons
 - Warehouses
 - Warehouse transactions
-- System payment webhooks
 
-### Services
+User/storefront:
 
-Location:
+- Profile
+- Orders
+- Payment creation/return/status
 
-```text
-service/admin/
-service/admin/impl/
-service/system/
-service/system/impl/
-```
+System:
 
-Responsibilities:
+- Health/readiness
+- Payment IPNs
 
-- Implement business rules.
-- Validate lifecycle transitions beyond basic request validation.
-- Coordinate repositories and mappers.
-- Handle authenticated staff context when needed.
-- Apply side effects such as stock updates, token invalidation, payment handling, and media upload.
-
-### Repositories
-
-Location:
-
-```text
-repository/
-```
-
-Responsibilities:
-
-- Provide database access through Spring Data JPA.
-- Keep persistence queries isolated from controllers and UI-facing DTOs.
-
-### Entities
-
-Location:
-
-```text
-entity/
-```
-
-Responsibilities:
-
-- Model persisted domain state.
-- Define relationships between catalog, user, staff, order, warehouse, payment, media, review, and return request data.
-- Use enums for state and type fields.
-
-Important entity groups:
-
-- Catalog: `CategoryEntity`, `BrandEntity`, `ProductEntity`, `VariantEntity`, `MediaEntity`
-- People and access: `UserEntity`, `StaffEntity`, `RoleEntity`, `PermissionEntity`, `AddressEntity`
-- Sales: `OrderEntity`, `OrderDetailEntity`, `CouponEntity`
-- Payments: `PaymentTransactionEntity`
-- Warehouse: `WarehouseEntity`, `WarehouseDetailEntity`, `WarehouseTransactionEntity`, `WarehouseTransactionDetailEntity`
-- Security: `InvalidatedTokenEntity`
-- Customer feedback and returns: `ReviewEntity`, `ReturnRequestEntity`
-
-### DTOs
-
-Location:
-
-```text
-dto/request/
-dto/response/
-```
-
-Responsibilities:
-
-- Keep API contracts separate from entity models.
-- Use request DTOs for validation.
-- Use response DTOs for frontend-safe output shapes.
-
-Request DTOs are currently strongest for admin workflows. Public client request DTOs are still limited.
-
-### Mappers
-
-Location:
-
-```text
-mapper/
-```
-
-Responsibilities:
-
-- Convert entities to response DTOs.
-- Convert request DTOs to entities where appropriate.
-- Keep mapping logic out of controllers.
-
-MapStruct is configured in Maven for mapper generation.
-
-### Security
-
-Location:
-
-```text
-security/
-```
+## Security
 
 Important classes:
 
-- `SecurityConfig`
-- `StaffDetails`
-- `StaffDetailsService`
-- `JwtAuthenticationFilter`
-- `JwtAuthEntryPoint`
-- `JwtUtils`
+```text
+SecurityConfig
+StaffDetails
+StaffDetailsService
+JwtAuthenticationFilter
+JwtAuthEntryPoint
+JwtAccessDeniedHandler
+JwtUtils
+```
 
 Current behavior:
 
 - Stateless sessions.
-- CSRF disabled for REST API usage.
-- `POST /api/admin/auth/login` is public.
-- Payment IPN endpoints are public.
-- Swagger/OpenAPI endpoints are public.
-- Other endpoints require authentication.
-- JWT subject is the staff email.
-- JWT token id is checked against the invalidated token repository.
+- JWT bearer token authentication.
+- Public health, login, payment return/IPN, and Swagger routes.
+- Admin-only routes for users, staff, roles, and permissions.
+- Permission-aware admin access for catalog, media, orders, coupons, warehouse, and payment reads.
+- JSON `401` and `403` responses.
 
-### Exceptions
+## Main Domain Modules
 
-Location:
-
-```text
-exception/GlobalExceptionHandler.java
-dto/response/system/ErrorResponseDTO.java
-```
-
-Current handled cases:
-
-- `IllegalArgumentException` -> `400 Bad Request`
-- `MethodArgumentNotValidException` -> `400 Bad Request`
-- `EntityNotFoundException` -> `404 Not Found`
-- `IllegalStateException` -> `409 Conflict`
-- Unhandled `Exception` -> `500 Internal Server Error`
-
-Authentication errors are handled separately by `JwtAuthEntryPoint`.
-
-See `docs/api/ERROR_FORMAT.md`.
+| Module | Entities and concepts |
+| --- | --- |
+| Catalog | Category, Brand, Product, Variant, Media |
+| People/access | User, Staff, Role, Permission, Address |
+| Sales | Order, Order detail, Coupon, Return request |
+| Payments | Payment transaction, provider callbacks, refunds |
+| Warehouse | Warehouse, stock detail, warehouse transaction |
+| Security | Invalidated token |
+| Feedback | Review |
 
 ## Request Lifecycle
 
 ```text
 HTTP request
   -> Security filter chain
-  -> JwtAuthenticationFilter when protected
+  -> JWT filter for protected routes
   -> Controller
-  -> Request DTO validation
+  -> Bean validation
   -> Service
   -> Repository
   -> Entity persistence
   -> Mapper
-  -> Response DTO
-  -> HTTP response
+  -> DTO response
 ```
 
-## Domain Modules
+## Health And OpenAPI
 
-### Catalog
-
-Includes categories, brands, products, variants, and media.
-
-Status enum:
+Health:
 
 ```text
-ProductStatus: ACTIVE, HIDDEN, DELETED
+GET /api/health
+GET /api/health/readiness
 ```
 
-### People And Access
-
-Includes users, staff, roles, permissions, and addresses.
-
-Status enum:
-
-```text
-UserStatus: ACTIVE, BLOCKED, DELETED
-```
-
-### Sales
-
-Includes orders, order details, coupons, payment transactions, return requests, and reviews.
-
-Key enums:
-
-```text
-OrderStatus
-PaymentStatus
-PaymentMethodType
-ShippingProvider
-ShippingStatus
-CouponStatus
-CouponTimeStatus
-CouponType
-ReturnRequestStatus
-```
-
-### Warehouse
-
-Includes warehouses, stock details, and warehouse transactions.
-
-Key enums:
-
-```text
-WarehouseStatus
-WarehouseTransactionType
-WarehouseTransactionStatus
-```
-
-### System Integrations
-
-Includes Cloudinary media upload, VNPay, Momo, system payment service, and payment webhook handling.
-
-## Jobs
-
-Location:
-
-```text
-job/
-```
-
-Current jobs:
-
-- `TokenCleanupScheduler`
-- `OrderCleanupScheduler`
-
-These are intended for cleanup or lifecycle maintenance work outside direct request handling.
-
-## Configuration
-
-Location:
-
-```text
-backend/electronics/src/main/resources/application.yml
-```
-
-Contains local configuration for:
-
-- Spring application name.
-- PostgreSQL datasource.
-- JPA/Hibernate behavior.
-- Multipart upload limits.
-- JWT settings.
-- Payment provider settings.
-- Cloudinary settings.
-
-Important security note:
-
-- Do not copy real secret values into docs or frontend code.
-- Move secrets to environment variables before serious deployment.
-
-## API Documentation
-
-Current endpoint inventory:
-
-```text
-docs/api/ENDPOINTS.md
-```
-
-Authentication behavior:
-
-```text
-docs/api/AUTH.md
-```
-
-Error format:
-
-```text
-docs/api/ERROR_FORMAT.md
-```
-
-Swagger/OpenAPI is enabled through Springdoc:
+OpenAPI when enabled:
 
 ```text
 /swagger-ui.html
@@ -383,39 +179,53 @@ Swagger/OpenAPI is enabled through Springdoc:
 /v3/api-docs/**
 ```
 
+## Configuration
+
+Main config file:
+
+```text
+backend/electronics/src/main/resources/application.yml
+```
+
+Environment-driven groups:
+
+- Database: `DB_URL`, `DB_USERNAME`, `DB_PASSWORD`
+- JWT: `ELECTRONICS_JWT_SECRET`, `ELECTRONICS_JWT_EXPIRATION_MS`
+- CORS: `CORS_ALLOWED_ORIGIN_PATTERNS`
+- Payment: `PAYMENT_*`, `VNPAY_*`, `MOMO_*`
+- Cloudinary: `CLOUDINARY_*`
+- Swagger: `SPRINGDOC_*`
+
+See [../ENVIRONMENT.md](../ENVIRONMENT.md).
+
 ## Development Commands
 
 Run from `backend/electronics/`:
 
 ```bash
-mvn test
 mvn spring-boot:run
+mvn test
+mvn -q -DskipTests compile
 ```
 
-Build outputs should stay out of git:
+## Adding A Backend Resource
 
-```text
-backend/electronics/target/
-```
+Follow the existing pattern:
 
-## Adding A New Backend Resource
-
-When adding a new backend resource, follow the existing pattern:
-
-1. Add or update entity and enum types.
+1. Add or update entity/enums.
 2. Add repository.
-3. Add request and response DTOs.
+3. Add request/response DTOs.
 4. Add mapper.
-5. Add service interface.
-6. Add service implementation.
-7. Add controller endpoint.
-8. Add validation and error handling.
-9. Update `docs/api/ENDPOINTS.md`.
-10. Add or update tests when the workflow has business risk.
+5. Add service interface and implementation.
+6. Add controller.
+7. Add security policy.
+8. Add frontend service/mapper if used by UI.
+9. Update API docs.
+10. Add tests for business-risk workflows.
 
 ## Known Gaps
 
-- Public storefront/customer APIs are not complete.
-- Fine-grained permission checks are not documented as an authorization matrix yet.
-- Secrets should be externalized from local configuration.
-- Payment config paths should be checked before deployment.
+- Public customer registration/auth is not finalized.
+- Customer ownership checks need a final principal contract.
+- Production migrations/backfills are not implemented.
+- Payment/refund edge cases need broader automated tests.

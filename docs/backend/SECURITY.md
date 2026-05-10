@@ -33,6 +33,8 @@ The following routes are public:
 
 ```text
 POST /api/admin/auth/login
+GET  /api/health
+GET  /api/health/readiness
 GET  /api/system/payment/vnpay-ipn
 POST /api/system/payment/momo-ipn
 GET  /api/payments/vnpay-return

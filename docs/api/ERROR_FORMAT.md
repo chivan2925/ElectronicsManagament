@@ -21,7 +21,9 @@ Most application errors use this shape:
   "statusCode": 400,
   "error": "Bad Request",
   "message": "Human-readable error message.",
-  "details": null
+  "details": null,
+  "path": "/api/admin/products",
+  "requestId": "optional-request-id"
 }
 ```
 
@@ -34,6 +36,8 @@ Fields:
 | `error` | string | HTTP reason phrase. |
 | `message` | string | Human-readable message. May be localized. |
 | `details` | object or null | Extra data, most often validation field errors. |
+| `path` | string or null | Request path when available. |
+| `requestId` | string or null | Correlation id when available. |
 
 ## Validation Error Shape
 
@@ -63,7 +67,8 @@ Authentication errors are written directly by the JWT authentication entry point
   "status": 401,
   "error": "Unauthorized",
   "message": "Authentication is required or the token is invalid.",
-  "path": "/api/admin/categories"
+  "path": "/api/admin/categories",
+  "requestId": "optional-request-id"
 }
 ```
 
@@ -75,6 +80,7 @@ Fields:
 | `error` | string | Authentication error label. |
 | `message` | string | Human-readable message. May be localized. |
 | `path` | string | Request path. |
+| `requestId` | string or null | Correlation id when available. |
 
 ## Current Handler Mapping
 
@@ -112,6 +118,7 @@ function normalizeApiError(error) {
     message: data?.message ?? "Something went wrong.",
     details: data?.details ?? null,
     path: data?.path ?? null,
+    requestId: data?.requestId ?? error.response?.headers?.["x-request-id"] ?? null,
   };
 }
 ```

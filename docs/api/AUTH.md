@@ -10,7 +10,11 @@ Auth is implemented with Spring Security, JWT, stateless sessions, and a staff d
 
 Public routes:
 
+- `GET /api/health`
+- `GET /api/health/readiness`
 - `POST /api/admin/auth/login`
+- `GET /api/payments/vnpay-return`
+- `GET /api/payments/momo-return`
 - `GET /api/system/payment/vnpay-ipn`
 - `POST /api/system/payment/momo-ipn`
 - `/v3/api-docs/**`
@@ -73,10 +77,11 @@ Authorization: Bearer <accessToken>
 Frontend convention:
 
 ```js
-localStorage.setItem("accessToken", response.data.accessToken);
+// Prefer using frontend/src/auth/authStorage.js rather than direct storage calls.
+saveAuthSession(session);
 ```
 
-The shared Axios client in `frontend/src/api/client.js` already reads this key and appends the `Authorization` header.
+The shared Axios client in `frontend/src/api/client.js` reads the centralized auth storage and appends the `Authorization` header.
 
 ## Logout
 
@@ -148,6 +153,7 @@ The login endpoint returns explicit status codes for common authentication failu
 - Redirect admin users to the login page after token removal.
 - Redirect successful admin/staff login to `/admin/dashboard`.
 - Redirect successful user-shaped login sessions to `/`.
+- Prefer `VITE_AUTH_TOKEN_STORAGE=session` unless a long-lived local development session is needed.
 - Do not store passwords.
 - Do not display raw JWT values in the UI.
 - The frontend refresh flow is ready, but the current backend admin auth controller exposes login/logout only. Real refresh requires backend refresh-token response and `POST /api/admin/auth/refresh` support.
@@ -156,4 +162,4 @@ The login endpoint returns explicit status codes for common authentication failu
 
 The backend already has role and permission entities, role management APIs, and `@EnableMethodSecurity`.
 
-Current endpoint access is mainly guarded by authentication. If fine-grained authorization is added later, document the required permissions per endpoint in `ENDPOINTS.md` or a dedicated authorization matrix.
+Current endpoint access is guarded by role and resource permissions. Admin-only areas include users, staff, roles, and permissions; staff access to other admin modules requires matching resource permissions such as `product:view` or `order:update`.
