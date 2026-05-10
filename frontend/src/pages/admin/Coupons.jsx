@@ -231,10 +231,10 @@ function Coupons() {
     const usedCount = coupons.reduce((total, coupon) => total + Number(coupon.usedCount || 0), 0);
 
     return [
-      { icon: TicketPercent, label: "Total coupons", value: pageMeta.totalItems.toLocaleString("vi-VN") },
-      { icon: BadgePercent, label: "Active on page", value: activeCount.toLocaleString("vi-VN") },
-      { icon: CalendarClock, label: "Expired on page", value: expiredCount.toLocaleString("vi-VN") },
-      { icon: TrendingUp, label: "Uses on page", value: usedCount.toLocaleString("vi-VN") },
+      { icon: TicketPercent, label: "Tổng coupon", value: pageMeta.totalItems.toLocaleString("vi-VN") },
+      { icon: BadgePercent, label: "Đang chạy (trang)", value: activeCount.toLocaleString("vi-VN") },
+      { icon: CalendarClock, label: "Hết hạn (trang)", value: expiredCount.toLocaleString("vi-VN") },
+      { icon: TrendingUp, label: "Lượt dùng (trang)", value: usedCount.toLocaleString("vi-VN") },
     ];
   }, [coupons, pageMeta.totalItems]);
 
@@ -420,9 +420,9 @@ function Coupons() {
     <section className="admin-page-shell">
       <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <h1 className="text-2xl font-black text-slate-900">Coupon Management</h1>
+          <h1 className="text-2xl font-black text-slate-900">Quản lý Coupon</h1>
           <p className="mt-1 text-sm font-semibold text-slate-500">
-            Create coupon codes, track usage limits, manage discount types, and control active or expired campaigns.
+            Tạo mã giảm giá, theo dõi giới hạn sử dụng, quản lý loại giảm giá và kiểm soát các chiến dịch đang chạy hoặc đã hết hạn.
           </p>
         </div>
 
@@ -434,7 +434,7 @@ function Coupons() {
             type="button"
           >
             {loading ? <Loader2 className="animate-spin" size={16} /> : <RefreshCw size={16} />}
-            Refresh
+            Làm mới
           </button>
 
           {canCreate ? (
@@ -444,7 +444,7 @@ function Coupons() {
               type="button"
             >
               <Plus size={16} />
-              New coupon
+              Thêm coupon
             </button>
           ) : null}
         </div>
@@ -463,7 +463,7 @@ function Coupons() {
             setQuery(nextValue);
             setPage(0);
           }}
-          placeholder="Search by coupon code..."
+          placeholder="Tìm theo mã coupon..."
           value={query}
         />
 
@@ -472,40 +472,40 @@ function Coupons() {
           filters={[
             {
               key: "status",
-              label: "Status",
+              label: "Trạng thái",
               options: STATUS_OPTIONS,
-              placeholder: "All statuses",
+              placeholder: "Tất cả trạng thái",
               type: "select",
             },
             {
               key: "timeStatus",
-              label: "Validity",
+              label: "Hiệu lực",
               options: TIME_STATUS_OPTIONS,
-              placeholder: "All validity",
+              placeholder: "Tất cả",
               type: "select",
             },
             {
               key: "dateType",
-              label: "Date field",
+              label: "Trường ngày",
               options: DATE_TYPE_OPTIONS,
-              placeholder: "Date field",
+              placeholder: "Trường ngày",
               type: "select",
             },
             {
               key: "fromDate",
-              label: "From",
+              label: "Từ ngày",
               type: "date",
             },
             {
               key: "toDate",
-              label: "To",
+              label: "Đến ngày",
               type: "date",
             },
           ]}
           onChange={handleFilterChange}
           onReset={handleResetFilters}
-          summary="Status, active window, and audit dates"
-          title="Filters"
+          summary="Trạng thái, thời hạn và ngày hệ thống"
+          title="Bộ lọc"
           values={filterValues}
         />
       </div>

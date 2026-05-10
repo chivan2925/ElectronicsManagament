@@ -32,16 +32,16 @@ const sidebarSections = [
     end: true,
     icon: Gauge,
     key: "dashboard",
-    label: "Dashboard",
+    label: "Tổng quan",
     path: "/admin/dashboard",
   },
   {
     children: [
-      { access: ADMIN_ROUTE_POLICIES.categories, icon: Layers3, key: "categories", label: "Categories", path: "/admin/categories" },
-      { access: ADMIN_ROUTE_POLICIES.brands, icon: Building2, key: "brands", label: "Brands", path: "/admin/brands" },
-      { access: ADMIN_ROUTE_POLICIES.products, icon: Package, key: "products", label: "Products", path: "/admin/products" },
-      { access: ADMIN_ROUTE_POLICIES.variants, icon: Boxes, key: "variants", label: "Variants", path: "/admin/variants" },
-      { access: ADMIN_ROUTE_POLICIES.media, icon: Image, key: "media", label: "Media", path: "/admin/media" },
+      { access: ADMIN_ROUTE_POLICIES.categories, icon: Layers3, key: "categories", label: "Danh mục", path: "/admin/categories" },
+      { access: ADMIN_ROUTE_POLICIES.brands, icon: Building2, key: "brands", label: "Thương hiệu", path: "/admin/brands" },
+      { access: ADMIN_ROUTE_POLICIES.products, icon: Package, key: "products", label: "Sản phẩm", path: "/admin/products" },
+      { access: ADMIN_ROUTE_POLICIES.variants, icon: Boxes, key: "variants", label: "Biến thể", path: "/admin/variants" },
+      { access: ADMIN_ROUTE_POLICIES.media, icon: Image, key: "media", label: "Hình ảnh", path: "/admin/media" },
     ],
     icon: PackageSearch,
     key: "catalog",
@@ -49,69 +49,69 @@ const sidebarSections = [
   },
   {
     children: [
-      { access: ADMIN_ROUTE_POLICIES.users, icon: Users, key: "users", label: "Customers", path: "/admin/users" },
-      { access: ADMIN_ROUTE_POLICIES.staff, icon: UserCog, key: "staff", label: "Staff", path: "/admin/staff" },
+      { access: ADMIN_ROUTE_POLICIES.users, icon: Users, key: "users", label: "Khách hàng", path: "/admin/users" },
+      { access: ADMIN_ROUTE_POLICIES.staff, icon: UserCog, key: "staff", label: "Nhân viên", path: "/admin/staff" },
     ],
     icon: Users,
     key: "users",
-    label: "Users",
+    label: "Người dùng",
   },
   {
     access: ADMIN_ROUTE_POLICIES.orders,
     icon: ShoppingCart,
     key: "orders",
-    label: "Orders",
+    label: "Đơn hàng",
     path: "/admin/orders",
   },
   {
     access: ADMIN_ROUTE_POLICIES.warehouse,
     icon: Warehouse,
     key: "warehouse",
-    label: "Warehouse",
+    label: "Kho hàng",
     path: "/admin/warehouse",
   },
   {
     access: ADMIN_ROUTE_POLICIES.coupons,
     icon: Percent,
     key: "coupons",
-    label: "Coupons",
+    label: "Mã giảm giá",
     path: "/admin/coupons",
   },
   {
     access: ADMIN_ROUTE_POLICIES.roles,
     icon: ShieldCheck,
     key: "roles",
-    label: "Roles & Permissions",
+    label: "Quyền & Nhóm quyền",
     path: "/admin/roles",
   },
   {
     children: [
-      { access: ADMIN_ROUTE_POLICIES.revenue, icon: BarChart3, key: "revenue", label: "Revenue", path: "/admin/reports/revenue" },
+      { access: ADMIN_ROUTE_POLICIES.revenue, icon: BarChart3, key: "revenue", label: "Doanh thu", path: "/admin/reports/revenue" },
       {
         access: ADMIN_ROUTE_POLICIES.bestSellers,
         icon: TrendingUp,
         key: "best-sellers",
-        label: "Best sellers",
+        label: "Bán chạy",
         path: "/admin/reports/best-sellers",
       },
       {
         access: ADMIN_ROUTE_POLICIES.activityLogs,
         icon: FileClock,
         key: "activity",
-        label: "Activity log",
+        label: "Nhật ký",
         path: "/admin/reports/activity",
       },
     ],
     icon: BarChart3,
     key: "analytics",
-    label: "Analytics",
+    label: "Báo cáo",
   },
   {
-    badge: "Soon",
+    badge: "Sắp có",
     disabled: true,
     icon: Settings,
     key: "settings",
-    label: "Settings",
+    label: "Cài đặt",
   },
 ];
 
@@ -174,7 +174,7 @@ function AdminSidebar({ collapsed, mobileOpen, onCloseMobileSidebar }) {
           {!isDesktopCollapsed && (
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-black tracking-normal">ElectronicsManagement</p>
-              <p className="text-xs font-semibold text-slate-400">Admin console</p>
+              <p className="text-xs font-semibold text-slate-400">Bảng quản trị</p>
             </div>
           )}
 
@@ -214,8 +214,8 @@ function AdminSidebar({ collapsed, mobileOpen, onCloseMobileSidebar }) {
                   <Tag size={17} />
                 </span>
                 <div className="min-w-0">
-                  <p className="text-sm font-bold text-white">Ecommerce ops</p>
-                  <p className="mt-0.5 text-xs leading-5 text-slate-400">Catalog, orders, and warehouse controls.</p>
+                  <p className="text-sm font-bold text-white">Vận hành bán hàng</p>
+                  <p className="mt-0.5 text-xs leading-5 text-slate-400">Quản lý catalog, đơn hàng và kho bãi.</p>
                 </div>
               </div>
             )}

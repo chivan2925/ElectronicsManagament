@@ -43,9 +43,9 @@ function KpiSkeletonGrid() {
 function RecentOrders({ items }) {
   return (
     <AnalyticsCard
-      action={<span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-black text-emerald-700">DB live</span>}
-      description="Latest checkout activity from the Order API."
-      title="Recent orders"
+      action={<span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-black text-emerald-700">Trực tiếp</span>}
+      description="Hoạt động thanh toán mới nhất từ API đơn hàng."
+      title="Đơn hàng gần đây"
     >
       <div className="overflow-x-auto px-5 pb-5 pt-4">
         {items.length ? (
@@ -119,13 +119,13 @@ function Dashboard() {
           <div className="mb-3 flex flex-wrap gap-2">
             <span className="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-black text-primary">
               <CalendarDays size={14} />
-              {filters.to} · Admin analytics
+              {filters.to} · Phân tích quản trị
             </span>
             <span className="inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50 px-3 py-1 text-xs font-black text-emerald-700">
-              Production-ready showcase
+              Bản trình diễn hoàn chỉnh
             </span>
           </div>
-          <h1 className="text-2xl font-black tracking-normal text-slate-950 md:text-3xl">Dashboard analytics</h1>
+          <h1 className="text-2xl font-black tracking-normal text-slate-950 md:text-3xl">Tổng quan phân tích</h1>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-500">
             Tổng quan doanh thu, đơn hàng, khách hàng, tồn kho và hoạt động vận hành cho cửa hàng electronics gaming.
           </p>

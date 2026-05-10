@@ -27,7 +27,7 @@ const activityStyles = {
 
 function ActivityFeed({ items }) {
   return (
-    <AnalyticsCard description="Cập nhật vận hành mới nhất." title="Recent activity">
+    <AnalyticsCard description="Cập nhật vận hành mới nhất." title="Hoạt động gần đây">
       <div className="space-y-4 px-5 pb-5 pt-4">
         {items.length ? items.map((item) => {
           const style = activityStyles[item.type] || activityStyles.SYSTEM;

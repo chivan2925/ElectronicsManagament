@@ -2,24 +2,24 @@ import { CalendarDays, Download, SlidersHorizontal } from "lucide-react";
 import { cn } from "../../utils/classNames";
 
 const defaultPresets = [
-  { label: "7D", value: "7d" },
-  { label: "30D", value: "30d" },
-  { label: "Quarter", value: "quarter" },
-  { label: "YTD", value: "ytd" },
+  { label: "7 ngày", value: "7d" },
+  { label: "30 ngày", value: "30d" },
+  { label: "Quý", value: "quarter" },
+  { label: "Năm nay", value: "ytd" },
 ];
 
 const defaultChannelOptions = [
-  { label: "All channels", value: "all" },
-  { label: "Storefront", value: "storefront" },
-  { label: "Admin assisted", value: "admin" },
-  { label: "Marketplace", value: "marketplace" },
+  { label: "Tất cả kênh", value: "all" },
+  { label: "Cửa hàng", value: "storefront" },
+  { label: "Quản trị viên", value: "admin" },
+  { label: "Sàn thương mại", value: "marketplace" },
 ];
 
 const defaultSegmentOptions = [
-  { label: "All segments", value: "all" },
-  { label: "New customers", value: "new" },
-  { label: "Returning customers", value: "returning" },
-  { label: "VIP customers", value: "vip" },
+  { label: "Tất cả phân khúc", value: "all" },
+  { label: "Khách hàng mới", value: "new" },
+  { label: "Khách hàng quay lại", value: "returning" },
+  { label: "Khách hàng VIP", value: "vip" },
 ];
 
 const defaultValue = {
@@ -58,9 +58,9 @@ function AnalyticsFilters({
           <SlidersHorizontal size={20} />
         </div>
         <div className="min-w-0">
-          <p className="text-sm font-black text-slate-950">Analytics filters</p>
+          <p className="text-sm font-black text-slate-950">Bộ lọc phân tích</p>
           <p className="mt-1 text-xs font-semibold text-slate-500">
-            Date range, channel, segment, and export controls for reporting APIs.
+            Khoảng thời gian, kênh, phân khúc và xuất báo cáo cho API reporting.
           </p>
         </div>
       </div>
@@ -145,7 +145,7 @@ function AnalyticsFilters({
           type="button"
         >
           <Download size={17} />
-          Export
+          Xuất báo cáo
         </button>
       </div>
     </section>

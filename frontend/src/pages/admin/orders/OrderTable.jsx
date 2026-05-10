@@ -5,11 +5,11 @@ import { AdminIconButton, AdminTable, StatusBadge } from "../../../admin/compone
 import { formatCurrency } from "../../../utils/formatters";
 
 const paymentLabels = {
-  CANCELLED: "Cancelled",
-  FAILED: "Failed",
-  PAID: "Paid",
-  PENDING: "Pending",
-  REFUNDED: "Refunded",
+  CANCELLED: "Đã hủy",
+  FAILED: "Thất bại",
+  PAID: "Đã thanh toán",
+  PENDING: "Chờ thanh toán",
+  REFUNDED: "Đã hoàn tiền",
 };
 
 const paymentTones = {
@@ -21,11 +21,11 @@ const paymentTones = {
 };
 
 const shippingLabels = {
-  CANCELLED: "Cancelled",
-  DELIVERED: "Delivered",
-  PENDING: "Pending",
-  RETURNED: "Returned",
-  SHIPPING: "Shipping",
+  CANCELLED: "Đã hủy",
+  DELIVERED: "Đã giao",
+  PENDING: "Chờ lấy hàng",
+  RETURNED: "Đã trả hàng",
+  SHIPPING: "Đang giao",
 };
 
 const shippingTones = {
@@ -59,7 +59,7 @@ function OrderTable({ canUpdate = false, data = [], loading = false, onView, pag
     () => [
       {
         key: "code",
-        label: "Order",
+        label: "Đơn hàng",
         render: (item) => (
           <div className="flex min-w-[180px] items-center gap-3">
             <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-primary ring-1 ring-blue-100">
@@ -74,7 +74,7 @@ function OrderTable({ canUpdate = false, data = [], loading = false, onView, pag
       },
       {
         key: "customer",
-        label: "Customer",
+        label: "Khách hàng",
         render: (item) => (
           <div className="min-w-[180px]">
             <p className="truncate font-black text-slate-900">{item.customerName}</p>
@@ -87,17 +87,17 @@ function OrderTable({ canUpdate = false, data = [], loading = false, onView, pag
       },
       {
         key: "stage",
-        label: "Status",
+        label: "Trạng thái",
         render: (item) => <StatusBadge label={item.stageLabel} status={String(item.stage || "").toUpperCase()} tone={getStageTone(item.stage)} />,
       },
       {
         key: "paymentStatus",
-        label: "Payment",
+        label: "Thanh toán",
         render: (item) => <StatusBadge label={paymentLabels[item.paymentStatus] || item.paymentStatus} status={item.paymentStatus} tone={paymentTones[item.paymentStatus]} />,
       },
       {
         key: "shippingStatus",
-        label: "Shipping",
+        label: "Vận chuyển",
         render: (item) => (
           <div className="flex items-center gap-2">
             <Truck className="text-slate-400" size={16} />
@@ -108,22 +108,22 @@ function OrderTable({ canUpdate = false, data = [], loading = false, onView, pag
       {
         align: "right",
         key: "total",
-        label: "Total",
+        label: "Tổng tiền",
         render: (item) => <span className="font-black text-slate-950">{formatCurrency(item.total || 0)}</span>,
       },
       {
         key: "createdAt",
-        label: "Created",
+        label: "Ngày tạo",
         render: (item) => <span className="text-sm font-semibold text-slate-600">{formatDate(item.createdAt)}</span>,
       },
       {
         key: "tools",
-        label: "Ops",
+        label: "Thao tác",
         sortable: false,
         render: (item) => (
           <div className="flex items-center gap-2">
-            <AdminIconButton icon={Package} title={item.shippingProvider || "Carrier"} />
-            <AdminIconButton icon={Eye} onClick={() => onView?.(item)} title={canUpdate ? "View and update order" : "View order"} />
+            <AdminIconButton icon={Package} title={item.shippingProvider || "Đơn vị vận chuyển"} />
+            <AdminIconButton icon={Eye} onClick={() => onView?.(item)} title={canUpdate ? "Xem và cập nhật đơn hàng" : "Xem đơn hàng"} />
           </div>
         ),
       },
@@ -135,8 +135,8 @@ function OrderTable({ canUpdate = false, data = [], loading = false, onView, pag
     <AdminTable
       columns={columns}
       data={data}
-      emptyMessage="Try changing the keyword, order status, payment status, or shipping status."
-      emptyTitle="No orders found"
+      emptyMessage="Hãy thử thay đổi từ khóa, trạng thái đơn, trạng thái thanh toán hoặc vận chuyển."
+      emptyTitle="Không tìm thấy đơn hàng"
       enablePagination
       loading={loading}
       manualPagination

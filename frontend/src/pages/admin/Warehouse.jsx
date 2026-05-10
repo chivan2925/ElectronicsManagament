@@ -46,7 +46,7 @@ function formatDateTime(value) {
   const date = new Date(value);
 
   if (Number.isNaN(date.getTime())) {
-    return "Recently";
+    return "Gần đây";
   }
 
   return new Intl.DateTimeFormat("vi-VN", {
@@ -78,8 +78,8 @@ function HistoryCard({ error, items = [], loading = false, onRetry }) {
             <ClipboardList size={18} />
           </span>
           <div>
-            <h2 className="text-sm font-black text-slate-950">Stock history</h2>
-            <p className="text-xs font-semibold text-slate-500">Latest movements</p>
+            <h2 className="text-sm font-black text-slate-950">Lịch sử tồn kho</h2>
+            <p className="text-xs font-semibold text-slate-500">Biến động gần đây</p>
           </div>
         </div>
         {loading ? <Loader2 className="animate-spin text-slate-400" size={17} /> : null}
@@ -107,7 +107,7 @@ function HistoryCard({ error, items = [], loading = false, onRetry }) {
                 </span>
               </div>
               <p className="mt-1 text-xs font-semibold text-slate-500">
-                {item.warehouseName || "Warehouse"} · {item.quantity} units · {formatDateTime(item.updatedAt)}
+                {item.warehouseName || "Kho"} · {item.quantity} đơn vị · {formatDateTime(item.updatedAt)}
               </p>
             </div>
           ))
@@ -292,10 +292,10 @@ function Warehouse() {
     const utilization = totalCapacity > 0 ? `${Math.round((totalUnits / totalCapacity) * 100)}%` : "0%";
 
     return [
-      { icon: WarehouseIcon, label: "Warehouses", value: pageMeta.totalItems },
-      { icon: Boxes, label: "Stock rows", value: stockRows.length },
-      { icon: ClipboardList, label: "Units on page", value: totalUnits.toLocaleString("vi-VN") },
-      { icon: RefreshCw, label: "Capacity used", value: utilization },
+      { icon: WarehouseIcon, label: "Kho hàng", value: pageMeta.totalItems },
+      { icon: Boxes, label: "Dòng tồn kho", value: stockRows.length },
+      { icon: ClipboardList, label: "Sản phẩm (trang)", value: totalUnits.toLocaleString("vi-VN") },
+      { icon: RefreshCw, label: "Công suất sử dụng", value: utilization },
     ];
   }, [pageMeta.totalItems, stockRows.length, warehouses]);
 
@@ -363,23 +363,23 @@ function Warehouse() {
     const quantity = Number(adjustValues.quantity);
 
     if (!adjustValues.warehouseId) {
-      errors.warehouseId = "Warehouse is required.";
+      errors.warehouseId = "Vui lòng chọn kho hàng.";
     }
 
     if (!adjustValues.variantId) {
-      errors.variantId = "Variant is required.";
+      errors.variantId = "Vui lòng chọn biến thể.";
     }
 
     if (!adjustValues.type) {
-      errors.type = "Movement type is required.";
+      errors.type = "Vui lòng chọn loại biến động.";
     }
 
     if (!Number.isInteger(quantity) || quantity <= 0) {
-      errors.quantity = "Quantity must be a positive whole number.";
+      errors.quantity = "Số lượng phải là số nguyên dương.";
     }
 
     if (selectedStock && adjustValues.type === "EXPORT" && quantity > Number(selectedStock.quantity || 0)) {
-      errors.quantity = "Quantity cannot exceed current stock.";
+      errors.quantity = "Số lượng xuất không được vượt quá tồn kho hiện tại.";
     }
 
     return errors;
@@ -417,7 +417,7 @@ function Warehouse() {
           {
             channel: "admin",
             id: `warehouse-stock-${adjustValues.variantId}-${adjustValues.warehouseId}-${Date.now()}`,
-            message: `${selectedStock?.variantName || selectedVariant?.name || "Variant"} now has ${nextQuantity} units in ${selectedStock?.warehouseName || selectedWarehouse?.name || "warehouse"}.`,
+            message: `${selectedStock?.variantName || selectedVariant?.name || "Sản phẩm"} hiện còn ${nextQuantity} đơn vị tại ${selectedStock?.warehouseName || selectedWarehouse?.name || "kho"}.`,
             payload: {
               movementQuantity: quantity,
               movementType: adjustValues.type,
@@ -432,7 +432,7 @@ function Warehouse() {
             },
             priority: becameLowStock ? "high" : "medium",
             source: "admin-warehouse",
-            title: becameLowStock ? "Low stock alert" : "Stock replenished",
+            title: becameLowStock ? "Cảnh báo hết hàng" : "Đã nhập thêm hàng",
             type: becameLowStock ? REALTIME_EVENT_TYPES.STOCK_LOW : REALTIME_EVENT_TYPES.STOCK_RESTOCKED,
           },
           { queue: true },
@@ -451,9 +451,9 @@ function Warehouse() {
     <section className="admin-page-shell">
       <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <h1 className="text-2xl font-black text-slate-900">Warehouse Management</h1>
+          <h1 className="text-2xl font-black text-slate-900">Quản lý kho hàng</h1>
           <p className="mt-1 text-sm font-semibold text-slate-500">
-            Stock overview, inventory adjustments, low-stock alerts, and movement history.
+            Tổng quan tồn kho, điều chỉnh số lượng, cảnh báo hàng sắp hết và lịch sử biến động.
           </p>
         </div>
 
@@ -465,7 +465,7 @@ function Warehouse() {
             type="button"
           >
             {loading ? <Loader2 className="animate-spin" size={16} /> : <RefreshCw size={16} />}
-            Refresh
+            Làm mới
           </button>
 
           {canAdjust ? (
@@ -476,7 +476,7 @@ function Warehouse() {
               type="button"
             >
               {optionsLoading ? <Loader2 className="animate-spin" size={16} /> : <Plus size={16} />}
-              New adjustment
+              Điều chỉnh mới
             </button>
           ) : null}
         </div>
@@ -497,7 +497,7 @@ function Warehouse() {
                 setQuery(nextValue);
                 setPage(0);
               }}
-              placeholder="Search warehouse, variant, SKU, or address..."
+              placeholder="Tìm theo kho, biến thể, SKU hoặc địa chỉ..."
               value={query}
             />
 
@@ -506,23 +506,23 @@ function Warehouse() {
               filters={[
                 {
                   key: "status",
-                  label: "Warehouse",
+                  label: "Kho hàng",
                   options: STATUS_OPTIONS,
-                  placeholder: "All statuses",
+                  placeholder: "Tất cả trạng thái",
                   type: "select",
                 },
                 {
                   key: "stockLevel",
-                  label: "Stock level",
+                  label: "Mức tồn kho",
                   options: STOCK_FILTER_OPTIONS,
-                  placeholder: "All levels",
+                  placeholder: "Tất cả mức độ",
                   type: "select",
                 },
               ]}
               onChange={handleFilterChange}
               onReset={handleResetFilters}
-              summary="Inventory controls"
-              title="Filters"
+              summary="Kiểm soát tồn kho"
+              title="Bộ lọc"
               values={filterValues}
             />
           </div>

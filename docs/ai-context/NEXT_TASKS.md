@@ -14,6 +14,9 @@ Phase 8 — Production + Deploy (Completed showcase)
 
 ## Recently Completed
 
+- Completed the full localization of the Admin Dashboard interface into Vietnamese, including navigation (Sidebar, Topbar, Breadcrumbs), global search, and operational modules (Orders, Warehouse, Coupons, Activity Feed).
+- Localized admin analytics widgets (Revenue, Charts, KPI cards) and the demo presentation mode for a consistent Vietnamese-speaking administrator experience.
+
 <<<<<<< HEAD
 - Connected `/admin/dashboard`, `/admin/reports/revenue`, `/admin/reports/best-sellers`, and `/admin/reports/activity` to real Admin Report and Order APIs.
 - Added `reportService`, `reportMapper`, and `useAdminReportDashboard` to normalize dashboard KPIs, revenue series, order status mix, top products, recent orders, and order-derived activity from backend data.

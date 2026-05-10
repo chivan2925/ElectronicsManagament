@@ -110,10 +110,10 @@ function Orders() {
 
   const stats = useMemo(
     () => [
-      { icon: ReceiptText, label: "Orders in result", value: pageMeta.totalItems },
-      { icon: PackageCheck, label: "Delivered on page", value: orders.filter((order) => order.stage === "delivered").length },
-      { icon: Truck, label: "Shipping on page", value: orders.filter((order) => order.stage === "shipping").length },
-      { icon: CreditCard, label: "Revenue on page", value: formatCurrency(orders.reduce((total, order) => total + (order.total || 0), 0)) },
+      { icon: ReceiptText, label: "Tổng số đơn hàng", value: pageMeta.totalItems },
+      { icon: PackageCheck, label: "Đã giao trên trang", value: orders.filter((order) => order.stage === "delivered").length },
+      { icon: Truck, label: "Đang giao trên trang", value: orders.filter((order) => order.stage === "shipping").length },
+      { icon: CreditCard, label: "Doanh thu trên trang", value: formatCurrency(orders.reduce((total, order) => total + (order.total || 0), 0)) },
     ],
     [orders, pageMeta.totalItems],
   );
@@ -249,15 +249,15 @@ function Orders() {
     <section className="admin-page-shell">
       <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <h1 className="text-2xl font-black text-slate-900">Order Management</h1>
+          <h1 className="text-2xl font-black text-slate-900">Quản lý đơn hàng</h1>
           <p className="mt-1 text-sm font-semibold text-slate-500">
-            Track customer orders, payment state, shipping handoff, and operational timeline.
+            Theo dõi đơn hàng, thanh toán, vận chuyển và tiến độ vận hành.
           </p>
         </div>
         {loading ? (
           <span className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-black text-slate-500">
             <Loader2 className="animate-spin" size={16} />
-            Syncing orders
+            Đang đồng bộ đơn hàng
           </span>
         ) : null}
       </div>
@@ -275,7 +275,7 @@ function Orders() {
             setQuery(nextValue);
             resetPage();
           }}
-          placeholder="Search by order code, customer name, or phone..."
+          placeholder="Tìm theo mã đơn, tên khách hàng, hoặc số điện thoại..."
           value={query}
         />
 
@@ -284,30 +284,30 @@ function Orders() {
           filters={[
             {
               key: "stage",
-              label: "Order status",
+              label: "Trạng thái đơn",
               options: STAGE_FILTER_OPTIONS,
-              placeholder: "All statuses",
+              placeholder: "Tất cả trạng thái",
               type: "select",
             },
             {
               key: "paymentStatus",
-              label: "Payment",
+              label: "Thanh toán",
               options: PAYMENT_STATUS_OPTIONS,
-              placeholder: "All payments",
+              placeholder: "Tất cả thanh toán",
               type: "select",
             },
             {
               key: "shippingStatus",
-              label: "Shipping",
+              label: "Vận chuyển",
               options: SHIPPING_STATUS_OPTIONS,
-              placeholder: "All shipping",
+              placeholder: "Tất cả vận chuyển",
               type: "select",
             },
           ]}
           onChange={handleFilterChange}
           onReset={handleResetFilters}
-          summary="Operational queue"
-          title="Filters"
+          summary="Hàng đợi vận hành"
+          title="Bộ lọc"
           values={filterValues}
         />
       </div>
@@ -331,11 +331,11 @@ function Orders() {
       />
 
       <AdminDrawer
-        description="Review customer, payment, shipping, items, and timeline before changing states."
+        description="Kiểm tra khách hàng, thanh toán, vận chuyển và sản phẩm trước khi thay đổi trạng thái."
         onClose={closeOrderDetail}
         open={Boolean(selectedOrder)}
         size="lg"
-        title={selectedOrder ? `Order ${selectedOrder.code || selectedOrder.id}` : "Order detail"}
+        title={selectedOrder ? `Đơn hàng ${selectedOrder.code || selectedOrder.id}` : "Chi tiết đơn hàng"}
       >
         <OrderDetail
           canUpdate={canUpdate}

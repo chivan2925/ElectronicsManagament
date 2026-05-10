@@ -98,7 +98,7 @@ function OrderDetail({
       <section className="admin-panel rounded-2xl p-4">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <div>
-            <p className="text-xs font-black uppercase tracking-normal text-slate-500">Order</p>
+            <p className="text-xs font-black uppercase tracking-normal text-slate-500">Đơn hàng</p>
             <h2 className="mt-1 text-2xl font-black text-slate-950">{order.code || `#${order.id}`}</h2>
             <div className="mt-3 flex flex-wrap gap-2">
               <StatusBadge
@@ -106,12 +106,12 @@ function OrderDetail({
                 status={String(order.stage || "").toUpperCase()}
                 tone={order.stage === "cancelled" ? "rose" : order.stage === "delivered" ? "emerald" : "blue"}
               />
-              <StatusBadge label={`Payment ${order.paymentStatus}`} status={order.paymentStatus} tone={statusTone[order.paymentStatus]} />
-              <StatusBadge label={`Shipping ${order.shippingStatus}`} status={order.shippingStatus} tone={statusTone[order.shippingStatus]} />
+              <StatusBadge label={`Thanh toán ${order.paymentStatus}`} status={order.paymentStatus} tone={statusTone[order.paymentStatus]} />
+              <StatusBadge label={`Vận chuyển ${order.shippingStatus}`} status={order.shippingStatus} tone={statusTone[order.shippingStatus]} />
             </div>
           </div>
           <div className="rounded-2xl border border-blue-100 bg-blue-50/70 px-4 py-3 text-right">
-            <p className="text-xs font-black uppercase tracking-normal text-slate-500">Total</p>
+            <p className="text-xs font-black uppercase tracking-normal text-slate-500">Tổng tiền</p>
             <p className="mt-1 text-2xl font-black text-slate-950">{formatCurrency(order.total || 0)}</p>
           </div>
         </div>
@@ -119,14 +119,14 @@ function OrderDetail({
 
       <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
         <div className="space-y-4">
-          <InfoCard icon={UserRound} title="Customer info">
+          <InfoCard icon={UserRound} title="Thông tin khách hàng">
             <div className="grid gap-3 sm:grid-cols-2">
               <div>
-                <p className="text-xs font-black uppercase tracking-normal text-slate-500">Customer</p>
+                <p className="text-xs font-black uppercase tracking-normal text-slate-500">Khách hàng</p>
                 <p className="mt-1 font-black text-slate-950">{order.customerName}</p>
               </div>
               <div>
-                <p className="text-xs font-black uppercase tracking-normal text-slate-500">User ID</p>
+                <p className="text-xs font-black uppercase tracking-normal text-slate-500">Mã người dùng</p>
                 <p className="mt-1 font-bold text-slate-700">{order.userId || "—"}</p>
               </div>
               <p className="inline-flex items-center gap-2 text-sm font-semibold text-slate-600">
@@ -140,7 +140,7 @@ function OrderDetail({
             </div>
           </InfoCard>
 
-          <InfoCard icon={MapPin} title="Shipping address">
+          <InfoCard icon={MapPin} title="Địa chỉ giao hàng">
             <div className="space-y-2 text-sm font-semibold leading-6 text-slate-600">
               <p className="font-black text-slate-950">{order.shippingName || order.customerName}</p>
               <p>{order.shippingPhone || "—"}</p>
@@ -148,14 +148,14 @@ function OrderDetail({
             </div>
           </InfoCard>
 
-          <InfoCard icon={PackageCheck} title="Order items">
+          <InfoCard icon={PackageCheck} title="Sản phẩm trong đơn">
             <div className="overflow-hidden rounded-2xl border border-slate-200">
               <table className="min-w-full divide-y divide-slate-200">
                 <thead className="bg-slate-50">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-black uppercase tracking-normal text-slate-500">Item</th>
-                    <th className="px-4 py-3 text-right text-xs font-black uppercase tracking-normal text-slate-500">Qty</th>
-                    <th className="px-4 py-3 text-right text-xs font-black uppercase tracking-normal text-slate-500">Price</th>
+                    <th className="px-4 py-3 text-left text-xs font-black uppercase tracking-normal text-slate-500">Sản phẩm</th>
+                    <th className="px-4 py-3 text-right text-xs font-black uppercase tracking-normal text-slate-500">SL</th>
+                    <th className="px-4 py-3 text-right text-xs font-black uppercase tracking-normal text-slate-500">Giá</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200 bg-white">
@@ -189,41 +189,41 @@ function OrderDetail({
                 <Truck size={17} />
               </span>
               <div>
-                <h3 className="text-sm font-black text-slate-950">Update workflow</h3>
-                <p className="text-xs font-semibold text-slate-500">State changes follow backend transition rules.</p>
+                <h3 className="text-sm font-black text-slate-950">Cập nhật vận hành</h3>
+                <p className="text-xs font-semibold text-slate-500">Thay đổi trạng thái tuân theo quy tắc chuyển đổi backend.</p>
               </div>
             </div>
 
             <div className="grid gap-3">
               <SelectField
                 disabled={isUpdateDisabled}
-                label="Order status"
+                label="Trạng thái đơn"
                 onChange={(value) => onChange?.("stage", value)}
                 options={ORDER_STAGE_OPTIONS}
                 value={formValues.stage}
               />
               <SelectField
                 disabled={isUpdateDisabled}
-                label="Payment status"
+                label="Trạng thái thanh toán"
                 onChange={(value) => onChange?.("paymentStatus", value)}
                 options={PAYMENT_STATUS_OPTIONS}
                 value={formValues.paymentStatus}
               />
               <SelectField
                 disabled={isUpdateDisabled}
-                label="Shipping status"
+                label="Trạng thái vận chuyển"
                 onChange={(value) => onChange?.("shippingStatus", value)}
                 options={SHIPPING_STATUS_OPTIONS}
                 value={formValues.shippingStatus}
               />
               <SelectField
                 disabled={isUpdateDisabled}
-                label="Carrier"
+                label="Đơn vị vận chuyển"
                 onChange={(value) => onChange?.("shippingProvider", value)}
                 options={SHIPPING_PROVIDER_OPTIONS}
                 value={formValues.shippingProvider}
               />
-              <Field label="Tracking code">
+              <Field label="Mã vận đơn">
                 <input
                   className="admin-control h-11 w-full rounded-xl px-3 text-sm font-bold text-slate-700 outline-none disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400"
                   disabled={isUpdateDisabled}
@@ -242,28 +242,28 @@ function OrderDetail({
               type="button"
             >
               {submitting ? <Loader2 className="animate-spin" size={16} /> : <Save size={16} />}
-              Save changes
+              Lưu thay đổi
             </button>
           </section>
 
           <section className="admin-panel rounded-2xl p-4">
-            <h3 className="text-sm font-black text-slate-950">Payment summary</h3>
+            <h3 className="text-sm font-black text-slate-950">Tóm tắt thanh toán</h3>
             <div className="mt-3 space-y-2 text-sm font-semibold text-slate-600">
               <div className="flex justify-between gap-4">
-                <span>Subtotal</span>
+                <span>Tạm tính</span>
                 <span className="font-black text-slate-900">{formatCurrency(order.subtotal || 0)}</span>
               </div>
               <div className="flex justify-between gap-4">
-                <span>Discount {order.couponCode ? `(${order.couponCode})` : ""}</span>
+                <span>Giảm giá {order.couponCode ? `(${order.couponCode})` : ""}</span>
                 <span className="font-black text-emerald-600">-{formatCurrency(order.discount || 0)}</span>
               </div>
               <div className="flex justify-between gap-4">
-                <span>Shipping</span>
+                <span>Phí vận chuyển</span>
                 <span className="font-black text-slate-900">{formatCurrency(order.shippingFee || 0)}</span>
               </div>
               <div className="border-t border-slate-200 pt-2">
                 <div className="flex justify-between gap-4">
-                  <span className="font-black text-slate-950">Total</span>
+                  <span className="font-black text-slate-950">Tổng tiền</span>
                   <span className="font-black text-slate-950">{formatCurrency(order.total || 0)}</span>
                 </div>
               </div>

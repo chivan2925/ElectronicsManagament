@@ -24,107 +24,107 @@ import Breadcrumbs from "./Breadcrumbs";
 const topbarSearchItems = [
   {
     access: ADMIN_ROUTE_POLICIES.dashboard,
-    group: "Overview",
+    group: "Tổng quan",
     keywords: ["analytics", "kpi", "dashboard"],
-    label: "Dashboard analytics",
+    label: "Phân tích dashboard",
     path: "/admin/dashboard",
   },
   {
     access: ADMIN_ROUTE_POLICIES.categories,
     group: "Catalog",
     keywords: ["category", "danh muc"],
-    label: "Categories",
+    label: "Danh mục",
     path: "/admin/categories",
   },
   {
     access: ADMIN_ROUTE_POLICIES.brands,
     group: "Catalog",
     keywords: ["brand", "thuong hieu"],
-    label: "Brands",
+    label: "Thương hiệu",
     path: "/admin/brands",
   },
   {
     access: ADMIN_ROUTE_POLICIES.products,
     group: "Catalog",
     keywords: ["product", "catalog", "san pham"],
-    label: "Products",
+    label: "Sản phẩm",
     path: "/admin/products",
   },
   {
     access: ADMIN_ROUTE_POLICIES.variants,
     group: "Catalog",
     keywords: ["variant", "sku", "bien the"],
-    label: "Variants",
+    label: "Biến thể",
     path: "/admin/variants",
   },
   {
     access: ADMIN_ROUTE_POLICIES.media,
     group: "Catalog",
     keywords: ["media", "asset", "cloudinary", "image"],
-    label: "Media library",
+    label: "Thư viện media",
     path: "/admin/media",
   },
   {
     access: ADMIN_ROUTE_POLICIES.orders,
-    group: "Operations",
+    group: "Vận hành",
     keywords: ["order", "checkout", "shipping", "don hang"],
-    label: "Orders",
+    label: "Đơn hàng",
     path: "/admin/orders",
   },
   {
     access: ADMIN_ROUTE_POLICIES.warehouse,
-    group: "Operations",
+    group: "Vận hành",
     keywords: ["warehouse", "inventory", "stock", "kho"],
-    label: "Warehouse",
+    label: "Kho hàng",
     path: "/admin/warehouse",
   },
   {
     access: ADMIN_ROUTE_POLICIES.coupons,
     group: "Marketing",
     keywords: ["coupon", "discount", "voucher"],
-    label: "Coupons",
+    label: "Mã giảm giá",
     path: "/admin/coupons",
   },
   {
     access: ADMIN_ROUTE_POLICIES.users,
-    group: "People",
+    group: "Nhân sự",
     keywords: ["customer", "user", "nguoi dung"],
-    label: "Customers",
+    label: "Khách hàng",
     path: "/admin/users",
   },
   {
     access: ADMIN_ROUTE_POLICIES.staff,
-    group: "People",
+    group: "Nhân sự",
     keywords: ["staff", "employee", "nhan vien"],
-    label: "Staff",
+    label: "Nhân viên",
     path: "/admin/staff",
   },
   {
     access: ADMIN_ROUTE_POLICIES.roles,
-    group: "Security",
+    group: "Bảo mật",
     keywords: ["role", "permission", "security"],
-    label: "Roles & permissions",
+    label: "Quyền & Nhóm quyền",
     path: "/admin/roles",
   },
   {
     access: ADMIN_ROUTE_POLICIES.revenue,
-    group: "Reports",
+    group: "Báo cáo",
     keywords: ["revenue", "report", "doanh thu"],
-    label: "Revenue report",
+    label: "Báo cáo doanh thu",
     path: "/admin/reports/revenue",
   },
   {
     access: ADMIN_ROUTE_POLICIES.bestSellers,
-    group: "Reports",
+    group: "Báo cáo",
     keywords: ["best sellers", "report", "top products"],
-    label: "Best sellers report",
+    label: "Báo cáo bán chạy",
     path: "/admin/reports/best-sellers",
   },
   {
     access: ADMIN_ROUTE_POLICIES.activityLogs,
-    group: "Reports",
+    group: "Báo cáo",
     keywords: ["activity", "audit", "log"],
-    label: "Activity log",
+    label: "Nhật ký hoạt động",
     path: "/admin/reports/activity",
   },
 ];
@@ -150,7 +150,7 @@ function AdminTopbar({ collapsed, onOpenMobileSidebar, onToggleSidebar }) {
   const profileRef = useRef(null);
   const searchRef = useRef(null);
   const displayName = auth.user?.fullName || auth.user?.name || auth.user?.email || "Admin PCE";
-  const displayRole = auth.user?.roleName || auth.user?.role || auth.roles?.[0] || "Administrator";
+  const displayRole = auth.user?.roleName || auth.user?.role || auth.roles?.[0] || "Quản trị viên";
   const initials = getInitials(displayName) || "AD";
   const searchResults = useMemo(() => {
     const keyword = searchQuery.trim().toLowerCase();
@@ -201,10 +201,10 @@ function AdminTopbar({ collapsed, onOpenMobileSidebar, onToggleSidebar }) {
 
     try {
       await authService.logout();
-      toast.showSuccess("Signed out of the admin dashboard.");
+      toast.showSuccess("Đã đăng xuất khỏi trang quản trị.");
     } catch {
       auth.logout();
-      toast.showInfo("Local admin session was cleared.");
+      toast.showInfo("Phiên đăng nhập đã được xóa.");
     } finally {
       navigate("/admin/login", { replace: true });
     }
@@ -232,19 +232,19 @@ function AdminTopbar({ collapsed, onOpenMobileSidebar, onToggleSidebar }) {
           icon={Menu}
           onClick={onOpenMobileSidebar}
           size="md"
-          title="Open admin navigation"
+          title="Mở menu điều hướng"
         />
         <AdminIconButton
           className="hidden lg:inline-flex"
           icon={collapsed ? PanelLeftOpen : PanelLeftClose}
           onClick={onToggleSidebar}
           size="md"
-          title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          title={collapsed ? "Mở rộng thanh bên" : "Thu gọn thanh bên"}
         />
 
         <div className="min-w-0 flex-1">
           <Breadcrumbs className="hidden sm:flex" />
-          <p className="truncate text-sm font-black text-slate-900 sm:hidden">Admin console</p>
+          <p className="truncate text-sm font-black text-slate-900 sm:hidden">Bảng quản trị</p>
         </div>
 
         <form className="relative hidden w-full max-w-md lg:block" onSubmit={handleSearchSubmit} ref={searchRef}>
@@ -256,7 +256,7 @@ function AdminTopbar({ collapsed, onOpenMobileSidebar, onToggleSidebar }) {
               setIsSearchOpen(true);
             }}
             onFocus={() => setIsSearchOpen(true)}
-            placeholder="Search admin modules..."
+            placeholder="Tìm kiếm chức năng quản trị..."
             type="search"
             value={searchQuery}
           />
@@ -268,6 +268,7 @@ function AdminTopbar({ collapsed, onOpenMobileSidebar, onToggleSidebar }) {
                 setSearchQuery("");
                 setIsSearchOpen(true);
               }}
+              title="Xóa tìm kiếm"
               type="button"
             >
               <X size={15} />
@@ -296,7 +297,7 @@ function AdminTopbar({ collapsed, onOpenMobileSidebar, onToggleSidebar }) {
                   ))
                 ) : (
                   <div className="rounded-xl border border-dashed border-slate-200 bg-slate-50 px-4 py-5 text-center">
-                    <p className="text-sm font-bold text-slate-700">No matching admin module</p>
+                    <p className="text-sm font-bold text-slate-700">Không tìm thấy chức năng phù hợp</p>
                   </div>
                 )}
               </div>
@@ -355,7 +356,7 @@ function AdminTopbar({ collapsed, onOpenMobileSidebar, onToggleSidebar }) {
                     to="/admin/dashboard"
                   >
                     <UserRound size={17} />
-                    Admin overview
+                    Tổng quan quản trị
                   </Link>
                   <button
                     className="flex w-full cursor-not-allowed items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold text-slate-400"
@@ -364,7 +365,7 @@ function AdminTopbar({ collapsed, onOpenMobileSidebar, onToggleSidebar }) {
                     type="button"
                   >
                     <Settings size={17} />
-                    Settings placeholder
+                    Cài đặt (Sắp có)
                   </button>
                   <button
                     className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold text-rose-600 transition hover:bg-rose-50"
@@ -373,7 +374,7 @@ function AdminTopbar({ collapsed, onOpenMobileSidebar, onToggleSidebar }) {
                     type="button"
                   >
                     <LogOut size={17} />
-                    Sign out
+                    Đăng xuất
                   </button>
                 </div>
               </div>

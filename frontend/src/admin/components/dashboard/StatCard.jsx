@@ -63,7 +63,7 @@ function StatCard({ helper, icon, title, tone = "blue", trend, trendType = "up",
             <TrendIcon size={14} />
             {trend}
           </span>
-          <span className="text-xs font-bold text-slate-400">vs previous</span>
+          <span className="text-xs font-bold text-slate-400">so với trước</span>
         </div>
       ) : null}
     </article>

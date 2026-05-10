@@ -91,7 +91,7 @@ function MetricTile({ helper, metricKey, placeholder, title, tone = "blue", tren
           <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-black text-emerald-700">{trend}</span>
         ) : null}
         {placeholder ? (
-          <span className="rounded-full bg-amber-50 px-2.5 py-1 text-xs font-black text-amber-700">Placeholder</span>
+          <span className="rounded-full bg-amber-50 px-2.5 py-1 text-xs font-black text-amber-700">Dự kiến</span>
         ) : null}
       </div>
       {helper ? <p className="mt-2 text-xs font-semibold leading-5 text-slate-500">{helper}</p> : null}
@@ -146,9 +146,9 @@ function RevenueAnalytics({ className, data, error = null, loading = false, onRe
 
       <div className="grid gap-6 xl:grid-cols-[1.25fr_0.95fr]">
         <AnalyticsCard
-          action={<span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-black text-primary">Revenue analytics</span>}
-          description="Gross revenue, target, and net revenue trend for the selected period."
-          title="Revenue trend"
+          action={<span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-black text-primary">Phân tích doanh thu</span>}
+          description="Xu hướng doanh thu gộp, mục tiêu và doanh thu thuần trong kỳ."
+          title="Xu hướng doanh thu"
         >
           <div className="h-[360px] px-2 pb-5 pt-4 sm:px-5">
             <ResponsiveContainer height="100%" width="100%">
@@ -173,13 +173,13 @@ function RevenueAnalytics({ className, data, error = null, loading = false, onRe
                   width={58}
                 />
                 <Tooltip content={<ChartTooltip />} />
-                <Area dataKey="target" fill="#FFFFFF00" name="Target" stroke="#8B5CF6" strokeDasharray="5 5" strokeWidth={2} type="monotone" />
-                <Area dataKey="netRevenue" fill="url(#adminRevenueNetFill)" name="Net revenue" stroke="#10B981" strokeWidth={2} type="monotone" />
+                <Area dataKey="target" fill="#FFFFFF00" name="Mục tiêu" stroke="#8B5CF6" strokeDasharray="5 5" strokeWidth={2} type="monotone" />
+                <Area dataKey="netRevenue" fill="url(#adminRevenueNetFill)" name="Doanh thu thuần" stroke="#10B981" strokeWidth={2} type="monotone" />
                 <Area
                   activeDot={{ fill: "#005BFF", r: 5, stroke: "#FFFFFF", strokeWidth: 2 }}
                   dataKey="revenue"
                   fill="url(#adminRevenueGrossFill)"
-                  name="Gross revenue"
+                  name="Doanh thu gộp"
                   stroke="#005BFF"
                   strokeWidth={3}
                   type="monotone"
@@ -190,9 +190,9 @@ function RevenueAnalytics({ className, data, error = null, loading = false, onRe
         </AnalyticsCard>
 
         <AnalyticsCard
-          action={<span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-black text-emerald-700">Order trends</span>}
-          description="Orders, completed volume, cancellations, and conversion placeholder."
-          title="Orders and conversion"
+          action={<span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-black text-emerald-700">Xu hướng đơn hàng</span>}
+          description="Đơn hàng, số lượng hoàn tất, hủy đơn và chuyển đổi dự kiến."
+          title="Đơn hàng và chuyển đổi"
         >
           <div className="h-[360px] px-2 pb-5 pt-4 sm:px-5">
             <ResponsiveContainer height="100%" width="100%">
@@ -210,12 +210,12 @@ function RevenueAnalytics({ className, data, error = null, loading = false, onRe
                   yAxisId="conversion"
                 />
                 <Tooltip content={<ChartTooltip />} />
-                <Bar dataKey="orders" fill="#005BFF" name="Orders" radius={[8, 8, 0, 0]} yAxisId="orders" />
-                <Line dataKey="completed" dot={false} name="Completed" stroke="#10B981" strokeWidth={3} type="monotone" yAxisId="orders" />
+                <Bar dataKey="orders" fill="#005BFF" name="Đơn hàng" radius={[8, 8, 0, 0]} yAxisId="orders" />
+                <Line dataKey="completed" dot={false} name="Hoàn tất" stroke="#10B981" strokeWidth={3} type="monotone" yAxisId="orders" />
                 <Line
                   dataKey="conversion"
                   dot={{ fill: "#F59E0B", r: 3 }}
-                  name="Conversion"
+                  name="Chuyển đổi"
                   stroke="#F59E0B"
                   strokeDasharray="4 4"
                   strokeWidth={2}
@@ -276,7 +276,7 @@ function RevenueAnalytics({ className, data, error = null, loading = false, onRe
                     width={98}
                   />
                   <Tooltip content={<ChartTooltip />} />
-                  <Bar dataKey="sold" fill="#005BFF" name="Units sold" radius={[0, 8, 8, 0]} />
+                  <Bar dataKey="sold" fill="#005BFF" name="Đã bán" radius={[0, 8, 8, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -298,7 +298,7 @@ function RevenueAnalytics({ className, data, error = null, loading = false, onRe
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-black text-slate-950">{item.name}</p>
                     <p className="mt-0.5 text-xs font-semibold text-slate-500">
-                      {item.sold} sold · {item.orderCount} orders
+                      Đã bán {item.sold} · {item.orderCount} đơn
                     </p>
                   </div>
                   <span className="shrink-0 text-sm font-black text-slate-950">{compactCurrency(item.revenue)}</span>
@@ -310,20 +310,20 @@ function RevenueAnalytics({ className, data, error = null, loading = false, onRe
       </div>
 
       <AnalyticsCard
-        action={<span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-600">Sales reports</span>}
+        action={<span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-600">Báo cáo bán hàng</span>}
         description="Doanh thu, số đơn và AOV được tổng hợp từ API reporting."
-        title="Sales report breakdown"
+        title="Chi tiết báo cáo bán hàng"
       >
         <div className="overflow-x-auto px-5 pb-5 pt-4">
           <table className="min-w-full">
             <thead>
               <tr className="border-b border-slate-100 text-left text-xs font-black uppercase tracking-normal text-slate-400">
-                <th className="whitespace-nowrap py-3 pr-4">Report slice</th>
-                <th className="whitespace-nowrap px-4 py-3">Orders</th>
-                <th className="whitespace-nowrap px-4 py-3">Revenue</th>
+                <th className="whitespace-nowrap py-3 pr-4">Kỳ báo cáo</th>
+                <th className="whitespace-nowrap px-4 py-3">Đơn hàng</th>
+                <th className="whitespace-nowrap px-4 py-3">Doanh thu</th>
                 <th className="whitespace-nowrap px-4 py-3">AOV</th>
-                <th className="whitespace-nowrap px-4 py-3">Conversion</th>
-                <th className="whitespace-nowrap py-3 pl-4">Trend</th>
+                <th className="whitespace-nowrap px-4 py-3">Chuyển đổi</th>
+                <th className="whitespace-nowrap py-3 pl-4">Xu hướng</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">

@@ -1,25 +1,25 @@
 export const ORDER_STAGE_OPTIONS = [
-  { label: "Pending", value: "pending" },
-  { label: "Confirmed", value: "confirmed" },
-  { label: "Shipping", value: "shipping" },
-  { label: "Delivered", value: "delivered" },
-  { label: "Cancelled", value: "cancelled" },
+  { label: "Chờ xử lý", value: "pending" },
+  { label: "Đã xác nhận", value: "confirmed" },
+  { label: "Đang giao hàng", value: "shipping" },
+  { label: "Đã giao hàng", value: "delivered" },
+  { label: "Đã hủy", value: "cancelled" },
 ];
 
 export const PAYMENT_STATUS_OPTIONS = [
-  { label: "Pending", value: "PENDING" },
-  { label: "Paid", value: "PAID" },
-  { label: "Failed", value: "FAILED" },
-  { label: "Cancelled", value: "CANCELLED" },
-  { label: "Refunded", value: "REFUNDED" },
+  { label: "Chờ thanh toán", value: "PENDING" },
+  { label: "Đã thanh toán", value: "PAID" },
+  { label: "Thất bại", value: "FAILED" },
+  { label: "Đã hủy", value: "CANCELLED" },
+  { label: "Đã hoàn tiền", value: "REFUNDED" },
 ];
 
 export const SHIPPING_STATUS_OPTIONS = [
-  { label: "Pending", value: "PENDING" },
-  { label: "Shipping", value: "SHIPPING" },
-  { label: "Delivered", value: "DELIVERED" },
-  { label: "Returned", value: "RETURNED" },
-  { label: "Cancelled", value: "CANCELLED" },
+  { label: "Chờ lấy hàng", value: "PENDING" },
+  { label: "Đang giao", value: "SHIPPING" },
+  { label: "Đã giao", value: "DELIVERED" },
+  { label: "Đã trả hàng", value: "RETURNED" },
+  { label: "Đã hủy", value: "CANCELLED" },
 ];
 
 export const SHIPPING_PROVIDER_OPTIONS = [
@@ -27,5 +27,5 @@ export const SHIPPING_PROVIDER_OPTIONS = [
   { label: "GHTK", value: "GHTK" },
   { label: "Viettel Post", value: "VIETTELPOST" },
   { label: "VNPost", value: "VNPOST" },
-  { label: "Other", value: "OTHER" },
+  { label: "Khác", value: "OTHER" },
 ];

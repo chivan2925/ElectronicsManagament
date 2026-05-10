@@ -3,52 +3,52 @@ import { Link, useLocation } from "react-router-dom";
 import { cn } from "../../utils/classNames";
 
 const routeCrumbs = {
-  "/admin": [{ label: "Dashboard", to: "/admin/dashboard" }],
+  "/admin": [{ label: "Tổng quan", to: "/admin/dashboard" }],
   "/admin/brands": [
     { label: "Catalog", to: "/admin/products" },
-    { label: "Brands" },
+    { label: "Thương hiệu" },
   ],
   "/admin/categories": [
     { label: "Catalog", to: "/admin/products" },
-    { label: "Categories" },
+    { label: "Danh mục" },
   ],
-  "/admin/coupons": [{ label: "Coupons" }],
-  "/admin/dashboard": [{ label: "Dashboard" }],
+  "/admin/coupons": [{ label: "Mã giảm giá" }],
+  "/admin/dashboard": [{ label: "Tổng quan" }],
   "/admin/media": [
     { label: "Catalog", to: "/admin/products" },
-    { label: "Media" },
+    { label: "Hình ảnh" },
   ],
-  "/admin/orders": [{ label: "Orders" }],
+  "/admin/orders": [{ label: "Đơn hàng" }],
   "/admin/products": [
     { label: "Catalog", to: "/admin/products" },
-    { label: "Products" },
+    { label: "Sản phẩm" },
   ],
   "/admin/reports/activity": [
-    { label: "Analytics", to: "/admin/reports/revenue" },
-    { label: "Activity log" },
+    { label: "Báo cáo", to: "/admin/reports/revenue" },
+    { label: "Nhật ký" },
   ],
   "/admin/reports/best-sellers": [
-    { label: "Analytics", to: "/admin/reports/revenue" },
-    { label: "Best sellers" },
+    { label: "Báo cáo", to: "/admin/reports/revenue" },
+    { label: "Bán chạy" },
   ],
   "/admin/reports/revenue": [
-    { label: "Analytics", to: "/admin/reports/revenue" },
-    { label: "Revenue" },
+    { label: "Báo cáo", to: "/admin/reports/revenue" },
+    { label: "Doanh thu" },
   ],
-  "/admin/roles": [{ label: "Roles & Permissions" }],
+  "/admin/roles": [{ label: "Quyền & Nhóm quyền" }],
   "/admin/staff": [
-    { label: "Users", to: "/admin/users" },
-    { label: "Staff" },
+    { label: "Người dùng", to: "/admin/users" },
+    { label: "Nhân viên" },
   ],
   "/admin/users": [
-    { label: "Users", to: "/admin/users" },
-    { label: "Customers" },
+    { label: "Người dùng", to: "/admin/users" },
+    { label: "Khách hàng" },
   ],
   "/admin/variants": [
     { label: "Catalog", to: "/admin/products" },
-    { label: "Variants" },
+    { label: "Biến thể" },
   ],
-  "/admin/warehouse": [{ label: "Warehouse" }],
+  "/admin/warehouse": [{ label: "Kho hàng" }],
 };
 
 function titleCase(value) {
@@ -74,7 +74,7 @@ function Breadcrumbs({ className }) {
   const location = useLocation();
   const normalizedPath = location.pathname.replace(/\/+$/, "") || "/admin";
   const crumbs = routeCrumbs[normalizedPath] ?? buildFallbackCrumbs(normalizedPath);
-  const fullTrail = [{ label: "Admin", to: "/admin/dashboard" }, ...crumbs];
+  const fullTrail = [{ label: "Quản trị", to: "/admin/dashboard" }, ...crumbs];
 
   return (
     <nav aria-label="Breadcrumb" className={cn("flex min-w-0 items-center gap-1 text-sm", className)}>

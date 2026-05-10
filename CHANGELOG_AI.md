@@ -8,6 +8,16 @@ Always update this file after meaningful work.
 
 ## 2026-05-11
 
+### Admin Dashboard Localization
+
+- Completed the full localization of the Admin Dashboard interface into Vietnamese.
+- Localized navigation elements: `AdminSidebar`, `AdminTopbar`, `Breadcrumbs`, and global search item groups.
+- Localized analytics widgets: `RevenueAnalytics`, chart legends, tooltips, axis labels, and metric card descriptions.
+- Localized operational modules: `OrderList`, `OrderDetail`, `Warehouse`, `Coupons`, and `ActivityFeed`.
+- Localized demo and presentation tools: `demoMode.js` and `DemoPresentationPanel.jsx`.
+- Translated system-wide UI strings, relative time stamps ("Vừa xong", "phút trước"), validation messages, and operational alerts.
+- Verified localized UI consistency across desktop and mobile views.
+
 <<<<<<< HEAD
 ### Admin Report Frontend API Wiring
 

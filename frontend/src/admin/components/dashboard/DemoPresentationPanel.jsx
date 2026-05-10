@@ -9,11 +9,11 @@ function DemoPresentationPanel() {
         <div>
           <div className="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-white px-3 py-1 text-xs font-black text-primary">
             <MonitorPlay size={14} />
-            Presentation mode
+            Chế độ trình bày
           </div>
-          <h2 className="mt-4 text-xl font-black text-slate-950">Demo runbook</h2>
+          <h2 className="mt-4 text-xl font-black text-slate-950">Hướng dẫn Demo</h2>
           <p className="mt-2 max-w-3xl text-sm font-semibold leading-6 text-slate-500">
-            Local demo mode uses seeded mock API data, demo auth sessions, and stable ecommerce/admin scenarios for smooth presentation runs.
+            Chế độ demo nội bộ sử dụng dữ liệu giả lập, phiên đăng nhập demo và các kịch bản thương mại điện tử/quản trị ổn định để phục vụ trình bày mượt mà.
           </p>
 
           <div className="mt-5 grid gap-3 md:grid-cols-2">
@@ -41,7 +41,7 @@ function DemoPresentationPanel() {
           <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
             <div className="mb-3 flex items-center gap-2">
               <UserRound className="text-primary" size={18} />
-              <h3 className="text-sm font-black text-slate-950">Demo accounts</h3>
+              <h3 className="text-sm font-black text-slate-950">Tài khoản Demo</h3>
             </div>
             <div className="grid gap-2">
               {DEMO_ACCOUNTS.map((account) => (
@@ -56,7 +56,7 @@ function DemoPresentationPanel() {
           <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
             <div className="mb-3 flex items-center gap-2">
               <ClipboardList className="text-primary" size={18} />
-              <h3 className="text-sm font-black text-slate-950">Presenter notes</h3>
+              <h3 className="text-sm font-black text-slate-950">Ghi chú thuyết trình</h3>
             </div>
             <ul className="space-y-2">
               {DEMO_PRESENTATION_NOTES.slice(0, 3).map((note) => (

@@ -31,7 +31,7 @@ function formatRelativeTime(value) {
   const timestamp = value ? new Date(value).getTime() : Date.now();
 
   if (!Number.isFinite(timestamp)) {
-    return "Just now";
+    return "Vừa xong";
   }
 
   const elapsedMs = Math.max(0, Date.now() - timestamp);
@@ -39,14 +39,14 @@ function formatRelativeTime(value) {
   const hour = 60 * minute;
 
   if (elapsedMs < minute) {
-    return "Just now";
+    return "Vừa xong";
   }
 
   if (elapsedMs < hour) {
-    return `${Math.floor(elapsedMs / minute)}m ago`;
+    return `${Math.floor(elapsedMs / minute)} phút trước`;
   }
 
-  return `${Math.floor(elapsedMs / hour)}h ago`;
+  return `${Math.floor(elapsedMs / hour)} giờ trước`;
 }
 
 function ActivityItem({ notification }) {
@@ -84,7 +84,7 @@ function StockAlert({ notification }) {
           <p className="mt-1 text-xs font-semibold leading-5 text-rose-600">{notification.message}</p>
           {stock || threshold ? (
             <p className="mt-2 text-xs font-black text-rose-700">
-              Stock {stock ?? "N/A"}{threshold ? ` / threshold ${threshold}` : ""}
+              Tồn kho {stock ?? "N/A"}{threshold ? ` / ngưỡng ${threshold}` : ""}
             </p>
           ) : null}
         </div>
@@ -104,11 +104,11 @@ function AdminRealtimeActivity() {
     <AnalyticsCard
       action={
         <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-black text-primary">
-          {unreadCount ? `${unreadCount} unread` : "Synced"}
+          {unreadCount ? `${unreadCount} chưa đọc` : "Đã đồng bộ"}
         </span>
       }
-      description="Centralized event feed for orders, payments, stock, and admin alerts."
-      title="Realtime operations"
+      description="Luồng sự kiện tập trung cho đơn hàng, thanh toán, kho và cảnh báo admin."
+      title="Vận hành trực tiếp"
     >
       <div className="grid gap-4 px-5 pb-5 pt-4 lg:grid-cols-[1.2fr_0.8fr]">
         <div className="space-y-3">
@@ -129,7 +129,7 @@ function AdminRealtimeActivity() {
 
         <div className="space-y-3">
           <div className="flex items-center justify-between gap-3">
-            <p className="text-sm font-black text-slate-950">Low stock alerts</p>
+            <p className="text-sm font-black text-slate-950">Cảnh báo tồn kho thấp</p>
             <span className="rounded-full bg-rose-50 px-2.5 py-1 text-xs font-black text-rose-600">
               {stockAlerts.length}
             </span>
